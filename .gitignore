@@ -4,8 +4,8 @@
 .pnp.js
 
 # security
-/server/db/password.js
-/server/src
+password
+port
 
 # testing
 /coverage
