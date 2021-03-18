@@ -17,11 +17,11 @@ app.get("/", (req, res) => {
     res.send("heelo");
 })
 
-app.post("/register", (req, res) => {
+app.post("/api/user/register", (req, res) => {
         management.register(req, res);
 })
 
-app.post("/login_check", (req, res) => {
+app.post("/api/user/login_check", (req, res) => {
         management.login(req, res);
 });
 
