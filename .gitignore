@@ -4,8 +4,8 @@
 .pnp.js
 
 # security
-password
-port
+password.js
+port.js
 
 # testing
 /coverage
