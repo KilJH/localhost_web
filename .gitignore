@@ -3,6 +3,10 @@
 /.pnp
 .pnp.js
 
+# security
+/server/db/password.js
+/server/src
+
 # testing
 /coverage
 
