@@ -27,7 +27,7 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 		<Layout
 			title={`${
 				pageProps.item ? pageProps.item.name : 'User Detail'
-			} | PlanBee🐝`}
+			} | localhost`}
 		>
 			{pageProps.item && <ListDetail item={pageProps.item} />}
 		</Layout>
