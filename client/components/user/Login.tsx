@@ -1,6 +1,9 @@
 import { Button, TextField } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
+import { useInput } from '../../hooks/useInput';
+import axios from 'axios';
+import Router from 'next/router';
 
 interface Props {}
 
@@ -16,19 +19,42 @@ const LoginContainer = styled.div`
 `;
 
 const Login = (props: Props) => {
+	const email = useInput('');
+	const pw = useInput('', (value: string) => !value.includes(';'));
+
+	const onClick = () => {
+		axios.post('/api/user/login', { email, pw }).then((res) => {
+			console.log(res);
+			console.log('로그인 성공');
+			Router.push('/');
+		});
+	};
+
 	return (
 		<LoginContainer>
 			<h3>로그인</h3>
 			<form>
 				<div>
-					<TextField label="ID" variant="outlined" fullWidth />
+					<TextField
+						{...email}
+						label="Email"
+						variant="outlined"
+						type="email"
+						fullWidth
+					/>
 				</div>
 				<div>
-					<TextField label="Password" variant="outlined" fullWidth />
+					<TextField
+						{...pw}
+						label="Password"
+						variant="outlined"
+						type="password"
+						fullWidth
+					/>
 				</div>
 
 				<div>
-					<Button variant="contained" color="primary">
+					<Button onClick={onClick} variant="contained" color="primary">
 						로그인
 					</Button>
 				</div>

@@ -13,7 +13,11 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/pickers": "^3.2.10",
     "@material-ui/styles": "^4.11.3",
+<<<<<<< HEAD
     "concurrently": "^6.0.0",
+=======
+    "axios": "^0.21.1",
+>>>>>>> 83e5a0f02d51283111c133835528194d91eda8b6
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.6",
     "mysql": "^2.18.1",
