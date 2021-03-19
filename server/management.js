@@ -32,6 +32,7 @@ module.exports.register = (req, res) => {
 	const email = req.body.email || req.query.email;
 	const pw = req.body.pw || req.query.pw;
 	const name = req.body.name || req.query.name;
+	const sex = req.body.sex || req.query.sex;
 	const nickname = req.body.nickname || req.query.nickname;
 	const phone = req.body.phone || req.query.phone;
 	const address = req.body.address || req.query.address;
@@ -45,7 +46,7 @@ module.exports.register = (req, res) => {
 
 		if (rows == '') {
 			// res.send({ message: '사용할 수 있는 이메일입니다.' });
-			const insert = `INSERT INTO user(email, pw, name, nickname, phone, addess) VALUES("${email}", "${hashPW}", ${name}, ${nickname}, ${phone}, ${address});`;
+			const insert = `INSERT INTO user(email, pw, name, sex, nickname, phone, address) VALUES("${email}", "${hashPW}", "${name}", "${sex}", "${nickname}", "${phone}", "${address}");`;
 
 			mysql.query(insert, (err3, rows, fields) => {
 				if (err3) return console.log('err3: ', err3);
