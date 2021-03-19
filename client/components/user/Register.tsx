@@ -184,6 +184,7 @@ export default function Register() {
 				email: emailInput.value,
 				pw: passwordInput.value,
 				name: nameInput.value,
+				sex: isMan ? 'male' : 'female',
 				nickname: nicknameInput.value,
 				phone: phoneNumInput.value,
 				address: addressInput.value,
