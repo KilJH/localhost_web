@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useInput } from '../../hooks/useInput';
 import axios from 'axios';
 import SERVER from '../../utils/url';
+import Link from 'next/link';
 
 interface Props {}
 
@@ -27,7 +28,7 @@ const Login = (props: Props) => {
 		// .post('/api/user/login_check', { email: email.value, pw: pw.value })
 		// .then((res) => {
 		axios
-			.post(`${SERVER}api/user/login_check`, {
+			.post(`${SERVER}/api/user/login_check`, {
 				email: email.value,
 				pw: pw.value,
 			})
@@ -69,11 +70,19 @@ const Login = (props: Props) => {
 						// onClick={onSubmit}
 						variant="contained"
 						color="primary"
+						fullWidth
 					>
 						로그인
 					</Button>
 				</div>
 			</form>
+
+			<hr />
+			<Link href="/users/register">
+				<Button fullWidth variant="contained">
+					회원가입
+				</Button>
+			</Link>
 		</LoginContainer>
 	);
 };

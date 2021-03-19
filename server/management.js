@@ -31,6 +31,10 @@ module.exports.register = (req, res) => {
 	// 회원가입
 	const email = req.body.email || req.query.email;
 	const pw = req.body.pw || req.query.pw;
+	const name = req.body.name || req.query.name;
+	const nickname = req.body.nickname || req.query.nickname;
+	const phone = req.body.phone || req.query.phone;
+	const address = req.body.address || req.query.address;
 	const sql = `SELECT * FROM user WHERE email = ?`;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
 
@@ -40,15 +44,17 @@ module.exports.register = (req, res) => {
 		if (err2) return console.log('register err: ', err2);
 
 		if (rows == '') {
-			res.send({ message: '사용할 수 있는 이메일입니다.' });
-			const insert = `INSERT INTO user(email, pw) VALUES("${email}", "${hashPW}");`;
+			// res.send({ message: '사용할 수 있는 이메일입니다.' });
+			const insert = `INSERT INTO user(email, pw, name, nickname, phone, addess) VALUES("${email}", "${hashPW}", ${name}, ${nickname}, ${phone}, ${address});`;
 
 			mysql.query(insert, (err3, rows, fields) => {
 				if (err3) return console.log('err3: ', err3);
+
 				console.log('계정 생성 성공');
 			});
+			res.send({ success: true, message: '회원가입 완료' });
 		} else {
-			res.send({ message: '이미 등록 된 이메일입니다.' });
+			res.send({ success: false, message: '이미 등록 된 이메일입니다.' });
 		}
 	});
 };

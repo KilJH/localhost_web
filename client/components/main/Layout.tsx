@@ -13,8 +13,9 @@ type Props = {
 const Main = styled.div<{ isMobile: boolean }>`
 	width: ${(props) => (props.isMobile ? '100%' : '70%')};
 	margin: 0 auto;
-	padding: 0 1rem;
+	padding: 0 1em;
 	transition: width 0.3s ease;
+	box-sizing: border-box;
 `;
 
 const Layout = ({ children, title = 'for your dream | localhost' }: Props) => {
