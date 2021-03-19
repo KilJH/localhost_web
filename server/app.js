@@ -29,6 +29,14 @@ app.post('/api/user/login_check', (req, res) => {
 	management.login(req, res);
 });
 
+app.post('/api/user/update', (req, res) => {
+	management.update(req, res);
+});
+
+app.post('/api/user/delete', (req, res) => {
+	management.delete(req, res);
+});
+
 app.listen(PORT, (req, res) => {
 	console.log('PORT server on');
 });

@@ -1,3 +1,4 @@
+const { DataUsage } = require('@material-ui/icons');
 const crypto = require('crypto');
 const mysql = require('./db/mysql');
 const { password } = require('./db/password');
@@ -59,3 +60,37 @@ module.exports.register = (req, res) => {
 		}
 	});
 };
+
+module.exports.update = (req, res) => {
+	// 정보수정
+	const email = req.body.email || req.query.email;
+	const pw = req.body.pw || null;
+	const phone = req.body.phone || null;
+	const address = req.body.address || null;
+	
+	const sql = `SELECT * FROM user WHERE email = ?`;
+
+	mysql.query(sql, email, (err, rows, fields) => {
+		if (err) return console.log("여기서 err", err);
+
+		if(pw !== null){
+			const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
+			updateData(hashPW, "pw");
+		}else if (phone !== null) {
+			updateData(phone, "phone");
+		}else if (address !== null) {
+			updateData(address, "address");
+		}
+
+		function updateData(data, type){
+			const update = `UPDATE user SET ${type} = "${data}" WHERE user_id = "${rows[0].user_id}";`
+
+			mysql.query(update, (err, rows2, field2) => {
+				if (err) return console.log(err);
+				console.log("변경 성공");
+				res.send({ message: "변경 대성공" })
+			})
+		}
+	})
+};
+
