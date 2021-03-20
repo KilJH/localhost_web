@@ -6,13 +6,15 @@ const { password } = require('./db/password');
 module.exports.login = (req, res) => {
 	// 로그인
 
+	if (!req.body.email)
+		res.send({ success: false, message: '아이디를 입력해주세요' });
+	if (!req.body.pw)
+		res.send({ success: false, message: '비밀번호를 입력해주세요' });
+
 	const email = req.body.email || req.query.email;
 	const pw = req.body.pw || req.query.pw;
 	const sql = `SELECT * FROM user WHERE email = ?`;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
-
-	if (email == null || pw == null)
-		return console.log('아이디 혹은 비밀번호가 없습니다');
 
 	mysql.query(sql, email, (err2, rows, fields) => {
 		if (err2) return console.log('err2: ', err2);
@@ -67,30 +69,29 @@ module.exports.update = (req, res) => {
 	const pw = req.body.pw || null;
 	const phone = req.body.phone || null;
 	const address = req.body.address || null;
-	
+
 	const sql = `SELECT * FROM user WHERE email = ?`;
 
 	mysql.query(sql, email, (err, rows, fields) => {
-		if (err) return console.log("여기서 err", err);
+		if (err) return console.log('여기서 err', err);
 
-		if(pw !== null){
+		if (pw !== null) {
 			const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
-			updateData(hashPW, "pw");
-		}else if (phone !== null) {
-			updateData(phone, "phone");
-		}else if (address !== null) {
-			updateData(address, "address");
+			updateData(hashPW, 'pw');
+		} else if (phone !== null) {
+			updateData(phone, 'phone');
+		} else if (address !== null) {
+			updateData(address, 'address');
 		}
 
-		function updateData(data, type){
-			const update = `UPDATE user SET ${type} = "${data}" WHERE user_id = "${rows[0].user_id}";`
+		function updateData(data, type) {
+			const update = `UPDATE user SET ${type} = "${data}" WHERE user_id = "${rows[0].user_id}";`;
 
 			mysql.query(update, (err, rows2, field2) => {
 				if (err) return console.log(err);
-				console.log("변경 성공");
-				res.send({ message: "변경 대성공" })
-			})
+				console.log('변경 성공');
+				res.send({ message: '변경 대성공' });
+			});
 		}
-	})
+	});
 };
-

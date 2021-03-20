@@ -25,8 +25,7 @@ const Login = (props: Props) => {
 
 	const onSubmit = (e: any) => {
 		e.preventDefault();
-		// .post('/api/user/login_check', { email: email.value, pw: pw.value })
-		// .then((res) => {
+
 		axios
 			.post(`${SERVER}/api/user/login_check`, {
 				email: email.value,
