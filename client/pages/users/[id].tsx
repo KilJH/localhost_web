@@ -4,10 +4,13 @@ import { User } from '../../interfaces';
 import { sampleUserData } from '../../utils/sample-data';
 import Layout from '../../components/main/Layout';
 import ListDetail from '../../components/user/ListDetail';
+import axios from 'axios';
+import SERVER from '../../utils/url';
 
 type Props = {
 	pageProps: {
 		item?: User;
+		isFollowed: boolean;
 		errors?: string;
 	};
 };
@@ -29,7 +32,9 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 				pageProps.item ? pageProps.item.name : 'User Detail'
 			} | localhost`}
 		>
-			{pageProps.item && <ListDetail item={pageProps.item} />}
+			{pageProps.item && (
+				<ListDetail item={pageProps.item} isFollowed={pageProps.isFollowed} />
+			)}
 		</Layout>
 	);
 };
@@ -38,7 +43,9 @@ export default StaticPropsDetail;
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	// Get the paths we want to pre-render based on users
-	const paths = sampleUserData.map((user) => ({
+	const paths = await (
+		await axios.get(`${SERVER}/api/user/list`)
+	).data.users.map((user) => ({
 		params: { id: user.id.toString() },
 	}));
 
@@ -53,10 +60,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	try {
 		const id = params?.id;
-		const item = sampleUserData.find((data) => data.id === Number(id));
+		const item = await (await axios.get(`${SERVER}/api/user/${id}`)).data.user;
+		const isFollowed = await (
+			await axios.post(`${SERVER}/api/user/follow_check`, {
+				userId: id,
+				followerId: 12,
+			})
+		).data.isFollowed;
 		// By returning { props: item }, the StaticPropsDetail component
 		// will receive `item` as a prop at build time
-		return { props: { item } };
+		return { props: { item, isFollowed } };
 	} catch (err) {
 		return { props: { errors: err.message } };
 	}

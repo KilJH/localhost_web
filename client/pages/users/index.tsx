@@ -5,6 +5,8 @@ import { User } from '../../interfaces';
 import { sampleUserData } from '../../utils/sample-data';
 import Layout from '../../components/main/Layout';
 import List from '../../components/user/List';
+import axios from 'axios';
+import SERVER from '../../utils/url';
 
 type Props = {
 	pageProps: {
@@ -32,7 +34,8 @@ export const getStaticProps: GetStaticProps = async () => {
 	// Example for including static props in a Next.js function component page.
 	// Don't forget to include the respective types for any props passed into
 	// the component.
-	const items: User[] = sampleUserData;
+	const items: User[] = await (await axios.get(`${SERVER}/api/user/list`)).data
+		.users;
 	return { props: { items } };
 };
 

@@ -1,7 +1,6 @@
-const { DataUsage } = require('@material-ui/icons');
+// const { DataUsage } = require('@material-ui/icons');
 const crypto = require('crypto');
-const mysql = require('./db/mysql');
-const { password } = require('./db/password');
+const mysql = require('../db/mysql');
 
 module.exports.login = (req, res) => {
 	// 로그인
@@ -56,7 +55,7 @@ module.exports.register = (req, res) => {
 
 				console.log('계정 생성 성공');
 			});
-			res.send({ success: true, message: '회원가입 완료' });
+			res.status(200).send({ success: true, message: '회원가입 완료' });
 		} else {
 			res.send({ success: false, message: '이미 등록 된 이메일입니다.' });
 		}
@@ -85,13 +84,97 @@ module.exports.update = (req, res) => {
 		}
 
 		function updateData(data, type) {
-			const update = `UPDATE user SET ${type} = "${data}" WHERE user_id = "${rows[0].user_id}";`;
+			const update = `UPDATE user SET ${type} = "${data}" WHERE id = "${rows[0].id}";`;
 
 			mysql.query(update, (err, rows2, field2) => {
 				if (err) return console.log(err);
 				console.log('변경 성공');
 				res.send({ message: '변경 대성공' });
 			});
+		}
+	});
+};
+
+module.exports.list = (req, res) => {
+	// 전체회원
+	const sql = `SELECT * FROM user`;
+
+	mysql.query(sql, (err, rows, fields) => {
+		if (err) return console.log('select err: ', err);
+		console.log('검색된 회원수: ', rows.length);
+		res.status(200).send({ success: true, users: rows });
+	});
+};
+module.exports.find = (req, res) => {
+	// 한명 검색
+	const id = req.params.id;
+
+	// const sql = `SELECT * FROM user WHERE id = "?"`;
+	const sql = `SELECT * FROM user WHERE id = ?`;
+
+	mysql.query(sql, id, (err, rows, fields) => {
+		if (err) return console.log('select err: ', err);
+		console.log('검색결과', rows);
+		res.status(200).send({ success: true, user: rows[0] });
+	});
+};
+
+module.exports.follow = (req, res) => {
+	// 팔로우, 팔로우 취소
+
+	if (!req.body.userId || !req.body.followerId) {
+		res.send({ success: false, message: '비정상적인 요청입니다.' });
+		console.log('실패실패');
+	}
+	console.log('팔로우 시도');
+	console.log(req.body.userId, req.body.followerId);
+
+	const userId = req.body.userId;
+	const followerId = req.body.followerId;
+
+	const sql = `SELECT * FROM follow WHERE user_id = ? AND follower_id = ?`;
+
+	mysql.query(sql, [userId, followerId], (err, rows, fields) => {
+		if (err) return console.log('select err: ', err);
+
+		if (rows == '') {
+			const insert = `INSERT INTO follow(user_id, follower_id) VALUES("${userId}", "${followerId}");`;
+			mysql.query(insert, (err, rows, fields) => {
+				if (err) return console.log('insert err: ', err);
+				res.status(200).send({ success: true, message: ' 팔로우 성공' });
+			});
+		} else {
+			const deleteSql = `DELETE FROM follow WHERE user_id = ? AND follower_id = ?`;
+			mysql.query(deleteSql, [userId, followerId], (err, rows, fields) => {
+				if (err) return console.log('delete err: ', err);
+				res.status(200).send({ success: true, message: ' 팔로우 취소' });
+			});
+		}
+	});
+};
+
+module.exports.followList = (req, res) => {
+	if (!req.userId) {
+		res.send({ success: false, message: '비정상적인 요청입니다.' });
+	}
+
+	const userId = req.body.userId;
+
+	const sql = `SELECT * FROM follow WHERE follower_id = ?`;
+	// 팔로우 리스트 가져오기
+};
+
+module.exports.isFollowed = (req, res) => {
+	const userId = req.body.userId;
+	const followerId = req.body.followerId;
+	const sql = `SELECT * FROM follow WHERE user_id = ? AND follower_id = ?`;
+
+	mysql.query(sql, [userId, followerId], (err, rows) => {
+		if (err) return console.log(err);
+		if (rows == '') {
+			res.send({ isFollowed: false });
+		} else {
+			res.send({ isFollowed: true });
 		}
 	});
 };
