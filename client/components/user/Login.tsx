@@ -1,5 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
-import React, { ReactEventHandler } from 'react';
+import React, { ReactEventHandler, useContext } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../hooks/useInput';
 import axios from 'axios';
@@ -32,9 +32,8 @@ const Login = (props: Props) => {
 				pw: pw.value,
 			})
 			.then((res) => {
-				console.log(res);
-				if (res.data.success) document.location.href = '/';
-				else {
+				if (res.data.success) {
+				} else {
 					alert(res.data.message);
 				}
 			});

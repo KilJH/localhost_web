@@ -37,13 +37,12 @@ const FollowButton = (props: Props) => {
 	const onClick = async (e: React.MouseEvent) => {
 		// 서버 api
 		try {
-			await axios
-				// 팔로워 아이디 바꾸기
-				.post(`${SERVER}/api/user/follow`, { userId, followerId: 12 })
-				.then((res) => {
-					console.log(res.data.message);
-					setFollowState(!followState);
-				});
+			// 팔로워 아이디 바꾸기
+			const res = await axios.post(`${SERVER}/api/user/follow`, {
+				userId,
+				followerId: 12,
+			});
+			setFollowState(!followState);
 		} catch (err) {
 			return console.log(err);
 		}

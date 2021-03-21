@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Drawer, IconButton } from '@material-ui/core';
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
@@ -157,7 +157,6 @@ const Menu = () => (
 
 const LoginMenu = () => {
 	const loginDrawer = useDrawer('right');
-
 	return (
 		<>
 			<IconButton onClick={loginDrawer.onOpen}>

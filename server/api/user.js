@@ -21,7 +21,9 @@ module.exports.login = (req, res) => {
 			res.send({ success: false, message: '등록되지 않은 이메일 입니다.' });
 		} else {
 			if (hashPW === rows[0].pw) {
-				res.status(200).send({ success: true, message: '로그인 성공' });
+				res
+					.status(200)
+					.send({ success: true, message: '로그인 성공', user: rows[0] });
 			} else {
 				res.send({ success: false, message: '비밀번호가 틀립니다.' });
 			}
