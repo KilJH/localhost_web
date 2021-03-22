@@ -1,9 +1,10 @@
 import { Button, TextField } from '@material-ui/core';
-import React from 'react';
+import React, { ReactEventHandler, useContext } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../hooks/useInput';
 import axios from 'axios';
-import Router from 'next/router';
+import SERVER from '../../utils/url';
+import Link from 'next/link';
 
 interface Props {}
 
@@ -22,18 +23,26 @@ const Login = (props: Props) => {
 	const email = useInput('');
 	const pw = useInput('', (value: string) => !value.includes(';'));
 
-	const onClick = () => {
-		axios.post('/api/user/login', { email, pw }).then((res) => {
-			console.log(res);
-			console.log('로그인 성공');
-			Router.push('/');
-		});
+	const onSubmit = (e: any) => {
+		e.preventDefault();
+
+		axios
+			.post(`${SERVER}/api/user/login_check`, {
+				email: email.value,
+				pw: pw.value,
+			})
+			.then((res) => {
+				if (res.data.success) {
+				} else {
+					alert(res.data.message);
+				}
+			});
 	};
 
 	return (
 		<LoginContainer>
 			<h3>로그인</h3>
-			<form>
+			<form onSubmit={onSubmit}>
 				<div>
 					<TextField
 						{...email}
@@ -54,11 +63,24 @@ const Login = (props: Props) => {
 				</div>
 
 				<div>
-					<Button onClick={onClick} variant="contained" color="primary">
+					<Button
+						type="submit"
+						// onClick={onSubmit}
+						variant="contained"
+						color="primary"
+						fullWidth
+					>
 						로그인
 					</Button>
 				</div>
 			</form>
+
+			<hr />
+			<Link href="/users/register">
+				<Button fullWidth variant="contained">
+					회원가입
+				</Button>
+			</Link>
 		</LoginContainer>
 	);
 };

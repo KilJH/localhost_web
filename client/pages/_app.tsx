@@ -3,7 +3,7 @@ import GlobalStyle from '../styles/reset';
 import App, { AppContext } from 'next/app';
 
 const _app = (props: any) => {
-	const { Component, ...others } = props;
+	const { Component, title, ...others } = props;
 	return (
 		<div>
 			{/* 전역 css */}
