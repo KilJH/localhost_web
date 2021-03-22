@@ -5,21 +5,21 @@
 // import { User } from 'path/to/interfaces';
 
 export type User = {
-	id: number;
-	name: string;
-	email: string;
-	password: string;
-	nickname: string;
-	phone: string;
-	address: string;
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  nickname: string;
+  phone: string;
+  address: string;
 };
 
 export type Plan = {
-	id: number;
-	title: string;
-	description: string;
-	price: number;
-	sleepDays: number;
-	travelDays: number;
-	tags: string[];
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  sleepDays: number;
+  travelDays: number;
+  tags: string[];
 };
