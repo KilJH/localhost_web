@@ -33,6 +33,7 @@ const Login = (props: Props) => {
 			})
 			.then((res) => {
 				if (res.data.success) {
+					location.href = '/';
 				} else {
 					alert(res.data.message);
 				}
