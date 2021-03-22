@@ -16,8 +16,10 @@ router.post('/login_check', function (req, res, next) {
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
+router.post('/delete', function (req, res, next) {
+	management.delete(req, res);
+});
 router.post('/follow', function (req, res, next) {
-	console.log('오긴왔음');
 	management.follow(req, res);
 });
 router.get('/follow', function (req, res, next) {
