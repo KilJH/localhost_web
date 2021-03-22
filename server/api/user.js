@@ -68,6 +68,7 @@ module.exports.update = (req, res) => {
 	// 정보수정
 	const email = req.body.email || req.query.email;
 	const pw = req.body.pw || null;
+	const nickname = req.body.nickname || null;
 	const phone = req.body.phone || null;
 	const address = req.body.address || null;
 
@@ -76,24 +77,15 @@ module.exports.update = (req, res) => {
 	mysql.query(sql, email, (err, rows, fields) => {
 		if (err) return console.log('여기서 err', err);
 
-		if (pw !== null) {
-			const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
-			updateData(hashPW, 'pw');
-		} else if (phone !== null) {
-			updateData(phone, 'phone');
-		} else if (address !== null) {
-			updateData(address, 'address');
-		}
+		const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
+	
+		const update = `UPDATE user SET pw = "${hashPW}", nickname = "${nickname}", phone = "${phone}", address = "${address}" WHERE id = "${rows[0].id}";`;
 
-		function updateData(data, type) {
-			const update = `UPDATE user SET ${type} = "${data}" WHERE id = "${rows[0].id}";`;
-
-			mysql.query(update, (err, rows2, field2) => {
-				if (err) return console.log(err);
+		mysql.query(update, (err, rows2, field2) => {
+			if (err) return console.log(err);
 				console.log('변경 성공');
 				res.send({ message: '변경 대성공' });
-			});
-		}
+		});
 	});
 };
 
