@@ -13,10 +13,6 @@ mysql.connect((err) => {
     console.log("db연결 생성!");
 });
 
-app.get("/", (req, res) => {
-    res.send("heelo");
-})
-
 app.post("/api/user/register", (req, res) => {
         management.register(req, res);
 })

@@ -5,7 +5,7 @@ const { password } = require("./db/password");
 module.exports.login = (req, res) => { // 로그인
     const email = req.body.email || req.query.email;
     const pw = req.body.pw || req.query.pw;
-    const sql = `SELECT * FROM USER WHERE email = ?`;
+    const sql = `SELECT * FROM user WHERE email = ?`;
     const hashPW = crypto.createHash("sha512").update(pw).digest("hex");
 
     if (email == null || pw == null)
@@ -28,7 +28,7 @@ module.exports.login = (req, res) => { // 로그인
 module.exports.register = (req, res) => { // 회원가입
     const email = req.body.email || req.query.email;
     const pw = req.body.pw || req.query.pw;
-    const sql = `SELECT * FROM USER WHERE email = ?`;
+    const sql = `SELECT * FROM user WHERE email = ?`;
     const hashPW = crypto.createHash("sha512").update(pw).digest("hex");
 
     if (email == null)
@@ -39,7 +39,7 @@ module.exports.register = (req, res) => { // 회원가입
 
         if (rows == "") {
             res.send({ message: "사용할 수 있는 이메일입니다." })
-            const insert = `INSERT INTO USER(email, pw) VALUES("${email}", "${hashPW}");`
+            const insert = `INSERT INTO user(email, pw) VALUES("${email}", "${hashPW}");`
 
             mysql.query(insert, (err3, rows, fields) => {
                 if (err3) return console.log("err3: ", err3);
