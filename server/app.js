@@ -12,7 +12,6 @@ app.use('/api/user', userRouter);
 app.use(cors());
 
 mysql.connect((err) => {
-<<<<<<< HEAD
     if (err) return console.log("err: ", err);
     console.log("db연결 생성!");
 });
@@ -23,10 +22,6 @@ app.post("/api/user/register", (req, res) => {
 
 app.post("/api/user/login_check", (req, res) => {
         management.login(req, res);
-=======
-	if (err) return console.log('err: ', err);
-	console.log('db연결 생성!');
->>>>>>> 494916f5719c8115816fb16d1bbe51b5160f64c1
 });
 
 app.listen(PORT, (req, res) => {
