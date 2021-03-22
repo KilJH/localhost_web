@@ -92,7 +92,7 @@ module.exports.update = (req, res) => {
 module.exports.delete = (req, res) => {
 	const userId = req.body.userId;
 
-	const sql = `DELETE * FROM user WHERE id = ?`;
+	const sql = `DELETE FROM user WHERE id = ?`;
 
 	mysql.query(sql, userId, (err) => {
 		if (err) {
