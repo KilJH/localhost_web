@@ -27,13 +27,17 @@ const Login = (props: Props) => {
 		e.preventDefault();
 
 		axios
-			.post(`${SERVER}/api/user/login_check`, {
-				email: email.value,
-				pw: pw.value,
-			})
+			.post(
+				`${SERVER}/api/auth/login`,
+				{
+					email: email.value,
+					pw: pw.value,
+				},
+				{ withCredentials: true }
+			)
 			.then((res) => {
 				if (res.data.success) {
-					location.href = '/';
+					// location.href = '/';
 				} else {
 					alert(res.data.message);
 				}

@@ -3,25 +3,24 @@ const app = express();
 const PORT = require('./src/port');
 const mysql = require('./db/mysql');
 const userRouter = require('./routes/user');
+const authRouter = require('./routes/auth');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+const corsOptions = {
+	origin: ['http://localhost:3000'],
+	credentials: true,
+};
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/user', userRouter);
-app.use(cors());
+app.use('/api/auth', authRouter);
+app.use(cors(corsOptions));
 
 mysql.connect((err) => {
-    if (err) return console.log("err: ", err);
-    console.log("db연결 생성!");
-});
-
-app.post("/api/user/register", (req, res) => {
-        management.register(req, res);
-})
-
-app.post("/api/user/login_check", (req, res) => {
-        management.login(req, res);
+	if (err) return console.log('err: ', err);
+	console.log('db연결 생성!');
 });
 
 app.listen(PORT, (req, res) => {

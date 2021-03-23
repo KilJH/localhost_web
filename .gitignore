@@ -6,6 +6,7 @@
 # security
 password.js
 port.js
+.env
 
 # testing
 /coverage
