@@ -15,6 +15,9 @@ router.post('/login', function (req, res, next) {
 });
 
 // 페이지 인증
+router.post('/check', function (req, res, next) {
+	management.checkToken(req, res);
+});
 
 // 로그아웃
 

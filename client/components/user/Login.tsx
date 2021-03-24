@@ -37,11 +37,13 @@ const Login = (props: Props) => {
 			)
 			.then((res) => {
 				if (res.data.success) {
-					// location.href = '/';
+					location.href = '/';
 				} else {
 					alert(res.data.message);
 				}
 			});
+
+		axios.post(`${SERVER}/api/auth/check`, {}, { withCredentials: true });
 	};
 
 	return (

@@ -62,5 +62,12 @@ module.exports.login = (req, res) => {
 };
 
 // 페이지 인증
+module.exports.checkToken = (req, res) => {
+	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
+		if (err) console.log(err);
+		console.log('디코드: ', decoded);
+	});
+	console.log(req.cookies);
+};
 
 // 로그아웃
