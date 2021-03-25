@@ -1,21 +1,32 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Drawer, IconButton } from '@material-ui/core';
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
+import { User } from '../../interfaces';
+import axios from 'axios';
+import SERVER from '../../utils/url';
 // Mobile
 import MenuIcon from '@material-ui/icons/Menu';
 import { useDrawer } from '../../hooks/useDrawer';
 import CloseIcon from '@material-ui/icons/Close';
 import Login from '../user/Login';
+import UserMenu from '../user/UserMenu';
 
 interface Props {
 	isMobile: boolean;
+	isLogined: boolean;
+	user?: User;
 }
 
 interface HeaderStyleProps {
 	isMobile: boolean;
+}
+
+interface LoginProps {
+	isLogined: boolean;
+	user?: User;
 }
 
 const menuArray = [
@@ -155,7 +166,7 @@ const Menu = () => (
 	</nav>
 );
 
-const LoginMenu = () => {
+const LoginMenu = (props: LoginProps) => {
 	const loginDrawer = useDrawer('right');
 	return (
 		<>
@@ -167,7 +178,7 @@ const LoginMenu = () => {
 				open={loginDrawer.open}
 				onClose={loginDrawer.onClose}
 			>
-				<Login />
+				{props.isLogined ? <UserMenu user={props.user} /> : <Login />}
 			</Drawer>
 		</>
 	);
@@ -176,9 +187,11 @@ const LoginMenu = () => {
 const Header = (props: Props) => {
 	const drawer = useDrawer('left');
 
-	if (props.isMobile) {
+	const { isMobile, isLogined, user } = props;
+
+	if (isMobile) {
 		return (
-			<HeaderDiv isMobile={props.isMobile}>
+			<HeaderDiv isMobile={isMobile}>
 				<IconButton>
 					<MenuIcon onClick={drawer.onOpen} />
 				</IconButton>
@@ -199,23 +212,23 @@ const Header = (props: Props) => {
 				</Drawer>
 				<EmptyFlexDiv />
 				<Logo>
-					<Link href="/">
+					<Link href='/'>
 						<a>
-							<img alt="mainlogo" src="/img/logos/localhostLogoBlack.png"></img>
+							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
 						</a>
 					</Link>
 				</Logo>
 				<EmptyFlexDiv />
-				<LoginMenu />
+				<LoginMenu isLogined={isLogined} user={user} />
 			</HeaderDiv>
 		);
 	} else {
 		return (
-			<HeaderDiv isMobile={props.isMobile}>
+			<HeaderDiv isMobile={isMobile}>
 				<Logo>
-					<Link href="/">
+					<Link href='/'>
 						<a>
-							<img alt="mainlogo" src="/img/logos/localhostLogoBlack.png"></img>
+							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
 						</a>
 					</Link>
 				</Logo>
@@ -224,9 +237,9 @@ const Header = (props: Props) => {
 					<Menu />
 				</MainMenu>
 				<div>
-					<input placeholder="검색창" />
+					<input placeholder='검색창' />
 				</div>
-				<LoginMenu />
+				<LoginMenu isLogined={isLogined} user={user} />
 			</HeaderDiv>
 		);
 	}

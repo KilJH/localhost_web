@@ -5,13 +5,15 @@ import SERVER from '../../utils/url';
 import Router from 'next/router';
 import { Button } from '@material-ui/core';
 import { StylesProvider } from '@material-ui/core';
+import { User } from '../../interfaces/index';
 
 interface Props {
+	user: User;
 	userId: number;
 	isFollowed: boolean;
 }
 
-const Btn = styled(Button)<{ isFollowed: boolean }>`
+const Btn = styled(Button)<{ isFollowed }>`
 	font-size: 0.75em !important;
 	background-color: ${(props) =>
 		props.isFollowed ? '#c5c7c9' : '#5197D5'} !important;
@@ -40,7 +42,7 @@ const FollowButton = (props: Props) => {
 			// 팔로워 아이디 바꾸기
 			const res = await axios.post(`${SERVER}/api/user/follow`, {
 				userId,
-				followerId: 12,
+				followerId: props.user.id,
 			});
 			setFollowState(!followState);
 		} catch (err) {
@@ -49,7 +51,7 @@ const FollowButton = (props: Props) => {
 	};
 
 	return (
-		<Btn isFollowed={followState} onClick={onClick} variant="contained">
+		<Btn isFollowed={followState} onClick={onClick} variant='contained'>
 			{followState ? 'Followed' : 'Follow'}
 		</Btn>
 	);

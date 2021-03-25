@@ -64,19 +64,33 @@ module.exports.login = (req, res) => {
 
 // 페이지 인증
 module.exports.checkToken = (req, res) => {
-	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
-		if (err) return res.send({ success: false, message: "미로그인" });
+	jwt.verify(req.body.token, SECRET_KEY, (err, decoded) => {
+		if (err) return res.send({ success: false, message: err });
 
-		const sql = `select token from user where email = ?`;
-		mysql.query(sql, decoded.email, (err2, rows, fields) => {
+		const sql = `SELECT * FROM user WHERE id = ?`;
+		mysql.query(sql, decoded.id, (err2, rows, fields) => {
 			if (err2) return err2;
-			if (rows[0].token === req.cookies.token) {
-				res.send({ success: true, message: "로그인" })
+			if (rows[0].token === req.body.token) {
+				res.send({ success: true, message: '로그인', user: rows[0] });
 			} else {
-				res.send({ success: false, message: "로그인 토큰 만료" })
+				res.send({ success: false, message: '로그인 토큰 만료' });
 			}
 		});
 	});
 };
 
 // 로그아웃
+
+module.exports.logout = (req, res) => {
+	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
+		if (err) return res.send({ success: false, message: err });
+
+		console.log(decoded);
+
+		const sql = `UPDATE user SET token = ? WHERE id = ?`;
+		mysql.query(sql, ['', decoded.id], (err) => {
+			if (err) return err;
+			else res.send({ success: true });
+		});
+	});
+};

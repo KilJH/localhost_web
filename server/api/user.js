@@ -150,6 +150,7 @@ module.exports.followList = (req, res) => {
 module.exports.isFollowed = (req, res) => {
 	const userId = req.body.userId;
 	const followerId = req.body.followerId;
+
 	const sql = `SELECT * FROM follow WHERE user_id = ? AND follower_id = ?`;
 
 	mysql.query(sql, [userId, followerId], (err, rows) => {
@@ -171,21 +172,16 @@ module.exports.checkAuth = (req, res) => {
 	const sql = `select * from user where id = ?`;
 
 	mysql.query(sql, id, (err, rows, fields) => {
-		if(err) return err;
+		if (err) return err;
 
-		if(rows[0].isadmin === 1 && rows[0].ishost === 1){
+		if (rows[0].isadmin === 1 && rows[0].ishost === 1) {
 			res.send({ auth: 3 });
-		}
-		else if(rows[0].isadmin === 1){
+		} else if (rows[0].isadmin === 1) {
 			res.send({ auth: 2 });
-		}
-		else if(rows[0].ishost === 1){
+		} else if (rows[0].ishost === 1) {
 			res.send({ auth: 1 });
-		}
-		else{
+		} else {
 			res.send({ auth: 0 });
 		}
-	})
-
-
-}
+	});
+};
