@@ -2,35 +2,6 @@
 const crypto = require('crypto');
 const mysql = require('../db/mysql');
 
-module.exports.login = (req, res) => {
-	// 로그인
-
-	if (!req.body.email)
-		res.send({ success: false, message: '아이디를 입력해주세요' });
-	if (!req.body.pw)
-		res.send({ success: false, message: '비밀번호를 입력해주세요' });
-
-	const email = req.body.email || req.query.email;
-	const pw = req.body.pw || req.query.pw;
-	const sql = `SELECT * FROM user WHERE email = ?`;
-	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
-
-	mysql.query(sql, email, (err2, rows, fields) => {
-		if (err2) return console.log('err2: ', err2);
-		if (rows == '') {
-			res.send({ success: false, message: '등록되지 않은 이메일 입니다.' });
-		} else {
-			if (hashPW === rows[0].pw) {
-				res
-					.status(200)
-					.send({ success: true, message: '로그인 성공', user: rows[0] });
-			} else {
-				res.send({ success: false, message: '비밀번호가 틀립니다.' });
-			}
-		}
-	});
-};
-
 module.exports.register = (req, res) => {
 	// 회원가입
 	const email = req.body.email || req.query.email;
@@ -194,3 +165,27 @@ module.exports.isFollowed = (req, res) => {
 module.exports.applyingHost = (req, res) => {
 	const userId = req.body.userId;
 };
+
+module.exports.checkAuth = (req, res) => {
+	const id = req.body.id;
+	const sql = `select * from user where id = ?`;
+
+	mysql.query(sql, id, (err, rows, fields) => {
+		if(err) return err;
+
+		if(rows[0].isadmin === 1 && rows[0].ishost === 1){
+			res.send({ auth: 3 });
+		}
+		else if(rows[0].isadmin === 1){
+			res.send({ auth: 2 });
+		}
+		else if(rows[0].ishost === 1){
+			res.send({ auth: 1 });
+		}
+		else{
+			res.send({ auth: 0 });
+		}
+	})
+
+
+}

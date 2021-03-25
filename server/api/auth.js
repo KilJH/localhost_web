@@ -1,6 +1,7 @@
 const mysql = require('../db/mysql');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { redirect } = require('next/dist/next-server/server/api-utils');
 
 // .env 파일로 빼서 gitignore하고 환경변수로 사용
 const SECRET_KEY = 'wearelocalhost';
@@ -64,10 +65,18 @@ module.exports.login = (req, res) => {
 // 페이지 인증
 module.exports.checkToken = (req, res) => {
 	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
-		if (err) console.log(err);
-		console.log('디코드: ', decoded);
+		if (err) return res.send({ success: false, message: "미로그인" });
+
+		const sql = `select token from user where email = ?`;
+		mysql.query(sql, decoded.email, (err2, rows, fields) => {
+			if (err2) return err2;
+			if (rows[0].token === req.cookies.token) {
+				res.send({ success: true, message: "로그인" })
+			} else {
+				res.send({ success: false, message: "로그인 토큰 만료" })
+			}
+		});
 	});
-	console.log(req.cookies);
 };
 
 // 로그아웃

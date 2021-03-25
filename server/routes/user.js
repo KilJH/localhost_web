@@ -9,10 +9,6 @@ router.post('/register', function (req, res, next) {
 	management.register(req, res);
 });
 
-router.post('/login_check', function (req, res, next) {
-	management.login(req, res);
-});
-
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
@@ -33,6 +29,10 @@ router.get('/:id', function (req, res, next) {
 });
 router.post('/follow_check', function (req, res, next) {
 	management.isFollowed(req, res);
+});
+
+router.post('/checkAuth', function (req, res, next) {
+	management.checkAuth(req, res);
 });
 
 module.exports = router;
