@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Drawer, IconButton } from '@material-ui/core';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
 import { User } from '../../interfaces';
-import axios from 'axios';
-import SERVER from '../../utils/url';
 // Mobile
 import MenuIcon from '@material-ui/icons/Menu';
 import { useDrawer } from '../../hooks/useDrawer';
 import CloseIcon from '@material-ui/icons/Close';
 import Login from '../user/Login';
 import UserMenu from '../user/UserMenu';
+import checkScrollDirection from '../../utils/checkScrollDirection';
+import ScrollContext from '../../context/scroll';
 
 interface Props {
 	isMobile: boolean;
@@ -22,11 +22,18 @@ interface Props {
 
 interface HeaderStyleProps {
 	isMobile: boolean;
+	fixed: boolean;
 }
 
 interface LoginProps {
 	isLogined: boolean;
 	user?: User;
+}
+
+declare global {
+	interface Window {
+		__scrollPosition: number;
+	}
 }
 
 const menuArray = [
@@ -39,16 +46,18 @@ const menuArray = [
 ];
 
 const HeaderDiv = styled.div<HeaderStyleProps>`
-	width: 100%;
-	height: 8vh;
+	width: ${(props) => (props.isMobile ? '100%' : '80%')};
+	max-width: 1200px;
+	height: ${(props) => (props.isMobile ? '2.5rem' : '4rem')};
 	min-height: 2.5rem;
 	max-height: 4rem;
-	padding: ${(props) => (props.isMobile ? 0 : '0 15%')};
+	margin: 0 auto;
 	box-sizing: border-box;
 
+	transition: top 0.5s ease;
 	background: white;
 	position: sticky;
-	top: 0;
+	top: ${(props) => (props.fixed ? '0' : props.isMobile ? '-2.5rem' : '-4rem')};
 
 	display: flex;
 	align-items: center;
@@ -60,6 +69,16 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 	& > button {
 		width: 2.5rem;
 		height: 2.5rem;
+	}
+
+	& > .white {
+		position: fixed;
+		top: inherit;
+		left: 0;
+		width: 100%;
+		height: inherit;
+		z-index: -2;
+		background-color: white;
 	}
 `;
 
@@ -188,10 +207,22 @@ const Header = (props: Props) => {
 	const drawer = useDrawer('left');
 
 	const { isMobile, isLogined, user } = props;
+	const { state, actions } = useContext(ScrollContext);
+
+	const onScroll = () => {
+		actions.setIsUp(checkScrollDirection());
+	};
+
+	useEffect(() => {
+		document.addEventListener('scroll', onScroll);
+		return () => {
+			document.removeEventListener('scroll', onScroll);
+		};
+	}, []);
 
 	if (isMobile) {
 		return (
-			<HeaderDiv isMobile={isMobile}>
+			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
 				<IconButton>
 					<MenuIcon onClick={drawer.onOpen} />
 				</IconButton>
@@ -224,7 +255,8 @@ const Header = (props: Props) => {
 		);
 	} else {
 		return (
-			<HeaderDiv isMobile={isMobile}>
+			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+				<div className='white'></div>
 				<Logo>
 					<Link href='/'>
 						<a>

@@ -4,22 +4,28 @@
 //
 // import { User } from 'path/to/interfaces';
 
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  nickname: string;
-  phone: string;
-  address: string;
-};
+export interface User {
+	id: number;
+	name: string;
+	email: string;
+	password: string;
+	nickname: string;
+	phone: string;
+	address: string;
+	photo: string;
+}
 
-export type Plan = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  sleepDays: number;
-  travelDays: number;
-  tags: string[];
-};
+export interface Plan {
+	id: number;
+	title: string;
+	description: string;
+	price: number;
+	sleepDays: number;
+	travelDays: number;
+	tags: string[];
+}
+
+export interface LoginProps {
+	isLogined: boolean;
+	user: User;
+}

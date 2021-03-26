@@ -1,25 +1,16 @@
 import Layout from '../components/main/Layout';
 import { Grid } from '@material-ui/core';
 import Greeting from '../components/Greeting';
-import { User } from '../interfaces';
-import SERVER from '../utils/url';
-import axios from 'axios';
-import { GetServerSideProps, GetStaticProps } from 'next';
-import cookies from 'next-cookies';
+import { LoginProps, User } from '../interfaces';
+import { GetStaticProps } from 'next';
 
 interface Props {
-	isLogined: boolean;
-	user?: User;
+	loginProps: LoginProps;
 }
 
-const IndexPage = (props: Props) => {
-	console.log(props);
+const IndexPage = ({ loginProps }: Props) => {
 	return (
-		<Layout
-			title='Home | localhost👋'
-			isLogined={props.isLogined}
-			user={props.user}
-		>
+		<Layout title='Home | localhost👋' loginProps={loginProps}>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<Greeting />
@@ -27,6 +18,10 @@ const IndexPage = (props: Props) => {
 			</Grid>
 		</Layout>
 	);
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+	return { props: {} };
 };
 
 export default IndexPage;

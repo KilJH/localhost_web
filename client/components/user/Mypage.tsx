@@ -1,55 +1,71 @@
-import { Tab, Tabs } from '@material-ui/core';
-import React, { ReactNode } from 'react';
-import { useTabs } from '../../hooks/useTabs';
+// import { Tab, Tabs } from '@material-ui/core';
+import React, { ReactNode, useContext } from 'react';
 import { User } from '../../interfaces/index';
 import MyBoard from './Mypage/MyBoard';
 import MyFollow from './Mypage/MyFollow';
 import Privacy from './Mypage/Privacy';
+import styled from 'styled-components';
+import ScrollContext from '../../context/scroll';
+import { useMediaQuery } from '@material-ui/core';
 
 interface Props {
 	user: User;
+	firstTap?: number;
 }
 
-interface TabProps {
-	children?: ReactNode;
-	value: number;
-	index: number;
+interface TabsProps {
+	fixed: boolean;
+	isMobile: boolean;
 }
-function TabPanel(props: TabProps) {
-	const { children, value, index } = props;
+const Tabs = styled.div<TabsProps>`
+	display: flex;
+	position: sticky;
+	background-color: white;
+	top: ${(props) =>
+		props.fixed ? (props.isMobile ? '2.5rem' : '4rem') : '-4rem'};
+	z-index: 2;
+	text-align: center;
 
-	return (
-		<div
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-		>
-			{value === index && <div>{children}</div>}
-		</div>
-	);
-}
+	transition: top 0.5s ease;
+
+	& > * {
+		flex: 1;
+		padding: 1em 0.5em;
+		transition: all 0.3s ease;
+		border-bottom: 2px solid #fff;
+		&:hover {
+			background-color: rgba(81, 151, 213, 0.1);
+			border-bottom: 2px solid #5197d5;
+		}
+	}
+`;
+
+const MyPageContainer = styled.div`
+	& > hr {
+		margin: 4rem 0;
+	}
+`;
 
 const Mypage = (props: Props) => {
-	const tabs = useTabs(0);
+	const { state } = useContext(ScrollContext);
+
+	const isMobile = useMediaQuery('(max-width: 600px)');
 
 	return (
-		<div>
-			<Tabs {...tabs} indicatorColor="primary" variant="fullWidth">
-				<Tab label="회원정보" />
-				<Tab label="팔로우" />
-				<Tab label="내가 쓴 글" />
-				<Tab label="위시리스트" />
+		<MyPageContainer>
+			<Tabs fixed={state.isUp} isMobile={isMobile}>
+				<a href='#'>회원정보</a>
+				<a href='#follow'>팔로우</a>
+				<a href='#board'>내가 쓴 글</a>
+				<a href='#wishlist'>위시리스트</a>
 			</Tabs>
 
-			<TabPanel value={tabs.value} index={0}>
-				<Privacy user={props.user} />
-			</TabPanel>
-			<TabPanel value={tabs.value} index={1}>
-				<MyFollow />
-			</TabPanel>
-			<TabPanel value={tabs.value} index={2}>
-				<MyBoard />
-			</TabPanel>
-		</div>
+			<Privacy user={props.user} id='pravacy' />
+			<hr />
+			<MyFollow id='follow' />
+			<hr />
+			<MyBoard id='board' />
+		</MyPageContainer>
 	);
 };
 

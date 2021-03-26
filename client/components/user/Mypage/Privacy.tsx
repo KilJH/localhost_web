@@ -5,6 +5,7 @@ import { User } from '../../../interfaces';
 import styled from 'styled-components';
 
 interface Props {
+	id: string;
 	user: User;
 }
 
@@ -27,14 +28,14 @@ const Privacy = (props: Props) => {
 	const adInput = useInput(props.user.address);
 
 	return (
-		<section>
+		<section id={props.id}>
 			<section>
 				<header>
 					<h3>기본 회원정보</h3>
 				</header>
-				<PrivacyContainer container alignItems="center">
+				<PrivacyContainer container alignItems='center'>
 					<Grid item xs={12}>
-						<Avatar alt="Profile">KIL</Avatar>
+						<Avatar alt='Profile'>KIL</Avatar>
 					</Grid>
 					<Grid item xs={3}>
 						이메일:{' '}
@@ -46,10 +47,16 @@ const Privacy = (props: Props) => {
 						패스워드:{' '}
 					</Grid>
 					<Grid item xs={9}>
-						<input type="password" disabled {...pwInput} />
+						<input type='password' disabled {...pwInput} />
 						<span>
 							<button>변경</button>
 						</span>
+					</Grid>
+					<Grid item xs={3}>
+						이름:
+					</Grid>
+					<Grid item xs={9}>
+						{props.user.name}
 					</Grid>
 					<Grid item xs={3}>
 						닉네임:
@@ -75,7 +82,7 @@ const Privacy = (props: Props) => {
 				<header>
 					<h3>추가 회원정보(선택)</h3>
 				</header>
-				<PrivacyContainer container alignItems="center">
+				<PrivacyContainer container alignItems='center'>
 					<Grid item xs={3}>
 						선호하는 여행스타일:
 					</Grid>

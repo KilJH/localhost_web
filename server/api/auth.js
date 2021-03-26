@@ -85,8 +85,6 @@ module.exports.logout = (req, res) => {
 	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
 		if (err) return res.send({ success: false, message: err });
 
-		console.log(decoded);
-
 		const sql = `UPDATE user SET token = ? WHERE id = ?`;
 		mysql.query(sql, ['', decoded.id], (err) => {
 			if (err) return err;

@@ -4,17 +4,18 @@ import Header from './Header';
 import styled from 'styled-components';
 import Footer from './Footer';
 import { useMediaQuery } from '@material-ui/core';
-import { User } from '../../interfaces/index';
+import { LoginProps, User } from '../../interfaces/index';
+import { ScrollProvider } from '../../context/scroll';
 
 type Props = {
 	children?: ReactNode;
 	title?: string;
-	isLogined: boolean;
-	user?: User;
+	loginProps?: LoginProps;
 };
 
 const Main = styled.div<{ isMobile: boolean }>`
-	width: ${(props) => (props.isMobile ? '100%' : '70%')};
+	width: ${(props) => (props.isMobile ? '100%' : '80%')};
+	max-width: 1200px;
 	margin: 0 auto;
 	padding: 0 1em;
 	transition: width 0.3s ease;
@@ -24,8 +25,7 @@ const Main = styled.div<{ isMobile: boolean }>`
 const Layout = ({
 	children,
 	title = 'for your dream | localhost',
-	isLogined,
-	user,
+	loginProps,
 }: Props) => {
 	const isMobile = useMediaQuery('(max-width: 600px)');
 
@@ -36,7 +36,11 @@ const Layout = ({
 				<meta charSet='utf-8' />
 				<meta name='viewport' content='initial-scale=1.0, width=device-width' />
 			</Head>
-			<Header isMobile={isMobile} isLogined={isLogined} user={user} />
+			<Header
+				isMobile={isMobile}
+				isLogined={loginProps.isLogined}
+				user={loginProps.user}
+			/>
 			<Main isMobile={isMobile}>{children}</Main>
 			<footer>
 				<hr />

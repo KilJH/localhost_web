@@ -3,14 +3,17 @@ import GlobalStyle from '../styles/reset';
 import App, { AppContext } from 'next/app';
 import axios from 'axios';
 import SERVER from '../utils/url';
+import { ScrollProvider } from '../context/scroll';
 
 const _app = (props: any) => {
 	const { Component, title, ...others } = props;
 	return (
 		<div>
 			{/* 전역 css */}
-			<GlobalStyle />
-			<Component {...others} />
+			<ScrollProvider>
+				<GlobalStyle />
+				<Component {...others} />
+			</ScrollProvider>
 		</div>
 	);
 };
@@ -23,14 +26,15 @@ const _app = (props: any) => {
 _app.getInitialProps = async (appContext: any) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext);
+	const token = appContext.ctx.req.cookies.token || '';
 	const res = await axios.post(`${SERVER}/api/auth/check`, {
-		token: appContext.ctx.req.cookies.token,
+		token,
 	});
 	const isLogined = res.data.success;
 	const user = res.data.user || {};
-	// console.log(appContext.ctx.req.cookies.token);
+	const loginProps = { isLogined, user };
 
-	return { ...appProps, isLogined, user };
+	return { ...appProps, loginProps };
 };
 
 export default _app;

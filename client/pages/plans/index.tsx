@@ -3,17 +3,20 @@ import Layout from '../../components/main/Layout';
 import PlanList from '../../components/plan/PlanList';
 import { samplePlanData } from '../../utils/sample-data';
 import { GetStaticProps } from 'next';
-import { Plan } from '../../interfaces';
+import { LoginProps, Plan } from '../../interfaces';
 
 interface Props {
+	loginProps: LoginProps;
 	pageProps: {
 		plans: Plan[];
 	};
 }
 
-const index = ({ pageProps }: Props) => {
+const index = (props: Props) => {
+	const { loginProps, pageProps } = props;
+
 	return (
-		<Layout title="플랜보기 | localhost">
+		<Layout title='플랜보기 | localhost' loginProps={loginProps}>
 			<PlanList plans={pageProps.plans} />
 		</Layout>
 	);

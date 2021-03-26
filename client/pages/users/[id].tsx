@@ -1,6 +1,6 @@
 import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 
-import { User } from '../../interfaces';
+import { LoginProps, User } from '../../interfaces';
 import Layout from '../../components/main/Layout';
 import ListDetail from '../../components/user/ListDetail';
 import axios from 'axios';
@@ -8,8 +8,7 @@ import SERVER from '../../utils/url';
 import user from '../admin/user';
 
 type Props = {
-	isLogined: boolean;
-	user: User;
+	loginProps: LoginProps;
 	pageProps: {
 		item?: User;
 		isFollowed: boolean;
@@ -17,7 +16,7 @@ type Props = {
 	};
 };
 
-const StaticPropsDetail = ({ isLogined, user, pageProps }: Props) => {
+const StaticPropsDetail = ({ loginProps, pageProps }: Props) => {
 	// if (pageProps.errors) {
 	// 	return (
 	// 		<Layout title='Error | PlanBee🐝'>
@@ -33,14 +32,13 @@ const StaticPropsDetail = ({ isLogined, user, pageProps }: Props) => {
 			title={`${
 				pageProps.item ? pageProps.item.name : 'User Detail'
 			} | localhost`}
-			isLogined={isLogined}
-			user={user}
+			loginProps={loginProps}
 		>
 			{pageProps.item && (
 				<ListDetail
 					item={pageProps.item}
 					isFollowed={pageProps.isFollowed}
-					loginedUser={user}
+					loginedUser={loginProps.user}
 				/>
 			)}
 		</Layout>
