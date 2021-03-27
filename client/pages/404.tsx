@@ -12,13 +12,11 @@ const ErrMsg = styled.div`
 	justify-content: center;
 `;
 
-interface Props {
-	loginProps: LoginProps;
-}
+interface Props {}
 
-export default function Error404({ loginProps }: Props) {
+export default function Error404(props: Props) {
 	return (
-		<Layout title='Error | localhost' loginProps={loginProps}>
+		<Layout title='Error | localhost'>
 			<ErrMsg title='Error | localhost'>
 				<ErrorIcon fontSize='large' />
 				404 : 페이지를 찾을 수 없습니다.

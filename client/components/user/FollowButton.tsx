@@ -1,14 +1,14 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import SERVER from '../../utils/url';
 import Router from 'next/router';
 import { Button } from '@material-ui/core';
 import { StylesProvider } from '@material-ui/core';
 import { User } from '../../interfaces/index';
+import { UserStateContext } from '../../context/user';
 
 interface Props {
-	user: User;
 	userId: number;
 	isFollowed: boolean;
 }
@@ -36,13 +36,14 @@ const FollowButton = (props: Props) => {
 
 	const [followState, setFollowState] = useState(isFollowed);
 
+	const currentUser = useContext(UserStateContext);
+
 	const onClick = async (e: React.MouseEvent) => {
 		// 서버 api
 		try {
-			// 팔로워 아이디 바꾸기
 			const res = await axios.post(`${SERVER}/api/user/follow`, {
 				userId,
-				followerId: props.user.id,
+				followerId: currentUser.id,
 			});
 			setFollowState(!followState);
 		} catch (err) {

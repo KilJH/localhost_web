@@ -7,14 +7,13 @@ import { LoginProps, Plan } from '../../interfaces';
 import { samplePlanData } from '../../utils/sample-data';
 
 interface Props {
-	loginProps: LoginProps;
 	pageProps: {
 		plan?: Plan;
 		errors?: string;
 	};
 }
 
-const PlanDatailPage = ({ pageProps, loginProps }: Props) => {
+const PlanDatailPage = ({ pageProps }: Props) => {
 	// // 쓰잘데기 없을 거 같은데
 	// if (pageProps.errors) {
 	// 	return (
@@ -31,7 +30,6 @@ const PlanDatailPage = ({ pageProps, loginProps }: Props) => {
 			title={`${
 				pageProps.plan ? pageProps.plan.title : 'Plan Detail'
 			} | localhost`}
-			loginProps={loginProps}
 		>
 			{pageProps.plan && <PlanOverview plan={pageProps.plan} />}
 			{pageProps.plan && <PlanDetail />}

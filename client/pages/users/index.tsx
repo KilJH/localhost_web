@@ -8,14 +8,13 @@ import axios from 'axios';
 import SERVER from '../../utils/url';
 
 type Props = {
-	loginProps: LoginProps;
 	pageProps: {
 		items: User[];
 	};
 };
 
-const WithStaticProps = ({ pageProps, loginProps }: Props) => (
-	<Layout title='Users List | localhost' loginProps={loginProps}>
+const WithStaticProps = ({ pageProps }: Props) => (
+	<Layout title='Users List | localhost'>
 		<h1>Users List</h1>
 		<p>
 			Example fetching data from inside <code>getStaticProps()</code>.

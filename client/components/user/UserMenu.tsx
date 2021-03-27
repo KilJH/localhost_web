@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { User } from '../../interfaces/index';
 import styled from 'styled-components';
 import Link from 'next/link';
 import SERVER from '../../utils/url';
 import axios from 'axios';
+import { UserStateContext } from '../../context/user';
 
-interface Props {
-	user: User;
-}
+interface Props {}
 
 const UserMenuContainer = styled.div`
 	width: 16rem;
@@ -47,10 +46,12 @@ const UserMenu = (props: Props) => {
 		location.href = '/';
 	};
 
+	const currentUser: User = useContext(UserStateContext);
+
 	return (
 		<UserMenuContainer>
-			<UserPhoto src={props.user.photo || '/img/default.jpg'} />
-			<h2>{props.user.nickname}</h2>
+			<UserPhoto src={currentUser.photo || '/img/default.jpg'} />
+			<h2>{currentUser.nickname}</h2>
 
 			<MenuList>
 				<ul>

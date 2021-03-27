@@ -8,10 +8,7 @@ import styled from 'styled-components';
 import ScrollContext from '../../context/scroll';
 import { useMediaQuery } from '@material-ui/core';
 
-interface Props {
-	user: User;
-	firstTap?: number;
-}
+interface Props {}
 
 interface TabsProps {
 	fixed: boolean;
@@ -60,7 +57,7 @@ const Mypage = (props: Props) => {
 				<a href='#wishlist'>위시리스트</a>
 			</Tabs>
 
-			<Privacy user={props.user} id='pravacy' />
+			<Privacy id='pravacy' />
 			<hr />
 			<MyFollow id='follow' />
 			<hr />

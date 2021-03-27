@@ -6,9 +6,10 @@ import ListDetail from '../../components/user/ListDetail';
 import axios from 'axios';
 import SERVER from '../../utils/url';
 import user from '../admin/user';
+import { useContext } from 'react';
+import { UserStateContext } from '../../context/user';
 
 type Props = {
-	loginProps: LoginProps;
 	pageProps: {
 		item?: User;
 		isFollowed: boolean;
@@ -16,7 +17,7 @@ type Props = {
 	};
 };
 
-const StaticPropsDetail = ({ loginProps, pageProps }: Props) => {
+const StaticPropsDetail = ({ pageProps }: Props) => {
 	// if (pageProps.errors) {
 	// 	return (
 	// 		<Layout title='Error | PlanBee🐝'>
@@ -32,14 +33,9 @@ const StaticPropsDetail = ({ loginProps, pageProps }: Props) => {
 			title={`${
 				pageProps.item ? pageProps.item.name : 'User Detail'
 			} | localhost`}
-			loginProps={loginProps}
 		>
 			{pageProps.item && (
-				<ListDetail
-					item={pageProps.item}
-					isFollowed={pageProps.isFollowed}
-					loginedUser={loginProps.user}
-				/>
+				<ListDetail item={pageProps.item} isFollowed={pageProps.isFollowed} />
 			)}
 		</Layout>
 	);

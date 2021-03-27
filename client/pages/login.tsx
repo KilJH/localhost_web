@@ -4,9 +4,7 @@ import Login from '../components/user/Login';
 import styled from 'styled-components';
 import { LoginProps } from '../interfaces';
 
-interface Props {
-	loginProps: LoginProps;
-}
+interface Props {}
 
 const LoginContainer = styled.div`
 	& > * {
@@ -16,7 +14,7 @@ const LoginContainer = styled.div`
 
 const login = (props: Props) => {
 	return (
-		<Layout title='로그인 | localhost' loginProps={props.loginProps}>
+		<Layout title='로그인 | localhost'>
 			<LoginContainer>
 				<Login />
 			</LoginContainer>

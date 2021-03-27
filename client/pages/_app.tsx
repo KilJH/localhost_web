@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import GlobalStyle from '../styles/reset';
 import App, { AppContext } from 'next/app';
 import axios from 'axios';
 import SERVER from '../utils/url';
 import { ScrollProvider } from '../context/scroll';
+import { UserContextProvider, UserSetterContext } from '../context/user';
 
 const _app = (props: any) => {
 	const { Component, title, ...others } = props;
+
+	// const setUser = useContext(UserSetterContext);
+	// setUser(props.loginProps.user);
+	// console.log('실행...');
+
+	const [user, setUser] = useState(props.loginProps.user);
+
 	return (
 		<div>
 			{/* 전역 css */}
-			<ScrollProvider>
-				<GlobalStyle />
-				<Component {...others} />
-			</ScrollProvider>
+			<UserContextProvider value={{ user, setUser }}>
+				<ScrollProvider>
+					<GlobalStyle />
+					<Component {...others} />
+				</ScrollProvider>
+			</UserContextProvider>
 		</div>
 	);
 };

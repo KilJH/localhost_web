@@ -4,13 +4,11 @@ import Layout from '../../components/main/Layout';
 import Register from '../../components/user/Register';
 import { LoginProps } from '../../interfaces';
 
-interface Props {
-	loginProps: LoginProps;
-}
+interface Props {}
 
 const register = (props: Props) => {
 	return (
-		<Layout title='회원가입 | localhost' loginProps={props.loginProps}>
+		<Layout title='회원가입 | localhost'>
 			<Register />
 		</Layout>
 	);

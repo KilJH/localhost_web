@@ -12,7 +12,7 @@ export interface User {
 	nickname: string;
 	phone: string;
 	address: string;
-	photo: string;
+	photo?: string;
 }
 
 export interface Plan {
@@ -27,5 +27,5 @@ export interface Plan {
 
 export interface LoginProps {
 	isLogined: boolean;
-	user: User;
+	user?: User;
 }

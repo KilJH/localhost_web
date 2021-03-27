@@ -13,11 +13,12 @@ import Login from '../user/Login';
 import UserMenu from '../user/UserMenu';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 import ScrollContext from '../../context/scroll';
+import { UserStateContext } from '../../context/user';
 
 interface Props {
 	isMobile: boolean;
-	isLogined: boolean;
-	user?: User;
+	// isLogined: boolean;
+	// user?: User;
 }
 
 interface HeaderStyleProps {
@@ -197,7 +198,7 @@ const LoginMenu = (props: LoginProps) => {
 				open={loginDrawer.open}
 				onClose={loginDrawer.onClose}
 			>
-				{props.isLogined ? <UserMenu user={props.user} /> : <Login />}
+				{props.isLogined ? <UserMenu /> : <Login />}
 			</Drawer>
 		</>
 	);
@@ -206,7 +207,8 @@ const LoginMenu = (props: LoginProps) => {
 const Header = (props: Props) => {
 	const drawer = useDrawer('left');
 
-	const { isMobile, isLogined, user } = props;
+	// const { isMobile, isLogined, user } = props;
+	const { isMobile } = props;
 	const { state, actions } = useContext(ScrollContext);
 
 	const onScroll = () => {
@@ -219,6 +221,9 @@ const Header = (props: Props) => {
 			document.removeEventListener('scroll', onScroll);
 		};
 	}, []);
+
+	const currentUser = useContext(UserStateContext);
+	const isLogined = Object.keys(currentUser).length === 0 ? false : true;
 
 	if (isMobile) {
 		return (
@@ -250,7 +255,7 @@ const Header = (props: Props) => {
 					</Link>
 				</Logo>
 				<EmptyFlexDiv />
-				<LoginMenu isLogined={isLogined} user={user} />
+				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);
 	} else {
@@ -271,7 +276,7 @@ const Header = (props: Props) => {
 				<div>
 					<input placeholder='검색창' />
 				</div>
-				<LoginMenu isLogined={isLogined} user={user} />
+				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);
 	}

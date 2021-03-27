@@ -1,12 +1,12 @@
 import { Grid, Avatar } from '@material-ui/core';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useInput } from '../../../hooks/useInput';
 import { User } from '../../../interfaces';
 import styled from 'styled-components';
+import { UserStateContext } from '../../../context/user';
 
 interface Props {
 	id: string;
-	user: User;
 }
 
 const Button = styled.button`
@@ -22,10 +22,12 @@ const PrivacyContainer = styled(Grid)`
 `;
 
 const Privacy = (props: Props) => {
-	const pwInput = useInput(props.user.password);
-	const nnInput = useInput(props.user.nickname);
-	const phInput = useInput(props.user.phone);
-	const adInput = useInput(props.user.address);
+	const currentUser = useContext(UserStateContext);
+
+	const pwInput = useInput(currentUser.password);
+	const nnInput = useInput(currentUser.nickname);
+	const phInput = useInput(currentUser.phone);
+	const adInput = useInput(currentUser.address);
 
 	return (
 		<section id={props.id}>
@@ -41,7 +43,7 @@ const Privacy = (props: Props) => {
 						이메일:{' '}
 					</Grid>
 					<Grid item xs={9}>
-						{props.user.email}
+						{currentUser.email}
 					</Grid>
 					<Grid item xs={3}>
 						패스워드:{' '}
@@ -56,7 +58,7 @@ const Privacy = (props: Props) => {
 						이름:
 					</Grid>
 					<Grid item xs={9}>
-						{props.user.name}
+						{currentUser.name}
 					</Grid>
 					<Grid item xs={3}>
 						닉네임:

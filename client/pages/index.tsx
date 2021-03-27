@@ -4,13 +4,11 @@ import Greeting from '../components/Greeting';
 import { LoginProps, User } from '../interfaces';
 import { GetStaticProps } from 'next';
 
-interface Props {
-	loginProps: LoginProps;
-}
+interface Props {}
 
-const IndexPage = ({ loginProps }: Props) => {
+const IndexPage = (props: Props) => {
 	return (
-		<Layout title='Home | localhost👋' loginProps={loginProps}>
+		<Layout title='Home | localhost👋'>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<Greeting />

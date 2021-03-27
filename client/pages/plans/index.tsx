@@ -6,17 +6,16 @@ import { GetStaticProps } from 'next';
 import { LoginProps, Plan } from '../../interfaces';
 
 interface Props {
-	loginProps: LoginProps;
 	pageProps: {
 		plans: Plan[];
 	};
 }
 
 const index = (props: Props) => {
-	const { loginProps, pageProps } = props;
+	const { pageProps } = props;
 
 	return (
-		<Layout title='플랜보기 | localhost' loginProps={loginProps}>
+		<Layout title='플랜보기 | localhost'>
 			<PlanList plans={pageProps.plans} />
 		</Layout>
 	);

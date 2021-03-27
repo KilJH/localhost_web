@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "context/user.js", "context/scroll.js"  ],
   "exclude": [
     "node_modules"
   ]

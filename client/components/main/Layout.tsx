@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import Head from 'next/head';
 import Header from './Header';
 import styled from 'styled-components';
@@ -6,11 +6,12 @@ import Footer from './Footer';
 import { useMediaQuery } from '@material-ui/core';
 import { LoginProps, User } from '../../interfaces/index';
 import { ScrollProvider } from '../../context/scroll';
+import { UserSetterContext, UserStateContext } from '../../context/user';
 
 type Props = {
 	children?: ReactNode;
 	title?: string;
-	loginProps?: LoginProps;
+	// loginProps?: LoginProps;
 };
 
 const Main = styled.div<{ isMobile: boolean }>`
@@ -25,9 +26,14 @@ const Main = styled.div<{ isMobile: boolean }>`
 const Layout = ({
 	children,
 	title = 'for your dream | localhost',
-	loginProps,
-}: Props) => {
+}: // loginProps,
+Props) => {
 	const isMobile = useMediaQuery('(max-width: 600px)');
+
+	// const setUser = useContext(UserSetterContext);
+	const currentUser = useContext(UserStateContext);
+	// setUser(loginProps.user);
+	console.log('레이: ', currentUser);
 
 	return (
 		<div>
@@ -36,11 +42,8 @@ const Layout = ({
 				<meta charSet='utf-8' />
 				<meta name='viewport' content='initial-scale=1.0, width=device-width' />
 			</Head>
-			<Header
-				isMobile={isMobile}
-				isLogined={loginProps.isLogined}
-				user={loginProps.user}
-			/>
+			{/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
+			<Header isMobile={isMobile} />
 			<Main isMobile={isMobile}>{children}</Main>
 			<footer>
 				<hr />

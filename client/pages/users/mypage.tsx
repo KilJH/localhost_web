@@ -5,23 +5,18 @@ import { sampleUserData } from '../../utils/sample-data';
 import { LoginProps, User } from '../../interfaces/index';
 import { GetServerSideProps, GetStaticProps } from 'next';
 
-interface Props {
-	loginProps: LoginProps;
-	pageProps: {
-		firstTab: number;
-	};
-}
+interface Props {}
 
-const mypage = ({ loginProps, pageProps }: Props) => {
+const mypage = (props: Props) => {
 	return (
-		<Layout title='마이페이지 | localhost' loginProps={loginProps}>
-			<Mypage user={loginProps.user} firstTap={pageProps.firstTab} />
+		<Layout title='마이페이지 | localhost'>
+			<Mypage />
 		</Layout>
 	);
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	return { props: { firstTab: Number(ctx.query.tab) } };
+	return { props: {} };
 };
 
 export default mypage;
