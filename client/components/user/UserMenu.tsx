@@ -61,17 +61,17 @@ const UserMenu = (props: Props) => {
 						</a>
 					</Link>
 
-					<Link as='/users/mypage' href='/users/mypage?tab=1'>
+					<Link href='/users/mypage#follow'>
 						<a>
 							<li>팔로우 확인</li>
 						</a>
 					</Link>
-					<Link as='/users/mypage' href='/users/mypage?tab=2'>
+					<Link href='/users/mypage#'>
 						<a>
 							<li>내가 쓴 글</li>
 						</a>
 					</Link>
-					<Link as='/users/mypage' href='/users/mypage?tab=3'>
+					<Link href='/users/mypage#'>
 						<a>
 							<li>나의 여행</li>
 						</a>

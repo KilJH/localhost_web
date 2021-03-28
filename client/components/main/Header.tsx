@@ -40,7 +40,7 @@ declare global {
 const menuArray = [
 	{ name: '플랜보기', path: '/plans' },
 	{ name: '동행찾기', path: '/host' },
-	{ name: '공지사항', path: '/notice' },
+	{ name: '공지사항', path: '/notices' },
 	{ name: '소개', path: '/about' },
 	{ name: '문의하기', path: '/question' },
 	{ name: '유저보기', path: '/users' },

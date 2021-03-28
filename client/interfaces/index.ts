@@ -29,3 +29,11 @@ export interface LoginProps {
 	isLogined: boolean;
 	user?: User;
 }
+
+export interface Notice {
+	id: number;
+	title: string;
+	description: string;
+	createTime: string;
+	thumb: string;
+}

@@ -33,7 +33,6 @@ Props) => {
 	// const setUser = useContext(UserSetterContext);
 	const currentUser = useContext(UserStateContext);
 	// setUser(loginProps.user);
-	console.log('레이: ', currentUser);
 
 	return (
 		<div>
