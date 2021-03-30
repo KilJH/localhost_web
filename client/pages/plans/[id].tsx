@@ -3,7 +3,7 @@ import React from 'react';
 import Layout from '../../components/main/Layout';
 import PlanDetail from '../../components/plan/PlanDetail';
 import PlanOverview from '../../components/plan/PlanOverview';
-import { Plan } from '../../interfaces';
+import { LoginProps, Plan } from '../../interfaces';
 import { samplePlanData } from '../../utils/sample-data';
 
 interface Props {
@@ -14,15 +14,16 @@ interface Props {
 }
 
 const PlanDatailPage = ({ pageProps }: Props) => {
-	if (pageProps.errors) {
-		return (
-			<Layout title="Error | localhost">
-				<p>
-					<span style={{ color: 'red' }}>Error:</span> {pageProps.errors}
-				</p>
-			</Layout>
-		);
-	}
+	// // 쓰잘데기 없을 거 같은데
+	// if (pageProps.errors) {
+	// 	return (
+	// 		<Layout title='Error | localhost' loginProps={loginProps}>
+	// 			<p>
+	// 				<span style={{ color: 'red' }}>Error:</span> {pageProps.errors}
+	// 			</p>
+	// 		</Layout>
+	// 	);
+	// }
 
 	return (
 		<Layout

@@ -1,9 +1,11 @@
 import React from 'react';
 
-interface Props {}
+interface Props {
+	id: string;
+}
 
 const MyBoard = (props: Props) => {
-	return <div></div>;
+	return <section id={props.id}></section>;
 };
 
 export default MyBoard;

@@ -4,6 +4,7 @@ const PORT = require('./src/port');
 const mysql = require('./db/mysql');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
+const noticeRouter = require('./routes/notice');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -16,9 +17,10 @@ const corsOptions = {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors(corsOptions));
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
-app.use(cors(corsOptions));
+app.use('/api/notice', noticeRouter);
 
 mysql.connect((err) => {
 	if (err) return console.log('err: ', err);

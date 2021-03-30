@@ -1,43 +1,64 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Drawer, IconButton } from '@material-ui/core';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
+import { User } from '../../interfaces';
 // Mobile
 import MenuIcon from '@material-ui/icons/Menu';
 import { useDrawer } from '../../hooks/useDrawer';
 import CloseIcon from '@material-ui/icons/Close';
 import Login from '../user/Login';
+import UserMenu from '../user/UserMenu';
+import checkScrollDirection from '../../utils/checkScrollDirection';
+import ScrollContext from '../../context/scroll';
+import { UserStateContext } from '../../context/user';
 
 interface Props {
 	isMobile: boolean;
+	// isLogined: boolean;
+	// user?: User;
 }
 
 interface HeaderStyleProps {
 	isMobile: boolean;
+	fixed: boolean;
+}
+
+interface LoginProps {
+	isLogined: boolean;
+	user?: User;
+}
+
+declare global {
+	interface Window {
+		__scrollPosition: number;
+	}
 }
 
 const menuArray = [
 	{ name: '플랜보기', path: '/plans' },
 	{ name: '동행찾기', path: '/host' },
-	{ name: '공지사항', path: '/notice' },
+	{ name: '공지사항', path: '/notices' },
 	{ name: '소개', path: '/about' },
 	{ name: '문의하기', path: '/question' },
 	{ name: '유저보기', path: '/users' },
 ];
 
 const HeaderDiv = styled.div<HeaderStyleProps>`
-	width: 100%;
-	height: 8vh;
+	width: ${(props) => (props.isMobile ? '100%' : '80%')};
+	max-width: 1200px;
+	height: ${(props) => (props.isMobile ? '2.5rem' : '4rem')};
 	min-height: 2.5rem;
 	max-height: 4rem;
-	padding: ${(props) => (props.isMobile ? 0 : '0 15%')};
+	margin: 0 auto;
 	box-sizing: border-box;
 
+	transition: top 0.5s ease;
 	background: white;
 	position: sticky;
-	top: 0;
+	top: ${(props) => (props.fixed ? '0' : props.isMobile ? '-2.5rem' : '-4rem')};
 
 	display: flex;
 	align-items: center;
@@ -49,6 +70,16 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 	& > button {
 		width: 2.5rem;
 		height: 2.5rem;
+	}
+
+	& > .white {
+		position: fixed;
+		top: inherit;
+		left: 0;
+		width: 100%;
+		height: inherit;
+		z-index: -2;
+		background-color: white;
 	}
 `;
 
@@ -155,7 +186,7 @@ const Menu = () => (
 	</nav>
 );
 
-const LoginMenu = () => {
+const LoginMenu = (props: LoginProps) => {
 	const loginDrawer = useDrawer('right');
 	return (
 		<>
@@ -167,7 +198,7 @@ const LoginMenu = () => {
 				open={loginDrawer.open}
 				onClose={loginDrawer.onClose}
 			>
-				<Login />
+				{props.isLogined ? <UserMenu /> : <Login />}
 			</Drawer>
 		</>
 	);
@@ -176,9 +207,27 @@ const LoginMenu = () => {
 const Header = (props: Props) => {
 	const drawer = useDrawer('left');
 
-	if (props.isMobile) {
+	// const { isMobile, isLogined, user } = props;
+	const { isMobile } = props;
+	const { state, actions } = useContext(ScrollContext);
+
+	const onScroll = () => {
+		actions.setIsUp(checkScrollDirection());
+	};
+
+	useEffect(() => {
+		document.addEventListener('scroll', onScroll);
+		return () => {
+			document.removeEventListener('scroll', onScroll);
+		};
+	}, []);
+
+	const currentUser = useContext(UserStateContext);
+	const isLogined = Object.keys(currentUser).length === 0 ? false : true;
+
+	if (isMobile) {
 		return (
-			<HeaderDiv isMobile={props.isMobile}>
+			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
 				<IconButton>
 					<MenuIcon onClick={drawer.onOpen} />
 				</IconButton>
@@ -199,23 +248,24 @@ const Header = (props: Props) => {
 				</Drawer>
 				<EmptyFlexDiv />
 				<Logo>
-					<Link href="/">
+					<Link href='/'>
 						<a>
-							<img alt="mainlogo" src="/img/logos/localhostLogoBlack.png"></img>
+							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
 						</a>
 					</Link>
 				</Logo>
 				<EmptyFlexDiv />
-				<LoginMenu />
+				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);
 	} else {
 		return (
-			<HeaderDiv isMobile={props.isMobile}>
+			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+				<div className='white'></div>
 				<Logo>
-					<Link href="/">
+					<Link href='/'>
 						<a>
-							<img alt="mainlogo" src="/img/logos/localhostLogoBlack.png"></img>
+							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
 						</a>
 					</Link>
 				</Logo>
@@ -224,9 +274,9 @@ const Header = (props: Props) => {
 					<Menu />
 				</MainMenu>
 				<div>
-					<input placeholder="검색창" />
+					<input placeholder='검색창' />
 				</div>
-				<LoginMenu />
+				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);
 	}

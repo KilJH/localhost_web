@@ -3,7 +3,7 @@ import Layout from '../../components/main/Layout';
 import PlanList from '../../components/plan/PlanList';
 import { samplePlanData } from '../../utils/sample-data';
 import { GetStaticProps } from 'next';
-import { Plan } from '../../interfaces';
+import { LoginProps, Plan } from '../../interfaces';
 
 interface Props {
 	pageProps: {
@@ -11,9 +11,11 @@ interface Props {
 	};
 }
 
-const index = ({ pageProps }: Props) => {
+const index = (props: Props) => {
+	const { pageProps } = props;
+
 	return (
-		<Layout title="플랜보기 | localhost">
+		<Layout title='플랜보기 | localhost'>
 			<PlanList plans={pageProps.plans} />
 		</Layout>
 	);

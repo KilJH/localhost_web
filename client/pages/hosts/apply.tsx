@@ -1,12 +1,13 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-import { User } from '../../interfaces/index';
+import { LoginProps, User } from '../../interfaces/index';
 import axios from 'axios';
 import SERVER from '../../utils/url';
 import Layout from '../../components/main/Layout';
 import Apply from '../../components/host/Apply';
 
 interface Props {
+	loginProps: LoginProps;
 	pageProps: {
 		user: User;
 	};
@@ -14,7 +15,7 @@ interface Props {
 
 const apply = (props: Props) => {
 	return (
-		<Layout title="호스트신청 | localhost">
+		<Layout title='호스트신청 | localhost'>
 			<Apply />
 		</Layout>
 	);

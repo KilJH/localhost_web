@@ -3,7 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 
-interface Props {}
+interface Props {
+	id: string;
+}
 
 const AvatarItem = styled.div`
 	width: 5rem;
@@ -31,7 +33,7 @@ const MoreButton = styled.button`
 
 const MyFollow = (props: Props) => {
 	return (
-		<div>
+		<section id={props.id}>
 			<section>
 				<h3>팔로잉 1</h3>
 				<AvatarContainer>
@@ -65,7 +67,7 @@ const MyFollow = (props: Props) => {
 					</AvatarItem>
 				</AvatarContainer>
 			</section>
-		</div>
+		</section>
 	);
 };
 

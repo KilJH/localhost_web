@@ -1,8 +1,7 @@
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 
-import { User } from '../../interfaces';
-import { sampleUserData } from '../../utils/sample-data';
+import { LoginProps, User } from '../../interfaces';
 import Layout from '../../components/main/Layout';
 import List from '../../components/user/List';
 import axios from 'axios';
@@ -15,7 +14,7 @@ type Props = {
 };
 
 const WithStaticProps = ({ pageProps }: Props) => (
-	<Layout title="Users List | PlanBee🐝">
+	<Layout title='Users List | localhost'>
 		<h1>Users List</h1>
 		<p>
 			Example fetching data from inside <code>getStaticProps()</code>.
@@ -23,7 +22,7 @@ const WithStaticProps = ({ pageProps }: Props) => (
 		<p>You are currently on: /users</p>
 		<List items={pageProps.items} />
 		<p>
-			<Link href="/">
+			<Link href='/'>
 				<a>Go home</a>
 			</Link>
 		</p>

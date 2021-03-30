@@ -3,6 +3,7 @@ import Document, { Head, Html, Main, NextScript } from 'next/document';
 import React from 'react';
 import { ServerStyleSheet } from 'styled-components'; // styled-components SSR 제공
 import { ServerStyleSheets } from '@material-ui/styles';
+import { UserContextProvider } from '../context/user';
 
 interface Props {
 	styleTags: Array<React.ReactElement<{}>>;

@@ -1,19 +1,25 @@
 import Layout from '../components/main/Layout';
 import { Grid } from '@material-ui/core';
 import Greeting from '../components/Greeting';
-import SearchDetail from '../components/SearchDetail';
+import { LoginProps, User } from '../interfaces';
+import { GetStaticProps } from 'next';
 
-const IndexPage = () => (
-	<Layout title="Home | localhost👋">
-		<Grid container spacing={2}>
-			<Grid item xs={12}>
-				<Greeting />
+interface Props {}
+
+const IndexPage = (props: Props) => {
+	return (
+		<Layout title='Home | localhost👋'>
+			<Grid container spacing={2}>
+				<Grid item xs={12}>
+					<Greeting />
+				</Grid>
 			</Grid>
-			<Grid item xs={12} lg={4} md={6}>
-				<SearchDetail />
-			</Grid>
-		</Grid>
-	</Layout>
-);
+		</Layout>
+	);
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+	return { props: {} };
+};
 
 export default IndexPage;

@@ -43,7 +43,7 @@ const Login = (props: Props) => {
 				}
 			});
 
-		axios.post(`${SERVER}/api/auth/check`, {}, { withCredentials: true });
+		// axios.get(`${SERVER}/api/auth/check`, { withCredentials: true });
 	};
 
 	return (
@@ -53,28 +53,28 @@ const Login = (props: Props) => {
 				<div>
 					<TextField
 						{...email}
-						label="Email"
-						variant="outlined"
-						type="email"
+						label='Email'
+						variant='outlined'
+						type='email'
 						fullWidth
 					/>
 				</div>
 				<div>
 					<TextField
 						{...pw}
-						label="Password"
-						variant="outlined"
-						type="password"
+						label='Password'
+						variant='outlined'
+						type='password'
 						fullWidth
 					/>
 				</div>
 
 				<div>
 					<Button
-						type="submit"
+						type='submit'
 						// onClick={onSubmit}
-						variant="contained"
-						color="primary"
+						variant='contained'
+						color='primary'
 						fullWidth
 					>
 						로그인
@@ -83,8 +83,8 @@ const Login = (props: Props) => {
 			</form>
 
 			<hr />
-			<Link href="/users/register">
-				<Button fullWidth variant="contained">
+			<Link href='/users/register'>
+				<Button fullWidth variant='contained'>
 					회원가입
 				</Button>
 			</Link>

@@ -1,11 +1,12 @@
 import { Grid, Avatar } from '@material-ui/core';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useInput } from '../../../hooks/useInput';
 import { User } from '../../../interfaces';
 import styled from 'styled-components';
+import { UserStateContext } from '../../../context/user';
 
 interface Props {
-	user: User;
+	id: string;
 }
 
 const Button = styled.button`
@@ -21,35 +22,43 @@ const PrivacyContainer = styled(Grid)`
 `;
 
 const Privacy = (props: Props) => {
-	const pwInput = useInput(props.user.password);
-	const nnInput = useInput(props.user.nickname);
-	const phInput = useInput(props.user.phone);
-	const adInput = useInput(props.user.address);
+	const currentUser = useContext(UserStateContext);
+
+	const pwInput = useInput(currentUser.password);
+	const nnInput = useInput(currentUser.nickname);
+	const phInput = useInput(currentUser.phone);
+	const adInput = useInput(currentUser.address);
 
 	return (
-		<section>
+		<section id={props.id}>
 			<section>
 				<header>
 					<h3>기본 회원정보</h3>
 				</header>
-				<PrivacyContainer container alignItems="center">
+				<PrivacyContainer container alignItems='center'>
 					<Grid item xs={12}>
-						<Avatar alt="Profile">KIL</Avatar>
+						<Avatar alt='Profile'>KIL</Avatar>
 					</Grid>
 					<Grid item xs={3}>
 						이메일:{' '}
 					</Grid>
 					<Grid item xs={9}>
-						{props.user.email}
+						{currentUser.email}
 					</Grid>
 					<Grid item xs={3}>
 						패스워드:{' '}
 					</Grid>
 					<Grid item xs={9}>
-						<input type="password" disabled {...pwInput} />
+						<input type='password' disabled {...pwInput} />
 						<span>
 							<button>변경</button>
 						</span>
+					</Grid>
+					<Grid item xs={3}>
+						이름:
+					</Grid>
+					<Grid item xs={9}>
+						{currentUser.name}
 					</Grid>
 					<Grid item xs={3}>
 						닉네임:
@@ -75,7 +84,7 @@ const Privacy = (props: Props) => {
 				<header>
 					<h3>추가 회원정보(선택)</h3>
 				</header>
-				<PrivacyContainer container alignItems="center">
+				<PrivacyContainer container alignItems='center'>
 					<Grid item xs={3}>
 						선호하는 여행스타일:
 					</Grid>
