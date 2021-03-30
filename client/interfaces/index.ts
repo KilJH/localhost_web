@@ -12,6 +12,8 @@ export type User = {
   nickname: string;
   phone: string;
   address: string;
+  isAdmin?: number;
+  isHost?: number;
 };
 
 export type Plan = {

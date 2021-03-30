@@ -1,10 +1,10 @@
-import { GetStaticProps } from "next";
-import { User } from "../../interfaces";
-import React from "react";
-import Layout from "../../components/main/Layout";
-import UserList from "../../components/admin/UserList";
-import axios from "axios";
-import SERVER from "../../utils/url";
+import { GetStaticProps } from 'next';
+import { User } from '../../../interfaces';
+import React from 'react';
+import Layout from '../../../components/main/Layout';
+import UserList from '../../../components/admin/UserList';
+import axios from 'axios';
+import SERVER from '../../../utils/url';
 
 type Props = {
   pageProps: {
@@ -12,10 +12,9 @@ type Props = {
   };
 };
 
-const user = ({ pageProps }: Props) => {
-  console.log(pageProps);
+const list = ({ pageProps }: Props) => {
   return (
-    <Layout title="회원가입 | localhost">
+    <Layout title='회원목록 | localhost'>
       <UserList {...pageProps} />
     </Layout>
   );
@@ -30,4 +29,4 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: { items } };
 };
 
-export default user;
+export default list;
