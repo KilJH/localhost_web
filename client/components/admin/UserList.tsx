@@ -12,6 +12,7 @@ type Props = {
   items: User[];
   search?: User;
   isHost?: boolean;
+  isPreHost?: boolean;
 };
 
 const UserTable = styled.table`
@@ -58,7 +59,24 @@ const DeleteButton = styled(Button)`
     background-color: #ff6b81;
   }
 `;
-
+const HostButton = styled(Button)`
+  &.MuiButton-root {
+    margin: 1rem;
+    width: 8rem;
+  }
+  &.MuiButton-containedSecondary {
+    background-color: #ff6b81;
+  }
+`;
+const PreHostButton = styled(Button)`
+  &.MuiButton-root {
+    margin: 1rem;
+    width: 8rem;
+  }
+  &.MuiButton-containedPrimary {
+    background-color: #5197d5;
+  }
+`;
 const DeleteCheckedItems = (state) => {
   const keys = Object.keys(state);
   const values = Object.values(state);
@@ -78,26 +96,49 @@ const DeleteCheckedItems = (state) => {
     }
   }
 };
-const HostifyItems = (items: User[]) => {
-  let hosts: User[] = [];
-  items.map((item) =>
-    axios
-      .post(`${SERVER}/api/user/checkAuth`, {
-        id: item.id,
-      })
-      .then((res: AxiosResponse<any>) => {
-        if (res.data.auth === 1) hosts.push(item);
-      })
-  );
-  items = hosts;
+const DisableHostCheckedItems = (state) => {
+  // 호스트 해제 기능
+  // const keys = Object.keys(state);
+  // const values = Object.values(state);
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] === true) {
+  //     axios
+  //       .post(`${SERVER}/api/user/host/disable'`, {
+  //         userId: keys[i],
+  //       })
+  //       .then((res: AxiosResponse<any>) => {
+  //         console.log(res.data);
+  //         alert(res.data.message);
+  //         if (res.data.success) {
+  //           Router.push('/admin/host/disable');
+  //         }
+  //       });
+  //   }
+  // }
+};
+const EnableHostCheckedItems = (state) => {
+  // 호스트 승인 기능
+  // const keys = Object.keys(state);
+  // const values = Object.values(state);
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] === true) {
+  //     axios
+  //       .post(`${SERVER}/api/user/host/approve'`, {
+  //         userId: keys[i],
+  //       })
+  //       .then((res: AxiosResponse<any>) => {
+  //         console.log(res.data);
+  //         alert(res.data.message);
+  //         if (res.data.success) {
+  //           Router.push('/admin/host/approve');
+  //         }
+  //       });
+  //   }
+  // }
 };
 export default function UserList(props: Props) {
-  const { search, items, isHost } = props;
+  const { search, items, isHost, isPreHost } = props;
   const [state, setState] = useState({});
-  useEffect(() => {
-    console.log('hi');
-    HostifyItems(props.items);
-  });
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -111,22 +152,22 @@ export default function UserList(props: Props) {
   };
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // let hosts: User[] = [];
-    // items.map((item) =>
-    //   axios
-    //     .post(`${SERVER}/api/user/checkAuth`, {
-    //       id: item.id,
-    //     })
-    //     .then((res: AxiosResponse<any>) => {
-    //       if (res.data.auth === 1) hosts.push(item);
-    //     })
-    // );
+  };
+  const HostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    DisableHostCheckedItems(state);
+  };
+  const PreHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    EnableHostCheckedItems(state);
   };
   return (
     <div>
       <UserTable>
         <caption>
-          <h1>{isHost ? '호스트' : '유저'} 리스트</h1>
+          <h1>
+            {isHost ? '호스트' : isPreHost ? '호스트 신청자' : '유저'} 리스트
+          </h1>
           <Search
             items={items}
             selectLabel='검색할 값'
@@ -171,6 +212,9 @@ export default function UserList(props: Props) {
           onClick={blockButtonHandler}
           variant='contained'
           color='primary'
+          style={
+            isHost || isPreHost ? { display: 'none' } : { display: 'default' }
+          }
         >
           유저 차단
         </BlockButton>
@@ -179,9 +223,30 @@ export default function UserList(props: Props) {
           onClick={deleteButtonHandler}
           variant='contained'
           color='secondary'
+          style={
+            isHost || isPreHost ? { display: 'none' } : { display: 'default' }
+          }
         >
           유저 삭제
         </DeleteButton>
+        <HostButton
+          type='submit'
+          onClick={HostButtonHandler}
+          variant='contained'
+          color='secondary'
+          style={isHost ? { display: 'default' } : { display: 'none' }}
+        >
+          호스트 해제
+        </HostButton>
+        <PreHostButton
+          type='submit'
+          onClick={PreHostButtonHandler}
+          variant='contained'
+          color='primary'
+          style={isPreHost ? { display: 'default' } : { display: 'none' }}
+        >
+          호스트 승인
+        </PreHostButton>
       </ButtonDiv>
     </div>
   );

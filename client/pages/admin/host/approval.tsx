@@ -14,8 +14,8 @@ type Props = {
 
 const list = ({ pageProps }: Props) => {
   return (
-    <Layout title='호스트목록 | localhost'>
-      <UserList {...pageProps} isHost={true} />
+    <Layout title='신청자목록 | localhost'>
+      <UserList {...pageProps} isPreHost={true} />
     </Layout>
   );
 };
