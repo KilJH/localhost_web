@@ -7,7 +7,7 @@ import {
 	Select,
 } from '@material-ui/core';
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useInput } from '../../hooks/useInput';
 import SERVER from '../../utils/url';
 import Router from 'next/router';
@@ -27,18 +27,6 @@ const countries = [
 	'포르투갈',
 	'스페인',
 	'이탈리아',
-];
-
-const languagesBackup = [
-	{ name: '한국어', checked: false },
-	{ name: '일본어', checked: false },
-	{ name: '중국어', checked: false },
-	{ name: '영어', checked: false },
-	{ name: '프랑스어', checked: false },
-	{ name: '독일어', checked: false },
-	{ name: '스페인어', checked: false },
-	{ name: '포르투갈어', checked: false },
-	{ name: '힌디어', checked: false },
 ];
 
 const languages = [
@@ -86,8 +74,8 @@ const Request = (props: Props) => {
 	};
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (langs.length < 3) {
-			if (e.target.checked) {
+		if (langs.length < 4) {
+			if (e.target.checked && langs.length < 3) {
 				setLangs([...langs, e.target.value]);
 				setChecked([
 					...checked.slice(0, Number(e.target.id) - 1),
@@ -102,22 +90,8 @@ const Request = (props: Props) => {
 					...checked.slice(Number(e.target.id) - 1 + 1),
 				]);
 			}
-		} else if (langs.length > 2) {
-			if (!e.target.checked) {
-				setLangs(langs.filter((lang) => lang !== e.target.value));
-				setChecked([
-					...checked.slice(0, Number(e.target.id) - 1),
-					false,
-					...checked.slice(Number(e.target.id) - 1 + 1),
-				]);
-			}
 		}
 	};
-
-	useEffect(() => {
-		console.log(langs);
-		console.log(checked);
-	}, [langs, checked]);
 
 	return (
 		<div>
