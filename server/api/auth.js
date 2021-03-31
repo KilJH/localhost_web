@@ -71,7 +71,13 @@ module.exports.checkToken = (req, res) => {
 		mysql.query(sql, decoded.id, (err2, rows, fields) => {
 			if (err2) return err2;
 			if (rows[0].token === req.body.token) {
-				res.send({ success: true, message: '로그인', user: rows[0] });
+				const user = {
+					...rows[0],
+					isAdmin: rows[0].isadmin,
+					isHost: rows[0].ishost,
+				};
+
+				res.status(200).send({ success: true, message: '로그인', user: user });
 			} else {
 				res.send({ success: false, message: '로그인 토큰 만료' });
 			}

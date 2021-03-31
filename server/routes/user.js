@@ -43,4 +43,8 @@ router.post('/host/approve', function (req, res, next) {
 	management.approveHost(req, res);
 });
 
+router.post('/host/request', function (req, res, next) {
+	management.requestHost(req, res);
+});
+
 module.exports = router;
