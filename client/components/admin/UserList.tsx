@@ -77,6 +77,9 @@ const PreHostButton = styled(Button)`
     background-color: #5197d5;
   }
 `;
+const Title = styled.h1`
+  cursor: pointer;
+`;
 const DeleteCheckedItems = (state) => {
   const keys = Object.keys(state);
   const values = Object.values(state);
@@ -153,27 +156,36 @@ export default function UserList(props: Props) {
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
   };
-  const HostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     DisableHostCheckedItems(state);
   };
-  const PreHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const preHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     EnableHostCheckedItems(state);
+  };
+  const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
+    let url: string;
+    isHost
+      ? (url = 'http://localhost:3000/admin/host/list')
+      : isPreHost
+      ? (url = 'http://localhost:3000/admin/host/approval')
+      : (url = 'http://localhost:3000/admin/user/list');
+    Router.push(url);
   };
   return (
     <div>
       <UserTable>
         <caption>
-          <h1>
+          <Title onClick={pushBackHandler}>
             {isHost ? '호스트' : isPreHost ? '호스트 신청자' : '유저'} 리스트
-          </h1>
+          </Title>
           <Search
             items={items}
             selectLabel='검색할 값'
             inputLabel='을 입력하세요.'
             buttonLabel='검색!'
-            routePage='http://localhost:3000/admin/user/'
+            routePage='http://localhost:3000/admin/search/'
             marginBottom='5rem'
           />
         </caption>
@@ -231,7 +243,7 @@ export default function UserList(props: Props) {
         </DeleteButton>
         <HostButton
           type='submit'
-          onClick={HostButtonHandler}
+          onClick={hostButtonHandler}
           variant='contained'
           color='secondary'
           style={isHost ? { display: 'default' } : { display: 'none' }}
@@ -240,7 +252,7 @@ export default function UserList(props: Props) {
         </HostButton>
         <PreHostButton
           type='submit'
-          onClick={PreHostButtonHandler}
+          onClick={preHostButtonHandler}
           variant='contained'
           color='primary'
           style={isPreHost ? { display: 'default' } : { display: 'none' }}

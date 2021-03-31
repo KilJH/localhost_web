@@ -10,35 +10,35 @@ import { useContext } from 'react';
 import { UserStateContext } from '../../context/user';
 
 type Props = {
-	pageProps: {
-		item?: User;
-		isFollowed: boolean;
-		errors?: string;
-	};
+  pageProps: {
+    item?: User;
+    isFollowed: boolean;
+    errors?: string;
+  };
 };
 
 const StaticPropsDetail = ({ pageProps }: Props) => {
-	// if (pageProps.errors) {
-	// 	return (
-	// 		<Layout title='Error | PlanBee🐝'>
-	// 			<p>
-	// 				<span style={{ color: 'red' }}>Error:</span> {pageProps.errors}
-	// 			</p>
-	// 		</Layout>
-	// 	);
-	// }
+  // if (pageProps.errors) {
+  // 	return (
+  // 		<Layout title='Error | PlanBee🐝'>
+  // 			<p>
+  // 				<span style={{ color: 'red' }}>Error:</span> {pageProps.errors}
+  // 			</p>
+  // 		</Layout>
+  // 	);
+  // }
 
-	return (
-		<Layout
-			title={`${
-				pageProps.item ? pageProps.item.name : 'User Detail'
-			} | localhost`}
-		>
-			{pageProps.item && (
-				<ListDetail item={pageProps.item} isFollowed={pageProps.isFollowed} />
-			)}
-		</Layout>
-	);
+  return (
+    <Layout
+      title={`${
+        pageProps.item ? pageProps.item.name : 'User Detail'
+      } | localhost`}
+    >
+      {pageProps.item && (
+        <ListDetail item={pageProps.item} isFollowed={pageProps.isFollowed} />
+      )}
+    </Layout>
+  );
 };
 
 export default StaticPropsDetail;
@@ -60,24 +60,24 @@ export default StaticPropsDetail;
 // It won't be called on client-side, so you can even do
 // direct database queries.
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	console.log(user);
-	try {
-		const id = context.params?.id;
-		const item = await (await axios.get(`${SERVER}/api/user/${id}`)).data.user;
-		const res = await axios.post(
-			`${SERVER}/api/auth/check`,
-			{ token: context.req.cookies.token },
-			{ withCredentials: true }
-		);
-		const isFollowed = await (
-			await axios.post(`${SERVER}/api/user/follow_check`, {
-				userId: id,
-				followerId: res.data.user.id,
-			})
-		).data.isFollowed;
+  console.log(user);
+  try {
+    const id = context.params?.id;
+    const item = await (await axios.get(`${SERVER}/api/user/${id}`)).data.user;
+    const res = await axios.post(
+      `${SERVER}/api/auth/check`,
+      { token: context.req.cookies.token },
+      { withCredentials: true }
+    );
+    const isFollowed = await (
+      await axios.post(`${SERVER}/api/user/follow_check`, {
+        userId: id,
+        followerId: res.data.user.id,
+      })
+    ).data.isFollowed;
 
-		return { props: { item, isFollowed } };
-	} catch (err) {
-		return { props: { errors: err.message } };
-	}
+    return { props: { item, isFollowed } };
+  } catch (err) {
+    return { props: { errors: err.message } };
+  }
 };

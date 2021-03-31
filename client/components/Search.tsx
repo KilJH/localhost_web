@@ -88,6 +88,7 @@ const SearchButton = styled(Button)`
 export default function Search(props: Props) {
   const [value, setValue] = useState('');
   const [select, setSelect] = useState(null);
+  const [foundItem, setFoundItem] = useState([]);
   const { items, routePage, selectLabel, inputLabel, buttonLabel } = props;
   const sLabel = selectLabel ? selectLabel : '선택';
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,21 +107,16 @@ export default function Search(props: Props) {
   const searchValue = (value: string) => {
     if (select === null) alert('옵션을 선택해주세요.');
     else {
-      let id = null;
-      items.map((item) => {
+      let tmp;
+      items.filter(function (e, index, array) {
         switch (select) {
           case 1:
-            if (item.email == value) id = item.id;
           case 2:
-            if (item.nickname == value) id = item.id;
           case 3:
-            if (item.name == value) id = item.id;
-          default:
-            break;
+            if (e.name === value || e.email === value || e.nickname === value)
+              Router.push(routePage);
         }
       });
-      if (id) Router.push(routePage + id);
-      else alert('일치하는 조건이 없습니다.');
     }
   };
   return (
