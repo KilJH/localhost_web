@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../../interfaces';
 import styled from 'styled-components';
 import UserItem from './UserItem';
@@ -11,6 +11,7 @@ import Search from '../Search';
 type Props = {
   items: User[];
   search?: User;
+  isHost?: boolean;
 };
 
 const UserTable = styled.table`
@@ -77,10 +78,26 @@ const DeleteCheckedItems = (state) => {
     }
   }
 };
-
+const HostifyItems = (items: User[]) => {
+  let hosts: User[] = [];
+  items.map((item) =>
+    axios
+      .post(`${SERVER}/api/user/checkAuth`, {
+        id: item.id,
+      })
+      .then((res: AxiosResponse<any>) => {
+        if (res.data.auth === 1) hosts.push(item);
+      })
+  );
+  items = hosts;
+};
 export default function UserList(props: Props) {
-  const { items, search } = props;
+  const { search, items, isHost } = props;
   const [state, setState] = useState({});
+  useEffect(() => {
+    console.log('hi');
+    HostifyItems(props.items);
+  });
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -94,12 +111,22 @@ export default function UserList(props: Props) {
   };
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    // let hosts: User[] = [];
+    // items.map((item) =>
+    //   axios
+    //     .post(`${SERVER}/api/user/checkAuth`, {
+    //       id: item.id,
+    //     })
+    //     .then((res: AxiosResponse<any>) => {
+    //       if (res.data.auth === 1) hosts.push(item);
+    //     })
+    // );
   };
   return (
     <div>
       <UserTable>
         <caption>
-          <h1>Users List</h1>
+          <h1>{isHost ? '호스트' : '유저'} 리스트</h1>
           <Search
             items={items}
             selectLabel='검색할 값'
