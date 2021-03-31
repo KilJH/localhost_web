@@ -39,8 +39,9 @@ declare global {
 
 const menuArray = [
 	{ name: '플랜보기', path: '/plans' },
-	{ name: '동행찾기', path: '/host' },
+	{ name: '동행찾기', path: '/hosts' },
 	{ name: '공지사항', path: '/notices' },
+	{ name: '자유게시판', path: '/boards' },
 	{ name: '소개', path: '/about' },
 	{ name: '문의하기', path: '/question' },
 	{ name: '유저보기', path: '/users' },
@@ -140,7 +141,7 @@ const MainMenu = styled.div`
 					display: block;
 				}
 				&:hover {
-					background: rgba(81, 151, 213, 0.1);
+					background: rgba(91, 115, 136, 0.1);
 					/* background: linear-gradient(white, 80%, rgba(81, 151, 213, 0.1)); */
 					box-shadow: inset 0 -2px #5197d5;
 				}

@@ -185,3 +185,26 @@ module.exports.checkAuth = (req, res) => {
     }
   });
 };
+
+module.exports.listOfHost = (req, res) => {
+	const sql = `SELECT * FROM user WHERE ishost = 1`;
+
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log(err);
+
+		res.status(200).send({ success: true, hosts: rows });
+	});
+};
+
+module.exports.approveHost = (req, res) => {
+	const userId = res.body.userId;
+
+	// 신청 테이블에서 호스트 테이블로 옮기기
+	// const sql = `SELECT * FROM user WHERE ishost = 1`;
+
+	// mysql.query(sql, (err, rows) => {
+	// 	if (err) return console.log(err);
+
+	// 	res.status(200).send({ success: true, hosts: rows });
+	// });
+};

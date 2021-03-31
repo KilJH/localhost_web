@@ -7,6 +7,7 @@ interface Props {
 }
 
 const NoticeDetailContainer = styled.section`
+	margin: 2rem 0 4rem 0;
 	& img {
 		width: 100%;
 		/* height: 20rem; */
@@ -33,13 +34,14 @@ const NoticeDetailContainer = styled.section`
 	}
 	& div.content {
 		display: flex;
-		margin: 2rem 0 4rem 0;
+		margin: 2rem 0;
 		& div {
 			flex: 1;
 			padding: 0.5rem;
 		}
 		& div:last-child {
 			flex: 3;
+			white-space: pre-line;
 		}
 		& .title {
 			font-size: 1.5em;
