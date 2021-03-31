@@ -35,4 +35,12 @@ router.post('/checkAuth', function (req, res, next) {
 	management.checkAuth(req, res);
 });
 
+router.get('/host/list', function (req, res, next) {
+	management.listOfHost(req, res);
+});
+
+router.post('/host/approve', function (req, res, next) {
+	management.approveHost(req, res);
+});
+
 module.exports = router;
