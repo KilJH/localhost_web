@@ -208,3 +208,30 @@ module.exports.approveHost = (req, res) => {
 	// 	res.status(200).send({ success: true, hosts: rows });
 	// });
 };
+
+module.exports.requestHost = (req, res) => {
+	const userId = req.body.userId;
+	const hostInfo = req.body.hostInfo;
+
+	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
+	const insert = `INSERT INTO host_request(user_id,country,language1,language2,language3,description) VALUES(?,?,?,?,?,?)`;
+
+	mysql.query(sql, userId, (err, rows) => {
+		if (err) return console.log(err);
+		if (rows[0])
+			res.send({ success: false, message: '이미 신청한 상태입니다.' });
+		mysql.query(
+			insert,
+			[userId, hostInfo.country, ...hostInfo.languages, hostInfo.description],
+			(err) => {
+				if (err) return console.log(err);
+
+				res.status(200).send({
+					success: true,
+					message:
+						'호스트 신청이 완료되었습니다. 관리자 승인 후 활동 가능합니다.',
+				});
+			}
+		);
+	});
+};

@@ -76,6 +76,19 @@ const UserMenu = (props: Props) => {
 							<li>나의 여행</li>
 						</a>
 					</Link>
+					{currentUser.isHost ? (
+						<Link href='/hosts/'>
+							<a>
+								<li>나의 호스팅</li>
+							</a>
+						</Link>
+					) : (
+						<Link href='/hosts/request'>
+							<a>
+								<li>호스트 신청</li>
+							</a>
+						</Link>
+					)}
 					<hr></hr>
 					<Link href=''>
 						<li>
