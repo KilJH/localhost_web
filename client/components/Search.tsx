@@ -8,8 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import styled from 'styled-components';
 import _app from '../pages/_app';
 import Router from 'next/router';
-import UserList from '../components/admin/UserList';
-import { arrayIncludes } from '@material-ui/pickers/_helpers/utils';
 
 type Props = {
   // 필수 Props

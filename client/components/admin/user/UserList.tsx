@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '../../interfaces';
+import { User } from '../../../interfaces';
 import styled from 'styled-components';
 import UserItem from './UserItem';
 import Button from '@material-ui/core/Button';
 import axios, { AxiosResponse } from 'axios';
-import SERVER from '../../utils/url';
+import SERVER from '../../../utils/url';
 import Router from 'next/router';
-import Search from '../Search';
+import Search from '../../Search';
 
 type Props = {
   items: User[];

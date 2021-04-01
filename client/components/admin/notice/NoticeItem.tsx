@@ -1,4 +1,4 @@
-import { User } from '../../interfaces';
+import { User } from '../../../interfaces';
 import React from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
@@ -19,7 +19,7 @@ const Checkbox = styled.input.attrs({
 const PushElement = styled.a`
   cursor: pointer;
 `;
-export default function UserItem(props: Props) {
+export default function NoticeItem(props: Props) {
   const { user, state, handleChange } = props;
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
     const url = `http://localhost:3000/users/${user.id}`;
