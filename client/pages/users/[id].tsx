@@ -5,7 +5,7 @@ import Layout from '../../components/main/Layout';
 import ListDetail from '../../components/user/ListDetail';
 import axios from 'axios';
 import SERVER from '../../utils/url';
-import user from '../admin/user';
+import user from '../users';
 import { useContext } from 'react';
 import { UserStateContext } from '../../context/user';
 

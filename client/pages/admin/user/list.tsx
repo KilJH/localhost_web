@@ -5,6 +5,7 @@ import Layout from '../../../components/main/Layout';
 import UserList from '../../../components/admin/UserList';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
+import Search from '../../../components/Search';
 
 type Props = {
   pageProps: {

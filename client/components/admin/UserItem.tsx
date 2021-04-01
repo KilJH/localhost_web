@@ -1,11 +1,12 @@
 import { User } from '../../interfaces';
 import React from 'react';
 import styled from 'styled-components';
+import Router from 'next/router';
 
 type Props = {
   user: User;
   state: object;
-  handleChange: React.ChangeEvent<HTMLInputElement>;
+  handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 const Checkbox = styled.input.attrs({
@@ -15,9 +16,15 @@ const Checkbox = styled.input.attrs({
   margin-left: 1rem;
   margin-right: 1rem;
 `;
-
+const PushElement = styled.a`
+  cursor: pointer;
+`;
 export default function UserItem(props: Props) {
   const { user, state, handleChange } = props;
+  const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
+    const url = `http://localhost:3000/users/${user.id}`;
+    Router.push(url);
+  };
   return (
     <React.Fragment>
       <tr>
@@ -28,10 +35,20 @@ export default function UserItem(props: Props) {
             onChange={handleChange}
           ></Checkbox>
         </td>
-        <td>{user.email}</td>
-        <td>{user.nickname}</td>
-        <td>{user.name}</td>
-        <td>{user.isadmin ? '관리자' : user.ishost ? '호스트' : '일반'}</td>
+        <td>
+          <PushElement onClick={onClickHandler}>{user.email}</PushElement>
+        </td>
+        <td>
+          <PushElement onClick={onClickHandler}>{user.nickname}</PushElement>
+        </td>
+        <td>
+          <PushElement onClick={onClickHandler}>{user.name}</PushElement>
+        </td>
+        <td>
+          <PushElement onClick={onClickHandler}>
+            {user.isadmin ? '관리자' : user.ishost ? '호스트' : '일반'}
+          </PushElement>
+        </td>
       </tr>
     </React.Fragment>
   );

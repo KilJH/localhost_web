@@ -5,6 +5,7 @@ import Layout from '../../components/main/Layout';
 import UserList from '../../components/admin/UserList';
 import SERVER from '../../utils/url';
 import axios, { AxiosResponse } from 'axios';
+import Search from '../../components/Search';
 
 type Props = {
   pageProps: {
@@ -15,7 +16,15 @@ type Props = {
 const list = ({ pageProps }: Props) => {
   return (
     <Layout title='신청자목록 | localhost'>
-      <UserList {...pageProps} isPreHost={true} />
+      <Search
+        items={pageProps.items}
+        selectLabel='검색할 값'
+        inputLabel='을 입력하세요.'
+        buttonLabel='검색!'
+        routePage='http://localhost:3000/admin/search/'
+        marginTop='5rem'
+        isSearching={true}
+      />
     </Layout>
   );
 };
@@ -25,8 +34,8 @@ export const getStaticProps: GetStaticProps = async () => {
   // Don't forget to include the respective types for any props passed into
   // the component.
 
-  const items: User[] = await (await axios.get(`${SERVER}/api/user/host/list`))
-    .data.hosts;
+  const items: User[] = await (await axios.get(`${SERVER}/api/user/list`)).data
+    .users;
 
   return { props: { items } };
 };

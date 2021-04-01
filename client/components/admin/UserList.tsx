@@ -155,6 +155,7 @@ export default function UserList(props: Props) {
   };
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(items);
   };
   const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -185,8 +186,9 @@ export default function UserList(props: Props) {
             selectLabel='검색할 값'
             inputLabel='을 입력하세요.'
             buttonLabel='검색!'
-            routePage='http://localhost:3000/admin/search/'
-            marginBottom='5rem'
+            routePage='http://localhost:3000/admin/user/'
+            marginTop='5rem'
+            isSearching={false}
           />
         </caption>
         <thead>
