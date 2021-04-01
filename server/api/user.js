@@ -109,20 +109,20 @@ module.exports.search = (req, res) => {
 	let sql = '';
 	switch (type) {
 		case 'name':
-			sql = 'SELECT * FROM user WHERE name = ?';
+			sql = `SELECT * FROM user WHERE name LIKE "%${item}%"`;
 			break;
 		case 'nickname':
-			sql = 'SELECT * FROM user WHERE nickname = ?';
+			sql = `SELECT * FROM user WHERE nickname LIKE "%${item}%"`;
 			break;
 		case 'email':
-			sql = 'SELECT * FROM user WHERE email = ?';
+			sql = `SELECT * FROM user WHERE email LIKE "%${item}%"`;
 			break;
 		default:
-			sql = 'SELECT * FROM user';
+			sql = `SELECT * FROM user`;
 			break;
 	}
 
-	mysql.query(sql, item, (err, rows) => {
+	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
 		res.status(200).send({ success: true, users: rows });
