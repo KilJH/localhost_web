@@ -8,6 +8,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import styled from 'styled-components';
 import _app from '../pages/_app';
 import Router from 'next/router';
+import axios, { AxiosResponse } from 'axios';
+import SERVER from '../utils/url';
 
 type Props = {
   // 필수 Props
@@ -172,8 +174,19 @@ export default function Search(props: Props) {
             if (e.nickname === value) console.log(foundItems);
           case 3:
             if (e.name === value) {
-              Router.push(routePage + e.id);
               //foundItems.push(e.id);
+              axios
+                .post(`${SERVER}/api/user/search`, {
+                  type: 'nickname',
+                  item: e.nickname,
+                })
+                .then((res: AxiosResponse<any>) => {
+                  console.log(res.data.users);
+                  console.log('hi');
+                  // if (res.data.success) {
+                  //     Router.push('/');
+                  //   }
+                });
             }
         }
       });

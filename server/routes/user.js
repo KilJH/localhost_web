@@ -27,6 +27,10 @@ router.get('/list', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
 	management.find(req, res);
 });
+router.post('/search', function (req, res, next) {
+	management.search(req, res);
+});
+
 router.post('/follow_check', function (req, res, next) {
 	management.isFollowed(req, res);
 });

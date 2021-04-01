@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 import { User } from '../../interfaces';
 import React from 'react';
 import Layout from '../../components/main/Layout';
-import UserList from '../../components/admin/user/UserList';
+import UserList from '../../components/admin/UserList';
 import SERVER from '../../utils/url';
 import axios, { AxiosResponse } from 'axios';
 import Search from '../../components/Search';
