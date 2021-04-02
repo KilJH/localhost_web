@@ -22,7 +22,7 @@ app.use(cors(corsOptions));
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notice', noticeRouter);
-app.use('/api/file', s3Router);
+app.use('/api/s3', s3Router);
 
 mysql.connect((err) => {
 	if (err) return console.log('err: ', err);
