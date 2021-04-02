@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SERVER from '../../utils/url';
 import axios from 'axios';
 import { UserStateContext } from '../../context/user';
+import UserPhoto from './UserPhoto';
 
 interface Props {}
 
@@ -14,13 +15,6 @@ const UserMenuContainer = styled.div`
 	& h2 {
 		text-align: center;
 	}
-`;
-
-const UserPhoto = styled.img`
-	width: 5em;
-	border-radius: 50%;
-	margin: 0 auto;
-	display: block;
 `;
 
 const MenuList = styled.nav`
@@ -50,7 +44,7 @@ const UserMenu = (props: Props) => {
 
 	return (
 		<UserMenuContainer>
-			<UserPhoto src={currentUser.photo || '/img/default.jpg'} />
+			<UserPhoto src={currentUser.photo} />
 			<h2>{currentUser.nickname}</h2>
 
 			<MenuList>

@@ -5,11 +5,10 @@ const mysql = require('./db/mysql');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const noticeRouter = require('./routes/notice');
-const s3Router = require("./routes/s3");
+const s3Router = require('./routes/file');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const s3 = require("./api/s3_upload");
 
 const corsOptions = {
 	origin: ['http://localhost:3000'],
@@ -23,7 +22,7 @@ app.use(cors(corsOptions));
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notice', noticeRouter);
-app.use('/api/s3', s3Router);
+app.use('/api/file', s3Router);
 
 mysql.connect((err) => {
 	if (err) return console.log('err: ', err);

@@ -12,6 +12,10 @@ router.post('/register', function (req, res, next) {
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
+
+router.post('/updatePW', function (req, res, next) {
+	management.updatePW(req, res);
+});
 router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
@@ -43,12 +47,21 @@ router.get('/host/list', function (req, res, next) {
 	management.listOfHost(req, res);
 });
 
-router.post('/host/approve', function (req, res, next) {
-	management.approveHost(req, res);
+router.get('/host/request/list', function (req, res, next) {
+	management.listOfRequestedHost(req, res);
 });
 
 router.post('/host/request', function (req, res, next) {
 	management.requestHost(req, res);
+});
+router.post('/host/allow', function (req, res, next) {
+	management.allowHost(req, res);
+});
+router.post('/host/deny', function (req, res, next) {
+	management.denyHost(req, res);
+});
+router.post('/host/demote', function (req, res, next) {
+	management.demote(req, res);
 });
 
 module.exports = router;
