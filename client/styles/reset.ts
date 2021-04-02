@@ -27,6 +27,9 @@ const GlobalStyle = createGlobalStyle`
   button{
     cursor: pointer;
   }
+  button:hover{
+    background-color: linear-gradient(#ffffff,#aaaaaa)
+  }
   input:disabled{
     background-color: #e5e7e9;
   }

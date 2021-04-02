@@ -12,6 +12,9 @@ router.post('/register', function (req, res, next) {
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
+router.post('/update/photo', function (req, res, next) {
+	management.updatePhoto(req, res);
+});
 
 router.post('/updatePW', function (req, res, next) {
 	management.updatePW(req, res);

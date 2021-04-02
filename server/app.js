@@ -8,6 +8,8 @@ const noticeRouter = require('./routes/notice');
 const s3Router = require('./routes/s3');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+
 const cors = require('cors');
 
 const corsOptions = {
@@ -18,6 +20,7 @@ const corsOptions = {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(cors(corsOptions));
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);

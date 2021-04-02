@@ -51,6 +51,19 @@ module.exports.update = (req, res) => {
 	});
 };
 
+module.exports.updatePhoto = (req, res) => {
+	// 프로필 이미지 수정
+	const url = req.body.url;
+	const userId = req.body.id;
+	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${userId}"`;
+
+	mysql.query(sql, (err) => {
+		if (err) return console.log(err);
+
+		res.send({ success: true, message: '프로필 이미지 변경' });
+	});
+};
+
 module.exports.updatePW = (req, res) => {
 	// const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
 };
