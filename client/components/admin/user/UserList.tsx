@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../../../interfaces';
 import styled from 'styled-components';
-import UserItem from './UserItem';
+import UserItem from '../user/UserItem';
 import Button from '@material-ui/core/Button';
 import axios, { AxiosResponse } from 'axios';
 import SERVER from '../../../utils/url';
 import Router from 'next/router';
-import Search from '../../Search';
 
 type Props = {
   items: User[];
@@ -142,12 +141,17 @@ const EnableHostCheckedItems = (state) => {
 export default function UserList(props: Props) {
   const { search, items, isHost, isPreHost } = props;
   const [state, setState] = useState({});
+  const [select, setSelect] = useState('email');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
       ...state,
       [id]: checked,
     });
+  };
+  const onSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelect(event.target.value);
+    console.log(select);
   };
   const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -174,6 +178,7 @@ export default function UserList(props: Props) {
       : (url = 'http://localhost:3000/admin/user/list');
     Router.push(url);
   };
+
   return (
     <div>
       <UserTable>
@@ -181,15 +186,6 @@ export default function UserList(props: Props) {
           <Title onClick={pushBackHandler}>
             {isHost ? '호스트' : isPreHost ? '호스트 신청자' : '유저'} 리스트
           </Title>
-          <Search
-            items={items}
-            selectLabel='검색할 값'
-            inputLabel='을 입력하세요.'
-            buttonLabel='검색!'
-            routePage='http://localhost:3000/admin/user/'
-            marginTop='5rem'
-            isSearching={false}
-          />
         </caption>
         <thead>
           <tr>
