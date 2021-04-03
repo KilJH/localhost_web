@@ -8,6 +8,7 @@ export const UserStateContext = createContext({
 	nickname: '',
 	phone: '',
 	address: '',
+	photo: '',
 });
 
 // type UserSetter = Dispatch<SetStateAction<User>>;
@@ -25,6 +26,7 @@ export const UserContextProvider = ({ value, children }) => {
 		nickname: '',
 		phone: '',
 		address: '',
+		photo: '',
 	});
 	return (
 		<UserSetterContext.Provider value={value.setUser || setUser}>

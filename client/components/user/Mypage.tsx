@@ -8,7 +8,10 @@ import styled from 'styled-components';
 import ScrollContext from '../../context/scroll';
 import { useMediaQuery } from '@material-ui/core';
 
-interface Props {}
+interface Props {
+	followingUsers?: User[];
+	followers?: User[];
+}
 
 interface TabsProps {
 	fixed: boolean;
@@ -59,7 +62,11 @@ const Mypage = (props: Props) => {
 
 			<Privacy id='pravacy' />
 			<hr />
-			<MyFollow id='follow' />
+			<MyFollow
+				id='follow'
+				followingUsers={props.followingUsers}
+				followers={props.followers}
+			/>
 			<hr />
 			<MyBoard id='board' />
 		</MyPageContainer>

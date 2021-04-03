@@ -20,12 +20,16 @@ const GlobalStyle = createGlobalStyle`
     border-radius: .25rem;
     outline: none;
     box-sizing: border-box;
+    font-size: 0.8em;
   }
   h1, h2, h3, h4, h5, h6{
     font-family:'Maven Pro', sans-serif;
   }
   button{
     cursor: pointer;
+  }
+  button:hover{
+    background-color: linear-gradient(#ffffff,#aaaaaa)
   }
   input:disabled{
     background-color: #e5e7e9;
