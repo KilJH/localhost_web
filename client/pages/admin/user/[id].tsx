@@ -1,5 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
-import UserList from '../../../components/admin/UserList';
+import UserList from '../../../components/admin/user/UserList';
 import { User } from '../../../interfaces';
 import Layout from '../../../components/main/Layout';
 import axios from 'axios';
