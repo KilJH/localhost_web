@@ -158,6 +158,7 @@ const Request = (props: Props) => {
 						{countries.map((country) => (
 							<MenuItem value={country}>{country}</MenuItem>
 						))}
+						<MenuItem disabled>다른 국가는 아직 서비스 전입니다.</MenuItem>
 					</Select>
 				</div>
 				<div>

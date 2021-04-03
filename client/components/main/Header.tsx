@@ -41,7 +41,7 @@ const menuArray = [
 	{ name: '플랜보기', path: '/plans' },
 	{ name: '동행찾기', path: '/hosts' },
 	{ name: '공지사항', path: '/notices' },
-	{ name: '자유게시판', path: '/boards' },
+	{ name: '자유게시판', path: '/board' },
 	{ name: '소개', path: '/about' },
 	{ name: '문의하기', path: '/question' },
 	{ name: '유저보기', path: '/users' },

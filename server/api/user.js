@@ -183,16 +183,23 @@ module.exports.followList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		const idArr = [];
-		rows.forEach((user) => {
-			idArr.push(user.user_id);
-		});
+		if (rows.length) {
+			const idArr = [];
+			rows.forEach((user) => {
+				idArr.push(user.user_id);
+			});
 
-		const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
+			const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
 
-		mysql.query(sqlUser, (err, rows2) => {
-			if (err) return console.log(err);
-			res.status(200).send({ success: true, followingUsers: rows2 });
+			mysql.query(sqlUser, (err, rows2) => {
+				if (err) return console.log(err);
+				res.status(200).send({ success: true, followingUsers: rows2 });
+			});
+		}
+		res.send({
+			success: true,
+			message: '팔로우하는 유저가 없습니다.',
+			followingUsers: [],
 		});
 	});
 };
@@ -209,17 +216,20 @@ module.exports.followerList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		const idArr = [];
-		rows.forEach((user) => {
-			idArr.push(user.follower_id);
-		});
+		if (rows.length) {
+			const idArr = [];
+			rows.forEach((user) => {
+				idArr.push(user.follower_id);
+			});
 
-		const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
+			const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
 
-		mysql.query(sqlUser, (err, rows2) => {
-			if (err) return console.log(err);
-			res.status(200).send({ success: true, followers: rows2 });
-		});
+			mysql.query(sqlUser, (err, rows2) => {
+				if (err) return console.log(err);
+				res.status(200).send({ success: true, followers: rows2 });
+			});
+		}
+		res.send({ success: true, message: '팔로워가 없습니다.', followers: [] });
 	});
 };
 
