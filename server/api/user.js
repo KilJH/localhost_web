@@ -172,14 +172,55 @@ module.exports.follow = (req, res) => {
 };
 
 module.exports.followList = (req, res) => {
-	if (!req.userId) {
+	// 팔로우 리스트 가져오기
+	if (!req.body.userId) {
 		res.send({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
-
 	const sql = `SELECT * FROM follow WHERE follower_id = ?`;
-	// 팔로우 리스트 가져오기
+
+	mysql.query(sql, userId, (err, rows) => {
+		if (err) return console.log(err);
+		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
+		const idArr = [];
+		rows.forEach((user) => {
+			idArr.push(user.user_id);
+		});
+
+		const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
+
+		mysql.query(sqlUser, (err, rows2) => {
+			if (err) return console.log(err);
+			res.status(200).send({ success: true, followingUsers: rows2 });
+		});
+	});
+};
+
+module.exports.followerList = (req, res) => {
+	// 팔로워 리스트 가져오기
+	if (!req.body.userId) {
+		res.send({ success: false, message: '비정상적인 요청입니다.' });
+	}
+
+	const userId = req.body.userId;
+	const sql = `SELECT * FROM follow WHERE user_id = ?`;
+
+	mysql.query(sql, userId, (err, rows) => {
+		if (err) return console.log(err);
+		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
+		const idArr = [];
+		rows.forEach((user) => {
+			idArr.push(user.follower_id);
+		});
+
+		const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
+
+		mysql.query(sqlUser, (err, rows2) => {
+			if (err) return console.log(err);
+			res.status(200).send({ success: true, followers: rows2 });
+		});
+	});
 };
 
 module.exports.isFollowed = (req, res) => {
@@ -245,6 +286,11 @@ module.exports.requestHost = (req, res) => {
 	const userId = req.body.userId;
 	const hostInfo = req.body.hostInfo;
 
+	let languages = [...hostInfo.languages];
+	for (let i = languages.length; i < 3; i++) {
+		languages = [...languages, null];
+	}
+
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
 	const insert = `INSERT INTO host_request(user_id,country,language1,language2,language3,description) VALUES(?,?,?,?,?,?)`;
 
@@ -254,7 +300,7 @@ module.exports.requestHost = (req, res) => {
 			res.send({ success: false, message: '이미 신청한 상태입니다.' });
 		mysql.query(
 			insert,
-			[userId, hostInfo.country, ...hostInfo.languages, hostInfo.description],
+			[userId, hostInfo.country, ...languages, hostInfo.description],
 			(err) => {
 				if (err) return console.log(err);
 

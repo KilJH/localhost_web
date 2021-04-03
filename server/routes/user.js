@@ -22,12 +22,22 @@ router.post('/updatePW', function (req, res, next) {
 router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
+
+// 팔로우
 router.post('/follow', function (req, res, next) {
 	management.follow(req, res);
+});
+router.post('/followingList', function (req, res, next) {
+	management.followList(req, res);
+});
+router.post('/followerList/', function (req, res, next) {
+	management.followerList(req, res);
 });
 router.get('/follow', function (req, res, next) {
 	management.followList(req, res);
 });
+
+//
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });

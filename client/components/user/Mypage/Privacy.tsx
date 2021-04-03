@@ -10,6 +10,8 @@ import UserPhoto from '../UserPhoto';
 
 interface Props {
 	id: string;
+	followingUsers?: User[];
+	followers?: User[];
 }
 
 const Button = styled.button`
