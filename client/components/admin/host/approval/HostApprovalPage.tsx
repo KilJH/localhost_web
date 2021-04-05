@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import Search from './Search';
-import { User } from '../interfaces';
+import Search from '../../../search/Search';
+import { User } from '../../../../interfaces';
 import axios from 'axios';
-import SERVER from '../utils/url';
-import UserList from './admin/user/UserList';
+import SERVER from '../../../../utils/url';
+import HostApprovalList from './HostApprovalList';
 
 type Props = {
   items: User[];
-  search?: User;
-  isHost?: boolean;
-  isPreHost?: boolean;
 };
 
-export default function LoadSearch(props: Props) {
+export default function HostApprovalPage(props: Props) {
   const { items } = props;
   const [foundItems, setFoundItems] = useState([]);
 
@@ -32,9 +29,10 @@ export default function LoadSearch(props: Props) {
         label={['이메일', '닉네임', '이름']}
         onSubmit={onSubmit}
         selectLabel='검색할 값'
-        marginTop='5rem'
+        marginTop='4rem'
+        marginBottom='1rem'
       />
-      <UserList items={foundItems.length !== 0 ? foundItems : items} />
+      <HostApprovalList items={foundItems.length !== 0 ? foundItems : items} />
     </div>
   );
 }

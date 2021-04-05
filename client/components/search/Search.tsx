@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { User } from '../interfaces';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
+import SearchIcon from '@material-ui/icons/Search';
 import styled from 'styled-components';
-import _app from '../pages/_app';
-import { useInput } from '../hooks/useInput';
+import _app from '../../pages/_app';
+import { useInput } from '../../hooks/useInput';
+import { Box, Divider, IconButton, InputBase, Paper } from '@material-ui/core';
 
 type Props = {
   // 필수 Props
@@ -50,42 +51,46 @@ const SearchForm = styled.form<FormProps>`
 
 const SelectControl = styled(FormControl)`
   &.MuiFormControl-root {
-    width: 25%;
-    margin-right: 0.5rem;
-  }
-  & .MuiOutlinedInput-root {
-    height: -webkit-fill-available;
-    &.hover fieldset {
-      border-color: rgb(81, 151, 213);
-    }
-    &.Mui-focused fieldset {
-      border-color: rgb(81, 151, 213);
-    }
-  }
-`;
-
-const CssTextField = styled(TextField)`
-  &.MuiFormControl-root {
-    width: 80%;
-    margin-right: 0.5rem;
-  }
-  & .MuiOutlinedInput-root {
-    height: -webkit-fill-available;
-    &.hover fieldset {
-      border-color: rgb(81, 151, 213);
-    }
-    &.Mui-focused fieldset {
-      border-color: rgb(81, 151, 213);
-    }
-  }
-`;
-
-const SearchButton = styled(Button)`
-  &.MuiButton-root {
     width: 20%;
+    margin-right: 0.5rem;
   }
-  &.MuiButton-containedPrimary {
-    background-color: #5197d5;
+  & .MuiOutlinedInput-root {
+    height: -webkit-fill-available;
+    &.hover fieldset {
+      border-color: rgb(81, 151, 213);
+    }
+    &.Mui-focused fieldset {
+      border-color: rgb(81, 151, 213);
+    }
+  }
+`;
+
+const CssInputBase = styled(InputBase)`
+  width: 90%;
+  margin-left: 1rem;
+  & .MuiOutlinedInput-root {
+    height: -webkit-fill-available;
+    &.hover fieldset {
+      border-color: rgb(81, 151, 213);
+    }
+    &.Mui-focused fieldset {
+      border-color: rgb(81, 151, 213);
+    }
+  }
+`;
+const PaperForm = styled(Paper)`
+  display: flex;
+  align-items: center;
+  width: 80%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  &.MuiPaper-elevation1 {
+    box-shadow: none;
+  }
+  &:hover {
+    border-color: rgb(0, 0, 0);
+  }
+  &:focus-within {
+    border: 2px solid rgb(81, 151, 213);
   }
 `;
 
@@ -129,17 +134,19 @@ export default function Search(props: Props) {
           ))}
         </Select>
       </SelectControl>
-      <CssTextField
-        // onChange={onTextChange}
-        {...item}
-        label={inputLabel ? inputLabel : '입력'}
-        variant='outlined'
-        type='text'
-        // {...item}
-      />
-      <SearchButton type='submit' variant='contained' color='primary'>
-        {buttonLabel ? buttonLabel : '검색'}
-      </SearchButton>
+      <PaperForm component='form'>
+        <CssInputBase
+          // onChange={onTextChange}
+          {...item}
+          placeholder={inputLabel ? inputLabel : '입력'}
+          type='text'
+          // {...item}
+        />
+
+        <IconButton type='submit'>
+          <SearchIcon />
+        </IconButton>
+      </PaperForm>
     </SearchForm>
   );
 }

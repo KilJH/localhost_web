@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { User } from '../../../interfaces';
+import { User } from '../../../../interfaces';
 import styled from 'styled-components';
-import UserItem from '../user/UserItem';
+import UserItem from '../../user/UserItem';
 import Button from '@material-ui/core/Button';
-import axios, { AxiosResponse } from 'axios';
-import SERVER from '../../../utils/url';
 import Router from 'next/router';
 
 type Props = {
@@ -35,49 +33,39 @@ const ButtonDiv = styled.div`
   margin: 0 auto;
   margin-top: 1rem;
 `;
-
-const BlockButton = styled(Button)`
+const PreHostButton = styled(Button)`
   &.MuiButton-root {
     margin: 1rem;
-    width: 6rem;
+    width: 8rem;
   }
   &.MuiButton-containedPrimary {
     background-color: #5197d5;
   }
 `;
-
-const DeleteButton = styled(Button)`
-  &.MuiButton-root {
-    margin: 1rem;
-    width: 6rem;
-  }
-  &.MuiButton-containedSecondary {
-    background-color: #ff6b81;
-  }
-`;
 const Title = styled.h1`
   cursor: pointer;
 `;
-const DeleteCheckedItems = (state) => {
-  const keys = Object.keys(state);
-  const values = Object.values(state);
-  for (let i = 0; i < values.length; i++) {
-    if (values[i] === true) {
-      axios
-        .post(`${SERVER}/api/user/delete`, {
-          userId: keys[i],
-        })
-        .then((res: AxiosResponse<any>) => {
-          console.log(res.data);
-          alert(res.data.message);
-          if (res.data.success) {
-            Router.push('/admin/user/list');
-          }
-        });
-    }
-  }
+const EnableHostCheckedItems = (state) => {
+  // 호스트 승인 기능
+  // const keys = Object.keys(state);
+  // const values = Object.values(state);
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] === true) {
+  //     axios
+  //       .post(`${SERVER}/api/user/host/approve'`, {
+  //         userId: keys[i],
+  //       })
+  //       .then((res: AxiosResponse<any>) => {
+  //         console.log(res.data);
+  //         alert(res.data.message);
+  //         if (res.data.success) {
+  //           Router.push('/admin/host/approve');
+  //         }
+  //       });
+  //   }
+  // }
 };
-export default function UserList(props: Props) {
+export default function HostApprovalList(props: Props) {
   const { items } = props;
   const [state, setState] = useState({});
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,23 +75,20 @@ export default function UserList(props: Props) {
       [id]: checked,
     });
   };
-  const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const preHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    DeleteCheckedItems(state);
-  };
-  const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log(items);
+    EnableHostCheckedItems(state);
   };
   const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    Router.push('http://localhost:3000/admin/user/list');
+    e.preventDefault();
+    Router.push('http://localhost:3000/admin/host/approval');
   };
 
   return (
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>유저 리스트</Title>
+          <Title onClick={pushBackHandler}>호스트 요청자 리스트</Title>
         </caption>
         <thead>
           <tr>
@@ -126,22 +111,14 @@ export default function UserList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <BlockButton
-          type='button'
-          onClick={blockButtonHandler}
+        <PreHostButton
+          type='submit'
+          onClick={preHostButtonHandler}
           variant='contained'
           color='primary'
         >
-          유저 차단
-        </BlockButton>
-        <DeleteButton
-          type='submit'
-          onClick={deleteButtonHandler}
-          variant='contained'
-          color='secondary'
-        >
-          유저 삭제
-        </DeleteButton>
+          호스트 승인
+        </PreHostButton>
       </ButtonDiv>
     </div>
   );
