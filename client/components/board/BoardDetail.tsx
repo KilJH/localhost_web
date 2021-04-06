@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Board, Reply } from '../../interfaces';
+import CommentItem from './comment/CommentItem';
+import CommentWrite from './comment/CommentWrite';
 
 interface Props {
 	board: Board;
@@ -12,7 +14,7 @@ const BoardContainer = styled.div`
 		display: flex;
 		align-items: center;
 		line-height: 160%;
-		background-color: #eee;
+		background-color: rgba(81, 151, 213, 0.3);
 		& > *:first-child {
 			flex: 1;
 			margin: 0;
@@ -33,6 +35,13 @@ const BoardContainer = styled.div`
 	}
 `;
 
+const CommentContainer = styled.div`
+	background-color: rgba(81, 151, 213, 0.1);
+	& h4 {
+		margin: 0.5rem 0 1rem 0;
+	}
+`;
+
 const BoardDetail = (props: Props) => {
 	const { board, replies } = props;
 	return (
@@ -40,7 +49,7 @@ const BoardDetail = (props: Props) => {
 			{/* 제목 */}
 			<div className='title'>
 				<h4>{board.title}</h4>
-				<div>{board.createTime}</div>
+				<div>{board.createTime}작성일</div>
 			</div>
 			{/* 작성자와 작성일, 조회수, 댓글 수 */}
 			<div className='meta'>
@@ -53,11 +62,13 @@ const BoardDetail = (props: Props) => {
 			{/* 버튼들 */}
 
 			{/* 댓글 */}
-			<div>
+			<CommentContainer>
+				<h4>댓글[댓글 수]</h4>
 				{replies.map((reply) => (
-					<div>{reply.description}</div>
+					<CommentItem comment={reply} />
 				))}
-			</div>
+				<CommentWrite />
+			</CommentContainer>
 		</BoardContainer>
 	);
 };
