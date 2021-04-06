@@ -11,6 +11,9 @@ interface Props {
 
 const BoardContainer = styled.div`
 	margin: 1rem 0;
+	& > * {
+		margin: 0.25rem 0;
+	}
 `;
 
 const BoardList = (props: Props) => {
@@ -24,10 +27,11 @@ const BoardList = (props: Props) => {
 				label={['제목', '내용', '작성자']}
 				onSubmit={(e) => {}}
 			/>
-			{boards.map((board) => (
-				<BoardItem board={board} key={board.id} />
-			))}
-
+			<div>
+				{boards.map((board) => (
+					<BoardItem board={board} key={board.id} />
+				))}
+			</div>
 			{/* 작성버튼 */}
 			<Link href='/board/write'>
 				<button>작성</button>
