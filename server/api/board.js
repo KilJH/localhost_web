@@ -10,17 +10,23 @@ module.exports.list = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 
-		rows.sort((a, b) => { if(a.id > b.id) return -1; else return 1; })
+		rows.sort((a, b) => {
+			if (a.id > b.id) return -1;
+			else return 1;
+		});
 
 		const userSql = `SELECT * FROM user`;
 		mysql.query(userSql, (err, rows2, fields2) => {
-			const boards = rows.map((board)=>{
-				const user = rows2.filter((user)=>{return user.id===board.user_id})
 
-				return {...board, author: user}
-			})
-			res.status(200).send({ success: true, list: boards});
-		})
+			const boards = rows.map((board) => {
+				const user = rows2.filter((user) => {
+					return user.id === board.user_id;
+				})[0];
+
+				return { ...board, createTime: board.create_time, author: user };
+			});
+			res.status(200).send({ success: true, list: boards });
+		});
 	});
 };
 
@@ -68,19 +74,19 @@ module.exports.update = (req, res) => {
 
 	const sql = `UPDATE board SET title = "${title}", description = "${description}" WHERE id = "${id}";`;
 
-	mysql.query(sql, (err) =>{
-		if(err) return err;
+	mysql.query(sql, (err) => {
+		if (err) return err;
 
 		res.status(200).send({ success: true });
-	})
-}
+	});
+};
 
 module.exports.delete = (req, res) => {
-	const id = req.body.id // board id
+	const id = req.body.id; // board id
 
 	const sql = `DELETE FROM board WHERE id = ${id}`;
 
-	mysql.query(sql,(err) => {
+	mysql.query(sql, (err) => {
 		if (err) {
 			res.send({
 				success: false,
@@ -91,4 +97,4 @@ module.exports.delete = (req, res) => {
 
 		res.send({ success: true });
 	});
-}
+};
