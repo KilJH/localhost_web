@@ -26,14 +26,22 @@ type Props = {
   buttonLabel?: string;
 
   // 스타일링
+  width?: string | number;
   marginTop?: string | number;
   marginBottom?: string | number;
   marginLeft?: string | number;
   marginRight?: string | number;
+
+  // select와 input의 width를 %로 받음(기본값 20:80)
+  selectWidth?: string;
+  inputWidth?: string;
 };
 
 // 검색 폼 전체 Props
 interface FormProps {
+  width?: string | number;
+  selectWidth?: string;
+  inputWidth?: string;
   marginTop?: string | number;
   marginBottom?: string | number;
   marginLeft?: string | number;
@@ -44,16 +52,17 @@ interface FormProps {
 const SearchForm = styled.form<FormProps>`
   display: flex;
   height: 3em;
+  width: ${(props: FormProps) => props.width || 'auto'};
   margin-top: ${(props: FormProps) => props.marginTop || 0};
   margin-bottom: ${(props: FormProps) => props.marginBottom || 0};
   margin-left: ${(props: FormProps) => props.marginLeft || 0};
   margin-right: ${(props: FormProps) => props.marginRight || 0};
 `;
 
-const SelectControl = styled(FormControl)`
+const SelectControl = styled(FormControl)<FormProps>`
   height: 3em;
   &.MuiFormControl-root {
-    width: 20%;
+    width: ${(props: FormProps) => props.selectWidth || '20%'};
     margin-right: 0.5rem;
   }
   & .MuiOutlinedInput-root {
@@ -90,10 +99,10 @@ const CssInputBase = styled(InputBase)`
     }
   }
 `;
-const PaperForm = styled(Paper)`
+const PaperForm = styled(Paper)<FormProps>`
   display: flex;
   align-items: center;
-  width: 80%;
+  width: ${(props: FormProps) => props.inputWidth || '80%'};
   border: 1px solid rgba(0, 0, 0, 0.25);
   &.MuiPaper-elevation1 {
     box-shadow: none;
@@ -107,14 +116,7 @@ const PaperForm = styled(Paper)`
 `;
 
 export default function Search(props: Props) {
-  const {
-    options,
-    label,
-    selectLabel,
-    inputLabel,
-    buttonLabel,
-    onSubmit,
-  } = props;
+  const { options, label, selectLabel, inputLabel, onSubmit } = props;
 
   const sLabel = selectLabel ? selectLabel : '선택';
   const item = useInput('');
@@ -125,12 +127,13 @@ export default function Search(props: Props) {
       onSubmit={(e: React.FormEvent) => {
         onSubmit(e, type.value, item.value);
       }}
+      width={props.width}
       marginTop={props.marginTop}
       marginBottom={props.marginBottom}
       marginLeft={props.marginLeft}
       marginRight={props.marginRight}
     >
-      <SelectControl variant='outlined'>
+      <SelectControl variant='outlined' selectWidth={props.selectWidth}>
         <CssSelect
           //defaultValue={1}
           {...type}
@@ -148,7 +151,7 @@ export default function Search(props: Props) {
           ))}
         </CssSelect>
       </SelectControl>
-      <PaperForm component='form'>
+      <PaperForm component='form' inputWidth={props.inputWidth}>
         <CssInputBase
           // onChange={onTextChange}
           {...item}

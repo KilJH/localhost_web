@@ -31,6 +31,8 @@ export default function UserPage(props: Props) {
         selectLabel='검색할 값'
         marginTop='4rem'
         marginBottom='1rem'
+        selectWidth='20%'
+        inputWidth='80%'
       />
       <UserList items={foundItems.length !== 0 ? foundItems : items} />
     </div>
