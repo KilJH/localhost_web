@@ -14,10 +14,6 @@ module.exports.list = (req, res) => {
 
 		const userSql = `SELECT * FROM user`;
 		mysql.query(userSql, (err, rows2, fields2) => {
-			// for(let i=0; i<rows.length; i++){
-			// 	if(rows[i].user_id === rows2[]
-			// }
-
 			const boards = rows.map((board)=>{
 				const user = rows2.filter((user)=>{return user.id===board.user_id})
 
@@ -50,13 +46,18 @@ module.exports.load = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('load err: ', err);
 		const hit = rows[0].hit + 1;
-		const hitsql = `UPDATE board SET hit = ${hit} WHERE id = ${id}`;
+		const hitSql = `UPDATE board SET hit = ${hit} WHERE id = ${id}`;
 		
-		mysql.query(hitsql, (err, rows, fields)=>{
+		mysql.query(hitSql, (err)=>{
 			if (err) return err;
 		});
 
-		res.status(200).send({ success: true });
+		const replySql = `SELECT * FROM board_reply where id = ${id};`;
+		mysql.query(replySql, (err, rows2, fields2) => {
+			if(err) return console.log(err);
+			
+			res.status(200).send({ success: true , board: rows[0], reply: rows2[0]});
+		})
 	});
 };
 
