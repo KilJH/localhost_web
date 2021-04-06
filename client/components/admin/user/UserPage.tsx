@@ -11,7 +11,7 @@ type Props = {
 
 export default function UserPage(props: Props) {
   const { items } = props;
-  const [foundItems, setFoundItems] = useState([]);
+  const [foundItems, setFoundItems] = useState(items);
 
   const onSubmit = async (event: React.FormEvent, type, item) => {
     event.preventDefault();
@@ -31,10 +31,8 @@ export default function UserPage(props: Props) {
         selectLabel='검색할 값'
         marginTop='4rem'
         marginBottom='1rem'
-        selectWidth='20%'
-        inputWidth='80%'
       />
-      <UserList items={foundItems.length !== 0 ? foundItems : items} />
+      <UserList items={foundItems.length !== 0 ? foundItems : []} />
     </div>
   );
 }

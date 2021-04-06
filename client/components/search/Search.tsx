@@ -1,14 +1,12 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import SearchIcon from '@material-ui/icons/Search';
 import styled from 'styled-components';
 import _app from '../../pages/_app';
 import { useInput } from '../../hooks/useInput';
-import { Box, Divider, IconButton, InputBase, Paper } from '@material-ui/core';
+import { IconButton, InputBase, Paper } from '@material-ui/core';
 
 type Props = {
   // 필수 Props
@@ -40,12 +38,18 @@ type Props = {
 // 검색 폼 전체 Props
 interface FormProps {
   width?: string | number;
-  selectWidth?: string;
-  inputWidth?: string;
   marginTop?: string | number;
   marginBottom?: string | number;
   marginLeft?: string | number;
   marginRight?: string | number;
+}
+
+interface SelectProps {
+  selectWidth?: string;
+}
+
+interface InputProps {
+  inputWidth?: string;
 }
 
 // 검색 바디
@@ -59,10 +63,10 @@ const SearchForm = styled.form<FormProps>`
   margin-right: ${(props: FormProps) => props.marginRight || 0};
 `;
 
-const SelectControl = styled(FormControl)<FormProps>`
+const SelectControl = styled(FormControl)<SelectProps>`
   height: 3em;
   &.MuiFormControl-root {
-    width: ${(props: FormProps) => props.selectWidth || '20%'};
+    width: ${(props: SelectProps) => props.selectWidth || '20%'};
     margin-right: 0.5rem;
   }
   & .MuiOutlinedInput-root {
@@ -99,10 +103,10 @@ const CssInputBase = styled(InputBase)`
     }
   }
 `;
-const PaperForm = styled(Paper)<FormProps>`
+const PaperForm = styled(Paper)<InputProps>`
   display: flex;
   align-items: center;
-  width: ${(props: FormProps) => props.inputWidth || '80%'};
+  width: ${(props: InputProps) => props.inputWidth || '80%'};
   border: 1px solid rgba(0, 0, 0, 0.25);
   &.MuiPaper-elevation1 {
     box-shadow: none;
@@ -120,11 +124,11 @@ export default function Search(props: Props) {
 
   const sLabel = selectLabel ? selectLabel : '선택';
   const item = useInput('');
-  const type = useInput('nickname');
+  const type = useInput(options[0]);
 
   return (
     <SearchForm
-      onSubmit={(e: React.FormEvent) => {
+      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
         onSubmit(e, type.value, item.value);
       }}
       width={props.width}
@@ -135,11 +139,9 @@ export default function Search(props: Props) {
     >
       <SelectControl variant='outlined' selectWidth={props.selectWidth}>
         <CssSelect
-          //defaultValue={1}
           {...type}
           inputProps={{ 'aria-label': 'Without label' }}
           displayEmpty
-          // {...type}
         >
           <MenuItem value='' disabled>
             {sLabel}
@@ -151,13 +153,11 @@ export default function Search(props: Props) {
           ))}
         </CssSelect>
       </SelectControl>
-      <PaperForm component='form' inputWidth={props.inputWidth}>
+      <PaperForm inputWidth={props.inputWidth}>
         <CssInputBase
-          // onChange={onTextChange}
           {...item}
           placeholder={inputLabel ? inputLabel : '입력'}
           type='text'
-          // {...item}
         />
 
         <IconButton type='submit'>

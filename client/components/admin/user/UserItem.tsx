@@ -44,11 +44,6 @@ export default function UserItem(props: Props) {
         <td>
           <PushElement onClick={onClickHandler}>{user.name}</PushElement>
         </td>
-        <td>
-          <PushElement onClick={onClickHandler}>
-            {user.isadmin ? '관리자' : user.ishost ? '호스트' : '일반'}
-          </PushElement>
-        </td>
       </tr>
     </React.Fragment>
   );

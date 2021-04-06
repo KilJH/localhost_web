@@ -11,7 +11,7 @@ type Props = {
 
 export default function HostApprovalPage(props: Props) {
   const { items } = props;
-  const [foundItems, setFoundItems] = useState([]);
+  const [foundItems, setFoundItems] = useState(items);
 
   const onSubmit = async (event: React.FormEvent, type, item) => {
     event.preventDefault();
@@ -32,7 +32,7 @@ export default function HostApprovalPage(props: Props) {
         marginTop='4rem'
         marginBottom='1rem'
       />
-      <HostApprovalList items={foundItems.length !== 0 ? foundItems : items} />
+      <HostApprovalList items={foundItems.length !== 0 ? foundItems : []} />
     </div>
   );
 }
