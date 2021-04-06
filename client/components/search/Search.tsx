@@ -43,6 +43,7 @@ interface FormProps {
 // 검색 바디
 const SearchForm = styled.form<FormProps>`
   display: flex;
+  height: 3em;
   margin-top: ${(props: FormProps) => props.marginTop || 0};
   margin-bottom: ${(props: FormProps) => props.marginBottom || 0};
   margin-left: ${(props: FormProps) => props.marginLeft || 0};
@@ -50,6 +51,7 @@ const SearchForm = styled.form<FormProps>`
 `;
 
 const SelectControl = styled(FormControl)`
+  height: 3em;
   &.MuiFormControl-root {
     width: 20%;
     margin-right: 0.5rem;
@@ -64,7 +66,17 @@ const SelectControl = styled(FormControl)`
     }
   }
 `;
-
+const CssSelect = styled(Select)`
+  & .MuiSelect-selectMenu {
+    display: flex;
+    align-items: center;
+    padding: 0 1em;
+    height: 100%;
+  }
+  & .MuiSelect-select:focus {
+    background-color: rgba(0, 0, 0, 0);
+  }
+`;
 const CssInputBase = styled(InputBase)`
   width: 90%;
   margin-left: 1rem;
@@ -119,7 +131,7 @@ export default function Search(props: Props) {
       marginRight={props.marginRight}
     >
       <SelectControl variant='outlined'>
-        <Select
+        <CssSelect
           //defaultValue={1}
           {...type}
           inputProps={{ 'aria-label': 'Without label' }}
@@ -134,7 +146,7 @@ export default function Search(props: Props) {
               {label[i]}
             </MenuItem>
           ))}
-        </Select>
+        </CssSelect>
       </SelectControl>
       <PaperForm component='form'>
         <CssInputBase
