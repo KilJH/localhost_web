@@ -11,7 +11,20 @@ module.exports.list = (req, res) => {
 		if (err) return console.log('select err: ', err);
 
 		rows.sort((a, b) => { if(a.id > b.id) return -1; else return 1; })
-		res.status(200).send({ success: true, list: rows});
+
+		const userSql = `SELECT * FROM user`;
+		mysql.query(userSql, (err, rows2, fields2) => {
+			// for(let i=0; i<rows.length; i++){
+			// 	if(rows[i].user_id === rows2[]
+			// }
+
+			const boards = rows.map((board)=>{
+				const user = rows2.filter((user)=>{return user.id===board.user_id})
+
+				return {...board, author: user}
+			})
+			res.status(200).send({ success: true, list: boards});
+		})
 	});
 };
 
