@@ -1,10 +1,10 @@
-import { User } from '../../../interfaces';
 import React from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
+import { Notice } from '../../../interfaces';
 
 type Props = {
-  user: User;
+  item: Notice;
   state: object;
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
@@ -20,7 +20,7 @@ const PushElement = styled.a`
   cursor: pointer;
 `;
 export default function NoticeItem(props: Props) {
-  const { user, state, handleChange } = props;
+  const { item, state, handleChange } = props;
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
     const url = `http://localhost:3000/users/${user.id}`;
     Router.push(url);
@@ -30,24 +30,19 @@ export default function NoticeItem(props: Props) {
       <tr>
         <td>
           <Checkbox
-            id={user.id.toString()}
+            id={item.id.toString()}
             isChecked={state}
             onChange={handleChange}
           ></Checkbox>
         </td>
         <td>
-          <PushElement onClick={onClickHandler}>{user.email}</PushElement>
+          <PushElement onClick={onClickHandler}>{item.id}</PushElement>
         </td>
         <td>
-          <PushElement onClick={onClickHandler}>{user.nickname}</PushElement>
+          <PushElement onClick={onClickHandler}>{item.title}</PushElement>
         </td>
         <td>
-          <PushElement onClick={onClickHandler}>{user.name}</PushElement>
-        </td>
-        <td>
-          <PushElement onClick={onClickHandler}>
-            {user.isadmin ? '관리자' : user.ishost ? '호스트' : '일반'}
-          </PushElement>
+          <PushElement onClick={onClickHandler}>{item.createTime}</PushElement>
         </td>
       </tr>
     </React.Fragment>

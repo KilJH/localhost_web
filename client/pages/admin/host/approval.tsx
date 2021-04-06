@@ -25,8 +25,9 @@ export const getStaticProps: GetStaticProps = async () => {
   // Don't forget to include the respective types for any props passed into
   // the component.
 
-  const items: User[] = await (await axios.get(`${SERVER}/api/user/host/list`))
-    .data.hosts;
+  const items: User[] = await (
+    await axios.get(`${SERVER}/api/user/host/request/list`)
+  ).data.requestedHosts;
 
   return { props: { items } };
 };

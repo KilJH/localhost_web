@@ -27,7 +27,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const items: User[] = await (await axios.get(`${SERVER}/api/user/host/list`))
     .data.hosts;
-
   return { props: { items } };
 };
 

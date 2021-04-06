@@ -144,7 +144,7 @@ export default function HostApprovalList(props: Props) {
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>호스트 요청자 리스트</Title>
+          <Title onClick={pushBackHandler}>호스트 신청자 리스트</Title>
         </caption>
         <thead>
           <tr>

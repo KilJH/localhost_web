@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { User } from '../../../interfaces';
+import React, { useState } from 'react';
+import { Notice } from '../../../interfaces';
 import styled from 'styled-components';
-import NoticeItem from './NoticeItem';
 import Button from '@material-ui/core/Button';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import SERVER from '../../../utils/url';
 import Router from 'next/router';
+import NoticeItem from './NoticeItem';
 
 type Props = {
-  items: User[];
-  search?: User;
-  isHost?: boolean;
-  isPreHost?: boolean;
+  items: Notice[];
 };
 
 const UserTable = styled.table`
@@ -58,26 +58,18 @@ const DeleteButton = styled(Button)`
     background-color: #ff6b81;
   }
 `;
-const HostButton = styled(Button)`
-  &.MuiButton-root {
-    margin: 1rem;
-    width: 8rem;
-  }
-  &.MuiButton-containedSecondary {
-    background-color: #ff6b81;
-  }
-`;
-const PreHostButton = styled(Button)`
-  &.MuiButton-root {
-    margin: 1rem;
-    width: 8rem;
-  }
-  &.MuiButton-containedPrimary {
-    background-color: #5197d5;
-  }
-`;
 const Title = styled.h1`
   cursor: pointer;
+`;
+
+const CssTh = styled.th`
+  padding-left: 1rem;
+`;
+
+const CssIconButton = styled(IconButton)`
+  &.MuiIconButton-root {
+    padding: 0;
+  }
 `;
 const DeleteCheckedItems = (state) => {
   const keys = Object.keys(state);
@@ -98,49 +90,12 @@ const DeleteCheckedItems = (state) => {
     }
   }
 };
-const DisableHostCheckedItems = (state) => {
-  // 호스트 해제 기능
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/user/host/disable'`, {
-  //         userId: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         console.log(res.data);
-  //         alert(res.data.message);
-  //         if (res.data.success) {
-  //           Router.push('/admin/host/disable');
-  //         }
-  //       });
-  //   }
-  // }
-};
-const EnableHostCheckedItems = (state) => {
-  // 호스트 승인 기능
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/user/host/approve'`, {
-  //         userId: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         console.log(res.data);
-  //         alert(res.data.message);
-  //         if (res.data.success) {
-  //           Router.push('/admin/host/approve');
-  //         }
-  //       });
-  //   }
-  // }
-};
 export default function NoticeList(props: Props) {
-  const { search, items, isHost, isPreHost } = props;
+  const { items } = props;
   const [state, setState] = useState({});
+  const [noState, setNoState] = useState(false);
+  const [nicknameState, setNicknameState] = useState(false);
+  const [nameState, setNameState] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -156,58 +111,89 @@ export default function NoticeList(props: Props) {
     e.preventDefault();
     console.log(items);
   };
-  const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    DisableHostCheckedItems(state);
-  };
-  const preHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    EnableHostCheckedItems(state);
-  };
   const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    let url: string;
-    isHost
-      ? (url = 'http://localhost:3000/admin/host/list')
-      : isPreHost
-      ? (url = 'http://localhost:3000/admin/host/approval')
-      : (url = 'http://localhost:3000/admin/user/list');
-    Router.push(url);
+    Router.push('http://localhost:3000/admin/user/list');
+  };
+  const noSortHandler = () => {
+    setNameState(false);
+    setNicknameState(false);
+    setNoState(!noState);
+    if (noState) {
+      items.sort(function (a: any, b: any) {
+        return a.email < b.email ? -1 : a.email > b.email ? 1 : 0;
+      });
+    } else {
+      items.sort(function (a: any, b: any) {
+        return a.email > b.email ? -1 : a.email < b.email ? 1 : 0;
+      });
+    }
+  };
+  const nicknameSortHandler = () => {
+    setNoState(false);
+    setNameState(false);
+    setNicknameState(!nicknameState);
+    if (nicknameState) {
+      items.sort(function (a: any, b: any) {
+        return a.nickname < b.nickname ? -1 : a.nickname > b.nickname ? 1 : 0;
+      });
+    } else {
+      items.sort(function (a: any, b: any) {
+        return a.nickname > b.nickname ? -1 : a.nickname < b.nickname ? 1 : 0;
+      });
+    }
+  };
+  const nameSortHandler = () => {
+    setNoState(false);
+    setNicknameState(false);
+    setNameState(!nameState);
+    if (nameState) {
+      items.sort(function (a: any, b: any) {
+        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+      });
+    } else {
+      items.sort(function (a: any, b: any) {
+        return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
+      });
+    }
   };
   return (
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>
-            {isHost ? '호스트' : isPreHost ? '호스트 신청자' : '유저'} 리스트
-          </Title>
+          <Title onClick={pushBackHandler}>공지목록</Title>
         </caption>
         <thead>
           <tr>
             <th>선택</th>
-            <th>이메일</th>
-            <th>닉네임</th>
-            <th>이름</th>
-            <th>회원분류</th>
+            <CssTh>
+              번호
+              <CssIconButton onClick={noSortHandler}>
+                {noState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              </CssIconButton>
+            </CssTh>
+            <CssTh>
+              공지제목
+              <CssIconButton onClick={nicknameSortHandler}>
+                {nicknameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              </CssIconButton>
+            </CssTh>
+            <CssTh>
+              작성날짜
+              <CssIconButton onClick={nameSortHandler}>
+                {nameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              </CssIconButton>
+            </CssTh>
           </tr>
         </thead>
         <tbody>
-          {search ? (
+          {items.map((item) => (
             <NoticeItem
-              key={search.id}
-              user={search}
+              key={item.id}
+              item={item}
               state={state}
               handleChange={handleChange}
             />
-          ) : (
-            items.map((item) => (
-              <NoticeItem
-                key={item.id}
-                user={item}
-                state={state}
-                handleChange={handleChange}
-              />
-            ))
-          )}
+          ))}
         </tbody>
       </UserTable>
       <ButtonDiv>
@@ -216,9 +202,6 @@ export default function NoticeList(props: Props) {
           onClick={blockButtonHandler}
           variant='contained'
           color='primary'
-          style={
-            isHost || isPreHost ? { display: 'none' } : { display: 'default' }
-          }
         >
           유저 차단
         </BlockButton>
@@ -227,30 +210,9 @@ export default function NoticeList(props: Props) {
           onClick={deleteButtonHandler}
           variant='contained'
           color='secondary'
-          style={
-            isHost || isPreHost ? { display: 'none' } : { display: 'default' }
-          }
         >
           유저 삭제
         </DeleteButton>
-        <HostButton
-          type='submit'
-          onClick={hostButtonHandler}
-          variant='contained'
-          color='secondary'
-          style={isHost ? { display: 'default' } : { display: 'none' }}
-        >
-          호스트 해제
-        </HostButton>
-        <PreHostButton
-          type='submit'
-          onClick={preHostButtonHandler}
-          variant='contained'
-          color='primary'
-          style={isPreHost ? { display: 'default' } : { display: 'none' }}
-        >
-          호스트 승인
-        </PreHostButton>
       </ButtonDiv>
     </div>
   );

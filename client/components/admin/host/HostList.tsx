@@ -7,6 +7,8 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
+import SERVER from '../../../utils/url';
+import axios, { AxiosResponse } from 'axios';
 
 type Props = {
   items: User[];
@@ -59,23 +61,23 @@ const CssIconButton = styled(IconButton)`
 `;
 const DisableHostCheckedItems = (state) => {
   // 호스트 해제 기능
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/user/host/disable'`, {
-  //         userId: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         console.log(res.data);
-  //         alert(res.data.message);
-  //         if (res.data.success) {
-  //           Router.push('/admin/host/disable');
-  //         }
-  //       });
-  //   }
-  // }
+  const keys = Object.keys(state);
+  const values = Object.values(state);
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === true) {
+      axios
+        .post(`${SERVER}/api/user/host/demote`, {
+          userId: keys[i],
+        })
+        .then((res: AxiosResponse<any>) => {
+          console.log(res.data);
+          alert(res.data.message);
+          if (res.data.success) {
+            Router.push('/admin/host/list');
+          }
+        });
+    }
+  }
 };
 export default function HostList(props: Props) {
   const { items } = props;
