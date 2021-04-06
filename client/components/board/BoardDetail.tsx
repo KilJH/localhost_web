@@ -6,7 +6,7 @@ import CommentWrite from './comment/CommentWrite';
 
 interface Props {
 	board: Board;
-	replies: Reply[];
+	comments: Reply[];
 }
 
 const BoardContainer = styled.div`
@@ -43,17 +43,18 @@ const CommentContainer = styled.div`
 `;
 
 const BoardDetail = (props: Props) => {
-	const { board, replies } = props;
+	const { board, comments } = props;
+	console.log(props);
 	return (
 		<BoardContainer>
 			{/* 제목 */}
 			<div className='title'>
 				<h4>{board.title}</h4>
-				<div>{board.createTime}작성일</div>
+				<div>{board.createTime}</div>
 			</div>
 			{/* 작성자와 작성일, 조회수, 댓글 수 */}
 			<div className='meta'>
-				{333}, {board.hit}, 댓글수
+				{board.author.nickname}, {board.hit}, 댓글수
 			</div>
 
 			{/* 버튼들 */}
@@ -64,7 +65,7 @@ const BoardDetail = (props: Props) => {
 			{/* 댓글 */}
 			<CommentContainer>
 				<h4>댓글[댓글 수]</h4>
-				{replies.map((reply) => (
+				{comments.map((reply) => (
 					<CommentItem comment={reply} />
 				))}
 				<CommentWrite />

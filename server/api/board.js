@@ -46,33 +46,54 @@ module.exports.write = (req, res) => {
 module.exports.load = (req, res) => {
 	// 게시글 불러오기
 	const id = req.body.id; // board id
-	const sql = `SELECT * FROM board WHERE id = ${id};`;
 
-	mysql.query(sql, (err, rows, fields) => {
-		if (err) return console.log('load err: ', err);
-		const hit = rows[0].hit + 1;
-		const hitSql = `UPDATE board SET hit = ${hit} WHERE id = ${id}`;
+	// 1. 해당 id의 게시물과 유저정보를 불러온다.
+	// 결과값이 행 한 개 -> rows[0] 해줘야됨
+	const boardSql = `SELECT * FROM board LEFT JOIN user ON board.user_id = user.id WHERE board.id = ${id};`;
+	mysql.query(boardSql, (err, boardRows) => {
+		if (err) return console.log(err);
 
-		mysql.query(hitSql, (err) => {
-			if (err) return err;
-		});
+		// 2. 해당 board_id의 코멘트와 유저정보를 불러온다.
+		// 결과값을 배열 그대로 넘겨준다.
+		const commentSql = `SELECT * FROM board_reply LEFT JOIN user ON board_reply.user_id = user.id WHERE board_reply.board_id = ${id}`;
+		mysql.query(commentSql, (err2, commentsRows) => {
+			if (err2) return console.log(err2);
 
-		const userSql = `SELECT * FROM user WHERE id = ${rows[0].user_id};`;
-		mysql.query(userSql, (err, user, fields2) => {
-			if (err) return err;
+			// 게시물 객체 생성
+			const board = {
+				id: boardRows[0].id,
+				title: boardRows[0].title,
+				description: boardRows[0].description,
+				createTime: boardRows[0].create_time, // 수정 필요
+				hit: boardRows.hit,
+				author: {
+					id: boardRows[0].user_id,
+					name: boardRows[0].name,
+					email: boardRows[0].email,
+					nickname: boardRows[0].nickname,
+					photo: boardRows[0].photo,
+				},
+			};
 
-			const replySql = `SELECT * FROM board_reply where id = ${id};`;
-			mysql.query(replySql, (err, reply, fields3) => {
-				if (err) return console.log(err);
-				const boards = rows.map((board)=>{ return {board, user}; })
-
-				const replyUserSql = `SELECT * FROM user WHERE id = ${reply[0].user_id};`;
-				mysql.query(replyUserSql, (err, user2, fields4) => {
-					const replies = rows.map(()=>{ return {reply, user2}})
-
-					res.status(200).send({ success: true, board: boards, reply: replies });
-				})
+			// 댓글 배열 생성
+			const comments = commentsRows.map((comment) => {
+				return {
+					id: comment.id,
+					description: comment.description,
+					createTiem: comment.create_time,
+					user: {
+						id: comment.user_id,
+						name: comment.name,
+						email: comment.email,
+						nickname: comment.nickname,
+						photo: comment.photo,
+					},
+				};
 			});
+
+			// 3. Board와 Comment[] 객체를 넘겨준다.( 불필요 정보 없어도 됨 )
+			// 객체의 키 값은 client/interfaces/index.ts 참조
+			res.status(200).send({ success: true, board, comments });
 		});
 	});
 };

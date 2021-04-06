@@ -9,7 +9,7 @@ import SERVER from '../../utils/url';
 interface Props {
 	pageProps: {
 		board: Board;
-		replies: Reply[];
+		comments: Reply[];
 	};
 }
 
@@ -36,7 +36,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const res = await axios.post(`${SERVER}/api/board/load`, { id: params.id });
 
-	return { props: { board: res.data.board, replies: res.data.reply || [] } };
+	return {
+		props: { board: res.data.board, comments: res.data.comments || [] },
+	};
 };
 
 export default BoardDetailPage;

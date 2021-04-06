@@ -2,10 +2,10 @@ export interface User {
 	id: number;
 	name: string;
 	email: string;
-	password: string;
+	password?: string;
 	nickname: string;
-	phone: string;
-	address: string;
+	phone?: string;
+	address?: string;
 	photo?: string;
 	isAdmin?: number;
 	isHost?: number;
