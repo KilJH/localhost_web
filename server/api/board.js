@@ -9,18 +9,18 @@ module.exports.list = (req, res) => {
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		for (let i = 0; i < rows.length; i++) console.log(rows[i]);
 
-		res.status(200).send({ success: true });
+		rows.sort((a, b) => { if(a.id > b.id) return -1; else return 1; })
+		res.status(200).send({ success: true, list: rows});
 	});
 };
 
 module.exports.write = (req, res) => {
 	// 게시글 작성
-	const user_id = req.body.user_id;
+	const userId = req.body.userId;
 	const title = req.body.title;
 	const description = req.body.description;
-	const sql = `INSERT INTO board(user_id, title, description) VALUES("${user_id}", "${title}", "${description}");`;
+	const sql = `INSERT INTO board(user_id, title, description) VALUES("${userId}", "${title}", "${description}");`;
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('write err: ', err);
@@ -35,9 +35,46 @@ module.exports.load = (req, res) => {
 	const sql = `SELECT * FROM board WHERE id = ${id};`;
 
 	mysql.query(sql, (err, rows, fields) => {
-		if (err) return console.log('write err: ', err);
-		console.log(rows[0].description);
+		if (err) return console.log('load err: ', err);
+		const hit = rows[0].hit + 1;
+		const hitsql = `UPDATE board SET hit = ${hit} WHERE id = ${id}`;
+		
+		mysql.query(hitsql, (err, rows, fields)=>{
+			if (err) return err;
+		});
 
 		res.status(200).send({ success: true });
 	});
 };
+
+module.exports.update = (req, res) => {
+	const id = req.body.id; // board id
+	const title = req.body.title;
+	const description = req.body.description;
+
+	const sql = `UPDATE board SET title = "${title}", description = "${description}" WHERE id = "${id}";`;
+
+	mysql.query(sql, (err) =>{
+		if(err) return err;
+
+		res.status(200).send({ success: true });
+	})
+}
+
+module.exports.delete = (req, res) => {
+	const id = req.body.id // board id
+
+	const sql = `DELETE FROM board WHERE id = ${id}`;
+
+	mysql.query(sql,(err) => {
+		if (err) {
+			res.send({
+				success: false,
+				message: 'SQL 오류로 회원 삭제에 실패했습니다.',
+			});
+			console.log('DELETE err: ', err);
+		}
+
+		res.send({ success: true });
+	});
+}

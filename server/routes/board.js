@@ -17,4 +17,13 @@ router.post('/load', function (req, res, next) {
 	management.load(req, res);
 });
 
+router.post('/update', function (req, res, next) {
+	management.update(req, res);
+});
+
+router.post('/delete', function (req, res, next) {
+	management.delete(req, res);
+});
+
+
 module.exports = router;
