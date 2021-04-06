@@ -37,8 +37,15 @@ export interface Notice {
 export interface Board {
 	id: number;
 	title: string;
-	content: string;
+	description: string;
 	author: User;
 	createTime: string;
 	hit: number;
+}
+
+export interface Reply {
+	id: number;
+	user: User;
+	description: string;
+	createTime: string;
 }
