@@ -2,9 +2,9 @@ import { GetStaticProps } from 'next';
 import { User } from '../../../interfaces';
 import React from 'react';
 import Layout from '../../../components/main/Layout';
-import UserList from '../../../components/admin/user/UserList';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
+import UserPage from '../../../components/admin/user/UserPage';
 
 type Props = {
   pageProps: {
@@ -15,7 +15,7 @@ type Props = {
 const list = ({ pageProps }: Props) => {
   return (
     <Layout title='회원목록 | localhost'>
-      <UserList {...pageProps} />
+      <UserPage {...pageProps}></UserPage>
     </Layout>
   );
 };
