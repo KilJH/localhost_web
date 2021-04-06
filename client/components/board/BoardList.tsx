@@ -3,8 +3,11 @@ import Search from '../search/Search';
 import BoardItem from './BoardItem';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { Board } from '../../interfaces';
 
-interface Props {}
+interface Props {
+	boards: Board[];
+}
 
 const sample = {
 	id: 1,
@@ -28,6 +31,7 @@ const BoardContainer = styled.div`
 `;
 
 const BoardList = (props: Props) => {
+	const { boards } = props;
 	return (
 		<BoardContainer>
 			<h2>자유게시판</h2>
@@ -37,6 +41,10 @@ const BoardList = (props: Props) => {
 				label={['제목', '내용', '작성자']}
 				onSubmit={(e) => {}}
 			/>
+			{boards.map((board) => (
+				<BoardItem board={board} key={board.id} />
+			))}
+
 			<BoardItem board={sample} />
 			<BoardItem board={sample} />
 

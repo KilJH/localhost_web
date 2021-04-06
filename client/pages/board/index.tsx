@@ -12,10 +12,10 @@ interface Props {
 	};
 }
 
-const index = (props: Props) => {
+const index = ({ pageProps }: Props) => {
 	return (
 		<Layout title='자유게시판 | localhost'>
-			<BoardList />
+			<BoardList boards={pageProps.boards} />
 		</Layout>
 	);
 };
@@ -25,5 +25,5 @@ export default index;
 export const getStaticProps: GetStaticProps = async (ctx) => {
 	const res = await axios.get(`${SERVER}/api/board/list`);
 
-	return { props: {} };
+	return { props: { boards: res.data.list } };
 };
