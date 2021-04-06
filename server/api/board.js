@@ -9,18 +9,32 @@ module.exports.list = (req, res) => {
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		for (let i = 0; i < rows.length; i++) console.log(rows[i]);
 
-		res.status(200).send({ success: true });
+		rows.sort((a, b) => {
+			if (a.id > b.id) return -1;
+			else return 1;
+		});
+
+		const userSql = `SELECT * FROM user`;
+		mysql.query(userSql, (err, rows2, fields2) => {
+			const boards = rows.map((board) => {
+				const user = rows2.filter((user) => {
+					return user.id === board.user_id;
+				})[0];
+
+				return { ...board, createTime: board.create_time, author: user };
+			});
+			res.status(200).send({ success: true, list: boards });
+		});
 	});
 };
 
 module.exports.write = (req, res) => {
 	// 게시글 작성
-	const user_id = req.body.user_id;
+	const userId = req.body.userId;
 	const title = req.body.title;
 	const description = req.body.description;
-	const sql = `INSERT INTO board(user_id, title, description) VALUES("${user_id}", "${title}", "${description}");`;
+	const sql = `INSERT INTO board(user_id, title, description) VALUES("${userId}", "${title}", "${description}");`;
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('write err: ', err);
@@ -35,9 +49,62 @@ module.exports.load = (req, res) => {
 	const sql = `SELECT * FROM board WHERE id = ${id};`;
 
 	mysql.query(sql, (err, rows, fields) => {
-		if (err) return console.log('write err: ', err);
-		console.log(rows[0].description);
+		if (err) return console.log('load err: ', err);
+		const hit = rows[0].hit + 1;
+		const hitSql = `UPDATE board SET hit = ${hit} WHERE id = ${id}`;
+
+		mysql.query(hitSql, (err) => {
+			if (err) return err;
+		});
+
+		const userSql = `SELECT * FROM user WHERE id = ${rows[0].user_id};`;
+		mysql.query(userSql, (err, user, fields2) => {
+			if (err) return err;
+
+			const replySql = `SELECT * FROM board_reply where id = ${id};`;
+			mysql.query(replySql, (err, reply, fields3) => {
+				if (err) return console.log(err);
+				const boards = rows.map((board)=>{ return {board, user}; })
+
+				const replyUserSql = `SELECT * FROM user WHERE id = ${reply[0].user_id};`;
+				mysql.query(replyUserSql, (err, user2, fields4) => {
+					const replies = rows.map(()=>{ return {reply, user2}})
+
+					res.status(200).send({ success: true, board: boards, reply: replies });
+				})
+			});
+		});
+	});
+};
+
+module.exports.update = (req, res) => {
+	const id = req.body.id; // board id
+	const title = req.body.title;
+	const description = req.body.description;
+
+	const sql = `UPDATE board SET title = "${title}", description = "${description}" WHERE id = "${id}";`;
+
+	mysql.query(sql, (err) => {
+		if (err) return err;
 
 		res.status(200).send({ success: true });
+	});
+};
+
+module.exports.delete = (req, res) => {
+	const id = req.body.id; // board id
+
+	const sql = `DELETE FROM board WHERE id = ${id}`;
+
+	mysql.query(sql, (err) => {
+		if (err) {
+			res.send({
+				success: false,
+				message: 'SQL 오류로 회원 삭제에 실패했습니다.',
+			});
+			console.log('DELETE err: ', err);
+		}
+
+		res.send({ success: true });
 	});
 };
