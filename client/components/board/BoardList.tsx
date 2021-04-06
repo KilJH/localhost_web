@@ -9,23 +9,6 @@ interface Props {
 	boards: Board[];
 }
 
-const sample = {
-	id: 1,
-	title: 'title',
-	content: 'contetnt',
-	author: {
-		id: 1,
-		name: 'kil',
-		email: 'string;',
-		password: 'string;',
-		nickname: 'string;',
-		phone: 'string;',
-		address: 'string;',
-	},
-	createTime: '2021-04-03',
-	hit: 1,
-};
-
 const BoardContainer = styled.div`
 	margin: 1rem 0;
 `;
@@ -44,9 +27,6 @@ const BoardList = (props: Props) => {
 			{boards.map((board) => (
 				<BoardItem board={board} key={board.id} />
 			))}
-
-			<BoardItem board={sample} />
-			<BoardItem board={sample} />
 
 			{/* 작성버튼 */}
 			<Link href='/board/write'>

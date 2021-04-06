@@ -38,6 +38,7 @@ const ItemContainer = styled.div`
 `;
 const BoardItem = (props: Props) => {
 	const { board } = props;
+	console.log(board);
 	return (
 		<ItemContainer>
 			{/* 링크 */}
