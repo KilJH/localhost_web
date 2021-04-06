@@ -62,6 +62,7 @@ module.exports.load = (req, res) => {
 		mysql.query(replySql, (err, rows2, fields2) => {
 			if(err) return console.log(err);
 			
+			if(rows2.length!=0){}
 			res.status(200).send({ success: true , board: rows[0], reply: rows2[0]});
 		})
 	});
