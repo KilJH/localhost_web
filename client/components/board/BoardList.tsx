@@ -32,6 +32,11 @@ const BoardList = (props: Props) => {
 		<BoardContainer>
 			<h2>자유게시판</h2>
 			{/* 검색 */}
+			<Search
+				options={['title', 'content', 'author']}
+				label={['제목', '내용', '작성자']}
+				onSubmit={(e) => {}}
+			/>
 			<BoardItem board={sample} />
 			<BoardItem board={sample} />
 

@@ -37,6 +37,7 @@ export interface Notice {
 export interface Board {
 	id: number;
 	title: string;
+	content: string;
 	author: User;
 	createTime: string;
 	hit: number;
