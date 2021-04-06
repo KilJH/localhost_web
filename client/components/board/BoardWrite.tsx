@@ -1,6 +1,10 @@
-import React from 'react';
+import axios from 'axios';
+import Router from 'next/router';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { UserStateContext } from '../../context/user';
 import { useInput } from '../../hooks/useInput';
+import SERVER from '../../utils/url';
 
 interface Props {}
 
@@ -55,8 +59,18 @@ const Button = styled.button`
 const BoardWrite = (props: Props) => {
 	const title = useInput('');
 	const content = useInput('');
+	const currentUser = useContext(UserStateContext);
 
-	const onSubmit = (e: React.FormEvent) => {};
+	const onSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const res = await axios.post(`${SERVER}/api/board/write`, {
+			userId: currentUser.id,
+			title: title.value,
+			description: content.value,
+		});
+
+		res.data.success ? Router.push('/board') : alert(res.data.message);
+	};
 
 	return (
 		<WriteContainer>

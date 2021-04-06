@@ -17,10 +17,10 @@ module.exports.list = (req, res) => {
 
 module.exports.write = (req, res) => {
 	// 게시글 작성
-	const user_id = req.body.user_id;
+	const userId = req.body.userId;
 	const title = req.body.title;
 	const description = req.body.description;
-	const sql = `INSERT INTO board(user_id, title, description) VALUES("${user_id}", "${title}", "${description}");`;
+	const sql = `INSERT INTO board(user_id, title, description) VALUES("${userId}", "${title}", "${description}");`;
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('write err: ', err);
