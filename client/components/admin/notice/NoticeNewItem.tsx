@@ -19,7 +19,7 @@ const Checkbox = styled.input.attrs({
 const PushElement = styled.a`
   cursor: pointer;
 `;
-export default function NoticeItem(props: Props) {
+export default function NoticeNewItem(props: Props) {
   const { item, state, handleChange } = props;
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
     // const url = `http://localhost:3000/users/${user.id}`;

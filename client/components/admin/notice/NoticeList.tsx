@@ -88,23 +88,21 @@ const DeleteCheckedItems = (state) => {
   }
 };
 const WriteItem = (state) => {
-  const keys = Object.keys(state);
-  const values = Object.values(state);
-  for (let i = 0; i < values.length; i++) {
-    if (values[i] === true) {
-      axios
-        .post(`${SERVER}/api/board/delete`, {
-          id: keys[i],
-        })
-        .then((res: AxiosResponse<any>) => {
-          console.log(res.data);
-          alert(res.data.message);
-          if (res.data.success) {
-            Router.push('/admin/user/list');
-          }
-        });
-    }
-  }
+  // const keys = Object.keys(state);
+  // const values = Object.values(state);
+  // for (let i = 0; i < values.length; i++) {
+  //   if (values[i] === true) {
+  //     axios
+  //       .post(`${SERVER}/api/board/write`, {
+  //         id: keys[i],
+  //       })
+  //       .then((res: AxiosResponse<any>) => {
+  //         if (res.data.success) {
+  //           Router.push('/admin/notice/list');
+  //         }
+  //       });
+  //   }
+  // }
 };
 export default function NoticeList(props: Props) {
   const { items } = props;
