@@ -26,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	const paths = await (
 		await axios.get(`${SERVER}/api/board/list`)
-	).data.list.map((board) => ({
+	).data.wholeList.map((board) => ({
 		params: { id: board.id.toString() },
 	}));
 

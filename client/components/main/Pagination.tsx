@@ -6,8 +6,8 @@ import styled from 'styled-components';
 interface Props {
 	currentIdx: number;
 	lastIdx: number;
-	url?: string;
-	api?: string;
+	url?: string; // 클라이언트의 주소
+	api?: string; // 데이터를 요청할 API 주소
 	setItems?: Function;
 }
 
@@ -93,11 +93,11 @@ const Pagination = (props: Props) => {
 				</PageButton>
 				{idxs.map((idx) =>
 					idx == currentIdx ? (
-						<PageButton>
+						<PageButton key={idx}>
 							<button className='current'>{idx}</button>
 						</PageButton>
 					) : (
-						<PageButton>
+						<PageButton key={idx}>
 							<Link href={`${url}?page=${idx}`}>
 								<button
 									onClick={() => {

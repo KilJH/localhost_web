@@ -41,8 +41,6 @@ module.exports.list = (req, res) => {
 	const sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id GROUP BY board.id ORDER BY board.create_time DESC`;
 	const page = req.query.page || 1;
 
-	console.log('페이지', page);
-
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err: ', err);
 
@@ -66,13 +64,12 @@ module.exports.list = (req, res) => {
 
 		const results = boards.slice((page - 1) * 10, page * 10);
 
-		console.log(results);
-
 		res.status(200).send({
 			success: true,
 			list: results,
 			lastIdx: Math.floor(boards.length / 10) + 1,
 			page: page,
+			wholeList: boards,
 		});
 	});
 };
@@ -237,8 +234,6 @@ module.exports.search = (req, res) => {
 				numOfComment: board.num_comment,
 			};
 		});
-
-		console.log(boards);
 
 		res.status(200).send({ success: true, list: boards });
 	});
