@@ -1,10 +1,10 @@
-import { User } from '../../../interfaces';
-import React from 'react';
+import { Host, User } from '../../../interfaces';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import Router from 'next/router';
+import UserDetail from './UserDetail';
 
 type Props = {
-  user: User;
+  user: User | Host;
   state: object;
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
@@ -21,14 +21,20 @@ const PushElement = styled.a`
 `;
 export default function UserItem(props: Props) {
   const { user, state, handleChange } = props;
+  const [detailState, setDetailState] = useState(false);
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
-    const url = `http://localhost:3000/users/${user.id}`;
-    Router.push(url);
+    setDetailState(!detailState);
   };
   return (
     <React.Fragment>
       <tr>
-        <td>
+        <td
+          style={
+            !detailState
+              ? { borderBottom: 0 }
+              : { borderBottom: '1px solid black' }
+          }
+        >
           <Checkbox
             id={user.id.toString()}
             isChecked={state}
@@ -43,6 +49,11 @@ export default function UserItem(props: Props) {
         </td>
         <td>
           <PushElement onClick={onClickHandler}>{user.name}</PushElement>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: 0 }} colSpan={4}>
+          <UserDetail user={user} visibility={detailState} />
         </td>
       </tr>
     </React.Fragment>

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Search from '../../search/Search';
-import { User } from '../../../interfaces';
+import { Host } from '../../../interfaces';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import HostList from './HostList';
 
 type Props = {
-  items: User[];
+  items: Host[];
 };
 
 export default function HostPage(props: Props) {

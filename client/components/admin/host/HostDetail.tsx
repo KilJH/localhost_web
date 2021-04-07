@@ -1,8 +1,8 @@
 import { Visibility } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
-import { Host } from '../../../../interfaces';
-import UserPhoto from '../../../user/UserPhoto';
+import { Host } from '../../../interfaces';
+import UserPhoto from '../../user/UserPhoto';
 
 type Props = {
   user?: Host;
@@ -15,7 +15,7 @@ const Title = styled.h2`
   margin-top: 0;
   margin-bottom: 3em;
   padding-top: 2em;
-  border-top: 3px solid #5197d5;
+  border-top: 1px solid black;
 `;
 const NameTag = styled.div`
   margin-top: 1em;
@@ -41,15 +41,6 @@ const Email = styled.h4`
   text-align: center;
 `;
 
-const Description = styled.a`
-  color: #5197d5;
-  font-size: 1.25em;
-  margin-top: 1em;
-  margin-bottom: 0;
-  padding-bottom: 1em;
-  display: block;
-  text-align: center;
-`;
 const SubTitle = styled.h4`
   margin-top: 2rem;
   margin-bottom: 0;
@@ -63,30 +54,18 @@ const Details = styled.a`
   font-size: 0.9em;
   display: block;
 `;
-const DetailsDiv = styled.div`
-  border-bottom: 3px solid #5197d5;
-`;
-export default function HostApprovalDetail(props: Props) {
+export default function HostDetail(props: Props) {
   const { user, visibility } = props;
   if (visibility === true) {
     return (
-      <DetailsDiv>
-        <Title>신청자 정보</Title>
+      <div>
+        <Title>호스트 정보</Title>
         <UserPhoto src={user.photo} width={5} />
         <NameTag>
           <Nickname>{user.nickname}</Nickname>
           <Name>#{user.name}</Name>
         </NameTag>
         <Email>({user.email})</Email>
-        <Description>"{user.description}"</Description>
-        <SubTitle>호스트 신청 날짜</SubTitle>
-        <Details>{user.create_time.split('T')[0]}</Details>
-        <SubTitle>사용 가능한 언어</SubTitle>
-        <Details>
-          {user.language1} &nbsp;
-          {user.language2} &nbsp;
-          {user.language3}
-        </Details>
         <SubTitle>성별</SubTitle>
         <Details>{user.sex === 'male' ? '남성' : '여성'}</Details>
         <SubTitle>국가</SubTitle>
@@ -95,7 +74,7 @@ export default function HostApprovalDetail(props: Props) {
         <Details>{user.address}</Details>
         <SubTitle>휴대폰 번호</SubTitle>
         <Details>{user.phone}</Details>
-      </DetailsDiv>
+      </div>
     );
   } else {
     return <div></div>;

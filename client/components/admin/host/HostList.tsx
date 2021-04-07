@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { User } from '../../../interfaces';
 import styled from 'styled-components';
 import UserItem from '../user/UserItem';
 import Button from '@material-ui/core/Button';
@@ -9,9 +8,10 @@ import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
 import SERVER from '../../../utils/url';
 import axios, { AxiosResponse } from 'axios';
+import { Host } from '../../../interfaces';
 
 type Props = {
-  items: User[];
+  items: Host[];
 };
 
 const UserTable = styled.table`

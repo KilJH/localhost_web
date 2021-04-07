@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { User } from '../../../interfaces';
 import styled from 'styled-components';
 import UserItem from '../user/UserItem';
@@ -68,6 +68,26 @@ const CssIconButton = styled(IconButton)`
     padding: 0;
   }
 `;
+const BlockCheckedItems = (state) => {
+  const keys = Object.keys(state);
+  const values = Object.values(state);
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === true) {
+      axios
+        .post(`${SERVER}/api/user/block`, {
+          userId: keys[i],
+        })
+        .then((res: AxiosResponse<any>) => {
+          console.log(res.data);
+          alert(res.data.message);
+          if (res.data.success) {
+            Router.push('/admin/user/list');
+          }
+        });
+    }
+  }
+};
+
 const DeleteCheckedItems = (state) => {
   const keys = Object.keys(state);
   const values = Object.values(state);
@@ -87,6 +107,7 @@ const DeleteCheckedItems = (state) => {
     }
   }
 };
+
 export default function UserList(props: Props) {
   const { items } = props;
   const [state, setState] = useState({});
@@ -106,7 +127,7 @@ export default function UserList(props: Props) {
   };
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(items);
+    BlockCheckedItems(state);
   };
 
   const emailSortHandler = () => {

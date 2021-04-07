@@ -9,7 +9,6 @@ import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import SERVER from '../../../../utils/url';
 import HostApprovalItem from './HostApprovalItem';
-import HostApprovalDetail from './HostApprovalDetail';
 
 type Props = {
   items: Host[];
@@ -109,11 +108,9 @@ const ApproveCheckedItems = (state) => {
 export default function HostApprovalList(props: Props) {
   const { items } = props;
   const [state, setState] = useState({});
-  const [userState, setUserState] = useState(items[0]);
   const [emailState, setEmailState] = useState(false);
   const [nicknameState, setNicknameState] = useState(false);
   const [nameState, setNameState] = useState(false);
-  const [detailState, setDetailState] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -209,13 +206,10 @@ export default function HostApprovalList(props: Props) {
               user={item}
               state={state}
               handleChange={handleChange}
-              setUserState={setUserState}
-              setDetailState={setDetailState}
             />
           ))}
         </tbody>
       </UserTable>
-      <HostApprovalDetail user={userState} visibility={detailState} />
       <ButtonDiv>
         <HostDenialButton
           type='submit'

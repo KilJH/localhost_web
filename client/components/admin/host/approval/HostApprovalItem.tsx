@@ -1,13 +1,12 @@
 import { Host } from '../../../../interfaces';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import HostApprovalDetail from './HostApprovalDetail';
 
 type Props = {
   user: Host;
   state: object;
   handleChange: React.ChangeEventHandler<HTMLInputElement>;
-  setUserState: Function;
-  setDetailState: Function;
 };
 
 const Checkbox = styled.input.attrs({
@@ -21,17 +20,21 @@ const PushElement = styled.a`
   cursor: pointer;
 `;
 export default function UserItem(props: Props) {
-  const { user, state, handleChange, setUserState, setDetailState } = props;
-  const [trueState, setTrueState] = useState(true);
+  const { user, state, handleChange } = props;
+  const [detailState, setDetailState] = useState(false);
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
-    setUserState(user);
-    setDetailState(trueState);
-    setTrueState(!trueState);
+    setDetailState(!detailState);
   };
   return (
     <React.Fragment>
       <tr>
-        <td>
+        <td
+          style={
+            !detailState
+              ? { borderBottom: 0 }
+              : { borderBottom: '1px solid black' }
+          }
+        >
           <Checkbox
             id={user.id.toString()}
             isChecked={state}
@@ -46,6 +49,11 @@ export default function UserItem(props: Props) {
         </td>
         <td>
           <PushElement onClick={onClickHandler}>{user.name}</PushElement>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: 0 }} colSpan={4}>
+          <HostApprovalDetail user={user} visibility={detailState} />
         </td>
       </tr>
     </React.Fragment>
