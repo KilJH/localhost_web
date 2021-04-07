@@ -80,4 +80,8 @@ router.post('/host/demote', function (req, res, next) {
 	management.demote(req, res);
 });
 
+router.post('/block', function (req, res, next) {
+	management.block(req, res);
+});
+
 module.exports = router;

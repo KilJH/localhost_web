@@ -8,7 +8,8 @@ interface Props {
 }
 
 const NoticeListContainer = styled.div`
-	/* display: flex; */
+	display: flex;
+	flex-wrap: wrap;
 	margin: 0 0 2rem 0;
 `;
 

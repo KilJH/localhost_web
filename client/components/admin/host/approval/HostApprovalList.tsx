@@ -92,7 +92,7 @@ const ApproveCheckedItems = (state) => {
   for (let i = 0; i < values.length; i++) {
     if (values[i] === true) {
       axios
-        .post(`${SERVER}/api/user/host/allow'`, {
+        .post(`${SERVER}/api/user/host/allow`, {
           userId: keys[i],
         })
         .then((res: AxiosResponse<any>) => {

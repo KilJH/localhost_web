@@ -6,8 +6,29 @@ const mysql = require('../db/mysql');
 // DATE formatting function
 const formatDate = (date) => {
   const day = new Date(date);
+  const now = new Date();
   // 날짜가 오늘이면 hh:mm
-  // 아니면 yyyy-MM-dd hh:mm
+
+  const yyyy = day.getFullYear();
+  const MM = day.getMonth() < 9 ? `0${day.getMonth() + 1}` : day.getMonth() + 1;
+  const dd = day.getDate() < 9 ? `0${day.getDate()}` : day.getDate();
+
+  const hh = day.getHours() < 10 ? `0${day.getHours()}` : day.getHours();
+  const mm = day.getMinutes() < 10 ? `0${day.getMinutes()}` : day.getMinutes();
+
+  if (
+    !(
+      now.getFullYear() - day.getFullYear() ||
+      now.getMonth() - day.getMonth() ||
+      now.getDate() - day.getDate()
+    )
+  ) {
+    return `${hh} : ${mm}`;
+  } else {
+    // 아니면 yyyy-MM-dd hh:mm
+
+    return `${yyyy}-${MM}-${dd} ${hh} : ${mm}`;
+  }
 };
 
 module.exports.list = (req, res) => {
@@ -29,7 +50,7 @@ module.exports.list = (req, res) => {
         id: board.board_id,
         title: board.title,
         description: board.description,
-        createTime: board.create_time,
+        createTime: formatDate(board.create_time),
         hit: board.hit,
         author: {
           id: board.user_id,
@@ -84,7 +105,7 @@ module.exports.load = (req, res) => {
         title: boardRows[0].title,
         description: boardRows[0].description,
         createTime: boardRows[0].create_time, // 수정 필요
-        hit: boardRows.hit,
+        hit: boardRows[0].hit,
         author: {
           id: boardRows[0].user_id,
           name: boardRows[0].name,
@@ -92,6 +113,7 @@ module.exports.load = (req, res) => {
           nickname: boardRows[0].nickname,
           photo: boardRows[0].photo,
         },
+        numOfComment: commentsRows.length,
       };
 
       // 댓글 배열 생성

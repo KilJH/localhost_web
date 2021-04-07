@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Board, Reply } from '../../interfaces';
+import UserPhoto from '../user/UserPhoto';
 import CommentItem from './comment/CommentItem';
 import CommentWrite from './comment/CommentWrite';
 
@@ -30,6 +31,8 @@ const BoardContainer = styled.div`
 	& .meta {
 		padding: 0.25rem 1rem;
 		font-size: 0.8em;
+		display: flex;
+		align-items: center;
 	}
 	& .content {
 	}
@@ -44,7 +47,6 @@ const CommentContainer = styled.div`
 
 const BoardDetail = (props: Props) => {
 	const { board, comments } = props;
-	console.log(props);
 	return (
 		<BoardContainer>
 			{/* 제목 */}
@@ -54,7 +56,9 @@ const BoardDetail = (props: Props) => {
 			</div>
 			{/* 작성자와 작성일, 조회수, 댓글 수 */}
 			<div className='meta'>
-				{board.author.nickname}, {board.hit}, 댓글수
+				<UserPhoto src={board.author.photo} width={2} margin='0 0.5rem 0 0' />
+				{board.author.nickname}, 조회 {board.hit || 0}, 댓글{' '}
+				{board.numOfComment || 0}
 			</div>
 
 			{/* 버튼들 */}
