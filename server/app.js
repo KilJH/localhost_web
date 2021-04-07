@@ -6,6 +6,7 @@ const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const noticeRouter = require('./routes/notice');
 const boardRouter = require('./routes/board');
+const planRouter = require('./routes/plan');
 const s3Router = require('./routes/s3');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -27,6 +28,7 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/notice', noticeRouter);
 app.use('/api/board', boardRouter);
+app.use('/api/plan', planRouter);
 app.use('/api/s3', s3Router);
 
 mysql.connect((err) => {

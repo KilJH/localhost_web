@@ -104,7 +104,7 @@ module.exports.load = (req, res) => {
 				id: boardRows[0].id,
 				title: boardRows[0].title,
 				description: boardRows[0].description,
-				createTime: boardRows[0].create_time, // 수정 필요
+				createTime: formatDate(board.create_time),
 				hit: boardRows[0].hit,
 				author: {
 					id: boardRows[0].user_id,
@@ -173,7 +173,7 @@ module.exports.delete = (req, res) => {
 
 module.exports.comment = (req, res) => {
 	const id = req.body.id; // board id
-	const userId = req.body.user_id;
+	const userId = req.body.userId;
 	const description = req.body.description;
 	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
 
