@@ -1,18 +1,19 @@
 import { GetStaticProps } from 'next';
-import { User } from '../../../interfaces';
+import { Host, User } from '../../../../interfaces';
 import React from 'react';
-import Layout from '../../../components/main/Layout';
-import SERVER from '../../../utils/url';
+import Layout from '../../../../components/main/Layout';
+import SERVER from '../../../../utils/url';
 import axios from 'axios';
-import HostApprovalList from '../../../components/admin/host/approval/HostApprovalList';
+import HostApprovalList from '../../../../components/admin/host/approval/HostApprovalList';
+import HostApprovalDetail from '../../../../components/admin/host/approval/HostApprovalDetail';
 
 type Props = {
   pageProps: {
-    items: User[];
+    items: Host[];
   };
 };
 
-const list = ({ pageProps }: Props) => {
+const index = ({ pageProps }: Props) => {
   return (
     <Layout title='신청자목록 | localhost'>
       <HostApprovalList {...pageProps} />
@@ -32,4 +33,4 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: { items } };
 };
 
-export default list;
+export default index;
