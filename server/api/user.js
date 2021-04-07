@@ -183,14 +183,12 @@ module.exports.follow = (req, res) => {
 			const insert = `INSERT INTO follow(user_id, follower_id) VALUES("${userId}", "${followerId}");`;
 			mysql.query(insert, (err, rows, fields) => {
 				if (err) return console.log('insert err: ', err);
-
 				res.status(200).send({ success: true, message: ' 팔로우 성공' });
 			});
 		} else {
 			const deleteSql = `DELETE FROM follow WHERE user_id = ? AND follower_id = ?`;
 			mysql.query(deleteSql, [userId, followerId], (err, rows, fields) => {
 				if (err) return console.log('delete err: ', err);
-
 				res.status(200).send({ success: true, message: ' 팔로우 취소' });
 			});
 		}
@@ -204,30 +202,22 @@ module.exports.followList = (req, res) => {
 	}
 
 	const userId = req.body.userId;
-	const sql = `SELECT * FROM follow WHERE follower_id = ?`;
+	const sql = `SELECT * FROM follow LEFT JOIN user ON follow.user_id=user.id WHERE follow.follower_id = ?`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
-		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		if (rows.length) {
-			const idArr = [];
-			rows.forEach((user) => {
-				idArr.push(user.user_id);
-			});
 
-			const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
+		const followingUsers = rows.map((user) => {
+			return {
+				id: user.user_id,
+				name: user.name,
+				email: user.email,
+				nickname: user.nickname,
+				photo: user.photo,
+			};
+		});
 
-			mysql.query(sqlUser, (err, rows2) => {
-				if (err) return console.log(err);
-				res.status(200).send({ success: true, followingUsers: rows2 });
-			});
-		} else {
-			res.send({
-				success: true,
-				message: '팔로우하는 유저가 없습니다.',
-				followingUsers: [],
-			});
-		}
+		res.send({ success: true, followingUsers });
 	});
 };
 
@@ -238,26 +228,22 @@ module.exports.followerList = (req, res) => {
 	}
 
 	const userId = req.body.userId;
-	const sql = `SELECT * FROM follow WHERE user_id = ?`;
+	const sql = `SELECT * FROM follow LEFT JOIN user ON follow.follower_id=user.id WHERE follow.user_id = ?`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		if (rows.length) {
-			const idArr = [];
-			rows.forEach((user) => {
-				idArr.push(user.follower_id);
-			});
+		const followers = rows.map((user) => {
+			return {
+				id: user.user_id,
+				name: user.name,
+				email: user.email,
+				nickname: user.nickname,
+				photo: user.photo,
+			};
+		});
 
-			const sqlUser = `SELECT * FROM user WHERE id IN (${idArr.join(',')})`;
-
-			mysql.query(sqlUser, (err, rows2) => {
-				if (err) return console.log(err);
-				res.status(200).send({ success: true, followers: rows2 });
-			});
-		} else {
-			res.send({ success: true, message: '팔로워가 없습니다.', followers: [] });
-		}
+		res.send({ success: true, followers });
 	});
 };
 
