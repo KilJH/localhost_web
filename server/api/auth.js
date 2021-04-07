@@ -68,7 +68,7 @@ module.exports.checkToken = (req, res) => {
 		if (err) return res.send({ success: false, message: err });
 
 		const sql = `SELECT * FROM user WHERE id = ?`;
-		mysql.query(sql, decoded.id, (err2, rows, fields) => {
+		mysql.query(sql, decoded.id, (err2, rows) => {
 			if (err2) return err2;
 			if (rows[0].token === req.body.token) {
 				const user = {

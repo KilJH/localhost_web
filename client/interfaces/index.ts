@@ -64,7 +64,7 @@ export interface Board {
   numOfComment?: number;
 }
 
-export interface Reply {
+export interface Comment {
   id: number;
   user: User;
   description: string;

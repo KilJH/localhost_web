@@ -46,6 +46,7 @@ const Introduction = styled.div`
 		}
 		&.isHide {
 			opacity: 0;
+			display: none;
 		}
 		& + div {
 			position: absolute;

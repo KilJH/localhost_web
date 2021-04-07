@@ -3,13 +3,13 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import BoardDetail from '../../components/board/BoardDetail';
 import Layout from '../../components/main/Layout';
-import { Board, Reply } from '../../interfaces';
+import { Board, Comment } from '../../interfaces';
 import SERVER from '../../utils/url';
 
 interface Props {
 	pageProps: {
 		board: Board;
-		comments: Reply[];
+		comments: Comment[];
 	};
 }
 
@@ -26,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 	const paths = await (
 		await axios.get(`${SERVER}/api/board/list`)
-	).data.list.map((board) => ({
+	).data.wholeList.map((board) => ({
 		params: { id: board.id.toString() },
 	}));
 
