@@ -390,7 +390,7 @@ module.exports.allowHost = (req, res) => {
 module.exports.denyHost = (req, res) => {
 	// 신청한 회원을 거부
 	const userId = req.body.userId;
-	const sql = `DELETE FROM host_request WHERE user_id`;
+	const sql = `DELETE FROM host_request WHERE user_id = ?`;
 
 	mysql.query(sql, userId, (err) => {
 		if (err) return console.log(err);
@@ -417,5 +417,18 @@ module.exports.demote = (req, res) => {
 				message: `id: ${userId} 호스트 회원이 강등되었습니다.`,
 			});
 		});
+	});
+};
+
+module.exports.block = (req, res) => {
+	const userId = req.body.userId;
+	const reason = req.body.reason;
+
+	const sql = `INSERT INTO ban(user_id, reason) VALUES(?,?)`;
+
+	mysql.query(sql, [userId, reason], (err) => {
+		if (err) return console.log(err);
+
+		res.status(200).send({ success: true, message: '회원을 차단했습니다.' });
 	});
 };

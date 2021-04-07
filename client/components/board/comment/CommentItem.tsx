@@ -20,10 +20,15 @@ const CommentItem = (props: Props) => {
 	const { comment } = props;
 	return (
 		<Comment>
-			<UserPhoto src={'/img/default.jpg'} width={4} margin='0 1rem 0 0' />
+			<UserPhoto
+				src={comment.user.photo || '/img/default.jpg'}
+				width={4}
+				margin='0 1rem 0 0'
+			/>
 			<div>
 				<div className='nickname'>
-					닉네임<span>{comment.createTime}</span>
+					{comment.user.nickname}
+					<span>{comment.createTime}</span>
 				</div>
 				<div>{comment.description}</div>
 			</div>
