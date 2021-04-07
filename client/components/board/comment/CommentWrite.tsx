@@ -1,7 +1,16 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { UserStateContext } from '../../../context/user';
+import { useInput } from '../../../hooks/useInput';
+import { Comment } from '../../../interfaces';
+import SERVER from '../../../utils/url';
 
-interface Props {}
+interface Props {
+	boardId: number;
+	comments: Comment[];
+	setComments: Function;
+}
 
 const WriterContainer = styled.div`
 	margin: 1rem 0 0.5rem 0;
@@ -36,13 +45,39 @@ const WriterContainer = styled.div`
 `;
 
 const CommentWrite = (props: Props) => {
-	const onSubmit = (e: React.FormEvent) => {
+	const [comment, setComment] = useState('');
+	const currentUser = useContext(UserStateContext);
+
+	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		const res = await axios.post(`${SERVER}/api/board/comment`, {
+			id: props.boardId,
+			userId: currentUser.id,
+			description: comment,
+		});
+		if (res.data.success) {
+			props.setComments([
+				...props.comments,
+				{
+					user: currentUser,
+					description: comment,
+					createTime: '방금 전',
+				},
+			]);
+
+			setComment('');
+		} else alert(res.data.message);
 	};
 	return (
 		<WriterContainer onSubmit={onSubmit}>
 			<form>
-				<textarea />
+				<textarea
+					value={comment}
+					onChange={(e) => {
+						setComment(e.target.value);
+					}}
+				/>
 
 				<button type='submit'>작성</button>
 			</form>

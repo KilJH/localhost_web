@@ -39,13 +39,14 @@ module.exports.list = (req, res) => {
 	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
 	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
 	const sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id GROUP BY board.id ORDER BY board.create_time DESC`;
+	const page = req.query.page || 1;
+
+	console.log('페이지', page);
 
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err: ', err);
 
 		const boards = rows.map((board) => {
-			console.log(board.create_time);
-
 			return {
 				id: board.board_id,
 				title: board.title,
@@ -63,9 +64,16 @@ module.exports.list = (req, res) => {
 			};
 		});
 
-		console.log(boards);
+		const results = boards.slice((page - 1) * 10, page * 10);
 
-		res.status(200).send({ success: true, list: boards });
+		console.log(results);
+
+		res.status(200).send({
+			success: true,
+			list: results,
+			lastIdx: Math.floor(boards.length / 10) + 1,
+			page: page,
+		});
 	});
 };
 
@@ -87,24 +95,30 @@ module.exports.load = (req, res) => {
 	// 게시글 불러오기
 	const id = req.body.id; // board id
 
+	// 0. 조회수 1 증가
+	const hitSql = `UPDATE board SET hit = hit+1 WHERE id = ?`;
+	mysql.query(hitSql, id, (err3) => {
+		if (err3) return console.log('조회수 증가 실패', err3);
+	});
+
 	// 1. 해당 id의 게시물과 유저정보를 불러온다.
 	// 결과값이 행 한 개 -> rows[0] 해줘야됨
-	const boardSql = `SELECT * FROM board LEFT JOIN user ON board.user_id = user.id WHERE board.id = ${id};`;
+	const boardSql = `SELECT *, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id WHERE board.id = ${id};`;
 	mysql.query(boardSql, (err, boardRows) => {
 		if (err) return console.log(err);
 
 		// 2. 해당 board_id의 코멘트와 유저정보를 불러온다.
 		// 결과값을 배열 그대로 넘겨준다.
-		const commentSql = `SELECT * FROM board_comment LEFT JOIN user ON board_comment.user_id = user.id WHERE board_comment.board_id = ${id}`;
+		const commentSql = `SELECT *, board_comment.id AS comment_id FROM board_comment LEFT JOIN user ON board_comment.user_id = user.id WHERE board_comment.board_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log(err2);
 
 			// 게시물 객체 생성
 			const board = {
-				id: boardRows[0].id,
+				id: boardRows[0].board_id,
 				title: boardRows[0].title,
 				description: boardRows[0].description,
-				createTime: boardRows[0].create_time, // 수정 필요
+				createTime: formatDate(boardRows[0].create_time),
 				hit: boardRows[0].hit,
 				author: {
 					id: boardRows[0].user_id,
@@ -119,7 +133,7 @@ module.exports.load = (req, res) => {
 			// 댓글 배열 생성
 			const comments = commentsRows.map((comment) => {
 				return {
-					id: comment.id,
+					id: comment.comment_id,
 					description: comment.description,
 					createTime: formatDate(comment.create_time),
 					user: {
@@ -173,20 +187,20 @@ module.exports.delete = (req, res) => {
 
 module.exports.comment = (req, res) => {
 	const id = req.body.id; // board id
-	const userId = req.body.user_id;
+	const userId = req.body.userId;
 	const description = req.body.description;
 	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
 
 	mysql.query(sql, (err) => {
-		if (err) return err;
+		if (err) res.send({ success: false, message: '댓글 작성에 실패했습니다.' });
 	});
-	res.send('댓글 작성 성공');
+	res.send({ success: true, message: '댓글 달기 성공' });
 };
 
 module.exports.search = (req, res) => {
 	const type = req.body.type || 'title';
 	const item = req.body.item;
-	
+
 	let sql = '';
 	switch (type) {
 		case 'title':
@@ -207,8 +221,6 @@ module.exports.search = (req, res) => {
 		if (err) return console.log('serach err: ', err);
 
 		const boards = rows.map((board) => {
-			console.log(board.create_time);
-
 			return {
 				id: board.board_id,
 				title: board.title,

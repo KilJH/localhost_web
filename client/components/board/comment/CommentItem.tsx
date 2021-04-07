@@ -1,38 +1,58 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Reply } from '../../../interfaces';
+import { Comment } from '../../../interfaces';
 import UserPhoto from '../../user/UserPhoto';
 
 interface Props {
-	comment: Reply;
+	comment: Comment;
 }
 
-const Comment = styled.div`
+const CommentItemContainer = styled.div`
 	display: flex;
-
-	& .nickname {
-		font-weight: 700;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid #aaa;
+	& > div:last-child {
+		flex: 1;
+	}
+	& .top {
 		margin-bottom: 0.25rem;
+		display: flex;
+		font-size: 0.8em;
+		& .nickname {
+			flex: 1;
+			font-weight: 700;
+		}
+		& .time {
+			flex: 1;
+			margin-left: 0.5rem;
+			font-weight: 400;
+			text-align: right;
+			color: #aaa;
+		}
+	}
+	& .description {
+		font-size: 0.9em;
+		white-space: pre;
 	}
 `;
 
 const CommentItem = (props: Props) => {
 	const { comment } = props;
 	return (
-		<Comment>
+		<CommentItemContainer>
 			<UserPhoto
 				src={comment.user.photo || '/img/default.jpg'}
-				width={4}
+				width={3}
 				margin='0 1rem 0 0'
 			/>
 			<div>
-				<div className='nickname'>
-					{comment.user.nickname}
-					<span>{comment.createTime}</span>
+				<div className='top'>
+					<div className='nickname'>{comment.user.nickname}</div>
+					<div className='time'>{comment.createTime}</div>
 				</div>
-				<div>{comment.description}</div>
+				<div className='description'>{comment.description}</div>
 			</div>
-		</Comment>
+		</CommentItemContainer>
 	);
 };
 

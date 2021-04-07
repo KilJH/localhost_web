@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Board, Reply } from '../../interfaces';
+import { Board, Comment } from '../../interfaces';
 import UserPhoto from '../user/UserPhoto';
-import CommentItem from './comment/CommentItem';
-import CommentWrite from './comment/CommentWrite';
+import CommentContainer from './comment/CommentContainer';
 
 interface Props {
 	board: Board;
-	comments: Reply[];
+	comments: Comment[];
 }
 
 const BoardContainer = styled.div`
@@ -35,18 +34,13 @@ const BoardContainer = styled.div`
 		align-items: center;
 	}
 	& .content {
-	}
-`;
-
-const CommentContainer = styled.div`
-	background-color: rgba(81, 151, 213, 0.1);
-	& h4 {
-		margin: 0.5rem 0 1rem 0;
+		white-space: pre;
 	}
 `;
 
 const BoardDetail = (props: Props) => {
 	const { board, comments } = props;
+	const [commentsState, setCommentsState] = useState(comments);
 	return (
 		<BoardContainer>
 			{/* 제목 */}
@@ -65,15 +59,14 @@ const BoardDetail = (props: Props) => {
 			{/* 내용 */}
 			<div className='content'>{board.description}</div>
 			{/* 버튼들 */}
+			{/* 이전, 다음, 목록 */}
 
 			{/* 댓글 */}
-			<CommentContainer>
-				<h4>댓글[댓글 수]</h4>
-				{comments.map((reply) => (
-					<CommentItem comment={reply} />
-				))}
-				<CommentWrite />
-			</CommentContainer>
+			<CommentContainer
+				boardId={board.id}
+				comments={commentsState}
+				setComments={setCommentsState}
+			/>
 		</BoardContainer>
 	);
 };

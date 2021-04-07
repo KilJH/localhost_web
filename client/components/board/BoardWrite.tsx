@@ -63,6 +63,7 @@ const BoardWrite = (props: Props) => {
 
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		// const parseContent = content.value.toString().replaceAll('\n', '\r\n');
 		const res = await axios.post(`${SERVER}/api/board/write`, {
 			userId: currentUser.id,
 			title: title.value,
