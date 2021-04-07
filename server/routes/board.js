@@ -25,5 +25,12 @@ router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
 
+router.post('/comment', function (req, res, next) {
+	management.comment(req, res);
+});
+
+router.post('/search', function (req, res, next) {
+	management.search(req, res);
+});
 
 module.exports = router;
