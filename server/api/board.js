@@ -3,29 +3,48 @@ const {
 } = require('date-fns/fp/formatDistanceStrictWithOptions');
 const mysql = require('../db/mysql');
 
+// DATE formatting function
+const formatDate = (date) => {
+	const day = new Date(date);
+	// 날짜가 오늘이면 hh:mm
+	// 아니면 yyyy-MM-dd hh:mm
+};
+
 module.exports.list = (req, res) => {
 	// 전체 게시글
-	const sql = `SELECT * FROM board`;
+	// 전체 게시물과 유저정보를 불러온다.
+	// id 컬럼이 중복되기때문에 board.id를 board_id로 별칭을 지어준다 Alias
+	// ORDER BY로 create_time의 역순대로
+	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
+	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
+	const sql = `SELECT board.*, user.*, COUNT(board_reply.id) AS num_reply, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_reply ON board.id = board_reply.board_id GROUP BY board.id ORDER BY board.create_time DESC`;
 
-	mysql.query(sql, (err, rows, fields) => {
+	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err: ', err);
 
-		rows.sort((a, b) => {
-			if (a.id > b.id) return -1;
-			else return 1;
+		const boards = rows.map((board) => {
+			console.log(board.create_time);
+
+			return {
+				id: board.board_id,
+				title: board.title,
+				description: board.description,
+				createTime: board.create_time,
+				hit: board.hit,
+				author: {
+					id: board.user_id,
+					name: board.name,
+					email: board.email,
+					nickname: board.nickname,
+					photo: board.photo,
+				},
+				numOfComment: board.num_reply,
+			};
 		});
 
-		const userSql = `SELECT * FROM user`;
-		mysql.query(userSql, (err, rows2, fields2) => {
-			const boards = rows.map((board) => {
-				const user = rows2.filter((user) => {
-					return user.id === board.user_id;
-				})[0];
+		console.log(boards);
 
-				return { ...board, createTime: board.create_time, author: user };
-			});
-			res.status(200).send({ success: true, list: boards });
-		});
+		res.status(200).send({ success: true, list: boards });
 	});
 };
 

@@ -56,7 +56,7 @@ const BoardItem = (props: Props) => {
 						<p className='title'>
 							{/* 제목 몇자 이상이면 줄이고 뒤에 ... */}
 							{board.title}
-							<span>[{board.hit}]</span>
+							<span>[{board.numOfComment}]</span>
 						</p>
 						<p className='hit'>조회 {board.hit} </p>
 						<p className='author'>

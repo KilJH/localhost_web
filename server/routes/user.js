@@ -47,6 +47,9 @@ router.get('/:id', function (req, res, next) {
 router.post('/search', function (req, res, next) {
 	management.search(req, res);
 });
+router.post('/searchHost', function (req, res, next) {
+	management.searchHost(req, res);
+});
 
 router.post('/follow_check', function (req, res, next) {
 	management.isFollowed(req, res);

@@ -41,6 +41,7 @@ export interface Board {
 	author: User;
 	createTime: string;
 	hit: number;
+	numOfComment?: number;
 }
 
 export interface Reply {
