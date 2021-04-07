@@ -47,9 +47,6 @@ const HostButton = styled(Button)`
     background-color: #ff6b81;
   }
 `;
-const Title = styled.h1`
-  cursor: pointer;
-`;
 const CssTh = styled.th`
   padding-left: 1rem;
 `;
@@ -95,9 +92,6 @@ export default function HostList(props: Props) {
   const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     DisableHostCheckedItems(state);
-  };
-  const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    Router.push('http://localhost:3000/admin/host/list');
   };
   const emailSortHandler = () => {
     setNameState(false);
@@ -145,7 +139,7 @@ export default function HostList(props: Props) {
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>호스트 리스트</Title>
+          <h1>호스트 리스트</h1>
         </caption>
         <thead>
           <tr>

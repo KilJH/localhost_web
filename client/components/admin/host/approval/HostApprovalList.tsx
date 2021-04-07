@@ -7,6 +7,8 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
+import axios, { AxiosResponse } from 'axios';
+import SERVER from '../../../../utils/url';
 
 type Props = {
   items: User[];
@@ -36,7 +38,16 @@ const ButtonDiv = styled.div`
   margin: 0 auto;
   margin-top: 1rem;
 `;
-const PreHostButton = styled(Button)`
+const HostDenialButton = styled(Button)`
+  &.MuiButton-root {
+    margin: 1rem;
+    width: 8rem;
+  }
+  &.MuiButton-containedSecondary {
+    background-color: #ff6b81;
+  }
+`;
+const HostApprovalButton = styled(Button)`
   &.MuiButton-root {
     margin: 1rem;
     width: 8rem;
@@ -44,9 +55,6 @@ const PreHostButton = styled(Button)`
   &.MuiButton-containedPrimary {
     background-color: #5197d5;
   }
-`;
-const Title = styled.h1`
-  cursor: pointer;
 `;
 const CssTh = styled.th`
   padding-left: 1rem;
@@ -57,25 +65,45 @@ const CssIconButton = styled(IconButton)`
     padding: 0;
   }
 `;
-const EnableHostCheckedItems = (state) => {
+const DenyCheckedItems = (state) => {
+  // 호스트 승인 거부 기능
+  const keys = Object.keys(state);
+  const values = Object.values(state);
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === true) {
+      axios
+        .post(`${SERVER}/api/user/host/deny`, {
+          userId: keys[i],
+        })
+        .then((res: AxiosResponse<any>) => {
+          console.log(res.data);
+          alert(res.data.message);
+          if (res.data.success) {
+            Router.push('/admin/host/approval');
+          }
+        });
+    }
+  }
+};
+const ApproveCheckedItems = (state) => {
   // 호스트 승인 기능
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/user/host/approve'`, {
-  //         userId: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         console.log(res.data);
-  //         alert(res.data.message);
-  //         if (res.data.success) {
-  //           Router.push('/admin/host/approve');
-  //         }
-  //       });
-  //   }
-  // }
+  const keys = Object.keys(state);
+  const values = Object.values(state);
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === true) {
+      axios
+        .post(`${SERVER}/api/user/host/allow'`, {
+          userId: keys[i],
+        })
+        .then((res: AxiosResponse<any>) => {
+          console.log(res.data);
+          alert(res.data.message);
+          if (res.data.success) {
+            Router.push('/admin/host/approval');
+          }
+        });
+    }
+  }
 };
 export default function HostApprovalList(props: Props) {
   const { items } = props;
@@ -90,13 +118,15 @@ export default function HostApprovalList(props: Props) {
       [id]: checked,
     });
   };
-  const preHostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const HostDenialButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    EnableHostCheckedItems(state);
+    DenyCheckedItems(state);
   };
-  const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
+  const HostApprovalButtonHandler = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
-    Router.push('http://localhost:3000/admin/host/approval');
+    ApproveCheckedItems(state);
   };
   const emailSortHandler = () => {
     setNameState(false);
@@ -144,7 +174,7 @@ export default function HostApprovalList(props: Props) {
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>호스트 신청자 리스트</Title>
+          <h1>호스트 신청자 리스트</h1>
         </caption>
         <thead>
           <tr>
@@ -181,14 +211,23 @@ export default function HostApprovalList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <PreHostButton
+        <HostDenialButton
           type='submit'
-          onClick={preHostButtonHandler}
+          onClick={HostDenialButtonHandler}
+          variant='contained'
+          color='secondary'
+        >
+          승인거부
+        </HostDenialButton>
+
+        <HostApprovalButton
+          type='submit'
+          onClick={HostApprovalButtonHandler}
           variant='contained'
           color='primary'
         >
-          호스트 승인
-        </PreHostButton>
+          승인
+        </HostApprovalButton>
       </ButtonDiv>
     </div>
   );

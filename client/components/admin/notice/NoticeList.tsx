@@ -39,7 +39,7 @@ const ButtonDiv = styled.div`
   margin-top: 1rem;
 `;
 
-const BlockButton = styled(Button)`
+const WriteButton = styled(Button)`
   &.MuiButton-root {
     margin: 1rem;
     width: 6rem;
@@ -58,9 +58,6 @@ const DeleteButton = styled(Button)`
     background-color: #ff6b81;
   }
 `;
-const Title = styled.h1`
-  cursor: pointer;
-`;
 
 const CssTh = styled.th`
   padding-left: 1rem;
@@ -77,8 +74,27 @@ const DeleteCheckedItems = (state) => {
   for (let i = 0; i < values.length; i++) {
     if (values[i] === true) {
       axios
-        .post(`${SERVER}/api/user/delete`, {
-          userId: keys[i],
+        .post(`${SERVER}/api/board/delete`, {
+          id: keys[i],
+        })
+        .then((res: AxiosResponse<any>) => {
+          console.log(res.data);
+          alert(res.data.message);
+          if (res.data.success) {
+            Router.push('/admin/user/list');
+          }
+        });
+    }
+  }
+};
+const WriteItem = (state) => {
+  const keys = Object.keys(state);
+  const values = Object.values(state);
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === true) {
+      axios
+        .post(`${SERVER}/api/board/delete`, {
+          id: keys[i],
         })
         .then((res: AxiosResponse<any>) => {
           console.log(res.data);
@@ -93,9 +109,9 @@ const DeleteCheckedItems = (state) => {
 export default function NoticeList(props: Props) {
   const { items } = props;
   const [state, setState] = useState({});
-  const [noState, setNoState] = useState(false);
-  const [nicknameState, setNicknameState] = useState(false);
-  const [nameState, setNameState] = useState(false);
+  const [numberState, setNumberState] = useState(false);
+  const [titleState, setTitleState] = useState(false);
+  const [dateState, setDateState] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -103,56 +119,63 @@ export default function NoticeList(props: Props) {
       [id]: checked,
     });
   };
+  const writeButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log(items);
+    WriteItem(state);
+  };
   const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     DeleteCheckedItems(state);
   };
-  const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log(items);
-  };
-  const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    Router.push('http://localhost:3000/admin/user/list');
-  };
-  const noSortHandler = () => {
-    setNameState(false);
-    setNicknameState(false);
-    setNoState(!noState);
-    if (noState) {
+
+  const numberSortHandler = () => {
+    setDateState(false);
+    setTitleState(false);
+    setNumberState(!numberState);
+    if (numberState) {
       items.sort(function (a: any, b: any) {
-        return a.email < b.email ? -1 : a.email > b.email ? 1 : 0;
+        return b.id - a.id;
       });
     } else {
       items.sort(function (a: any, b: any) {
-        return a.email > b.email ? -1 : a.email < b.email ? 1 : 0;
+        return a.id - b.id;
       });
     }
   };
-  const nicknameSortHandler = () => {
-    setNoState(false);
-    setNameState(false);
-    setNicknameState(!nicknameState);
-    if (nicknameState) {
+  const titleSortHandler = () => {
+    setNumberState(false);
+    setDateState(false);
+    setTitleState(!titleState);
+    if (titleState) {
       items.sort(function (a: any, b: any) {
-        return a.nickname < b.nickname ? -1 : a.nickname > b.nickname ? 1 : 0;
+        return a.title > b.title ? -1 : a.title < b.title ? 1 : 0;
       });
     } else {
       items.sort(function (a: any, b: any) {
-        return a.nickname > b.nickname ? -1 : a.nickname < b.nickname ? 1 : 0;
+        return a.title < b.title ? -1 : a.title > b.title ? 1 : 0;
       });
     }
   };
-  const nameSortHandler = () => {
-    setNoState(false);
-    setNicknameState(false);
-    setNameState(!nameState);
-    if (nameState) {
+  const dateSortHandler = () => {
+    setNumberState(false);
+    setTitleState(false);
+    setDateState(!dateState);
+    if (dateState) {
       items.sort(function (a: any, b: any) {
-        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+        return a.createTime > b.createTime
+          ? -1
+          : a.createTime < b.createTime
+          ? 1
+          : 0;
       });
     } else {
       items.sort(function (a: any, b: any) {
-        return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
+        return a.createTime < b.createTime
+          ? -1
+          : a.createTime > b.createTime
+          ? 1
+          : 0;
       });
     }
   };
@@ -160,27 +183,27 @@ export default function NoticeList(props: Props) {
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>공지목록</Title>
+          <h1>공지목록</h1>
         </caption>
         <thead>
           <tr>
             <th>선택</th>
             <CssTh>
               번호
-              <CssIconButton onClick={noSortHandler}>
-                {noState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              <CssIconButton onClick={numberSortHandler}>
+                {numberState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </CssIconButton>
             </CssTh>
             <CssTh>
               공지제목
-              <CssIconButton onClick={nicknameSortHandler}>
-                {nicknameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              <CssIconButton onClick={titleSortHandler}>
+                {titleState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </CssIconButton>
             </CssTh>
             <CssTh>
               작성날짜
-              <CssIconButton onClick={nameSortHandler}>
-                {nameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              <CssIconButton onClick={dateSortHandler}>
+                {dateState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </CssIconButton>
             </CssTh>
           </tr>
@@ -197,21 +220,21 @@ export default function NoticeList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <BlockButton
-          type='button'
-          onClick={blockButtonHandler}
+        <WriteButton
+          type='submit'
+          onClick={writeButtonHandler}
           variant='contained'
           color='primary'
         >
-          유저 차단
-        </BlockButton>
+          공지 작성
+        </WriteButton>
         <DeleteButton
           type='submit'
           onClick={deleteButtonHandler}
           variant='contained'
           color='secondary'
         >
-          유저 삭제
+          공지 삭제
         </DeleteButton>
       </ButtonDiv>
     </div>

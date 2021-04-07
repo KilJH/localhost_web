@@ -15,7 +15,7 @@ export default function HostPage(props: Props) {
 
   const onSubmit = async (event: React.FormEvent, type, item) => {
     event.preventDefault();
-    const res = await axios.post(`${SERVER}/api/user/search`, {
+    const res = await axios.post(`${SERVER}/api/user/searchHost`, {
       type: type,
       item: item,
     });

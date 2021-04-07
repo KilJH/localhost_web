@@ -58,9 +58,6 @@ const DeleteButton = styled(Button)`
     background-color: #ff6b81;
   }
 `;
-const Title = styled.h1`
-  cursor: pointer;
-`;
 
 const CssTh = styled.th`
   padding-left: 1rem;
@@ -111,9 +108,7 @@ export default function UserList(props: Props) {
     e.preventDefault();
     console.log(items);
   };
-  const pushBackHandler = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    Router.push('http://localhost:3000/admin/user/list');
-  };
+
   const emailSortHandler = () => {
     setNameState(false);
     setNicknameState(false);
@@ -160,7 +155,7 @@ export default function UserList(props: Props) {
     <div>
       <UserTable>
         <caption>
-          <Title onClick={pushBackHandler}>유저 리스트</Title>
+          <h1>유저 리스트</h1>
         </caption>
         <thead>
           <tr>

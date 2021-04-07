@@ -4,7 +4,7 @@ import React from 'react';
 import Layout from '../../../components/main/Layout';
 import SERVER from '../../../utils/url';
 import axios from 'axios';
-import HostApprovalPage from '../../../components/admin/host/approval/HostApprovalPage';
+import HostApprovalList from '../../../components/admin/host/approval/HostApprovalList';
 
 type Props = {
   pageProps: {
@@ -15,7 +15,7 @@ type Props = {
 const list = ({ pageProps }: Props) => {
   return (
     <Layout title='신청자목록 | localhost'>
-      <HostApprovalPage {...pageProps}></HostApprovalPage>
+      <HostApprovalList {...pageProps} />
     </Layout>
   );
 };
