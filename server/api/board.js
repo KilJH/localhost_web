@@ -69,6 +69,8 @@ module.exports.list = (req, res) => {
 			list: results,
 			lastIdx: Math.floor(boards.length / 10) + 1,
 			page: page,
+
+			// 전체리스트 리팩토링
 			wholeList: boards,
 		});
 	});
