@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { User } from '../../../../interfaces';
+import { Host } from '../../../../interfaces';
 import styled from 'styled-components';
-import UserItem from '../../user/UserItem';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -9,9 +8,11 @@ import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import SERVER from '../../../../utils/url';
+import HostApprovalItem from './HostApprovalItem';
+import HostApprovalDetail from './HostApprovalDetail';
 
 type Props = {
-  items: User[];
+  items: Host[];
 };
 
 const UserTable = styled.table`
@@ -108,9 +109,11 @@ const ApproveCheckedItems = (state) => {
 export default function HostApprovalList(props: Props) {
   const { items } = props;
   const [state, setState] = useState({});
+  const [userState, setUserState] = useState(items[0]);
   const [emailState, setEmailState] = useState(false);
   const [nicknameState, setNicknameState] = useState(false);
   const [nameState, setNameState] = useState(false);
+  const [detailState, setDetailState] = useState(false);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -201,15 +204,18 @@ export default function HostApprovalList(props: Props) {
         </thead>
         <tbody>
           {items.map((item) => (
-            <UserItem
+            <HostApprovalItem
               key={item.id}
               user={item}
               state={state}
               handleChange={handleChange}
+              setUserState={setUserState}
+              setDetailState={setDetailState}
             />
           ))}
         </tbody>
       </UserTable>
+      <HostApprovalDetail user={userState} visibility={detailState} />
       <ButtonDiv>
         <HostDenialButton
           type='submit'
@@ -219,7 +225,6 @@ export default function HostApprovalList(props: Props) {
         >
           승인거부
         </HostDenialButton>
-
         <HostApprovalButton
           type='submit'
           onClick={HostApprovalButtonHandler}

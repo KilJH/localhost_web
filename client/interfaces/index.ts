@@ -11,6 +11,24 @@ export interface User {
 	isHost?: number;
 }
 
+export interface Host {
+	id: number;
+	name: string;
+	nickname: string;
+	sex: string;
+	email: string;
+	password?: string;
+	phone?: string;
+	address?: string;
+	country?: string;
+	photo?: string;
+	description: string;
+	createTime: string;
+	language1: string;
+	language2: string;
+	language3: string;
+}
+
 export interface Plan {
 	id: number;
 	title: string;
