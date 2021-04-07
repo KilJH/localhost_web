@@ -121,7 +121,7 @@ module.exports.load = (req, res) => {
 				return {
 					id: comment.id,
 					description: comment.description,
-					createTiem: comment.create_time,
+					createTime: formatDate(comment.create_time),
 					user: {
 						id: comment.user_id,
 						name: comment.name,
@@ -168,5 +168,66 @@ module.exports.delete = (req, res) => {
 		}
 
 		res.send({ success: true });
+	});
+};
+
+module.exports.comment = (req, res) => {
+	const id = req.body.id; // board id
+	const userId = req.body.user_id;
+	const description = req.body.description;
+	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
+
+	mysql.query(sql, (err) => {
+		if (err) return err;
+	});
+	res.send('댓글 작성 성공');
+};
+
+module.exports.search = (req, res) => {
+	const type = req.body.type || 'title';
+	const item = req.body.item;
+	
+	let sql = '';
+	switch (type) {
+		case 'title':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE title LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC `;
+			break;
+		case 'description':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE board.description LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC`;
+			break;
+		case 'nickname':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE nickname LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC`;
+			break;
+		default:
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id GROUP BY board.id ORDER BY board.create_time DESC`;
+			break;
+	}
+
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log('serach err: ', err);
+
+		const boards = rows.map((board) => {
+			console.log(board.create_time);
+
+			return {
+				id: board.board_id,
+				title: board.title,
+				description: board.description,
+				createTime: formatDate(board.create_time),
+				hit: board.hit,
+				author: {
+					id: board.user_id,
+					name: board.name,
+					email: board.email,
+					nickname: board.nickname,
+					photo: board.photo,
+				},
+				numOfComment: board.num_comment,
+			};
+		});
+
+		console.log(boards);
+
+		res.status(200).send({ success: true, list: boards });
 	});
 };
