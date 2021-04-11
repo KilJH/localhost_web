@@ -65,7 +65,16 @@ module.exports.updatePhoto = (req, res) => {
 };
 
 module.exports.updatePW = (req, res) => {
-	// const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
+	const email = req.body.email || req.query.email;
+	const pw = req.body.pw || req.query.pw;
+	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
+
+	const update = `UPDATE user SET pw = "${hashPW}" WHERE email = "${email}";`;
+
+	mysql.query(update, (err) => {
+		if(err) return err;
+		res.send({ success: true });
+	})
 };
 
 module.exports.delete = (req, res) => {

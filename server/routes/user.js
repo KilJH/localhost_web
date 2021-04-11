@@ -37,7 +37,6 @@ router.get('/follow', function (req, res, next) {
 	management.followList(req, res);
 });
 
-//
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });

@@ -26,7 +26,6 @@ const formatDate = (date) => {
 		return `${hh} : ${mm}`;
 	} else {
 		// 아니면 yyyy-MM-dd hh:mm
-
 		return `${yyyy}-${MM}-${dd} ${hh} : ${mm}`;
 	}
 };
@@ -59,14 +58,19 @@ module.exports.list = (req, res) => {
 				numOfComment: plan.num_comment,
 			};
 		});
-
 		res.status(200).send({ success: true, list: plans });
 	});
 };
 
 module.exports.load = (req, res) => {
-	// 플랜불러오기
+	// 플랜불러오
 	const id = req.body.id; // plan id
+	const hitSql = `UPDATE plan SET hit = hit+1 WHERE id = ?`;
+
+	mysql.query(hitSql, id, (err3) => {
+		if (err3) return console.log('조회수 증가 실패', err3);
+	});
+
 	const sql = `SELECT *, plan_day.description AS day_desc FROM plan LEFT JOIN plan_day ON plan.id = plan_day.plan_id LEFT JOIN plan_time
     ON plan_day.id = plan_time.plan_day_id LEFT JOIN user ON plan.user_id = user.id WHERE plan.id = ${id}`;
 
@@ -153,7 +157,7 @@ module.exports.dayWrite = (req, res) => {
 };
 
 module.exports.planWrite = (req, res) => {
-	// 데이 작성
+	// 플랜 작성
 	const userId = req.body.userId;
 	const title = req.body.title;
 
@@ -163,5 +167,108 @@ module.exports.planWrite = (req, res) => {
 		if (err) return console.log('planWrite err: ', err);
 
 		res.status(200).send({ success: true });
+	});
+};
+
+module.exports.delete = (req, res) => {
+	// 삭제
+	const id = req.body.id; // 플랜 id
+	const planDayId = req.body.planDayId;
+	const planTimeId = req.body.planTimeId;
+	
+	let sql = '';
+	if(id)
+		sql = `DELETE FROM plan WHERE id = "${id}";`;
+	if(planDayId)
+		sql =`DELETE FROM plan_day WHERE id = "${planDayId}";`;
+	if(planTimeId)
+		sql =`DELETE FROM plan_time WHERE id = "${planTimeId}";`;
+
+	mysql.query(sql, (err) => {
+		if(err) return err;
+		res.send({ success: true });
+	})	
+};
+
+module.exports.timeUpdate = (req, res) => {
+	//시간 수정
+	const id = req.body.id; // plan_timeId
+	const description = req.body.description;
+	const price = req.body.price;
+	const time = req.body.time;
+
+	const sql = `UPDATE plan_time SET description = "${description}", price = "${price}", time = "${time}" WHERE id = "${id}";`;
+	
+	mysql.query(sql, (err) => {
+		if(err) return err;
+		res.send({ success: true });
+	})
+}
+
+module.exports.dayUpdate = (req, res) => {
+	//데이 수정
+	const id = req.body.id; // plan_dayId
+	const description = req.body.description;
+	const date = req.body.date;
+
+	const sql = `UPDATE plan_day SET description = "${description}", date = "${date}" WHERE id = "${id}";`;
+	
+	mysql.query(sql, (err) => {
+		if(err) return err;
+		res.send({ success: true });
+	})
+}
+
+module.exports.planUpdate = (req, res) => {
+	//플랜 수정
+	const id = req.body.id; // planId
+	const title = req.body.title;
+
+	const sql = `UPDATE plan SET title = "${title}" WHERE id = "${id}";`;
+	
+	mysql.query(sql, (err) => {
+		if(err) return err;
+		res.send({ success: true });
+	})
+}
+
+module.exports.search = (req, res) => {
+	const type = req.body.type || 'title';
+	const item = req.body.item;
+
+	let sql = '';
+	switch (type) {
+		case 'title':
+			sql = `select plan.*, user.*, count(plan_comment.id) as num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE title LIKE "%${item}%" GROUP BY plan.id ORDER BY plan.create_time DESC `;
+			break;
+		case 'nickname':
+			sql = `select plan.*, user.*, count(plan_comment.id) as num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE nickname LIKE "%${item}%" GROUP BY plan.id ORDER BY plan.create_time DESC `;
+			break;
+		default:
+			sql = `select plan.*, user.*, count(plan_comment.id) as num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id GROUP BY plan.id ORDER BY plan.create_time DESC `;
+			break;
+	}
+
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log('serach err: ', err);
+
+		const plans = rows.map((plan) => {
+			return {
+				id: plan.plan_id,
+				title: plan.title,
+				createTime: formatDate(plan.create_time),
+				hit: plan.hit,
+				author: {
+					id: plan.user_id,
+					name: plan.name,
+					email: plan.email,
+					nickname: plan.nickname,
+					photo: plan.photo,
+				},
+				numOfComment: plan.num_comment,
+			};
+		});
+
+		res.status(200).send({ success: true, list: plans });
 	});
 };
