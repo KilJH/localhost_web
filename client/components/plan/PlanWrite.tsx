@@ -10,21 +10,12 @@ import {
 	KeyboardTimePicker,
 	MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import React, {
-	ChangeEvent,
-	Dispatch,
-	ReactNode,
-	SetStateAction,
-	useEffect,
-	useState,
-} from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../hooks/useInput';
 import { PlanDay, PlanTime } from '../../interfaces';
 import Button from '../reuse/Button';
 import PlanDayItem from './PlanDayItem';
-import PlanTimeItem from './PlanTimeItem';
-import PlanDetailItem from './PlanTimeItem';
 import PlanWholeItem from './PlanWholeItem';
 
 interface Props {}
@@ -467,9 +458,7 @@ const PlanWrite = (props: Props) => {
 		setWholePlan(
 			wholePlan.length < date
 				? wholePlan.concat(dayPlan)
-				: wholePlan.map((item, i) => {
-						return i === date - 1 ? dayPlan : item;
-				  })
+				: wholePlan.map((item, i) => (i === date - 1 ? dayPlan : item))
 		);
 	};
 
