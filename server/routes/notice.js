@@ -14,6 +14,9 @@ router.post('/write', function (req, res, next) {
 router.post('/update', function (req, res, next) {
   management.update(req, res);
 });
+router.post('/delete', function (req, res, next) {
+  management.update(req, res);
+});
 router.get('/:id', function (req, res, next) {
   management.find(req, res);
 });

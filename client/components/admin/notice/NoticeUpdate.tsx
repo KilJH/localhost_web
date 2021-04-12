@@ -72,7 +72,7 @@ const ModifyButton = styled(Button)`
 const DetailsDiv = styled.div`
   border-bottom: 3px solid #5197d5;
 `;
-const modifyNotice = (id, title, description) => {
+const modifyNotice = (id: number, title: string, description: string) => {
   axios
     .post(`${SERVER}/api/notice/update`, {
       id: id,

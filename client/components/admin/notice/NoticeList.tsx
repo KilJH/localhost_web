@@ -34,7 +34,7 @@ const UserTable = styled.table`
 
 const ButtonDiv = styled.div`
   width: fit-content;
-  display: flex;
+  display: block;
   margin: 0 auto;
   margin-top: 1rem;
 `;
@@ -74,35 +74,21 @@ const DeleteCheckedItems = (state) => {
   for (let i = 0; i < values.length; i++) {
     if (values[i] === true) {
       axios
-        .post(`${SERVER}/api/board/delete`, {
+        .post(`${SERVER}/api/notice/delete`, {
           id: keys[i],
         })
         .then((res: AxiosResponse<any>) => {
           console.log(res.data);
           alert(res.data.message);
           if (res.data.success) {
-            Router.push('/admin/user/list');
+            Router.push('/admin/notice/list');
           }
         });
     }
   }
 };
-const WriteItem = (state) => {
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/board/write`, {
-  //         id: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         if (res.data.success) {
-  //           Router.push('/admin/notice/list');
-  //         }
-  //       });
-  //   }
-  // }
+const WriteItem = () => {
+  Router.push('/admin/notice/write'); // 에러
 };
 export default function NoticeList(props: Props) {
   const { items } = props;
@@ -110,6 +96,7 @@ export default function NoticeList(props: Props) {
   const [numberState, setNumberState] = useState(false);
   const [titleState, setTitleState] = useState(false);
   const [dateState, setDateState] = useState(false);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -119,8 +106,7 @@ export default function NoticeList(props: Props) {
   };
   const writeButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(items);
-    WriteItem(state);
+    WriteItem();
   };
   const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -218,14 +204,6 @@ export default function NoticeList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <WriteButton
-          type='submit'
-          onClick={writeButtonHandler}
-          variant='contained'
-          color='primary'
-        >
-          공지 작성
-        </WriteButton>
         <DeleteButton
           type='submit'
           onClick={deleteButtonHandler}
@@ -234,6 +212,14 @@ export default function NoticeList(props: Props) {
         >
           공지 삭제
         </DeleteButton>
+        <WriteButton
+          type='submit'
+          onClick={writeButtonHandler}
+          variant='contained'
+          color='primary'
+        >
+          공지 작성
+        </WriteButton>
       </ButtonDiv>
     </div>
   );

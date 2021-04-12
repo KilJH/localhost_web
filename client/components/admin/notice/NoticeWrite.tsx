@@ -1,81 +1,116 @@
-import React from 'react';
+import Button from '@material-ui/core/Button';
+import axios, { AxiosResponse } from 'axios';
+import Router from 'next/router';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Notice } from '../../../interfaces';
-import UserPhoto from '../../user/UserPhoto';
+import SERVER from '../../../utils/url';
 
-type Props = {
-  item?: Notice;
-  visibility: boolean;
-};
-
-const Title = styled.h2`
+const MainTitle = styled.h2`
   color: #5197d5;
   text-align: center;
   margin-top: 0;
   margin-bottom: 3em;
   padding-top: 2em;
-  border-top: 1px solid black;
-`;
-const NameTag = styled.div`
-  margin-top: 1em;
-  margin-bottom: 0;
-  display: block;
-  text-align: center;
-`;
-const Nickname = styled.h2`
-  display: inline;
-  text-align: center;
-`;
-const Name = styled.h4`
-  color: rgba(0, 0, 0, 0.5);
-  margin-left: 0.15em;
-  display: inline;
-  text-align: center;
-`;
-const Email = styled.h4`
-  color: rgba(0, 0, 0, 0.5);
-  margin-top: 0;
-  margin-bottom: 0;
-  display: block;
-  text-align: center;
+  border-top: 3px solid #5197d5;
 `;
 
-const SubTitle = styled.h4`
-  margin-top: 2rem;
-  margin-bottom: 0;
-  display: block;
-`;
-const Details = styled.a`
+const SubTitle = styled.h6`
   color: #5197d5;
-  margin-top: 0.5em;
-  margin-bottom: 2em;
-  margin-left: 0.05em;
-  font-size: 0.9em;
+  text-indent: 0.1rem;
+  text-align: left;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
   display: block;
 `;
-export default function NoticeWrite(props: Props) {
-  const { user, visibility } = props;
-  if (visibility === true) {
-    return (
-      <div>
-        <Title>호스트 정보</Title>
-        <UserPhoto src={user.photo} width={5} />
-        <NameTag>
-          <Nickname>{user.nickname}</Nickname>
-          <Name>#{user.name}</Name>
-        </NameTag>
-        <Email>({user.email})</Email>
-        <SubTitle>성별</SubTitle>
-        <Details>{user.sex === 'male' ? '남성' : '여성'}</Details>
-        <SubTitle>국가</SubTitle>
-        <Details>{user.country}</Details>
-        <SubTitle>주소</SubTitle>
-        <Details>{user.address}</Details>
-        <SubTitle>휴대폰 번호</SubTitle>
-        <Details>{user.phone}</Details>
-      </div>
-    );
-  } else {
-    return <div></div>;
+
+const Title = styled.textarea`
+  font-family: auto;
+  width: 98%;
+  height: 1.2rem;
+  padding: 0.25rem;
+  align-items: left;
+  resize: none;
+  overflow: hidden;
+  &:focus {
+    outline-color: #5197d5;
   }
+`;
+
+const Description = styled.textarea`
+  font-family: auto;
+  width: 98%;
+  height: 15rem;
+  text-align: left;
+  margin-bottom: 1em;
+  margin-left: 0.05em;
+  padding: 0.25rem;
+  font-size: 0.9em;
+  resize: none;
+  overflow: hidden;
+  &:focus {
+    outline-color: #5197d5;
+  }
+`;
+const WriteButton = styled(Button)`
+  &.MuiButton-root {
+    display: block;
+    margin-right: 0.5rem;
+    margin-left: auto;
+    width: 4rem;
+  }
+  &.MuiButton-containedPrimary {
+    background-color: #5197d5;
+  }
+`;
+const DetailsDiv = styled.div`
+  margin-bottom: 4rem;
+`;
+const writeNotice = (title: string, description: string) => {
+  axios
+    .post(`${SERVER}/api/notice/write`, {
+      title: title,
+      description: description,
+    })
+    .then((res: AxiosResponse<any>) => {
+      if (res.data.success) {
+        alert('공지 작성 완료');
+        Router.push('/admin/notice/list');
+      }
+    });
+};
+
+export default function NoticeWrite() {
+  const [titleState, setTitleState] = useState('');
+  const [descState, setDescState] = useState('');
+  const writeButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (titleState === '') alert('제목이 비어있습니다.');
+    else if (descState === '') alert('내용이 비어있습니다.');
+    else writeNotice(titleState, descState);
+  };
+  return (
+    <DetailsDiv>
+      <MainTitle>공지 작성</MainTitle>
+      <SubTitle>제목</SubTitle>
+      <Title
+        autoFocus
+        placeholder='제목을 입력해주세요.'
+        onChange={(e) => setTitleState(e.target.value)}
+      />
+      <SubTitle>내용</SubTitle>
+      <Description
+        placeholder='내용을 입력해주세요.'
+        onChange={(e) => setDescState(e.target.value)}
+      />
+      <WriteButton
+        type='submit'
+        onClick={writeButtonHandler}
+        variant='contained'
+        color='primary'
+      >
+        게시
+      </WriteButton>
+    </DetailsDiv>
+  );
 }
