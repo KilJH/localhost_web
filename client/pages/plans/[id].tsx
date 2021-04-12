@@ -1,7 +1,7 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
 import React from 'react';
 import Layout from '../../components/main/Layout';
-import PlanDetail from '../../components/plan/PlanDetail';
+import PlanDetail from '../../components/plan/PlanWholeItem';
 import PlanOverview from '../../components/plan/PlanOverview';
 import { LoginProps, Plan } from '../../interfaces';
 import { samplePlanData } from '../../utils/sample-data';
@@ -32,7 +32,6 @@ const PlanDatailPage = ({ pageProps }: Props) => {
 			} | localhost`}
 		>
 			{pageProps.plan && <PlanOverview plan={pageProps.plan} />}
-			{pageProps.plan && <PlanDetail />}
 		</Layout>
 	);
 };
