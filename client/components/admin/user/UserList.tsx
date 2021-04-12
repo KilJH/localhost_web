@@ -124,10 +124,12 @@ export default function UserList(props: Props) {
   const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     DeleteCheckedItems(state);
+    location.href = `/admin/user/list`;
   };
   const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     BlockCheckedItems(state);
+    location.href = `/admin/user/list`;
   };
 
   const emailSortHandler = () => {

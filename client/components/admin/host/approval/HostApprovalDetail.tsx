@@ -83,9 +83,7 @@ export default function HostApprovalDetail(props: Props) {
         <Details>{user.create_time.split('T')[0]}</Details>
         <SubTitle>사용 가능한 언어</SubTitle>
         <Details>
-          {user.language1} &nbsp;
-          {user.language2} &nbsp;
-          {user.language3}
+          {user.language1} {user.language2} {user.language3}
         </Details>
         <SubTitle>성별</SubTitle>
         <Details>{user.sex === 'male' ? '남성' : '여성'}</Details>
