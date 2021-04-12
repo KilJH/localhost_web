@@ -1,11 +1,10 @@
-import { Visibility } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
-import { Host } from '../../../interfaces';
+import { Notice } from '../../../interfaces';
 import UserPhoto from '../../user/UserPhoto';
 
 type Props = {
-  user?: Host;
+  item?: Notice;
   visibility: boolean;
 };
 
@@ -54,7 +53,7 @@ const Details = styled.a`
   font-size: 0.9em;
   display: block;
 `;
-export default function HostDetail(props: Props) {
+export default function NoticeWrite(props: Props) {
   const { user, visibility } = props;
   if (visibility === true) {
     return (

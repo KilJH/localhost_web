@@ -8,7 +8,7 @@ type Props = {
   visibility: boolean;
 };
 
-const Title = styled.h2`
+const MainTitle = styled.h2`
   color: #5197d5;
   text-align: center;
   margin-top: 0;
@@ -61,7 +61,7 @@ export default function UserDetail(props: Props) {
   if (visibility === true) {
     return (
       <DetailsDiv>
-        <Title>{user.ishost === 0 ? '유저' : '호스트'} 정보</Title>
+        <MainTitle>{user.ishost === 0 ? '유저' : '호스트'} 정보</MainTitle>
         <UserPhoto src={user.photo} width={5} />
         <NameTag>
           <Nickname>{user.nickname}</Nickname>

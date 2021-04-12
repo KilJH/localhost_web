@@ -2,9 +2,9 @@ import { GetStaticProps } from 'next';
 import { Notice } from '../../../interfaces';
 import React from 'react';
 import Layout from '../../../components/main/Layout';
-import NoticeList from '../../../components/admin/notice/NoticeList';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
+import NoticeNewItem from '../../../components/admin/notice/NoticeNewItem';
 
 type Props = {
   pageProps: {
@@ -12,10 +12,10 @@ type Props = {
   };
 };
 
-const list = ({ pageProps }: Props) => {
+const write = ({ pageProps }: Props) => {
   return (
     <Layout title='공지목록 | localhost'>
-      <NoticeList {...pageProps} />
+      <NoticeNewItem {...pageProps} />
     </Layout>
   );
 };
@@ -29,4 +29,4 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: { items } };
 };
 
-export default list;
+export default write;
