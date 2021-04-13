@@ -47,7 +47,7 @@ const PrivacyContainer = styled.div`
 const Privacy = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
 
-	const pwInput = useInput(currentUser.password);
+	const pwInput = useInput('');
 	const nnInput = useInput(currentUser.nickname);
 	const phInput = useInput(currentUser.phone);
 	const adInput = useInput(currentUser.address);
@@ -182,6 +182,19 @@ const Privacy = (props: Props) => {
 									>
 										변경
 									</Button>
+									{disabledPw ? (
+										''
+									) : (
+										<Button
+											default
+											type='button'
+											onClick={() => {
+												setDisabledPw(!disabledPw);
+											}}
+										>
+											취소
+										</Button>
+									)}
 								</span>
 								<CpxBarometer value={pwInput.value} />
 							</div>
