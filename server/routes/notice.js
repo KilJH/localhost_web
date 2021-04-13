@@ -14,5 +14,8 @@ router.post('/write', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
 	management.find(req, res);
 });
+router.post('/search', function (req, res, next) {
+	management.search(req, res);
+});
 
 module.exports = router;

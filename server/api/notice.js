@@ -99,3 +99,27 @@ module.exports.delete = (req, res) => {
 		res.send({ success: true, message: `id:${id} 공지 삭제 완료` });
 	});
 };
+
+// 검색
+module.exports.search = (req, res) => {
+	const type = req.body.type || 'title';
+	const item = req.body.item;
+	let sql = '';
+	switch (type) {
+		case 'title':
+			sql = `SELECT * FROM notice WHERE title LIKE "%${item}%"`;
+			break;
+		case 'content':
+			sql = `SELECT * FROM notice WHERE description LIKE "%${item}%"`;
+			break;
+		default:
+			sql = `SELECT * FROM notice WHERE title LIKE "%${item}%" OR description LIKE "%${item}%"`;
+			break;
+	}
+
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log(err);
+
+		res.status(200).send({ success: true, notices: rows });
+	});
+};
