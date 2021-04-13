@@ -9,7 +9,7 @@ type Props = {
   visibility: boolean;
 };
 
-const Title = styled.h2`
+const MainTitle = styled.h2`
   color: #5197d5;
   text-align: center;
   margin-top: 0;
@@ -71,7 +71,7 @@ export default function HostApprovalDetail(props: Props) {
   if (visibility === true) {
     return (
       <DetailsDiv>
-        <Title>신청자 정보</Title>
+        <MainTitle>신청자 정보</MainTitle>
         <UserPhoto src={user.photo} width={5} />
         <NameTag>
           <Nickname>{user.nickname}</Nickname>
@@ -83,9 +83,7 @@ export default function HostApprovalDetail(props: Props) {
         <Details>{user.create_time.split('T')[0]}</Details>
         <SubTitle>사용 가능한 언어</SubTitle>
         <Details>
-          {user.language1} &nbsp;
-          {user.language2} &nbsp;
-          {user.language3}
+          {user.language1} {user.language2} {user.language3}
         </Details>
         <SubTitle>성별</SubTitle>
         <Details>{user.sex === 'male' ? '남성' : '여성'}</Details>

@@ -29,8 +29,7 @@ export default function HostPage(props: Props) {
         label={['이메일', '닉네임', '이름']}
         onSubmit={onSubmit}
         selectLabel='검색할 값'
-        marginTop='4rem'
-        marginBottom='1rem'
+        marginBottom='2em'
       />
       <HostList items={foundItems.length !== 0 ? foundItems : []} />
     </div>

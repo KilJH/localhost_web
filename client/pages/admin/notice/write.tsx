@@ -1,9 +1,10 @@
-import { GetStaticProps } from 'next';
-import { Notice } from '../../../interfaces';
-import React from 'react';
-import Layout from '../../../components/main/Layout';
-import NoticeList from '../../../components/admin/notice/NoticeList';
 import axios from 'axios';
+import { GetStaticProps } from 'next';
+import React from 'react';
+import AdminLayout from '../../../components/admin/AdminLayout';
+import NoticeWrite from '../../../components/admin/notice/NoticeWrite';
+import Layout from '../../../components/main/Layout';
+import { Notice } from '../../../interfaces';
 import SERVER from '../../../utils/url';
 
 type Props = {
@@ -12,14 +13,15 @@ type Props = {
   };
 };
 
-const list = ({ pageProps }: Props) => {
+const write = ({ pageProps }: Props) => {
   return (
-    <Layout title='공지목록 | localhost'>
-      <NoticeList {...pageProps} />
+    <Layout title='공지작성 | localhost' isAdmin={true}>
+      <AdminLayout title='공지작성' selected='notice'>
+        <NoticeWrite />
+      </AdminLayout>
     </Layout>
   );
 };
-
 export const getStaticProps: GetStaticProps = async () => {
   // Example for including static props in a Next.js function component page.
   // Don't forget to include the respective types for any props passed into
@@ -28,5 +30,4 @@ export const getStaticProps: GetStaticProps = async () => {
     .data.notices;
   return { props: { items } };
 };
-
-export default list;
+export default write;

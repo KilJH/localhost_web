@@ -9,47 +9,50 @@ import { ScrollProvider } from '../../context/scroll';
 import { UserSetterContext, UserStateContext } from '../../context/user';
 
 type Props = {
-	children?: ReactNode;
-	title?: string;
-	// loginProps?: LoginProps;
+  children?: ReactNode;
+  title?: string;
+  isAdmin?: boolean;
+  // loginProps?: LoginProps;
 };
 
-const Main = styled.div<{ isMobile: boolean }>`
-	width: ${(props) => (props.isMobile ? '100%' : '80%')};
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0 1em;
-	transition: width 0.3s ease;
-	box-sizing: border-box;
+const Main = styled.div<{ isMobile: boolean; isAdmin: boolean }>`
+  width: ${(props) => (props.isMobile ? '100%' : '80%')};
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: ${(props) => (props.isAdmin ? 0 : '0 1em')};
+  transition: width 0.3s ease;
+  box-sizing: border-box;
 `;
 
 const Layout = ({
-	children,
-	title = 'for your dream | localhost',
+  children,
+  title = 'for your dream | localhost',
+  isAdmin,
 }: // loginProps,
 Props) => {
-	const isMobile = useMediaQuery('(max-width: 600px)');
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
-	// const setUser = useContext(UserSetterContext);
-	const currentUser = useContext(UserStateContext);
-	// setUser(loginProps.user);
-
-	return (
-		<div>
-			<Head>
-				<title>{title}</title>
-				<meta charSet='utf-8' />
-				<meta name='viewport' content='initial-scale=1.0, width=device-width' />
-			</Head>
-			{/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
-			<Header isMobile={isMobile} />
-			<Main isMobile={isMobile}>{children}</Main>
-			<footer>
-				<hr />
-				<Footer />
-			</footer>
-		</div>
-	);
+  // const setUser = useContext(UserSetterContext);
+  const currentUser = useContext(UserStateContext);
+  // setUser(loginProps.user);
+  return (
+    <div>
+      <Head>
+        <title>{title}</title>
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+      </Head>
+      {/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
+      <Header isMobile={isMobile} isAdmin={isAdmin} />
+      <Main isMobile={isMobile} isAdmin={isAdmin}>
+        {children}
+      </Main>
+      <footer>
+        <hr />
+        <Footer />
+      </footer>
+    </div>
+  );
 };
 
 export default Layout;

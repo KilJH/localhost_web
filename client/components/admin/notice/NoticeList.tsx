@@ -16,16 +16,15 @@ type Props = {
 
 const UserTable = styled.table`
   width: 100%;
-  min-width: 32rem;
-  max-width: 80rem;
+  min-width: 32em;
   margin: 0 auto;
   text-align: center;
   border-collapse: collapse;
   & th {
-    font-size: 1rem;
+    font-size: 1em;
   }
   & thead {
-    border-bottom: 2px solid black;
+    border-bottom: 3px solid #5197d5;
   }
   & td {
     border-bottom: 1px solid black;
@@ -34,33 +33,34 @@ const UserTable = styled.table`
 
 const ButtonDiv = styled.div`
   width: fit-content;
-  display: flex;
-  margin: 0 auto;
-  margin-top: 1rem;
-`;
-
-const WriteButton = styled(Button)`
-  &.MuiButton-root {
-    margin: 1rem;
-    width: 6rem;
-  }
-  &.MuiButton-containedPrimary {
-    background-color: #5197d5;
-  }
+  display: inline;
 `;
 
 const DeleteButton = styled(Button)`
   &.MuiButton-root {
-    margin: 1rem;
-    width: 6rem;
+    float: right;
+    width: 8em;
+    margin: 4em 1em 2em 0;
   }
   &.MuiButton-containedSecondary {
     background-color: #ff6b81;
   }
 `;
-
+const WriteButton = styled(Button)`
+  &.MuiButton-root {
+    float: right;
+    width: 8em;
+    margin: 4em 0 2em 1em;
+  }
+  &.MuiButton-containedPrimary {
+    background-color: #5197d5;
+  }
+`;
+const CheckTh = styled.th`
+  padding-bottom: 0.25em;
+`;
 const CssTh = styled.th`
-  padding-left: 1rem;
+  padding-left: 1em;
 `;
 
 const CssIconButton = styled(IconButton)`
@@ -74,35 +74,21 @@ const DeleteCheckedItems = (state) => {
   for (let i = 0; i < values.length; i++) {
     if (values[i] === true) {
       axios
-        .post(`${SERVER}/api/board/delete`, {
+        .post(`${SERVER}/api/notice/delete`, {
           id: keys[i],
         })
         .then((res: AxiosResponse<any>) => {
           console.log(res.data);
           alert(res.data.message);
           if (res.data.success) {
-            Router.push('/admin/user/list');
+            Router.push('/admin/notice/list');
           }
         });
     }
   }
 };
-const WriteItem = (state) => {
-  // const keys = Object.keys(state);
-  // const values = Object.values(state);
-  // for (let i = 0; i < values.length; i++) {
-  //   if (values[i] === true) {
-  //     axios
-  //       .post(`${SERVER}/api/board/write`, {
-  //         id: keys[i],
-  //       })
-  //       .then((res: AxiosResponse<any>) => {
-  //         if (res.data.success) {
-  //           Router.push('/admin/notice/list');
-  //         }
-  //       });
-  //   }
-  // }
+const WriteItem = () => {
+  Router.push('/admin/notice/write'); // 에러
 };
 export default function NoticeList(props: Props) {
   const { items } = props;
@@ -110,6 +96,7 @@ export default function NoticeList(props: Props) {
   const [numberState, setNumberState] = useState(false);
   const [titleState, setTitleState] = useState(false);
   const [dateState, setDateState] = useState(false);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
     setState({
@@ -119,8 +106,7 @@ export default function NoticeList(props: Props) {
   };
   const writeButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(items);
-    WriteItem(state);
+    WriteItem();
   };
   const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -180,12 +166,9 @@ export default function NoticeList(props: Props) {
   return (
     <div>
       <UserTable>
-        <caption>
-          <h1>공지목록</h1>
-        </caption>
         <thead>
           <tr>
-            <th>선택</th>
+            <CheckTh>선택</CheckTh>
             <CssTh>
               번호
               <CssIconButton onClick={numberSortHandler}>

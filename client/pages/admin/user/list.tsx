@@ -5,6 +5,7 @@ import Layout from '../../../components/main/Layout';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import UserPage from '../../../components/admin/user/UserPage';
+import AdminLayout from '../../../components/admin/AdminLayout';
 
 type Props = {
   pageProps: {
@@ -14,8 +15,10 @@ type Props = {
 
 const list = ({ pageProps }: Props) => {
   return (
-    <Layout title='회원목록 | localhost'>
-      <UserPage {...pageProps}></UserPage>
+    <Layout title='회원관리 | localhost' isAdmin={true}>
+      <AdminLayout title='회원목록' selected='user'>
+        <UserPage {...pageProps} />
+      </AdminLayout>
     </Layout>
   );
 };

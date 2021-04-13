@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import Router from 'next/router';
 import { Notice } from '../../../interfaces';
+import NoticeUpdate from './NoticeUpdate';
 
 type Props = {
   item: Notice;
@@ -21,14 +21,20 @@ const PushElement = styled.a`
 `;
 export default function NoticeItem(props: Props) {
   const { item, state, handleChange } = props;
+  const [detailState, setDetailState] = useState(false);
   const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
-    // const url = `http://localhost:3000/users/${user.id}`;
-    // Router.push(url);
+    setDetailState(!detailState);
   };
   return (
     <React.Fragment>
       <tr>
-        <td>
+        <td
+          style={
+            !detailState
+              ? { borderBottom: 0 }
+              : { borderBottom: '1px solid black' }
+          }
+        >
           <Checkbox
             id={item.id.toString()}
             isChecked={state}
@@ -43,6 +49,11 @@ export default function NoticeItem(props: Props) {
         </td>
         <td>
           <PushElement onClick={onClickHandler}>{item.createTime}</PushElement>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: 0 }} colSpan={4}>
+          <NoticeUpdate item={item} visibility={detailState} />
         </td>
       </tr>
     </React.Fragment>
