@@ -5,7 +5,7 @@ import Layout from '../../../../components/main/Layout';
 import SERVER from '../../../../utils/url';
 import axios from 'axios';
 import HostApprovalList from '../../../../components/admin/host/approval/HostApprovalList';
-import HostApprovalDetail from '../../../../components/admin/host/approval/HostApprovalDetail';
+import AdminLayout from '../../../../components/admin/AdminLayout';
 
 type Props = {
   pageProps: {
@@ -15,8 +15,10 @@ type Props = {
 
 const index = ({ pageProps }: Props) => {
   return (
-    <Layout title='신청자목록 | localhost'>
-      <HostApprovalList {...pageProps} />
+    <Layout title='호스트 승인 | localhost' isAdmin={true}>
+      <AdminLayout title='호스트 신청자목록' selected='approval'>
+        <HostApprovalList {...pageProps} />
+      </AdminLayout>
     </Layout>
   );
 };

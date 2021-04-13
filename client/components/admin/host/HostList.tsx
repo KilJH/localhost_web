@@ -16,39 +16,38 @@ type Props = {
 
 const UserTable = styled.table`
   width: 100%;
-  min-width: 32rem;
-  max-width: 80rem;
+  min-width: 32em;
+  max-width: 80em;
   margin: 0 auto;
   text-align: center;
   border-collapse: collapse;
   & th {
-    font-size: 1rem;
+    font-size: 1em;
   }
   & thead {
-    border-bottom: 2px solid black;
+    border-bottom: 3px solid #5197d5;
   }
   & td {
     border-bottom: 1px solid black;
   }
 `;
 
-const ButtonDiv = styled.div`
-  width: fit-content;
-  display: flex;
-  margin: 0 auto;
-  margin-top: 1rem;
-`;
 const HostButton = styled(Button)`
   &.MuiButton-root {
-    margin: 1rem;
-    width: 8rem;
+    float: right;
+    display: block;
+    margin: 4em 0 2em 0;
+    width: 9em;
   }
   &.MuiButton-containedSecondary {
     background-color: #ff6b81;
   }
 `;
+const CheckTh = styled.th`
+  padding-bottom: 0.25em;
+`;
 const CssTh = styled.th`
-  padding-left: 1rem;
+  padding-left: 1em;
 `;
 
 const CssIconButton = styled(IconButton)`
@@ -139,12 +138,9 @@ export default function HostList(props: Props) {
   return (
     <div>
       <UserTable>
-        <caption>
-          <h1>호스트 리스트</h1>
-        </caption>
         <thead>
           <tr>
-            <th>선택</th>
+            <CheckTh>선택</CheckTh>
             <CssTh>
               이메일
               <CssIconButton onClick={emailSortHandler}>
@@ -176,16 +172,14 @@ export default function HostList(props: Props) {
           ))}
         </tbody>
       </UserTable>
-      <ButtonDiv>
-        <HostButton
-          type='submit'
-          onClick={hostButtonHandler}
-          variant='contained'
-          color='secondary'
-        >
-          호스트 해제
-        </HostButton>
-      </ButtonDiv>
+      <HostButton
+        type='submit'
+        onClick={hostButtonHandler}
+        variant='contained'
+        color='secondary'
+      >
+        호스트 해제
+      </HostButton>
     </div>
   );
 }

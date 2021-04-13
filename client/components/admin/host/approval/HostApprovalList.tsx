@@ -16,16 +16,16 @@ type Props = {
 
 const UserTable = styled.table`
   width: 100%;
-  min-width: 32rem;
-  max-width: 80rem;
+  min-width: 32em;
+  max-width: 80em;
   margin: 0 auto;
   text-align: center;
   border-collapse: collapse;
   & th {
-    font-size: 1rem;
+    font-size: 1em;
   }
   & thead {
-    border-bottom: 2px solid black;
+    border-bottom: 3px solid #5197d5;
   }
   & td {
     border-bottom: 1px solid black;
@@ -34,14 +34,13 @@ const UserTable = styled.table`
 
 const ButtonDiv = styled.div`
   width: fit-content;
-  display: flex;
-  margin: 0 auto;
-  margin-top: 1rem;
+  display: inline;
 `;
 const HostDenialButton = styled(Button)`
   &.MuiButton-root {
-    margin: 1rem;
-    width: 8rem;
+    float: right;
+    width: 8em;
+    margin: 4em 1em 2em 0;
   }
   &.MuiButton-containedSecondary {
     background-color: #ff6b81;
@@ -49,15 +48,19 @@ const HostDenialButton = styled(Button)`
 `;
 const HostApprovalButton = styled(Button)`
   &.MuiButton-root {
-    margin: 1rem;
-    width: 8rem;
+    float: right;
+    width: 8em;
+    margin: 4em 0 2em 1em;
   }
   &.MuiButton-containedPrimary {
     background-color: #5197d5;
   }
 `;
+const CheckTh = styled.th`
+  padding-bottom: 0.25em;
+`;
 const CssTh = styled.th`
-  padding-left: 1rem;
+  padding-left: 1em;
 `;
 
 const CssIconButton = styled(IconButton)`
@@ -175,12 +178,9 @@ export default function HostApprovalList(props: Props) {
   return (
     <div>
       <UserTable>
-        <caption>
-          <h1>호스트 신청자 리스트</h1>
-        </caption>
         <thead>
           <tr>
-            <th>선택</th>
+            <CheckTh>선택</CheckTh>
             <CssTh>
               이메일
               <CssIconButton onClick={emailSortHandler}>
@@ -213,14 +213,6 @@ export default function HostApprovalList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <HostDenialButton
-          type='submit'
-          onClick={HostDenialButtonHandler}
-          variant='contained'
-          color='secondary'
-        >
-          승인거부
-        </HostDenialButton>
         <HostApprovalButton
           type='submit'
           onClick={HostApprovalButtonHandler}
@@ -229,6 +221,14 @@ export default function HostApprovalList(props: Props) {
         >
           승인
         </HostApprovalButton>
+        <HostDenialButton
+          type='submit'
+          onClick={HostDenialButtonHandler}
+          variant='contained'
+          color='secondary'
+        >
+          승인거부
+        </HostDenialButton>
       </ButtonDiv>
     </div>
   );

@@ -6,30 +6,21 @@ import styled from 'styled-components';
 import { Notice } from '../../../interfaces';
 import SERVER from '../../../utils/url';
 
-const MainTitle = styled.h2`
-  color: #5197d5;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 3em;
-  padding-top: 2em;
-  border-top: 3px solid #5197d5;
-`;
-
 const SubTitle = styled.h6`
   color: #5197d5;
-  text-indent: 0.1rem;
+  text-indent: 0.1em;
   text-align: left;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.5em 0.25em;
   display: block;
 `;
 
 const Title = styled.textarea`
   font-family: auto;
   width: 98%;
-  height: 1.2rem;
-  padding: 0.25rem;
+  height: 1.2em;
+  padding: 0.5em;
   align-items: left;
+  margin-bottom: 2em;
   resize: none;
   overflow: hidden;
   &:focus {
@@ -40,11 +31,10 @@ const Title = styled.textarea`
 const Description = styled.textarea`
   font-family: auto;
   width: 98%;
-  height: 15rem;
+  height: 15em;
   text-align: left;
-  margin-bottom: 1em;
   margin-left: 0.05em;
-  padding: 0.25rem;
+  padding: 0.5em;
   font-size: 0.9em;
   resize: none;
   overflow: hidden;
@@ -54,18 +44,16 @@ const Description = styled.textarea`
 `;
 const WriteButton = styled(Button)`
   &.MuiButton-root {
+    float: right;
     display: block;
-    margin-right: 0.5rem;
-    margin-left: auto;
-    width: 4rem;
+    margin: 4em 0 2em 0;
+    width: 5em;
   }
   &.MuiButton-containedPrimary {
     background-color: #5197d5;
   }
 `;
-const DetailsDiv = styled.div`
-  margin-bottom: 4rem;
-`;
+const DetailsDiv = styled.div``;
 const writeNotice = (title: string, description: string) => {
   axios
     .post(`${SERVER}/api/notice/write`, {
@@ -91,7 +79,6 @@ export default function NoticeWrite() {
   };
   return (
     <DetailsDiv>
-      <MainTitle>공지 작성</MainTitle>
       <SubTitle>제목</SubTitle>
       <Title
         autoFocus

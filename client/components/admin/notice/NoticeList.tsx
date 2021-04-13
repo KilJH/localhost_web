@@ -16,16 +16,15 @@ type Props = {
 
 const UserTable = styled.table`
   width: 100%;
-  min-width: 32rem;
-  max-width: 80rem;
+  min-width: 32em;
   margin: 0 auto;
   text-align: center;
   border-collapse: collapse;
   & th {
-    font-size: 1rem;
+    font-size: 1em;
   }
   & thead {
-    border-bottom: 2px solid black;
+    border-bottom: 3px solid #5197d5;
   }
   & td {
     border-bottom: 1px solid black;
@@ -34,33 +33,34 @@ const UserTable = styled.table`
 
 const ButtonDiv = styled.div`
   width: fit-content;
-  display: block;
-  margin: 0 auto;
-  margin-top: 1rem;
-`;
-
-const WriteButton = styled(Button)`
-  &.MuiButton-root {
-    margin: 1rem;
-    width: 6rem;
-  }
-  &.MuiButton-containedPrimary {
-    background-color: #5197d5;
-  }
+  display: inline;
 `;
 
 const DeleteButton = styled(Button)`
   &.MuiButton-root {
-    margin: 1rem;
-    width: 6rem;
+    float: right;
+    width: 8em;
+    margin: 4em 1em 2em 0;
   }
   &.MuiButton-containedSecondary {
     background-color: #ff6b81;
   }
 `;
-
+const WriteButton = styled(Button)`
+  &.MuiButton-root {
+    float: right;
+    width: 8em;
+    margin: 4em 0 2em 1em;
+  }
+  &.MuiButton-containedPrimary {
+    background-color: #5197d5;
+  }
+`;
+const CheckTh = styled.th`
+  padding-bottom: 0.25em;
+`;
 const CssTh = styled.th`
-  padding-left: 1rem;
+  padding-left: 1em;
 `;
 
 const CssIconButton = styled(IconButton)`
@@ -166,12 +166,9 @@ export default function NoticeList(props: Props) {
   return (
     <div>
       <UserTable>
-        <caption>
-          <h1>공지목록</h1>
-        </caption>
         <thead>
           <tr>
-            <th>선택</th>
+            <CheckTh>선택</CheckTh>
             <CssTh>
               번호
               <CssIconButton onClick={numberSortHandler}>
@@ -204,14 +201,6 @@ export default function NoticeList(props: Props) {
         </tbody>
       </UserTable>
       <ButtonDiv>
-        <DeleteButton
-          type='submit'
-          onClick={deleteButtonHandler}
-          variant='contained'
-          color='secondary'
-        >
-          공지 삭제
-        </DeleteButton>
         <WriteButton
           type='submit'
           onClick={writeButtonHandler}
@@ -220,6 +209,14 @@ export default function NoticeList(props: Props) {
         >
           공지 작성
         </WriteButton>
+        <DeleteButton
+          type='submit'
+          onClick={deleteButtonHandler}
+          variant='contained'
+          color='secondary'
+        >
+          공지 삭제
+        </DeleteButton>
       </ButtonDiv>
     </div>
   );
