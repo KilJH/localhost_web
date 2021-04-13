@@ -13,18 +13,18 @@ router.post('/load', function (req, res, next) {
 	management.load(req, res);
 });
 
-router.post('/timeWrite', function (req, res, next) {
-	management.timeWrite(req, res);
+router.post('/write', function (req, res, next) {
+	management.write(req, res);
 });
 
-router.post('/dayWrite', function (req, res, next) {
+/*outer.post('/dayWrite', function (req, res, next) {
 	management.dayWrite(req, res);
 });
 
 router.post('/planWrite', function (req, res, next) {
 	management.planWrite(req, res);
 });
-
+*/
 router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
