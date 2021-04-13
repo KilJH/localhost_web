@@ -38,7 +38,7 @@ const NavDiv = styled.div`
   text-align: center;
   align-items: left;
   background-color: #5197d5;
-  min-width: 11.5em;
+  min-width: 13em;
   position: fixed;
   height: 100vh;
   z-index: 1;
@@ -147,10 +147,10 @@ const ClickedText = styled(ListItemText)`
   }
 `;
 const ComponentDiv = styled.div`
-  width: 85%;
-  margin-left: 11.25em;
-  position: relative;
+  width: 100%;
+  margin: 0;
   background-color: #f1f2f6;
+  height: 100vh;
 `;
 
 const ComponentTitleDiv = styled.div`
@@ -158,18 +158,25 @@ const ComponentTitleDiv = styled.div`
 `;
 const ComponentTitle = styled.h4`
   margin: 0 2em;
+  padding-left: 11em;
   padding-top: 3.5em;
   font-size: 1.1em;
   color: #5197d5;
 `;
 const ComponentMainDiv = styled.div`
-  margin: 3em;
-  margin-top: 1em;
+  margin: 1em 3em 3em 15em;
   padding: 2em;
   top: -4em;
   background-color: white;
   border-radius: 0.25em;
   box-shadow: 2px 2px 5px 1px gray;
+`;
+const FooterDiv = styled.div`
+  top: 0.5em;
+  position: fixed;
+  & a {
+    font-size: 0.5em;
+  }
 `;
 export default function AdminLayout(props: Props) {
   const {
