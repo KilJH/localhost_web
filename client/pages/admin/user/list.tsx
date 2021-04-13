@@ -1,7 +1,6 @@
 import { GetStaticProps } from 'next';
 import { User } from '../../../interfaces';
 import React from 'react';
-import Layout from '../../../components/main/Layout';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import UserPage from '../../../components/admin/user/UserPage';
@@ -15,11 +14,9 @@ type Props = {
 
 const list = ({ pageProps }: Props) => {
   return (
-    <Layout title='회원관리 | localhost' isAdmin={true}>
-      <AdminLayout title='회원목록' selected='user'>
-        <UserPage {...pageProps} />
-      </AdminLayout>
-    </Layout>
+    <AdminLayout title='회원목록' selected='user'>
+      <UserPage {...pageProps} />
+    </AdminLayout>
   );
 };
 

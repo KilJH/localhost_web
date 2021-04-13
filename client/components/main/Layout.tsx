@@ -11,7 +11,6 @@ import { UserSetterContext, UserStateContext } from '../../context/user';
 type Props = {
   children?: ReactNode;
   title?: string;
-  isAdmin?: boolean;
   // loginProps?: LoginProps;
 };
 
@@ -27,7 +26,6 @@ const Main = styled.div<{ isMobile: boolean; isAdmin: boolean }>`
 const Layout = ({
   children,
   title = 'for your dream | localhost',
-  isAdmin,
 }: // loginProps,
 Props) => {
   const isMobile = useMediaQuery('(max-width: 600px)');
@@ -43,10 +41,8 @@ Props) => {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       {/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
-      <Header isMobile={isMobile} isAdmin={isAdmin} />
-      <Main isMobile={isMobile} isAdmin={isAdmin}>
-        {children}
-      </Main>
+      <Header isMobile={isMobile} />
+      <Main isMobile={isMobile}>{children}</Main>
       <footer>
         <hr />
         <Footer />

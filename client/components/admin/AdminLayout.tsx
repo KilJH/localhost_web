@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import Head from 'next/head';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -21,6 +22,10 @@ import {
 } from '@material-ui/icons';
 import styled from 'styled-components';
 import Router from 'next/router';
+import ArrowLeftOutlined from '@material-ui/icons/ArrowLeftOutlined';
+import Footer from '../main/Footer';
+import Header from '../main/Header';
+import AdminHeader from './AdminHeader';
 
 type Props = {
   title: string;
@@ -162,193 +167,207 @@ const ComponentMainDiv = styled.div`
   box-shadow: 2px 2px 5px 1px gray;
 `;
 export default function AdminLayout(props: Props) {
-  const { title, children, selected } = props;
+  const {
+    title = '오류동에서 오류남! | 관리자 | localhost',
+    children,
+    selected,
+  } = props;
   const [open, setOpen] = React.useState(true);
-
   const handleClick = () => {
     setOpen(!open);
   };
 
   return (
-    <Layout>
-      <NavDiv>
-        <List>
-          <NavTitle>
-            <NavTitleIcon>
-              <VpnKeyIcon />
-            </NavTitleIcon>
-            <NavTitleText primary='관리자 페이지' />
-          </NavTitle>
-          <Divider />
-
-          {/* 공지 관리 */}
-          {selected !== 'notice' ? ( // 미클릭 시
-            <Item button onClick={() => Router.push('/admin/notice/list')}>
+    <div>
+      <Head>
+        <title>{title} | 관리자 | localhost</title>
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+      </Head>
+      {/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
+      <AdminHeader />
+      <Layout>
+        <NavDiv>
+          <List>
+            <NavTitle>
+              <NavTitleIcon>
+                <VpnKeyIcon />
+              </NavTitleIcon>
+              <NavTitleText primary='관리자 페이지' />
+            </NavTitle>
+            <Divider />
+            {/* 공지 관리 */}
+            {selected !== 'notice' ? ( // 미클릭 시
+              <Item button onClick={() => Router.push('/admin/notice/list')}>
+                <Icon>
+                  <NotificationsOutlinedIcon />
+                </Icon>
+                <Text primary='공지 관리' />
+              </Item>
+            ) : (
+              // 클릭 시
+              <ClickedItem
+                button
+                onClick={() => Router.push('/admin/notice/list')}
+              >
+                <ClickedIcon>
+                  <NotificationsOutlinedIcon />
+                </ClickedIcon>
+                <ClickedText primary='공지 관리' />
+              </ClickedItem>
+            )}
+            {/* 게시물 관리 */}
+            {selected !== 'board' ? ( // 미클릭 시
+              <Item button>
+                <Icon>
+                  <ForumOutlinedIcon />
+                </Icon>
+                <Text primary='게시물 관리' />
+              </Item>
+            ) : (
+              // 클릭 시
+              <ClickedItem button>
+                <ClickedIcon>
+                  <ForumOutlinedIcon />
+                </ClickedIcon>
+                <ClickedText primary='게시물 관리' />
+              </ClickedItem>
+            )}
+            {/* 유저 관리 */}
+            <Item button onClick={handleClick}>
               <Icon>
-                <NotificationsOutlinedIcon />
+                <PeopleOutlinedIcon />
               </Icon>
-              <Text primary='공지 관리' />
+              <Text primary='유저 관리' />
+              <ArrowIcon>
+                {open ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
+              </ArrowIcon>
             </Item>
-          ) : (
-            // 클릭 시
-            <ClickedItem
-              button
-              onClick={() => Router.push('/admin/notice/list')}
-            >
-              <ClickedIcon>
-                <NotificationsOutlinedIcon />
-              </ClickedIcon>
-              <ClickedText primary='공지 관리' />
-            </ClickedItem>
-          )}
-          {/* 게시물 관리 */}
-          {selected !== 'board' ? ( // 미클릭 시
-            <Item button>
-              <Icon>
-                <ForumOutlinedIcon />
-              </Icon>
-              <Text primary='게시물 관리' />
-            </Item>
-          ) : (
-            // 클릭 시
-            <ClickedItem button>
-              <ClickedIcon>
-                <ForumOutlinedIcon />
-              </ClickedIcon>
-              <ClickedText primary='게시물 관리' />
-            </ClickedItem>
-          )}
-          {/* 유저 관리 */}
-          <Item button onClick={handleClick}>
-            <Icon>
-              <PeopleOutlinedIcon />
-            </Icon>
-            <Text primary='유저 관리' />
-            <ArrowIcon>
-              {open ? <ArrowDropDownOutlined /> : <ArrowDropUpOutlined />}
-            </ArrowIcon>
-          </Item>
-          {/* 일반회원 */}
-          <Collapse in={open} timeout='auto' unmountOnExit>
-            <List component='div' disablePadding>
-              {selected !== 'user' ? ( // 미클릭 시
-                <Item button onClick={() => Router.push('/admin/user/list')}>
-                  <ArrowIcon>
-                    <ArrowRightOutlined />
-                  </ArrowIcon>
-                  <Icon>
-                    <PersonOutlinedIcon />
-                  </Icon>
-                  <Text primary='회원' />
-                </Item>
-              ) : (
-                // 클릭 시
-                <ClickedItem
-                  button
-                  onClick={() => Router.push('/admin/user/list')}
-                >
-                  <ArrowIcon>
-                    <ArrowRightOutlined />
-                  </ArrowIcon>
-                  <ClickedIcon>
-                    <PersonOutlinedIcon />
-                  </ClickedIcon>
-                  <ClickedText primary='회원' />
-                </ClickedItem>
-              )}
-            </List>
-          </Collapse>
-          {/* 호스트 */}
-          <Collapse in={open} timeout='auto' unmountOnExit>
-            <List component='div' disablePadding>
-              {selected !== 'host' ? ( // 미클릭 시
-                <Item button onClick={() => Router.push('/admin/host/list')}>
-                  <ArrowIcon>
-                    <ArrowRightOutlined />
-                  </ArrowIcon>
-                  <Icon>
-                    <AssignmentIndOutlinedIcon />
-                  </Icon>
-                  <Text primary='호스트' />
-                </Item>
-              ) : (
-                // 클릭 시
-                <ClickedItem
-                  button
-                  onClick={() => Router.push('/admin/host/list')}
-                >
-                  <ArrowIcon>
-                    <ArrowRightOutlined />
-                  </ArrowIcon>
-                  <ClickedIcon>
-                    <AssignmentIndOutlinedIcon />
-                  </ClickedIcon>
-                  <ClickedText primary='호스트' />
-                </ClickedItem>
-              )}
-            </List>
-          </Collapse>
-          {/* 호스트 승인 */}
-          {selected !== 'approval' ? ( // 미클릭 시
-            <Item button onClick={() => Router.push('/admin/host/approval')}>
-              <Icon>
-                <AssignmentTurnedInOutlinedIcon />
-              </Icon>
-              <Text primary='호스트 승인' />
-            </Item>
-          ) : (
-            // 클릭 시
-            <ClickedItem
-              button
-              onClick={() => Router.push('/admin/host/approval')}
-            >
-              <ClickedIcon>
-                <AssignmentTurnedInOutlinedIcon />
-              </ClickedIcon>
-              <ClickedText primary='호스트 승인' />
-            </ClickedItem>
-          )}
-          {/* 플랜 관리 */}
-          {selected !== 'plan' ? ( // 미클릭 시
-            <Item button>
-              <Icon>
-                <AssessmentOutlinedIcon />
-              </Icon>
-              <Text primary='플랜 관리' />
-            </Item>
-          ) : (
-            // 클릭 시
-            <ClickedItem button>
-              <ClickedIcon>
-                <AssessmentOutlinedIcon />
-              </ClickedIcon>
-              <ClickedText primary='플랜 관리' />
-            </ClickedItem>
-          )}
-          {/* 고객센터 관리 */}
-          {selected !== 'customerService' ? (
-            <Item button>
-              <Icon>
-                <HeadsetMicOutlinedIcon />
-              </Icon>
-              <Text primary='고객센터 관리' />
-            </Item>
-          ) : (
-            <ClickedItem button>
-              <ClickedIcon>
-                <HeadsetMicOutlinedIcon />
-              </ClickedIcon>
-              <ClickedText primary='고객센터 관리' />
-            </ClickedItem>
-          )}
-        </List>
-      </NavDiv>
-      <ComponentDiv>
-        <ComponentTitleDiv>
-          <ComponentTitle>{title}</ComponentTitle>
-        </ComponentTitleDiv>
-        <ComponentMainDiv>{children}</ComponentMainDiv>
-      </ComponentDiv>
-    </Layout>
+            {/* 일반회원 */}
+            <Collapse in={open} timeout='auto' unmountOnExit>
+              <List component='div' disablePadding>
+                {selected !== 'user' ? ( // 미클릭 시
+                  <Item button onClick={() => Router.push('/admin/user/list')}>
+                    <ArrowIcon>
+                      <ArrowRightOutlined />
+                    </ArrowIcon>
+                    <Icon>
+                      <PersonOutlinedIcon />
+                    </Icon>
+                    <Text primary='회원' />
+                  </Item>
+                ) : (
+                  // 클릭 시
+                  <ClickedItem
+                    button
+                    onClick={() => Router.push('/admin/user/list')}
+                  >
+                    <ArrowIcon>
+                      <ArrowDropDownOutlined />
+                    </ArrowIcon>
+                    <ClickedIcon>
+                      <PersonOutlinedIcon />
+                    </ClickedIcon>
+                    <ClickedText primary='회원' />
+                  </ClickedItem>
+                )}
+              </List>
+            </Collapse>
+            {/* 호스트 */}
+            <Collapse in={open} timeout='auto' unmountOnExit>
+              <List component='div' disablePadding>
+                {selected !== 'host' ? ( // 미클릭 시
+                  <Item button onClick={() => Router.push('/admin/host/list')}>
+                    <ArrowIcon>
+                      <ArrowRightOutlined />
+                    </ArrowIcon>
+                    <Icon>
+                      <AssignmentIndOutlinedIcon />
+                    </Icon>
+                    <Text primary='호스트' />
+                  </Item>
+                ) : (
+                  // 클릭 시
+                  <ClickedItem
+                    button
+                    onClick={() => Router.push('/admin/host/list')}
+                  >
+                    <ArrowIcon>
+                      <ArrowDropDownOutlined />
+                    </ArrowIcon>
+                    <ClickedIcon>
+                      <AssignmentIndOutlinedIcon />
+                    </ClickedIcon>
+                    <ClickedText primary='호스트' />
+                  </ClickedItem>
+                )}
+              </List>
+            </Collapse>
+            {/* 호스트 승인 */}
+            {selected !== 'approval' ? ( // 미클릭 시
+              <Item button onClick={() => Router.push('/admin/host/approval')}>
+                <Icon>
+                  <AssignmentTurnedInOutlinedIcon />
+                </Icon>
+                <Text primary='호스트 승인' />
+              </Item>
+            ) : (
+              // 클릭 시
+              <ClickedItem
+                button
+                onClick={() => Router.push('/admin/host/approval')}
+              >
+                <ClickedIcon>
+                  <AssignmentTurnedInOutlinedIcon />
+                </ClickedIcon>
+                <ClickedText primary='호스트 승인' />
+              </ClickedItem>
+            )}
+            {/* 플랜 관리 */}
+            {selected !== 'plan' ? ( // 미클릭 시
+              <Item button>
+                <Icon>
+                  <AssessmentOutlinedIcon />
+                </Icon>
+                <Text primary='플랜 관리' />
+              </Item>
+            ) : (
+              // 클릭 시
+              <ClickedItem button>
+                <ClickedIcon>
+                  <AssessmentOutlinedIcon />
+                </ClickedIcon>
+                <ClickedText primary='플랜 관리' />
+              </ClickedItem>
+            )}
+            {/* 고객센터 관리 */}
+            {selected !== 'customerService' ? (
+              <Item button>
+                <Icon>
+                  <HeadsetMicOutlinedIcon />
+                </Icon>
+                <Text primary='고객센터 관리' />
+              </Item>
+            ) : (
+              <ClickedItem button>
+                <ClickedIcon>
+                  <HeadsetMicOutlinedIcon />
+                </ClickedIcon>
+                <ClickedText primary='고객센터 관리' />
+              </ClickedItem>
+            )}
+          </List>
+        </NavDiv>
+        <ComponentDiv>
+          <ComponentTitleDiv>
+            <ComponentTitle>{title}</ComponentTitle>
+          </ComponentTitleDiv>
+          <ComponentMainDiv>{children}</ComponentMainDiv>
+        </ComponentDiv>
+      </Layout>
+      <footer>
+        <Footer />
+      </footer>
+    </div>
   );
 }

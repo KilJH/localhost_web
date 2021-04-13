@@ -17,7 +17,6 @@ import { UserStateContext } from '../../context/user';
 
 interface Props {
   isMobile: boolean;
-  isAdmin?: boolean;
   // isLogined: boolean;
   // user?: User;
 }
@@ -84,25 +83,7 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
     background-color: white;
   }
 `;
-const AdminDiv = styled.div<HeaderStyleProps>`
-  width: ${(props) => (props.isMobile ? '100%' : '80%')};
-  max-width: 1200px;
-  height: ${(props) => (props.isMobile ? '2.5rem' : '4rem')};
-  min-height: 2.5rem;
-  max-height: 4rem;
-  margin: 0 auto;
-  box-sizing: border-box;
 
-  transition: top 0.5s ease;
-  background-color: rgb(33, 33, 33);
-  position: sticky;
-  top: ${(props) => (props.fixed ? '0' : props.isMobile ? '-2.5rem' : '-4rem')};
-
-  display: block;
-  align-items: center;
-
-  z-index: 10;
-`;
 const Logo = styled.div`
   height: 100%;
   max-height: 3.5rem;
@@ -228,7 +209,7 @@ const Header = (props: Props) => {
   const drawer = useDrawer('left');
 
   // const { isMobile, isLogined, user } = props;
-  const { isMobile, isAdmin } = props;
+  const { isMobile } = props;
   const { state, actions } = useContext(ScrollContext);
 
   const onScroll = () => {
@@ -245,79 +226,59 @@ const Header = (props: Props) => {
   const currentUser = useContext(UserStateContext);
   const isLogined = Object.keys(currentUser).length === 0 ? false : true;
 
-  if (!isAdmin) {
-    if (isMobile) {
-      return (
-        <HeaderDiv isMobile={isMobile} fixed={state.isUp}>
-          <IconButton>
-            <MenuIcon onClick={drawer.onOpen} />
-          </IconButton>
-          <Drawer
-            anchor={drawer.anchor}
-            open={drawer.open}
-            onClose={drawer.onClose}
-          >
-            <HamburgerMenu>
-              <div>
-                <EmptyFlexDiv />
-                <IconButton>
-                  <CloseIcon onClick={drawer.onClose} />
-                </IconButton>
-              </div>
-              <Menu />
-            </HamburgerMenu>
-          </Drawer>
-          <EmptyFlexDiv />
-          <Logo>
-            <Link href='/'>
-              <a>
-                <img
-                  alt='mainlogo'
-                  src='/img/logos/localhostLogoBlack.png'
-                ></img>
-              </a>
-            </Link>
-          </Logo>
-          <EmptyFlexDiv />
-          <LoginMenu isLogined={isLogined} />
-        </HeaderDiv>
-      );
-    } else {
-      return (
-        <HeaderDiv isMobile={isMobile} fixed={state.isUp}>
-          <div className='white'></div>
-          <Logo>
-            <Link href='/'>
-              <a>
-                <img
-                  alt='mainlogo'
-                  src='/img/logos/localhostLogoBlack.png'
-                ></img>
-              </a>
-            </Link>
-          </Logo>
-
-          <MainMenu>
-            <Menu />
-          </MainMenu>
-          <div>
-            <input placeholder='검색창' />
-          </div>
-          <LoginMenu isLogined={isLogined} />
-        </HeaderDiv>
-      );
-    }
-  } else {
+  if (isMobile) {
     return (
-      <AdminDiv isMobile={isMobile} fixed={state.isUp}>
+      <HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+        <IconButton>
+          <MenuIcon onClick={drawer.onOpen} />
+        </IconButton>
+        <Drawer
+          anchor={drawer.anchor}
+          open={drawer.open}
+          onClose={drawer.onClose}
+        >
+          <HamburgerMenu>
+            <div>
+              <EmptyFlexDiv />
+              <IconButton>
+                <CloseIcon onClick={drawer.onClose} />
+              </IconButton>
+            </div>
+            <Menu />
+          </HamburgerMenu>
+        </Drawer>
+        <EmptyFlexDiv />
         <Logo>
           <Link href='/'>
             <a>
-              <img alt='mainlogo' src='/img/logos/localhostLogoWhite.png'></img>
+              <img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
             </a>
           </Link>
         </Logo>
-      </AdminDiv>
+        <EmptyFlexDiv />
+        <LoginMenu isLogined={isLogined} />
+      </HeaderDiv>
+    );
+  } else {
+    return (
+      <HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+        <div className='white'></div>
+        <Logo>
+          <Link href='/'>
+            <a>
+              <img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
+            </a>
+          </Link>
+        </Logo>
+
+        <MainMenu>
+          <Menu />
+        </MainMenu>
+        <div>
+          <input placeholder='검색창' />
+        </div>
+        <LoginMenu isLogined={isLogined} />
+      </HeaderDiv>
     );
   }
 };
