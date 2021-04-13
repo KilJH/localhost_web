@@ -1,7 +1,6 @@
 import { GetStaticProps } from 'next';
 import { Host, User } from '../../../../interfaces';
 import React from 'react';
-import Layout from '../../../../components/main/Layout';
 import SERVER from '../../../../utils/url';
 import axios from 'axios';
 import HostApprovalList from '../../../../components/admin/host/approval/HostApprovalList';
@@ -15,11 +14,9 @@ type Props = {
 
 const index = ({ pageProps }: Props) => {
   return (
-    <Layout title='호스트 승인 | localhost' isAdmin={true}>
-      <AdminLayout title='호스트 신청자목록' selected='approval'>
-        <HostApprovalList {...pageProps} />
-      </AdminLayout>
-    </Layout>
+    <AdminLayout title='호스트 신청자목록' selected='approval'>
+      <HostApprovalList {...pageProps} />
+    </AdminLayout>
   );
 };
 

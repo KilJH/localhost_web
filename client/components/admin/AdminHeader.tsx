@@ -1,19 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { Drawer, IconButton } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
-import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
-import { User } from '../../interfaces';
-// Mobile
-import MenuIcon from '@material-ui/icons/Menu';
-import { useDrawer } from '../../hooks/useDrawer';
-import CloseIcon from '@material-ui/icons/Close';
-import Login from '../user/Login';
-import UserMenu from '../user/UserMenu';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 import ScrollContext from '../../context/scroll';
-import { UserStateContext } from '../../context/user';
 
 interface HeaderStyleProps {
   fixed: boolean;

@@ -15,11 +15,9 @@ type Props = {
 
 const list = ({ pageProps }: Props) => {
   return (
-    <Layout title='공지목록 | localhost' isAdmin={true}>
-      <AdminLayout title='공지목록' selected='notice'>
-        <NoticeList {...pageProps} />
-      </AdminLayout>
-    </Layout>
+    <AdminLayout title='공지목록' selected='notice'>
+      <NoticeList {...pageProps} />
+    </AdminLayout>
   );
 };
 

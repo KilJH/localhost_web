@@ -14,11 +14,9 @@ type Props = {
 };
 
 const list = ({ pageProps }: Props) => (
-  <Layout title='호스트관리 | localhost' isAdmin={true}>
-    <AdminLayout title='호스트목록' selected='host'>
-      <HostPage {...pageProps} />
-    </AdminLayout>
-  </Layout>
+  <AdminLayout title='호스트목록' selected='host'>
+    <HostPage {...pageProps} />
+  </AdminLayout>
 );
 
 export const getStaticProps: GetStaticProps = async () => {

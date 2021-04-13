@@ -15,11 +15,9 @@ type Props = {
 
 const write = ({ pageProps }: Props) => {
   return (
-    <Layout title='공지작성 | localhost' isAdmin={true}>
-      <AdminLayout title='공지작성' selected='notice'>
-        <NoticeWrite />
-      </AdminLayout>
-    </Layout>
+    <AdminLayout title='공지작성' selected='notice'>
+      <NoticeWrite />
+    </AdminLayout>
   );
 };
 export const getStaticProps: GetStaticProps = async () => {

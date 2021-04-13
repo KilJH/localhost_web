@@ -15,16 +15,11 @@ import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import HeadsetMicOutlinedIcon from '@material-ui/icons/HeadsetMicOutlined';
 import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import {
-  ArrowDropDownOutlined,
-  ArrowDropUpOutlined,
-  ArrowRightOutlined,
-} from '@material-ui/icons';
+import { ArrowDropDownOutlined, ArrowRightOutlined } from '@material-ui/icons';
 import styled from 'styled-components';
 import Router from 'next/router';
 import ArrowLeftOutlined from '@material-ui/icons/ArrowLeftOutlined';
 import Footer from '../main/Footer';
-import Header from '../main/Header';
 import AdminHeader from './AdminHeader';
 
 type Props = {
@@ -33,15 +28,20 @@ type Props = {
   selected?: string;
 };
 const Layout = styled.div`
-  display: flex;
-  margin: 0;
+  max-width: 1200px;
+  display: block;
+  margin: 0 auto;
   min-height: 27em;
+  align-items: center;
 `;
 const NavDiv = styled.div`
   text-align: center;
-  align-items: center;
+  align-items: left;
   background-color: #5197d5;
-  min-width: 11em;
+  min-width: 11.5em;
+  position: fixed;
+  height: 100vh;
+  z-index: 1;
 `;
 
 const NavTitle = styled(ListItem)`
@@ -51,7 +51,7 @@ const NavTitle = styled(ListItem)`
     padding: 0;
     margin-bottom: 0.25em;
   }
-  min-width: 10.5em;
+  min-width: 12em;
 `;
 const NavTitleIcon = styled(ListItemIcon)`
   &.MuiListItemIcon-root {
@@ -147,21 +147,26 @@ const ClickedText = styled(ListItemText)`
   }
 `;
 const ComponentDiv = styled.div`
-  width: 100%;
+  width: 85%;
+  margin-left: 11.25em;
+  position: relative;
   background-color: #f1f2f6;
 `;
 
 const ComponentTitleDiv = styled.div`
-  margin: 2.5em 0 0 1.75em;
+  margin: 0 0 0 1.75em;
 `;
 const ComponentTitle = styled.h4`
-  margin: 0;
+  margin: 0 2em;
+  padding-top: 3.5em;
   font-size: 1.1em;
   color: #5197d5;
 `;
 const ComponentMainDiv = styled.div`
-  margin: 1em;
-  padding: 1.5em;
+  margin: 3em;
+  margin-top: 1em;
+  padding: 2em;
+  top: -4em;
   background-color: white;
   border-radius: 0.25em;
   box-shadow: 2px 2px 5px 1px gray;

@@ -15,13 +15,13 @@ router.post('/update', function (req, res, next) {
   management.update(req, res);
 });
 router.post('/delete', function (req, res, next) {
-  management.update(req, res);
+  management.delete(req, res);
 });
 router.get('/:id', function (req, res, next) {
   management.find(req, res);
 });
 router.post('/search', function (req, res, next) {
-	management.search(req, res);
+  management.search(req, res);
 });
 
 module.exports = router;
