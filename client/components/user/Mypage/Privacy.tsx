@@ -7,6 +7,8 @@ import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import UserPhoto from '../UserPhoto';
+import Button from '../../reuse/Button';
+import CpxBarometer from '../../reuse/CpxBarometer';
 
 interface Props {
 	id: string;
@@ -14,12 +16,12 @@ interface Props {
 	followers?: User[];
 }
 
-const Button = styled.button`
-	padding: 0.5rem 1rem;
-	background-color: #5197d5;
-	border: none;
-	color: white;
-`;
+// const Button = styled.button`
+// 	padding: 0.5rem 1rem;
+// 	background-color: #5197d5;
+// 	border: none;
+// 	color: white;
+// `;
 
 const PrivacyContainer = styled.div`
 	margin: 0 auto;
@@ -49,6 +51,8 @@ const Privacy = (props: Props) => {
 	const nnInput = useInput(currentUser.nickname);
 	const phInput = useInput(currentUser.phone);
 	const adInput = useInput(currentUser.address);
+
+	const [disabledPw, setDisabledPw] = useState(true);
 
 	const [img, setImg] = useState(null);
 
@@ -140,9 +144,9 @@ const Privacy = (props: Props) => {
 									hover
 								/>
 
-								<button type='button' onClick={onClickReset}>
+								<Button default type='button' onClick={onClickReset}>
 									기본이미지로 변경
-								</button>
+								</Button>
 							</div>
 						</div>
 						<div>
@@ -152,10 +156,34 @@ const Privacy = (props: Props) => {
 						<div>
 							<div>패스워드: </div>
 							<div>
-								<input type='password' disabled {...pwInput} />
+								<input type='password' disabled={disabledPw} {...pwInput} />
 								<span>
-									<button>변경</button>
+									<Button
+										type='button'
+										onClick={() => {
+											if (!disabledPw) {
+												axios
+													.post(`${SERVER}/api/user/updatePW`, {
+														email: currentUser.email,
+														pw: pwInput.value,
+													})
+													.then((res) => {
+														alert(
+															res.data.success
+																? res.data.message
+																: '비밀번호 변경에 실패했습니다.'
+														);
+													});
+											}
+											pwInput.setValue('');
+											setDisabledPw(!disabledPw);
+										}}
+										default={disabledPw}
+									>
+										변경
+									</Button>
 								</span>
+								<CpxBarometer value={pwInput.value} />
 							</div>
 						</div>
 						<div>
@@ -192,7 +220,9 @@ const Privacy = (props: Props) => {
 				</section>
 
 				<Button type='submit'>수정</Button>
-				<button type='button'>취소</button>
+				<Button type='button' default>
+					취소
+				</Button>
 			</form>
 		</section>
 	);

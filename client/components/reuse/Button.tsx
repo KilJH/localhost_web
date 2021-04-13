@@ -1,3 +1,4 @@
+import { type } from 'node:os';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -7,6 +8,7 @@ interface Props {
 	padding?: string;
 	default?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement>;
+	type?: 'button' | 'submit' | 'reset';
 }
 
 const StyledButton = styled.button<Props>`
@@ -24,13 +26,14 @@ const StyledButton = styled.button<Props>`
 `;
 
 const Button = (props: Props) => {
-	const { children, width, padding, onClick } = props;
+	const { children, width, padding, type, onClick } = props;
 	return (
 		<StyledButton
 			width={width}
 			onClick={onClick}
 			padding={padding}
 			default={props.default}
+			type={type}
 		>
 			{children}
 		</StyledButton>

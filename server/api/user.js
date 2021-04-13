@@ -65,6 +65,7 @@ module.exports.updatePhoto = (req, res) => {
 };
 
 module.exports.updatePW = (req, res) => {
+	console.log('왔냐?');
 	const email = req.body.email || req.query.email;
 	const pw = req.body.pw || req.query.pw;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
@@ -72,9 +73,9 @@ module.exports.updatePW = (req, res) => {
 	const update = `UPDATE user SET pw = "${hashPW}" WHERE email = "${email}";`;
 
 	mysql.query(update, (err) => {
-		if(err) return err;
-		res.send({ success: true });
-	})
+		if (err) return err;
+		res.send({ success: true, message: '비밀번호 변경에 성공했습니다.' });
+	});
 };
 
 module.exports.delete = (req, res) => {

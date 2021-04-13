@@ -32,13 +32,13 @@ export interface Host {
 }
 
 export interface Plan {
-	id: number;
+	id?: number;
 	title: string;
 	description: string;
-	price: number;
+	price?: number;
 	sleepDays: number;
 	travelDays: number;
-	tags: string[];
+	tags?: string[];
 	planDays: PlanDay[];
 }
 
@@ -52,9 +52,9 @@ export interface PlanTime {
 	type: string;
 	price: number;
 	place: string;
-	placeInfo: string;
+	placeInfo?: string;
 	description: string;
-	photo: string[];
+	photo?: string[];
 }
 
 export interface LoginProps {
