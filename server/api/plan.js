@@ -1,6 +1,7 @@
 const {
 	default: formatDistanceStrictWithOptions,
 } = require('date-fns/fp/formatDistanceStrictWithOptions');
+const { isUnionTypeNode } = require('typescript');
 const mysql = require('../db/mysql');
 
 // DATE formatting function
@@ -63,7 +64,7 @@ module.exports.list = (req, res) => {
 };
 
 module.exports.load = (req, res) => {
-	// 플랜불러오
+	// 플랜 불러오기
 	const id = req.body.id; // plan id
 	const hitSql = `UPDATE plan SET hit = hit+1 WHERE id = ?`;
 
@@ -80,14 +81,36 @@ module.exports.load = (req, res) => {
 		const commentSql = `SELECT *, plan_comment.id As comment_id FROM plan_comment LEFT JOIN user ON plan_comment.user_id = user.id WHERE plan_comment.plan_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log('load err2', err2);
-			
-			const planTimes = plansRows.map((planTime)=>(
-				`${planTime.time}, ${planTime.type}, ${planTime.price}, ${planTime.place}, ${planTime.placeInfo}, ${planTime.description}, ${planTime.photo}`
-			)).join(',');
 
-			/*const planDays = plansRows.filter((planDay, i)=>(
-				planDay.date==i
-			)).map(`${planTimes}`)*/
+			let arr = {};
+			let planDay = [];
+			const planTimes = plansRows.map((plansRow) => (
+				`${plansRow.time}, ${plansRow.type}, ${plansRow.price}, ${plansRow.place}, ${plansRow.placeInfo}, ${plansRow.description}, ${plansRow.photo}`
+			))
+
+			let day = 1;
+			let temp = "";
+		
+			for (let i = 0; i < plansRows.length; i++) {
+				if (plansRows[i].date == day) {
+					temp = temp + planTimes[i];
+					if(i===plansRows.length-1){
+						arr[day] = temp;
+						planDay.push(arr);
+					}
+				}else{
+					arr[day] = temp;
+					planDay.push(arr);
+					arr = {};
+					day++;
+					temp="";
+					temp=planTimes[i];
+					if(i===plansRows.length-1){
+						arr[day] = temp;
+						planDay.push(arr);
+					}
+				}
+			}
 
 			const plan = {
 				id: plansRows[0].id,
@@ -104,7 +127,7 @@ module.exports.load = (req, res) => {
 					nickname: plansRows[0].nickname,
 					photo: plansRows[0].photo,
 				},
-				planTimes
+				planDay
 			};
 
 			const comments = commentsRows.map((comment) => {
@@ -167,10 +190,8 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map((planTime) => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${
-							planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${
-							planTime.placeInfo
+						`(${planDayId + i}, "${planTime.description}", ${planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
 						}", "${planTime.photo}")`
 					);
 				});
@@ -178,7 +199,7 @@ module.exports.write = (req, res) => {
 
 			const planTimesStr = arr.join(',');
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`;
-		
+
 			mysql.query(timeSql, (err3) => {
 				if (err3) {
 					res.send({ success: false });
