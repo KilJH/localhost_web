@@ -37,6 +37,7 @@ const ItemContainer = styled.div`
 	& .descriptionItem {
 		color: #666;
 		font-size: 0.8em;
+		white-space: pre;
 	}
 
 	& > div {
