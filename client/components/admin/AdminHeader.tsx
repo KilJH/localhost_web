@@ -3,6 +3,13 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 import ScrollContext from '../../context/scroll';
+import AdminMobileNav from './AdminMobileNav';
+
+type Props = {
+  isUp: boolean;
+  isMobile: boolean;
+  selected: string;
+};
 
 interface HeaderStyleProps {
   fixed: boolean;
@@ -48,20 +55,8 @@ const Logo = styled.div`
 `;
 
 const AdminHeader = (props: Props) => {
-  const { state, actions } = useContext(ScrollContext);
-  const onScroll = () => {
-    actions.setIsUp(checkScrollDirection());
-  };
-
-  useEffect(() => {
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
   return (
-    <Header fixed={state.isUp}>
+    <Header fixed={props.isUp}>
       <Logo>
         <Link href='/'>
           <a>
@@ -69,8 +64,10 @@ const AdminHeader = (props: Props) => {
           </a>
         </Link>
       </Logo>
+      {!props.isMobile || <AdminMobileNav selected={props.selected} />}
     </Header>
   );
 };
-
+{
+}
 export default AdminHeader;

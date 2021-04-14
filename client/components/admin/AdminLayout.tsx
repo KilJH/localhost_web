@@ -1,10 +1,13 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import Footer from '../main/Footer';
 import AdminHeader from './AdminHeader';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import AdminNav from './AdminNav';
+import AdminMobileNav from './AdminMobileNav';
+import ScrollContext from '../../context/scroll';
+import checkScrollDirection from '../../utils/checkScrollDirection';
 
 type Props = {
   title: string;
@@ -73,7 +76,18 @@ export default function AdminLayout(props: Props) {
     selected,
   } = props;
 
+  const { state, actions } = useContext(ScrollContext);
   const isMobile = useMediaQuery('(max-width: 860px)');
+  const onScroll = () => {
+    actions.setIsUp(checkScrollDirection());
+  };
+
+  useEffect(() => {
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, []);
   return (
     <div>
       <Head>
@@ -81,9 +95,9 @@ export default function AdminLayout(props: Props) {
         <meta charSet='utf-8' />
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
-      <AdminHeader />
+      <AdminHeader isUp={state.isUp} isMobile={isMobile} selected={selected} />
       <Layout>
-        <AdminNav selected={selected} />
+        {isMobile || <AdminNav selected={selected} />}
         <ComponentDiv>
           <TitleDiv>
             <Title isMobile={isMobile}>{title}</Title>
