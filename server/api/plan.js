@@ -104,8 +104,8 @@ module.exports.load = (req, res) => {
 					time: planRows.time,
 				};
 			});
-			
-            const comments = commentsRows.map((comment) => {
+
+			const comments = commentsRows.map((comment) => {
 				return {
 					id: comment.comment_id,
 					description: comment.description,
@@ -137,52 +137,61 @@ module.exports.write = (req, res) => {
 
 	const sql = `INSERT INTO plan(user_id, title, description, price, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${price}", "${sleepDays}", "${travelDays}");`;
 
-	mysql.query(sql, (err, rows) => {	
-		if(err) return err; 
+	mysql.query(sql, (err, rows) => {
+		if (err) return err;
 		const planId = rows.insertId;
-		const tagsStr = tags.map((tag)=>(`(${planId}, ${tag})`)).join(',');
-		const tagsSql = `INSERT INTO plan_tag VALUES ${tagsStr}`
+		const tagsStr = tags.map((tag) => `(${planId}, ${tag})`).join(',');
+		const tagsSql = `INSERT INTO plan_tag VALUES ${tagsStr}`;
 
-		mysql.query(tagsSql, (err2) => { if(err2) return err2; });
+		mysql.query(tagsSql, (err2) => {
+			if (err2) return err2;
+		});
 
-		const planDaysStr = planDays.map((planDay, i) => (`(${planId}, "${planDay.description}", ${i+1})`)).join(',');
-		const daySql = `INSERT INTO plan_day(plan_id, description, date) VALUES ${planDaysStr}`
-		
-		mysql.query(daySql, (err2, rows2) => { 
-			if(err2) return err2; 
+		const planDaysStr = planDays
+			.map((planDay, i) => `(${planId}, "${planDay.description}", ${i + 1})`)
+			.join(',');
+		const daySql = `INSERT INTO plan_day(plan_id, description, date) VALUES ${planDaysStr}`;
+
+		mysql.query(daySql, (err2, rows2) => {
+			if (err2) return err2;
 			const planDayId = rows2.insertId;
 			const arr = [];
-			for( let i =0; i<planDays.length;i++){
-				planDays[i].planTimes.map((planTime) => {arr.push(`(${planDayId+i}, "${planTime.description}", ${planTime.price}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo}", "${planTime.photo}")`)})
+			for (let i = 0; i < planDays.length; i++) {
+				planDays[i].planTimes.map((planTime) => {
+					arr.push(
+						`(${planDayId + i}, "${planTime.description}", ${
+							planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${
+							planTime.placeInfo
+						}", "${planTime.photo}")`
+					);
+				});
 			}
-		
+
 			const planTimesStr = arr.join(',');
-			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`
+			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`;
 			mysql.query(timeSql, (err3) => {
 				res.send({ success: true });
-			})
-		})
-	})
-}
+			});
+		});
+	});
+};
 
 module.exports.delete = (req, res) => {
 	// 삭제
 	const id = req.body.id; // 플랜 id
 	const planDayId = req.body.planDayId;
 	const planTimeId = req.body.planTimeId;
-	
+
 	let sql = '';
-	if(id)
-		sql = `DELETE FROM plan WHERE id = "${id}";`;
-	if(planDayId)
-		sql =`DELETE FROM plan_day WHERE id = "${planDayId}";`;
-	if(planTimeId)
-		sql =`DELETE FROM plan_time WHERE id = "${planTimeId}";`;
+	if (id) sql = `DELETE FROM plan WHERE id = "${id}";`;
+	if (planDayId) sql = `DELETE FROM plan_day WHERE id = "${planDayId}";`;
+	if (planTimeId) sql = `DELETE FROM plan_time WHERE id = "${planTimeId}";`;
 
 	mysql.query(sql, (err) => {
-		if(err) return err;
+		if (err) return err;
 		res.send({ success: true });
-	})	
+	});
 };
 
 module.exports.timeUpdate = (req, res) => {
@@ -193,12 +202,12 @@ module.exports.timeUpdate = (req, res) => {
 	const time = req.body.time;
 
 	const sql = `UPDATE plan_time SET description = "${description}", price = "${price}", time = "${time}" WHERE id = "${id}";`;
-	
+
 	mysql.query(sql, (err) => {
-		if(err) return err;
+		if (err) return err;
 		res.send({ success: true });
-	})
-}
+	});
+};
 
 module.exports.dayUpdate = (req, res) => {
 	//데이 수정
@@ -207,12 +216,12 @@ module.exports.dayUpdate = (req, res) => {
 	const date = req.body.date;
 
 	const sql = `UPDATE plan_day SET description = "${description}", date = "${date}" WHERE id = "${id}";`;
-	
+
 	mysql.query(sql, (err) => {
-		if(err) return err;
+		if (err) return err;
 		res.send({ success: true });
-	})
-}
+	});
+};
 
 module.exports.planUpdate = (req, res) => {
 	//플랜 수정
@@ -220,12 +229,12 @@ module.exports.planUpdate = (req, res) => {
 	const title = req.body.title;
 
 	const sql = `UPDATE plan SET title = "${title}" WHERE id = "${id}";`;
-	
+
 	mysql.query(sql, (err) => {
-		if(err) return err;
+		if (err) return err;
 		res.send({ success: true });
-	})
-}
+	});
+};
 
 module.exports.search = (req, res) => {
 	const type = req.body.type || 'title';
