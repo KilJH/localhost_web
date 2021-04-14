@@ -137,18 +137,18 @@ module.exports.write = (req, res) => {
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
 	mysql.query(sql, (err, rows) => {	
-		if(err) res.send({success: false}); 
+		if(err) { res.send({success: false}); return err; }
 		const planId = rows.insertId;
 		const tagsStr = tags.map((tag)=>(`(${planId}, ${tag})`)).join(',');
 		const tagsSql = `INSERT INTO plan_tag VALUES ${tagsStr}`
 
-		mysql.query(tagsSql, (err2) => { if(err2) return err2; });
-		res.send({success:true});
+		mysql.query(tagsSql, (err2) => { if(err2) res.send({success: false}); return err2});
+
 		const planDaysStr = planDays.map((planDay, i) => (`(${planId}, "${planDay.description}", ${i+1})`)).join(',');
 		const daySql = `INSERT INTO plan_day(plan_id, description, date) VALUES ${planDaysStr}`
 		
-		/*mysql.query(daySql, (err2, rows2) => { 
-			if(err2) return err2; 
+		mysql.query(daySql, (err2, rows2) => { 
+			if(err2) { res.send({success: false}); return err2}; 
 			const planDayId = rows2.insertId;
 			const arr = [];
 			for( let i =0; i<planDays.length;i++){
@@ -158,10 +158,10 @@ module.exports.write = (req, res) => {
 			const planTimesStr = arr.join(',');
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`
 			mysql.query(timeSql, (err3) => {
+				if(err3) { res.send({success: false}); return err3;}; 
 				res.send({ success: true });
 			})
 		})
-		*/
 	})
 }
 
