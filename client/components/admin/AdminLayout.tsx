@@ -21,12 +21,17 @@ import Router from 'next/router';
 import ArrowLeftOutlined from '@material-ui/icons/ArrowLeftOutlined';
 import Footer from '../main/Footer';
 import AdminHeader from './AdminHeader';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 type Props = {
   title: string;
   children?: ReactNode;
   selected?: string;
 };
+
+interface MobileProps {
+  isMobile: boolean;
+}
 const Layout = styled.div`
   max-width: 1200px;
   display: block;
@@ -34,7 +39,8 @@ const Layout = styled.div`
   min-height: 27em;
   align-items: center;
 `;
-const NavDiv = styled.div`
+const NavDiv = styled.div<MobileProps>`
+  display: ${(props) => (props.isMobile ? 'none' : 'block')};
   text-align: center;
   align-items: left;
   background-color: #5197d5;
@@ -42,8 +48,13 @@ const NavDiv = styled.div`
   position: fixed;
   height: 100vh;
   z-index: 1;
+  top: 0em;
 `;
-
+const NavList = styled(List)`
+  &.MuiList-padding {
+    padding-top: 7rem;
+  }
+`;
 const NavTitle = styled(ListItem)`
   width: inherit;
   &.MuiListItem-gutters {
@@ -150,34 +161,40 @@ const ComponentDiv = styled.div`
   width: 100%;
   margin: 0;
   background-color: #f1f2f6;
-  height: 100vh;
+  height: 100%;
 `;
 
 const ComponentTitleDiv = styled.div`
   margin: 0 0 0 1.75em;
 `;
-const ComponentTitle = styled.h4`
+const ComponentTitle = styled.h4<MobileProps>`
   margin: 0 2em;
-  padding-left: 11em;
+  padding-left: ${(props) => (props.isMobile ? '1em' : '11em')};
   padding-top: 3.5em;
   font-size: 1.1em;
   color: #5197d5;
 `;
-const ComponentMainDiv = styled.div`
-  margin: 1em 3em 3em 15em;
+const ComponentMainDiv = styled.div<MobileProps>`
+  margin: ${(props) =>
+    props.isMobile ? '1em 3em 3em 3em' : '1em 3em 3em 15em'};
   padding: 2em;
   top: -4em;
   background-color: white;
   border-radius: 0.25em;
   box-shadow: 2px 2px 5px 1px gray;
-`;
-const FooterDiv = styled.div`
-  top: 0.5em;
-  position: fixed;
-  & a {
-    font-size: 0.5em;
+  & div {
+    font-size: ${(props) => (props.isMobile ? '0.7em' : '')};
+    & form > div {
+      &.MuiFormControl-root {
+        height: ${(props) => (props.isMobile ? '4.3em' : '')};
+      }
+    }
   }
 `;
+const EndHr = styled.hr`
+  margin-top: 9em;
+`;
+const FooterDiv = styled.footer``;
 export default function AdminLayout(props: Props) {
   const {
     title = '오류동에서 오류남! | 관리자 | localhost',
@@ -185,6 +202,7 @@ export default function AdminLayout(props: Props) {
     selected,
   } = props;
   const [open, setOpen] = React.useState(true);
+  const isMobile = useMediaQuery('(max-width: 860px)');
   const handleClick = () => {
     setOpen(!open);
   };
@@ -199,8 +217,8 @@ export default function AdminLayout(props: Props) {
       {/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
       <AdminHeader />
       <Layout>
-        <NavDiv>
-          <List>
+        <NavDiv isMobile={isMobile}>
+          <NavList>
             <NavTitle>
               <NavTitleIcon>
                 <VpnKeyIcon />
@@ -368,18 +386,19 @@ export default function AdminLayout(props: Props) {
                 <ClickedText primary='고객센터 관리' />
               </ClickedItem>
             )}
-          </List>
+          </NavList>
         </NavDiv>
         <ComponentDiv>
           <ComponentTitleDiv>
-            <ComponentTitle>{title}</ComponentTitle>
+            <ComponentTitle isMobile={isMobile}>{title}</ComponentTitle>
           </ComponentTitleDiv>
-          <ComponentMainDiv>{children}</ComponentMainDiv>
+          <ComponentMainDiv isMobile={isMobile}>{children}</ComponentMainDiv>
+          <EndHr />
+          <FooterDiv>
+            <Footer />
+          </FooterDiv>
         </ComponentDiv>
       </Layout>
-      <footer>
-        <Footer />
-      </footer>
     </div>
   );
 }

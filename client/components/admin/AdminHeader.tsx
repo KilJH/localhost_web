@@ -3,32 +3,12 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 import ScrollContext from '../../context/scroll';
-import Footer from '../main/Footer';
 
 interface HeaderStyleProps {
   fixed: boolean;
 }
 
 const Header = styled.div<HeaderStyleProps>`
-  width: 100%;
-  max-width: 1200px;
-  height: 4rem;
-  min-height: 2.5rem;
-  max-height: 4rem;
-  margin: 0 auto;
-  box-sizing: border-box;
-
-  transition: top 0.5s ease;
-  background-color: rgb(33, 33, 33);
-  position: sticky;
-  top: ${(props) => (props.fixed ? '0' : '-4rem')};
-
-  display: block;
-  align-items: center;
-
-  z-index: 10;
-`;
-const AdminDiv = styled.div<HeaderStyleProps>`
   width: 100%;
   max-width: 1200px;
   height: 4rem;
@@ -81,17 +61,15 @@ const AdminHeader = (props: Props) => {
   }, []);
 
   return (
-    <div>
-      <Header fixed={state.isUp}>
-        <Logo>
-          <Link href='/'>
-            <a>
-              <img alt='mainlogo' src='/img/logos/localhostLogoWhite.png'></img>
-            </a>
-          </Link>
-        </Logo>
-      </Header>
-    </div>
+    <Header fixed={state.isUp}>
+      <Logo>
+        <Link href='/'>
+          <a>
+            <img alt='mainlogo' src='/img/logos/localhostLogoWhite.png'></img>
+          </a>
+        </Link>
+      </Logo>
+    </Header>
   );
 };
 
