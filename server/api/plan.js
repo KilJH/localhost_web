@@ -77,7 +77,7 @@ module.exports.load = (req, res) => {
 	mysql.query(sql, (err, plansRows) => {
 		if (err) return console.log('load err', err);
 
-		const commentSql = `SELECT * FROM plan_comment LEFT JOIN user ON plan_comment.user_id = user.id WHERE plan_comment.plan_id = ${id}`;
+		const commentSql = `SELECT *, plan_comment.id As comment_id FROM plan_comment LEFT JOIN user ON plan_comment.user_id = user.id WHERE plan_comment.plan_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log('load err2', err2);
 
@@ -104,10 +104,10 @@ module.exports.load = (req, res) => {
 					time: planRows.time,
 				};
 			});
-
+			
             const comments = commentsRows.map((comment) => {
 				return {
-					id: comment.id,
+					id: comment.comment_id,
 					description: comment.description,
 					createTime: formatDate(comment.create_time),
 					user: {

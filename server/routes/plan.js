@@ -17,14 +17,6 @@ router.post('/write', function (req, res, next) {
 	management.write(req, res);
 });
 
-/*outer.post('/dayWrite', function (req, res, next) {
-	management.dayWrite(req, res);
-});
-
-router.post('/planWrite', function (req, res, next) {
-	management.planWrite(req, res);
-});
-*/
 router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
