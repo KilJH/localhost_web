@@ -616,14 +616,17 @@ const PlanWrite = (props: Props) => {
 							<div className='price'>
 								<label>금액</label>
 								<Input
-									type='number'
+									// type='number'
+									// min='0'
+									// step='1000'
 									width='100%'
 									textAlign='left'
-									min='0'
-									step='1000'
-									value={timePlan.price}
-									onChange={(e) => {
-										setTimePlan({ ...timePlan, price: Number(e.target.value) });
+									value={timePlan.price.toLocaleString()}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+										setTimePlan({
+											...timePlan,
+											price: Number(e.target.value.replaceAll(/[\D]/gi, '')),
+										});
 									}}
 								/>
 							</div>
@@ -695,26 +698,29 @@ const PlanWrite = (props: Props) => {
 								)
 							) : (
 								<>
+									{tripDate === 1 ? (
+										<Button
+											width='50%'
+											onClick={() => {
+												setStep(step - 1);
+											}}
+											default
+										>
+											이전
+										</Button>
+									) : (
+										<Button
+											width='50%'
+											padding='1rem'
+											onClick={onPrevDate}
+											default
+										>
+											&lt; 이전 날 일정
+										</Button>
+									)}
 									<Button
 										width='50%'
 										padding='1rem'
-										onClick={onPrevDate}
-										default
-									>
-										&lt; 이전 날 일정
-									</Button>
-									{/* <Button
-										width='8rem'
-										onClick={() => {
-											setStep(step - 1);
-										}}
-										default
-									>
-										이전
-									</Button> */}
-
-									<Button
-										width='50%'
 										onClick={() => {
 											saveDayPlan();
 											setStep(step + 1);
