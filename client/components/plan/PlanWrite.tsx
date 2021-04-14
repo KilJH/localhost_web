@@ -10,10 +10,14 @@ import {
 	KeyboardTimePicker,
 	MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import React, { ReactNode, useEffect, useState } from 'react';
+import axios from 'axios';
+import { title } from 'node:process';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { UserStateContext } from '../../context/user';
 import { useInput } from '../../hooks/useInput';
-import { PlanDay, PlanTime } from '../../interfaces';
+import { Plan, PlanDay, PlanTime } from '../../interfaces';
+import SERVER from '../../utils/url';
 import Button from '../reuse/Button';
 import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
@@ -25,6 +29,7 @@ interface WrapperProps {
 	step: number;
 	setStep: Function;
 	children?: ReactNode;
+	plan?: Plan;
 }
 
 interface InputProps {
@@ -317,7 +322,6 @@ const PlanWriteContainer = styled.div`
 	}
 	& .MuiSelect-select {
 		font-size: 0.8em;
-		/* padding: 0.75rem; */
 	}
 	& .MuiSelect-select.MuiSelect-select {
 		padding: 0.75rem;
@@ -328,11 +332,23 @@ const PlanWriteContainer = styled.div`
 `;
 
 const WriteWrapper = (props: WrapperProps) => {
-	const { isFull, children, step, setStep } = props;
+	const { isFull, children, step, setStep, plan } = props;
 	const isMobile = useMediaQuery('(max-width: 600px)');
+	const currentUser = useContext(UserStateContext);
 
 	const onNextStep = () => {
-		setStep(step + 1);
+		if (step === 4) {
+			const userId = currentUser.id;
+			axios.post(`${SERVER}/api/plan/write`, { userId, plan }).then((res) => {
+				if (res.data.success) {
+					setStep(step + 1);
+				} else {
+					alert('플랜 작성에 실패했습니다.');
+				}
+			});
+		} else {
+			setStep(step + 1);
+		}
 	};
 	const onPrevStep = () => {
 		setStep(step - 1);
@@ -356,7 +372,7 @@ const WriteWrapper = (props: WrapperProps) => {
 					''
 				) : (
 					<Button width='8rem' onClick={onNextStep}>
-						다음
+						{step === 4 ? '완료' : '다음'}
 					</Button>
 				)}
 			</div>
@@ -643,7 +659,7 @@ const PlanWrite = (props: Props) => {
 									setTimePlan({ ...timePlan, place: e.target.value });
 								}}
 							/>
-							{/* input type="file" 동적으로 만들어서 하기 */}
+							{/* 구글 place, Map API 이용*/}
 							<button>
 								<AddLocation />
 							</button>
@@ -657,6 +673,7 @@ const PlanWrite = (props: Props) => {
 								}}
 							/>
 
+							{/* input type="file" 동적으로 만들어서 하기 */}
 							<button className='image'>
 								<Image />
 							</button>
@@ -737,10 +754,20 @@ const PlanWrite = (props: Props) => {
 				// 일정 삭제버튼
 			);
 		case 4:
+			const plan: Plan = {
+				title: planName.value as string,
+				description: planDesc.value as string,
+				sleepDays: sleepDate,
+				travelDays: tripDate,
+				tags: [],
+				planDays: wholePlan,
+			};
 			return (
-				<WriteWrapper isFull={false} step={step} setStep={setStep}>
+				<WriteWrapper isFull={false} step={step} setStep={setStep} plan={plan}>
 					{/* 전체 개요*/}
-					<PlanWholeItem plans={wholePlan} />
+					<div style={{ width: '80%' }}>
+						<PlanWholeItem plans={wholePlan} />
+					</div>
 				</WriteWrapper>
 			);
 		case 5:
