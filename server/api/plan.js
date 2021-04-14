@@ -139,7 +139,6 @@ module.exports.write = (req, res) => {
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 	mysql.query(sql, (err, rows) => {
 		if (err) {
-			// res.send({ success: false });
 			return err;
 		}
 		const planId = rows.insertId;
@@ -151,7 +150,6 @@ module.exports.write = (req, res) => {
 		});
 
 		mysql.query(tagsSql, (err2) => {
-			// if (err2) res.send({ success: false });
 			return err2;
 		});
 
@@ -162,7 +160,6 @@ module.exports.write = (req, res) => {
 
 		mysql.query(daySql, (err2, rows2) => {
 			if (err2) {
-				// res.send({ success: false });
 				return err2;
 			}
 			const planDayId = rows2.insertId;
@@ -184,7 +181,7 @@ module.exports.write = (req, res) => {
 		
 			mysql.query(timeSql, (err3) => {
 				if (err3) {
-					// res.send({ success: false });
+					res.send({ success: false });
 					return err3;
 				}
 				res.send({ success: true });
