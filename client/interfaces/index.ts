@@ -40,9 +40,13 @@ export interface Plan {
 	travelDays: number;
 	tags?: string[];
 	planDays: PlanDay[];
+	createTime?: string;
+	hit?: number;
+	author?: User;
 }
 
 export interface PlanDay {
+	day?: number;
 	description: string;
 	planTimes: PlanTime[];
 }
