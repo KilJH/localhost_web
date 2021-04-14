@@ -80,10 +80,21 @@ module.exports.load = (req, res) => {
 		const commentSql = `SELECT *, plan_comment.id As comment_id FROM plan_comment LEFT JOIN user ON plan_comment.user_id = user.id WHERE plan_comment.plan_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log('load err2', err2);
+			
+			const planTimes = plansRows.map((planTime)=>(
+				`${planTime.time}, ${planTime.type}, ${planTime.price}, ${planTime.place}, ${planTime.placeInfo}, ${planTime.description}, ${planTime.photo}`
+			)).join(',');
+
+			/*const planDays = plansRows.filter((planDay, i)=>(
+				planDay.date==i
+			)).map(`${planTimes}`)*/
 
 			const plan = {
 				id: plansRows[0].id,
 				title: plansRows[0].title,
+				description: plansRows[0].description,
+				sleepDays: plansRows[0].sleepDays,
+				travelDays: plansRows[0].travelDays,
 				createTime: formatDate(plansRows[0].create_time),
 				hit: plansRows[0].hit,
 				author: {
@@ -93,17 +104,8 @@ module.exports.load = (req, res) => {
 					nickname: plansRows[0].nickname,
 					photo: plansRows[0].photo,
 				},
+				planTimes
 			};
-			// 플랜 객체 생성
-			const planDetail = plansRows.map((planRows) => {
-				return {
-					day: planRows.date,
-					day_desc: planRows.day_desc,
-					time_desc: planRows.description,
-					price: planRows.price,
-					time: planRows.time,
-				};
-			});
 
 			const comments = commentsRows.map((comment) => {
 				return {
@@ -120,7 +122,7 @@ module.exports.load = (req, res) => {
 				};
 			});
 
-			res.status(200).send({ success: true, plan, planDetail, comments });
+			res.status(200).send({ success: true, plan, comments });
 		});
 	});
 };
@@ -135,7 +137,6 @@ module.exports.write = (req, res) => {
 	const planDays = req.body.plan.planDays;
 
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
-
 	mysql.query(sql, (err, rows) => {
 		if (err) {
 			return err;
@@ -177,7 +178,7 @@ module.exports.write = (req, res) => {
 
 			const planTimesStr = arr.join(',');
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`;
-
+		
 			mysql.query(timeSql, (err3) => {
 				if (err3) {
 					res.send({ success: false });
