@@ -11,8 +11,7 @@ import {
 	MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import axios from 'axios';
-import { title } from 'node:process';
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../hooks/useInput';
@@ -26,9 +25,10 @@ interface Props {}
 
 interface WrapperProps {
 	isFull: boolean;
+	isMobile: boolean;
 	step: number;
 	setStep: Function;
-	children?: ReactNode;
+	children?: React.ReactNode;
 	plan?: Plan;
 }
 
@@ -89,6 +89,8 @@ const countries = [
 const types = ['이동', '식사', '관광'];
 
 const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
+	width: 80%;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -106,7 +108,7 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		margin: 0 0 2rem 0;
 	}
 	& .progressWrapper {
-		width: 80%;
+		width: 100%;
 		max-width: 800px;
 		position: ${(props) => (props.isFull ? 'absolute' : 'sticky')};
 		top: ${(props) =>
@@ -138,9 +140,11 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 	}
 	& .btnContainer {
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
+		width: 100%;
 		& button {
 			margin: 0 0.25rem;
+			flex: 1;
 		}
 	}
 
@@ -176,7 +180,7 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 `;
 
 const Input = styled.input<InputProps>`
-	font-size: 0.8rem;
+	font-size: 0.8em;
 	border-radius: ${(props) => props.borderRadius || 0};
 	border: ${(props) => props.border || 'none'};
 	border-bottom: ${(props) =>
@@ -184,21 +188,17 @@ const Input = styled.input<InputProps>`
 	text-align: ${(props) => props.textAlign || 'center'};
 	padding: 0.75rem;
 	width: ${(props) => props.width || '8em'};
+	height: 2.5rem;
+	box-sizing: border-box;
 
-	transition: box-shadow 0.3s ease,
-		border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	transition: all 0.2s ease;
 
 	&:hover {
-		box-shadow: ${(props) =>
-			props.border
-				? 'inset -1px -1px 0px rgba(0, 0, 0, 0.87), inset 1px 1px 0px rgba(0, 0, 0, 0.87)'
-				: 'inset 0px -1px 0px rgba(0, 0, 0, 0.87)'};
+		border-width: 2px;
+		border-color: rgba(0, 0, 0, 0.87);
 	}
 	&:focus {
-		box-shadow: ${(props) =>
-			props.border
-				? 'inset -1px -1px 0px rgb(58, 75, 170), inset 1px 1px 0px rgb(58, 75, 170)'
-				: 'inset 0px -1px 0px rgb(58, 75, 170)'};
+		border-width: 2px;
 		border-color: rgb(58, 75, 170);
 	}
 
@@ -210,7 +210,7 @@ const Input = styled.input<InputProps>`
 `;
 
 const Textarea = styled.textarea`
-	font-size: 0.8rem;
+	font-size: 0.8em;
 	border-radius: 0.25rem;
 	border: 1px solid rgba(0, 0, 0, 0.42);
 	width: 100%;
@@ -221,19 +221,15 @@ const Textarea = styled.textarea`
 
 	resize: none;
 
-	font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		'Helvetica Neue', Arial, sans-serif;
+	font-family: inherit;
 
-	transition: box-shadow 0.3s ease,
-		border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	transition: border 0.2s ease;
 	&:hover {
-		box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.87);
-		border-color: rgba(0, 0, 0, 0.87);
+		border: 2px solid rgba(0, 0, 0, 0.87);
 	}
 	&:focus {
 		outline: none;
-		box-shadow: inset 0px 0px 0px 1px rgb(58, 75, 170);
-		border-color: rgb(58, 75, 170);
+		border: 2px solid rgb(58, 75, 170);
 	}
 `;
 
@@ -253,7 +249,7 @@ const StyledSelect = styled(Select)`
 `;
 
 const PlanWriteContainer = styled.div`
-	width: 80%;
+	width: 100%;
 	& > * {
 		margin: 0.5rem 0;
 	}
@@ -263,7 +259,7 @@ const PlanWriteContainer = styled.div`
 	& .flex {
 		margin: 0;
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		flex-wrap: wrap;
 		& > div {
 			margin: 0.25rem 0.5rem;
@@ -296,14 +292,12 @@ const PlanWriteContainer = styled.div`
 			opacity: 1;
 		}
 	}
-	& .place button {
-		transform: translateX(-2.5rem);
-	}
+	& .place button,
 	& .description button.image {
-		transform: translateX(-2.5rem);
+		transform: translateX(-3.5em);
 	}
 	& .description button.add {
-		transform: translate(-3rem, 10rem);
+		transform: translate(-4em, 12em);
 	}
 	& .MuiFormControl-marginNormal {
 		margin: 0;
@@ -332,8 +326,7 @@ const PlanWriteContainer = styled.div`
 `;
 
 const WriteWrapper = (props: WrapperProps) => {
-	const { isFull, children, step, setStep, plan } = props;
-	const isMobile = useMediaQuery('(max-width: 600px)');
+	const { isMobile, isFull, children, step, setStep, plan } = props;
 	const currentUser = useContext(UserStateContext);
 
 	const onNextStep = () => {
@@ -364,14 +357,14 @@ const WriteWrapper = (props: WrapperProps) => {
 				{step === 0 || step === 5 ? (
 					''
 				) : (
-					<Button width='8rem' onClick={onPrevStep} default>
+					<Button onClick={onPrevStep} default padding='1rem'>
 						이전
 					</Button>
 				)}
 				{step === 5 ? (
 					''
 				) : (
-					<Button width='8rem' onClick={onNextStep}>
+					<Button onClick={onNextStep} padding='1rem'>
 						{step === 4 ? '완료' : '다음'}
 					</Button>
 				)}
@@ -380,7 +373,7 @@ const WriteWrapper = (props: WrapperProps) => {
 	);
 };
 
-const PlanWrite = (props: Props) => {
+const PlanWrite = (props: Props): JSX.Element => {
 	// 모바일인지
 	const isMobile = useMediaQuery('(max-width: 600px)');
 	// 단계
@@ -453,7 +446,7 @@ const PlanWrite = (props: Props) => {
 	}, [time]);
 
 	// 일정 하나 추가
-	const onAddTimePlan = () => {
+	function onAddTimePlan(): void {
 		setDayPlan({
 			description: '',
 			planTimes: dayPlan.planTimes.concat(timePlan),
@@ -468,39 +461,39 @@ const PlanWrite = (props: Props) => {
 			photo: [],
 		});
 		setTime(new Date(null, null, null, time.getHours(), time.getMinutes()));
-	};
+	}
 
-	const saveDayPlan = () => {
+	// 하루 일정 추가
+	function saveDayPlan(): void {
 		setWholePlan(
 			wholePlan.length < date
 				? wholePlan.concat(dayPlan)
 				: wholePlan.map((item, i) => (i === date - 1 ? dayPlan : item))
 		);
-	};
-
+	}
 	// 이전 날
-	const onPrevDate = () => {
+	function onPrevDate(): void {
 		saveDayPlan();
 		setDayPlan(wholePlan[date - 2]);
 		setDate(date - 1);
-	};
-
+	}
 	// 다음 날
-	const onNextDate = () => {
+	function onNextDate(): void {
 		saveDayPlan();
 		setDayPlan(wholePlan[date] || { description: '', planTimes: [] });
 		setDate(date + 1);
-	};
-
-	useEffect(() => {
-		console.log(wholePlan);
-	}, wholePlan);
+	}
 
 	switch (step) {
 		case 0:
 			// 나라, 도시 선택
 			return (
-				<WriteWrapper isFull={true} step={step} setStep={setStep}>
+				<WriteWrapper
+					isFull={true}
+					step={step}
+					setStep={setStep}
+					isMobile={isMobile}
+				>
 					<label>나라를 선택해주세요</label>
 					<StyledSelect {...country}>
 						{countries.map((country) => (
@@ -524,8 +517,14 @@ const PlanWrite = (props: Props) => {
 				</WriteWrapper>
 			);
 		case 1:
+			// 여행일수 선택
 			return (
-				<WriteWrapper isFull={true} step={step} setStep={setStep}>
+				<WriteWrapper
+					isFull={true}
+					step={step}
+					setStep={setStep}
+					isMobile={isMobile}
+				>
 					<label>여행일수를 선택해주세요</label>
 					<div className='dateContainer'>
 						<Input
@@ -550,8 +549,14 @@ const PlanWrite = (props: Props) => {
 				</WriteWrapper>
 			);
 		case 2:
+			// 기본정보 입력
 			return (
-				<WriteWrapper isFull={false} step={step} setStep={setStep}>
+				<WriteWrapper
+					isFull={false}
+					step={step}
+					setStep={setStep}
+					isMobile={isMobile}
+				>
 					<PlanWriteContainer>
 						<div>
 							<label>플랜의 이름을 정해주세요</label>
@@ -592,9 +597,6 @@ const PlanWrite = (props: Props) => {
 					</div>
 					{/* 일별 일정 작성*/}
 					<PlanWriteContainer>
-						{/* {dayPlan.map((plan) => {
-							return <PlanTimeItem plan={plan} />;
-						})} */}
 						<PlanDayItem planDay={dayPlan} />
 						<h2>{date}일차 일정</h2>
 						<div className='flex'>
@@ -632,9 +634,6 @@ const PlanWrite = (props: Props) => {
 							<div className='price'>
 								<label>금액</label>
 								<Input
-									// type='number'
-									// min='0'
-									// step='1000'
 									width='100%'
 									textAlign='left'
 									value={timePlan.price.toLocaleString()}
@@ -661,7 +660,7 @@ const PlanWrite = (props: Props) => {
 							/>
 							{/* 구글 place, Map API 이용*/}
 							<button>
-								<AddLocation />
+								<AddLocation fontSize={isMobile ? 'small' : 'default'} />
 							</button>
 						</div>
 						<div className='description'>
@@ -675,82 +674,47 @@ const PlanWrite = (props: Props) => {
 
 							{/* input type="file" 동적으로 만들어서 하기 */}
 							<button className='image'>
-								<Image />
+								<Image fontSize={isMobile ? 'small' : 'default'} />
 							</button>
 							<button className='add' onClick={onAddTimePlan}>
-								<PlaylistAdd fontSize='large' />
+								<PlaylistAdd fontSize={isMobile ? 'default' : 'large'} />
 							</button>
 						</div>
-						<div className='btnContainer'>
-							{date < tripDate ? (
-								date === 1 ? (
-									<>
-										<Button
-											width='8rem'
-											onClick={() => {
-												setStep(step - 1);
-											}}
-											default
-										>
-											이전
-										</Button>
-										<Button width='100%' padding='1rem' onClick={onNextDate}>
-											다음 날 일정 &gt;
-										</Button>
-									</>
-								) : (
-									<>
-										<Button
-											width='50%'
-											padding='1rem'
-											onClick={onPrevDate}
-											default
-										>
-											&lt; 이전 날 일정
-										</Button>
-										<Button width='50%' padding='1rem' onClick={onNextDate}>
-											다음 날 일정 &gt;
-										</Button>
-									</>
-								)
-							) : (
-								<>
-									{tripDate === 1 ? (
-										<Button
-											width='50%'
-											onClick={() => {
-												setStep(step - 1);
-											}}
-											default
-										>
-											이전
-										</Button>
-									) : (
-										<Button
-											width='50%'
-											padding='1rem'
-											onClick={onPrevDate}
-											default
-										>
-											&lt; 이전 날 일정
-										</Button>
-									)}
-									<Button
-										width='50%'
-										padding='1rem'
-										onClick={() => {
-											saveDayPlan();
-											setStep(step + 1);
-										}}
-									>
-										완료
-									</Button>
-								</>
-							)}
-						</div>
 					</PlanWriteContainer>
+					<div className='btnContainer'>
+						{/* 이전 단계냐 이전 날 일정이냐 */}
+						{date === 1 ? (
+							<Button
+								onClick={() => {
+									setStep(step - 1);
+								}}
+								default
+							>
+								이전
+							</Button>
+						) : (
+							<Button padding='1rem' onClick={onPrevDate} default>
+								&lt; 이전 날 일정
+							</Button>
+						)}
+						{/* 완료냐 다음 날 일정이냐 */}
+						{date < tripDate ? (
+							<Button padding='1rem' onClick={onNextDate}>
+								다음 날 일정 &gt;
+							</Button>
+						) : (
+							<Button
+								padding='1rem'
+								onClick={() => {
+									saveDayPlan();
+									setStep(step + 1);
+								}}
+							>
+								완료
+							</Button>
+						)}
+					</div>
 				</WriteContainer>
-				// 전날 버튼
 				// 일정 삭제버튼
 			);
 		case 4:
@@ -763,16 +727,27 @@ const PlanWrite = (props: Props) => {
 				planDays: wholePlan,
 			};
 			return (
-				<WriteWrapper isFull={false} step={step} setStep={setStep} plan={plan}>
+				<WriteWrapper
+					isFull={false}
+					step={step}
+					setStep={setStep}
+					isMobile={isMobile}
+					plan={plan}
+				>
 					{/* 전체 개요*/}
-					<div style={{ width: '80%' }}>
+					<div style={{ width: '100%' }}>
 						<PlanWholeItem plans={wholePlan} />
 					</div>
 				</WriteWrapper>
 			);
 		case 5:
 			return (
-				<WriteWrapper isFull={true} step={step} setStep={setStep}>
+				<WriteWrapper
+					isFull={true}
+					step={step}
+					setStep={setStep}
+					isMobile={isMobile}
+				>
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
 					<Button width='16rem'>작성한 플랜 보러가기</Button>
