@@ -17,7 +17,6 @@ type Props = {
 const UserTable = styled.table`
   width: 100%;
   min-width: 32em;
-  max-width: 80em;
   margin: 0 auto;
   text-align: center;
   border-collapse: collapse;

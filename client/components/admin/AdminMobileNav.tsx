@@ -26,12 +26,16 @@ type Props = {
 const NavDiv = styled.div`
   background-color: #5197d5;
 `;
-const NavList = styled(List)``;
+const NavList = styled(List)`
+  &.MuiList-padding {
+    padding: 0;
+  }
+`;
 const NavTitle = styled.button`
   margin: 0 auto;
   display: block;
   border: none;
-  padding: 0;
+  padding: 0.5em 0;
 `;
 const NavTitleIcon = styled(ListItemIcon)`
   &.MuiListItemIcon-root {
