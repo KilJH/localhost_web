@@ -8,15 +8,17 @@ const noticeRouter = require('./routes/notice');
 const boardRouter = require('./routes/board');
 const planRouter = require('./routes/plan');
 const s3Router = require('./routes/s3');
+const mapRouter = require('./routes/map');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
+const axios = require('axios');
 
 const corsOptions = {
-	origin: ['http://localhost:3000'],
-	credentials: true,
+  origin: ['http://localhost:3000'],
+  credentials: true,
 };
 
 app.use(bodyParser.json());
@@ -30,12 +32,13 @@ app.use('/api/notice', noticeRouter);
 app.use('/api/board', boardRouter);
 app.use('/api/plan', planRouter);
 app.use('/api/s3', s3Router);
+app.use('/api/map', mapRouter);
 
 mysql.connect((err) => {
-	if (err) return console.log('err: ', err);
-	console.log('db연결 생성!');
+  if (err) return console.log('err: ', err);
+  console.log('db연결 생성!');
 });
 
 app.listen(PORT, (req, res) => {
-	console.log('PORT server on');
+  console.log('PORT server on');
 });
