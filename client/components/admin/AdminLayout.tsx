@@ -25,12 +25,13 @@ const Layout = styled.div`
   min-height: 27em;
   align-items: center;
 `;
-const ComponentDiv = styled.div`
+const ComponentDiv = styled.div<MobileProps>`
   width: 100%;
   margin: 0;
   background-color: #f1f2f6;
   height: 100%;
   min-height: 100vh;
+  padding-top: ${(props) => (props.isMobile ? '5em' : '0')};
 `;
 
 const TitleDiv = styled.div`
@@ -52,10 +53,10 @@ const MainComponent = styled.div<MobileProps>`
   border-radius: 0.25em;
   box-shadow: 2px 2px 5px 1px gray;
   & div {
-    font-size: ${(props) => (props.isMobile ? '0.6em' : '')};
+    font-size: ${(props) => (props.isMobile ? '0.5em' : '')};
     & form > div {
       &.MuiFormControl-root {
-        height: ${(props) => (props.isMobile ? '4.3em' : '')};
+        height: ${(props) => (props.isMobile ? '6em' : '')};
       }
     }
     & div > div > button {
@@ -98,7 +99,7 @@ export default function AdminLayout(props: Props) {
       <AdminHeader isUp={state.isUp} isMobile={isMobile} selected={selected} />
       <Layout>
         {isMobile || <AdminNav selected={selected} />}
-        <ComponentDiv>
+        <ComponentDiv isMobile={isMobile}>
           <TitleDiv>
             <Title isMobile={isMobile}>{title}</Title>
           </TitleDiv>
