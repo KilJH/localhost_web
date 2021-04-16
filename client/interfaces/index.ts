@@ -90,3 +90,9 @@ export interface Comment {
 	description: string;
 	createTime: string;
 }
+
+export interface Place {
+	formatted_address: string;
+	geometry: { location: { lat: number; lng: number } };
+	name: string;
+}

@@ -5,6 +5,7 @@ import Button from '../reuse/Button';
 import { useInput } from '../../hooks/useInput';
 import axios from 'axios';
 import { Search } from '@material-ui/icons';
+import Input from '../reuse/Input';
 
 interface Props {
 	setPlace: React.Dispatch<React.SetStateAction<Place>>;
@@ -28,15 +29,19 @@ const ItemContainer = styled.div`
 `;
 
 const ListContainer = styled.div`
-	max-height: 16em;
+	height: 16em;
 	overflow-y: auto;
 `;
 
 const StyledForm = styled.form`
 	width: 100%;
 	display: flex;
+	margin-bottom: 1rem;
 	& > input {
 		flex: 1;
+	}
+	& > button {
+		margin: 0 0 0 0.5rem;
 	}
 `;
 
@@ -68,8 +73,14 @@ const SearchPlace = (props: Props) => {
 	return (
 		<div>
 			<StyledForm onSubmit={onSubmit}>
-				<input {...input} />
-				<Button type='submit' padding='0.25rem 1rem'>
+				<Input
+					{...input}
+					placeholder='주소를 검색해주세요'
+					border='1px solid rgba(0,0,0,0.42)'
+					borderRadius='0.25rem'
+					textAlign='left'
+				/>
+				<Button type='submit' padding='0.375rem 1rem'>
 					<Search />
 				</Button>
 			</StyledForm>
