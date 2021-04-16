@@ -14,7 +14,7 @@ module.exports.nearbyList = (req, res) => {
 	const latitude = req.body.latitude;
 	const longitude = req.body.longitude;
 
-	const sql = `SELECT *, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host HAVING distance <= 20 ORDER BY distance;`;
+	const sql = `SELECT *, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host WHERE host.on = 1 HAVING distance <= 20 ORDER BY distance`;
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) console.log('nearby err', err);
 
