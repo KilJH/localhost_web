@@ -20,7 +20,7 @@ module.exports.register = (req, res) => {
 		if (err2) return console.log('register err: ', err2);
 
 		if (rows == '') {
-			// res.send({ message: '사용할 수 있는 이메일입니다.' });
+			// res.json({ message: '사용할 수 있는 이메일입니다.' });
 			const insert = `INSERT INTO user(email, pw, name, sex, nickname, phone, address) VALUES("${email}", "${hashPW}", "${name}", "${sex}", "${nickname}", "${phone}", "${address}");`;
 
 			mysql.query(insert, (err3, rows, fields) => {
@@ -28,9 +28,9 @@ module.exports.register = (req, res) => {
 
 				console.log('계정 생성 성공');
 			});
-			res.status(200).send({ success: true, message: '회원가입 완료' });
+			res.status(200).json({ success: true, message: '회원가입 완료' });
 		} else {
-			res.send({ success: false, message: '이미 등록 된 이메일입니다.' });
+			res.json({ success: false, message: '이미 등록 된 이메일입니다.' });
 		}
 	});
 };
@@ -47,7 +47,7 @@ module.exports.update = (req, res) => {
 	mysql.query(update, (err, rows) => {
 		if (err) return console.log(err);
 		console.log('변경 성공');
-		res.send({ success: true, message: '변경 대성공' });
+		res.json({ success: true, message: '변경 대성공' });
 	});
 };
 
@@ -60,7 +60,7 @@ module.exports.updatePhoto = (req, res) => {
 	mysql.query(sql, (err) => {
 		if (err) return console.log(err);
 
-		res.send({ success: true, message: '프로필 이미지 변경' });
+		res.json({ success: true, message: '프로필 이미지 변경' });
 	});
 };
 
@@ -74,7 +74,7 @@ module.exports.updatePW = (req, res) => {
 
 	mysql.query(update, (err) => {
 		if (err) return err;
-		res.send({ success: true, message: '비밀번호 변경에 성공했습니다.' });
+		res.json({ success: true, message: '비밀번호 변경에 성공했습니다.' });
 	});
 };
 
@@ -85,14 +85,14 @@ module.exports.delete = (req, res) => {
 
 	mysql.query(sql, userId, (err) => {
 		if (err) {
-			res.send({
+			res.json({
 				success: false,
 				message: 'SQL 오류로 회원 삭제에 실패했습니다.',
 			});
 			console.log('DELETE err: ', err);
 		}
 
-		res.send({ success: true, message: `id:${userId} 회원 삭제 완료` });
+		res.json({ success: true, message: `id:${userId} 회원 삭제 완료` });
 	});
 };
 
@@ -103,7 +103,7 @@ module.exports.list = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 		console.log('검색된 회원수: ', rows.length);
-		res.status(200).send({ success: true, users: rows });
+		res.status(200).json({ success: true, users: rows });
 	});
 };
 module.exports.find = (req, res) => {
@@ -116,7 +116,7 @@ module.exports.find = (req, res) => {
 	mysql.query(sql, id, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 		console.log('검색결과', rows);
-		res.status(200).send({ success: true, user: rows[0] });
+		res.status(200).json({ success: true, user: rows[0] });
 	});
 };
 
@@ -143,7 +143,7 @@ module.exports.search = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).send({ success: true, users: rows });
+		res.status(200).json({ success: true, users: rows });
 	});
 };
 
@@ -170,7 +170,7 @@ module.exports.searchHost = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).send({ success: true, users: rows });
+		res.status(200).json({ success: true, users: rows });
 	});
 };
 
@@ -178,7 +178,7 @@ module.exports.follow = (req, res) => {
 	// 팔로우, 팔로우 취소
 
 	if (!req.body.userId || !req.body.followerId) {
-		res.send({ success: false, message: '비정상적인 요청입니다.' });
+		res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
@@ -193,13 +193,13 @@ module.exports.follow = (req, res) => {
 			const insert = `INSERT INTO follow(user_id, follower_id) VALUES("${userId}", "${followerId}");`;
 			mysql.query(insert, (err, rows, fields) => {
 				if (err) return console.log('insert err: ', err);
-				res.status(200).send({ success: true, message: ' 팔로우 성공' });
+				res.status(200).json({ success: true, message: ' 팔로우 성공' });
 			});
 		} else {
 			const deleteSql = `DELETE FROM follow WHERE user_id = ? AND follower_id = ?`;
 			mysql.query(deleteSql, [userId, followerId], (err, rows, fields) => {
 				if (err) return console.log('delete err: ', err);
-				res.status(200).send({ success: true, message: ' 팔로우 취소' });
+				res.status(200).json({ success: true, message: ' 팔로우 취소' });
 			});
 		}
 	});
@@ -208,7 +208,7 @@ module.exports.follow = (req, res) => {
 module.exports.followList = (req, res) => {
 	// 팔로우 리스트 가져오기
 	if (!req.body.userId) {
-		res.send({ success: false, message: '비정상적인 요청입니다.' });
+		res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
@@ -227,14 +227,14 @@ module.exports.followList = (req, res) => {
 			};
 		});
 
-		res.send({ success: true, followingUsers });
+		res.json({ success: true, followingUsers });
 	});
 };
 
 module.exports.followerList = (req, res) => {
 	// 팔로워 리스트 가져오기
 	if (!req.body.userId) {
-		res.send({ success: false, message: '비정상적인 요청입니다.' });
+		res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
@@ -253,7 +253,7 @@ module.exports.followerList = (req, res) => {
 			};
 		});
 
-		res.send({ success: true, followers });
+		res.json({ success: true, followers });
 	});
 };
 
@@ -266,9 +266,9 @@ module.exports.isFollowed = (req, res) => {
 	mysql.query(sql, [userId, followerId], (err, rows) => {
 		if (err) return console.log(err);
 		if (rows == '') {
-			res.send({ isFollowed: false });
+			res.json({ isFollowed: false });
 		} else {
-			res.send({ isFollowed: true });
+			res.json({ isFollowed: true });
 		}
 	});
 };
@@ -281,13 +281,13 @@ module.exports.checkAuth = (req, res) => {
 		if (err) return err;
 
 		if (rows[0].isadmin === 1 && rows[0].ishost === 1) {
-			res.send({ auth: 3 });
+			res.json({ auth: 3 });
 		} else if (rows[0].isadmin === 1) {
-			res.send({ auth: 2 });
+			res.json({ auth: 2 });
 		} else if (rows[0].ishost === 1) {
-			res.send({ auth: 1 });
+			res.json({ auth: 1 });
 		} else {
-			res.send({ auth: 0 });
+			res.json({ auth: 0 });
 		}
 	});
 };
@@ -298,7 +298,7 @@ module.exports.listOfHost = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).send({ success: true, hosts: rows });
+		res.status(200).json({ success: true, hosts: rows });
 	});
 };
 
@@ -308,7 +308,7 @@ module.exports.listOfRequestedHost = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).send({ success: true, requestedHosts: rows });
+		res.status(200).json({ success: true, requestedHosts: rows });
 	});
 };
 
@@ -327,14 +327,14 @@ module.exports.requestHost = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		if (rows[0])
-			res.send({ success: false, message: '이미 신청한 상태입니다.' });
+			res.json({ success: false, message: '이미 신청한 상태입니다.' });
 		mysql.query(
 			insert,
 			[userId, hostInfo.country, ...languages, hostInfo.description],
 			(err) => {
 				if (err) return console.log(err);
 
-				res.status(200).send({
+				res.status(200).json({
 					success: true,
 					message:
 						'호스트 신청이 완료되었습니다. 관리자 승인 후 활동 가능합니다.',
@@ -376,7 +376,7 @@ module.exports.allowHost = (req, res) => {
 					if (err) return console.log('delete err: ', err);
 
 					mysql.query(update, userId, (err) => {
-						res.send({
+						res.json({
 							success: true,
 							message: '호스트 승인이 완료되었습니다.',
 						});
@@ -396,7 +396,7 @@ module.exports.denyHost = (req, res) => {
 
 		res
 			.status(200)
-			.send({ success: true, message: '호스트 신청을 거절했습니다.' });
+			.json({ success: true, message: '호스트 신청을 거절했습니다.' });
 	});
 };
 module.exports.demote = (req, res) => {
@@ -411,7 +411,7 @@ module.exports.demote = (req, res) => {
 		mysql.query(update, userId, (err) => {
 			if (err) return console.log('err: ', err);
 
-			res.status(200).send({
+			res.status(200).json({
 				success: true,
 				message: `id: ${userId} 호스트 회원이 강등되었습니다.`,
 			});
@@ -428,6 +428,6 @@ module.exports.block = (req, res) => {
 	mysql.query(sql, [userId, reason], (err) => {
 		if (err) return console.log(err);
 
-		res.status(200).send({ success: true, message: '회원을 차단했습니다.' });
+		res.status(200).json({ success: true, message: '회원을 차단했습니다.' });
 	});
 };

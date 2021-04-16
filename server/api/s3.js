@@ -18,7 +18,7 @@ module.exports.upload = (req, res) => {
 	s3.upload(param, function (err, data) {
 		if (err) console.log(err);
 		console.log('uplaod', data);
-		res.send({ success: true, url: data.Location });
+		res.json({ success: true, url: data.Location });
 	});
 };
 

@@ -64,7 +64,7 @@ module.exports.list = (req, res) => {
 
 		const results = boards.slice((page - 1) * 10, page * 10);
 
-		res.status(200).send({
+		res.status(200).json({
 			success: true,
 			list: results,
 			lastIdx: Math.floor(boards.length / 10) + 1,
@@ -86,7 +86,7 @@ module.exports.write = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('write err: ', err);
 
-		res.status(200).send({ success: true });
+		res.status(200).json({ success: true });
 	});
 };
 
@@ -147,7 +147,7 @@ module.exports.load = (req, res) => {
 
 			// 3. Board와 Comment[] 객체를 넘겨준다.( 불필요 정보 없어도 됨 )
 			// 객체의 키 값은 client/interfaces/index.ts 참조
-			res.status(200).send({ success: true, board, comments });
+			res.status(200).json({ success: true, board, comments });
 		});
 	});
 };
@@ -162,7 +162,7 @@ module.exports.update = (req, res) => {
 	mysql.query(sql, (err) => {
 		if (err) return err;
 
-		res.status(200).send({ success: true });
+		res.status(200).json({ success: true });
 	});
 };
 
@@ -173,14 +173,14 @@ module.exports.delete = (req, res) => {
 
 	mysql.query(sql, (err) => {
 		if (err) {
-			res.send({
+			res.json({
 				success: false,
 				message: 'SQL 오류로 공지 삭제에 실패했습니다.',
 			});
 			console.log('DELETE err: ', err);
 		}
 
-		res.send({ success: true });
+		res.json({ success: true });
 	});
 };
 
@@ -191,9 +191,9 @@ module.exports.comment = (req, res) => {
 	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
 
 	mysql.query(sql, (err) => {
-		if (err) res.send({ success: false, message: '댓글 작성에 실패했습니다.' });
+		if (err) res.json({ success: false, message: '댓글 작성에 실패했습니다.' });
 	});
-	res.send({ success: true, message: '댓글 달기 성공' });
+	res.json({ success: true, message: '댓글 달기 성공' });
 };
 
 module.exports.search = (req, res) => {
@@ -237,6 +237,6 @@ module.exports.search = (req, res) => {
 			};
 		});
 
-		res.status(200).send({ success: true, list: boards });
+		res.status(200).json({ success: true, list: boards });
 	});
 };

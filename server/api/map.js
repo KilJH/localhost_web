@@ -3,13 +3,13 @@ const password = require('../db/password');
 const axios = require('axios');
 
 module.exports.searchPlaces = async (req, res) => {
-  console.log(req.query.search);
+	console.log(req.query.search);
 
-  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
-    req.query.search
-  )}&language=ko&key=${password.MAP_KEY}`;
-  const googlePlace = await axios.get(url);
+	const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURI(
+		req.query.search
+	)}&language=ko&key=${password.MAP_KEY}`;
+	const googlePlace = await axios.get(url);
 
-  console.log(googlePlace);
-  res.send({ places: googlePlace.data.results });
+	console.log(googlePlace);
+	res.json({ places: googlePlace.data.results });
 };

@@ -59,7 +59,7 @@ module.exports.list = (req, res) => {
 				numOfComment: plan.num_comment,
 			};
 		});
-		res.status(200).send({ success: true, list: plans });
+		res.status(200).json({ success: true, list: plans });
 	});
 };
 
@@ -84,28 +84,29 @@ module.exports.load = (req, res) => {
 
 			let arr = {};
 			let planDay = [];
-			const planTimes = plansRows.map((plansRow) => (
-				`${plansRow.time}, ${plansRow.type}, ${plansRow.price}, ${plansRow.place}, ${plansRow.placeInfo}, ${plansRow.description}, ${plansRow.photo}`
-			))
+			const planTimes = plansRows.map(
+				(plansRow) =>
+					`${plansRow.time}, ${plansRow.type}, ${plansRow.price}, ${plansRow.place}, ${plansRow.placeInfo}, ${plansRow.description}, ${plansRow.photo}`
+			);
 
 			let day = 1;
-			let temp = "";
-		
+			let temp = '';
+
 			for (let i = 0; i < plansRows.length; i++) {
 				if (plansRows[i].date == day) {
 					temp = temp + planTimes[i];
-					if(i===plansRows.length-1){
+					if (i === plansRows.length - 1) {
 						arr[day] = temp;
 						planDay.push(arr);
 					}
-				}else{
+				} else {
 					arr[day] = temp;
 					planDay.push(arr);
 					arr = {};
 					day++;
-					temp="";
-					temp=planTimes[i];
-					if(i===plansRows.length-1){
+					temp = '';
+					temp = planTimes[i];
+					if (i === plansRows.length - 1) {
 						arr[day] = temp;
 						planDay.push(arr);
 					}
@@ -127,7 +128,7 @@ module.exports.load = (req, res) => {
 					nickname: plansRows[0].nickname,
 					photo: plansRows[0].photo,
 				},
-				planDay
+				planDay,
 			};
 
 			const comments = commentsRows.map((comment) => {
@@ -145,7 +146,7 @@ module.exports.load = (req, res) => {
 				};
 			});
 
-			res.status(200).send({ success: true, plan, comments });
+			res.status(200).json({ success: true, plan, comments });
 		});
 	});
 };
@@ -190,8 +191,10 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map((planTime) => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
+						`(${planDayId + i}, "${planTime.description}", ${
+							planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${
+							planTime.placeInfo
 						}", "${planTime.photo}")`
 					);
 				});
@@ -202,10 +205,10 @@ module.exports.write = (req, res) => {
 
 			mysql.query(timeSql, (err3) => {
 				if (err3) {
-					res.send({ success: false });
+					res.json({ success: false });
 					return err3;
 				}
-				res.send({ success: true });
+				res.json({ success: true });
 			});
 		});
 	});
@@ -224,7 +227,7 @@ module.exports.delete = (req, res) => {
 
 	mysql.query(sql, (err) => {
 		if (err) return err;
-		res.send({ success: true });
+		res.json({ success: true });
 	});
 };
 
@@ -239,7 +242,7 @@ module.exports.timeUpdate = (req, res) => {
 
 	mysql.query(sql, (err) => {
 		if (err) return err;
-		res.send({ success: true });
+		res.json({ success: true });
 	});
 };
 
@@ -253,7 +256,7 @@ module.exports.dayUpdate = (req, res) => {
 
 	mysql.query(sql, (err) => {
 		if (err) return err;
-		res.send({ success: true });
+		res.json({ success: true });
 	});
 };
 
@@ -266,7 +269,7 @@ module.exports.planUpdate = (req, res) => {
 
 	mysql.query(sql, (err) => {
 		if (err) return err;
-		res.send({ success: true });
+		res.json({ success: true });
 	});
 };
 
@@ -307,6 +310,6 @@ module.exports.search = (req, res) => {
 			};
 		});
 
-		res.status(200).send({ success: true, list: plans });
+		res.status(200).json({ success: true, list: plans });
 	});
 };
