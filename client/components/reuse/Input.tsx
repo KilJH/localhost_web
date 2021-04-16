@@ -9,6 +9,7 @@ interface InputProps {
 	padding?: string;
 	margin?: string;
 	type?: string;
+	placeholder?: string;
 	min?: string | number;
 	max?: string | number;
 	value?: string | number;
@@ -59,6 +60,7 @@ const Input = (props: InputProps) => {
 		max,
 		value,
 		onChange,
+		placeholder,
 	} = props;
 	return (
 		<StyledInput
@@ -69,6 +71,7 @@ const Input = (props: InputProps) => {
 			type={type}
 			padding={padding}
 			margin={margin}
+			placeholder={placeholder}
 			min={min}
 			max={max}
 			value={value}
