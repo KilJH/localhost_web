@@ -321,8 +321,10 @@ module.exports.requestHost = (req, res) => {
 		languages = [...languages, null];
 	}
 
+	console.log(hostInfo.place);
+
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host_request(user_id,country,language1,language2,language3,description) VALUES(?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host_request(user_id,language1,language2,language3,description,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?)`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
@@ -330,7 +332,14 @@ module.exports.requestHost = (req, res) => {
 			res.json({ success: false, message: '이미 신청한 상태입니다.' });
 		mysql.query(
 			insert,
-			[userId, hostInfo.country, ...languages, hostInfo.description],
+			[
+				userId,
+				...languages,
+				hostInfo.description,
+				hostInfo.place.geometry.location.lat,
+				hostInfo.place.geometry.location.lng,
+				`${hostInfo.place.formatted_address}(${hostInfo.place.name})`,
+			],
 			(err) => {
 				if (err) return console.log(err);
 
