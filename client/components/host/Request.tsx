@@ -1,19 +1,26 @@
 import {
 	Checkbox,
+	Fade,
 	FormControlLabel,
 	FormGroup,
 	MenuItem,
+	Modal,
 	Radio,
 	RadioGroup,
 	Select,
 } from '@material-ui/core';
 import axios from 'axios';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../hooks/useInput';
 import SERVER from '../../utils/url';
 import Router from 'next/router';
 import { UserStateContext } from '../../context/user';
 import styled from 'styled-components';
+import Textarea from '../reuse/Textarea';
+import Input from '../reuse/Input';
+import Button from '../reuse/Button';
+import { Place } from '../../interfaces';
+import SearchPlace from '../search/SearchPlace';
 
 interface Props {}
 
@@ -45,30 +52,20 @@ const languages = [
 
 const RequestContainer = styled.div`
 	margin: 2rem auto;
-	& > form > div {
+	& > div > div {
 		display: flex;
 		margin: 1.5rem 0;
+		align-items: center;
+		flex-wrap: wrap;
+		& label {
+			font-weight: 600;
+		}
 		& > *:first-child {
 			flex: 1;
 		}
 		& > *:last-child {
 			flex: 2;
 		}
-	}
-`;
-
-const TextAreaItrd = styled.textarea`
-	border-radius: 0.25rem;
-	resize: none;
-	box-sizing: border-box;
-	transition: border 0.3s ease;
-	border: 1px solid #aaa;
-	&:hover {
-		border: 2px solid #777;
-	}
-	&:focus {
-		outline: none;
-		border: 2px solid rgba(58, 75, 170, 1);
 	}
 `;
 
@@ -95,8 +92,28 @@ const BtnRequest = styled.button`
 	}
 `;
 
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& .searchForm {
+		width: 50vw;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: none;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+	}
+`;
+
 const Request = (props: Props) => {
-	const country = useInput('대한민국');
+	// const country = useInput('대한민국');
+	const [place, setPlace] = useState<Place>({
+		name: '',
+		formatted_address: '',
+		geometry: { location: { lat: 0, lng: 0 } },
+	});
 	const [langs, setLangs] = useState([]);
 	const description = useInput('');
 	const currentUser = useContext(UserStateContext);
@@ -110,16 +127,28 @@ const Request = (props: Props) => {
 	const [checked, setChecked] = useState(newChecked);
 	const favorite = useInput('0');
 
-	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	// 모달을 위한 State
+	const [open, setOpen] = useState(false);
+	const handleOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
+	useEffect(() => {
+		setOpen(false);
+	}, [place]);
+
+	const onSubmit = async () => {
+		// e.preventDefault();
 
 		const hostInfo = {
-			country: country.value,
+			// country: country.value,
+			place: place,
 			languages: langs,
 			description: description.value,
 		};
 
-		console.log(country.value, description.value);
 		const res = await axios.post(`${SERVER}/api/user/host/request`, {
 			userId: currentUser.id,
 			hostInfo,
@@ -150,16 +179,31 @@ const Request = (props: Props) => {
 
 	return (
 		<RequestContainer>
-			<form onSubmit={onSubmit}>
+			<div>
 				<h2>호스트 신청을 위한 정보를 입력해주세요</h2>
 				<div>
-					<label>거주국가를 선택해주세요</label>
-					<Select {...country}>
-						{countries.map((country) => (
-							<MenuItem value={country}>{country}</MenuItem>
-						))}
-						<MenuItem disabled>다른 국가는 아직 서비스 전입니다.</MenuItem>
-					</Select>
+					<div>
+						<label>호스트 활동 지역을 선택해주세요</label>
+					</div>
+					<div className='addressForm' onClick={handleOpen}>
+						<Input
+							type='address'
+							width='100%'
+							borderRadius='0.25rem'
+							border='1px solid rgba(0,0,0,0.41)'
+							textAlign='left'
+							value={
+								place.name ? `${place.formatted_address}(${place.name})` : ''
+							}
+						/>
+						<StyledModal open={open} onClose={handleClose}>
+							<Fade in={open}>
+								<div className='searchForm'>
+									<SearchPlace setPlace={setPlace} />
+								</div>
+							</Fade>
+						</StyledModal>
+					</div>
 				</div>
 				<div>
 					<label>사용가능 언어를 선택해주세요(최대 3개)</label>
@@ -203,12 +247,14 @@ const Request = (props: Props) => {
 				</div>
 				<div>
 					<label>간략한 자기소개를 적어주세요</label>
-					<TextAreaItrd cols={64} rows={8} {...description}></TextAreaItrd>
+					<Textarea height='8em' {...description}></Textarea>
 				</div>
 
 				<WarningMessage>신청 후 관리자의 승인이 필요합니다.</WarningMessage>
-				<BtnRequest type='submit'>신청</BtnRequest>
-			</form>
+				<BtnRequest type='submit' onClick={onSubmit}>
+					신청
+				</BtnRequest>
+			</div>
 		</RequestContainer>
 	);
 };
