@@ -358,7 +358,7 @@ module.exports.allowHost = (req, res) => {
 	const userId = req.body.userId;
 
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host(user_id,country,language1,language2,language3,description) VALUES(?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host(user_id,language1,language2,language3,description,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?)`;
 	const del = `DELETE FROM host_request WHERE user_id = ?`;
 	const update = `UPDATE user SET ishost=1 WHERE id = ?`;
 
@@ -371,11 +371,13 @@ module.exports.allowHost = (req, res) => {
 			insert,
 			[
 				rows[0].user_id,
-				rows[0].country,
-				rows[0].languages1,
-				rows[0].languages2,
-				rows[0].languages3,
+				rows[0].language1,
+				rows[0].language2,
+				rows[0].language3,
 				rows[0].description,
+				rows[0].latitude,
+				rows[0].longitude,
+				rows[0].address,
 			],
 			(err, rows) => {
 				if (err) return console.log('insert err: ', err);
@@ -384,6 +386,7 @@ module.exports.allowHost = (req, res) => {
 				mysql.query(del, userId, (err) => {
 					if (err) return console.log('delete err: ', err);
 
+					// 유저 테이블에 isHost = 1 로 업데이트
 					mysql.query(update, userId, (err) => {
 						res.json({
 							success: true,
