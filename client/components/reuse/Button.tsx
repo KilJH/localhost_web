@@ -1,14 +1,13 @@
-import { type } from 'node:os';
-import React from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface Props {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children?: React.ReactNode;
 	width?: string;
 	padding?: string;
 	default?: boolean;
-	onClick?: React.MouseEventHandler<HTMLButtonElement>;
-	type?: 'button' | 'submit' | 'reset';
+	// onClick?: React.MouseEventHandler<HTMLButtonElement>;
+	// type?: 'button' | 'submit' | 'reset';
 }
 
 const StyledButton = styled.button<Props>`
@@ -26,14 +25,13 @@ const StyledButton = styled.button<Props>`
 `;
 
 const Button = (props: Props) => {
-	const { children, width, padding, type, onClick } = props;
+	const { children, width, padding, ...other } = props;
 	return (
 		<StyledButton
 			width={width}
-			onClick={onClick}
 			padding={padding}
 			default={props.default}
-			type={type}
+			{...other}
 		>
 			{children}
 		</StyledButton>

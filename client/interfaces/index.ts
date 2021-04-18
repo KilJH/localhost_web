@@ -22,14 +22,15 @@ export interface Host {
 	password?: string;
 	phone?: string;
 	address?: string;
-	country?: string;
 	photo?: string;
 	description: string;
-	createTime: string;
+	reqCountry: number;
+	createTime?: string;
 	language1: string;
 	language2: string;
 	language3: string;
 	on: number;
+	place: Place;
 }
 
 export interface Plan {
