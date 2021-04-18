@@ -3,11 +3,9 @@ import {
 	Fade,
 	FormControlLabel,
 	FormGroup,
-	MenuItem,
 	Modal,
 	Radio,
 	RadioGroup,
-	Select,
 } from '@material-ui/core';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
@@ -57,13 +55,12 @@ const RequestContainer = styled.div`
 		margin: 1.5rem 0;
 		align-items: center;
 		flex-wrap: wrap;
-		& label {
+		& > label {
 			font-weight: 600;
-		}
-		& > *:first-child {
 			flex: 1;
+			padding: 0 1em;
 		}
-		& > *:last-child {
+		& > *:nth-child(2) {
 			flex: 2;
 		}
 	}
@@ -76,20 +73,11 @@ const WarningMessage = styled.p`
 	margin: 2rem 0 0.25rem 0;
 `;
 
-const BtnRequest = styled.button`
+const BtnRequest = styled(Button)`
 	display: block;
-	color: white;
-	background-color: rgb(81, 151, 213, 1);
 	font-size: 1em;
 	font-weight: 500;
-	border: none;
-	width: 10em;
 	margin: 0 auto;
-	padding: 0.5rem 1rem;
-	transition: all 0.3s ease;
-	&:hover {
-		background-color: rgb(61, 131, 203, 1);
-	}
 `;
 
 const StyledModal = styled(Modal)`
@@ -98,11 +86,12 @@ const StyledModal = styled(Modal)`
 	justify-content: center;
 
 	& .searchForm {
-		width: 50vw;
+		width: 80vw;
+		max-width: 800px;
 		background: rgba(255, 255, 255, 0.9);
 		padding: 1rem;
 		border-radius: 0.25rem;
-		outline: none;
+		outline: 0;
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
 	}
 `;
@@ -125,7 +114,7 @@ const Request = (props: Props) => {
 	}
 
 	const [checked, setChecked] = useState(newChecked);
-	const favorite = useInput('0');
+	const travelerNation = useInput('0');
 
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
@@ -182,10 +171,8 @@ const Request = (props: Props) => {
 			<div>
 				<h2>호스트 신청을 위한 정보를 입력해주세요</h2>
 				<div>
-					<div>
-						<label>호스트 활동 지역을 선택해주세요</label>
-					</div>
-					<div className='addressForm' onClick={handleOpen}>
+					<label>호스트 활동 지역을 선택해주세요</label>
+					<div className='addressForm'>
 						<Input
 							type='address'
 							width='100%'
@@ -195,6 +182,8 @@ const Request = (props: Props) => {
 							value={
 								place.name ? `${place.formatted_address}(${place.name})` : ''
 							}
+							onClick={handleOpen}
+							onChange={handleOpen}
 						/>
 						<StyledModal open={open} onClose={handleClose}>
 							<Fade in={open}>
@@ -227,7 +216,7 @@ const Request = (props: Props) => {
 				</div>
 				<div>
 					<label>원하는 여행객의 국적을 선택해주세요</label>
-					<RadioGroup row {...favorite}>
+					<RadioGroup row {...travelerNation}>
 						<FormControlLabel
 							value='0'
 							control={<Radio color='primary' />}
@@ -247,11 +236,13 @@ const Request = (props: Props) => {
 				</div>
 				<div>
 					<label>간략한 자기소개를 적어주세요</label>
-					<Textarea height='8em' {...description}></Textarea>
+					<div>
+						<Textarea height='8em' {...description} />
+					</div>
 				</div>
 
 				<WarningMessage>신청 후 관리자의 승인이 필요합니다.</WarningMessage>
-				<BtnRequest type='submit' onClick={onSubmit}>
+				<BtnRequest onClick={onSubmit} width='10em' padding='0.5rem 1rem'>
 					신청
 				</BtnRequest>
 			</div>
