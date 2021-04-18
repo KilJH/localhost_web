@@ -1,19 +1,13 @@
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
-interface InputProps {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	width?: string;
 	border?: string;
 	borderRadius?: string;
 	textAlign?: string;
 	padding?: string;
 	margin?: string;
-	type?: string;
-	placeholder?: string;
-	min?: string | number;
-	max?: string | number;
-	value?: string | number;
-	onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const StyledInput = styled.input<InputProps>`
@@ -56,11 +50,7 @@ const Input = (props: InputProps) => {
 		type,
 		padding,
 		margin,
-		min,
-		max,
-		value,
-		onChange,
-		placeholder,
+		...other
 	} = props;
 	return (
 		<StyledInput
@@ -71,11 +61,7 @@ const Input = (props: InputProps) => {
 			type={type}
 			padding={padding}
 			margin={margin}
-			placeholder={placeholder}
-			min={min}
-			max={max}
-			value={value}
-			onChange={onChange}
+			{...other}
 		/>
 	);
 };
