@@ -46,9 +46,6 @@ router.get('/:id', function (req, res, next) {
 router.post('/search', function (req, res, next) {
 	management.search(req, res);
 });
-router.post('/searchHost', function (req, res, next) {
-	management.searchHost(req, res);
-});
 
 router.post('/follow_check', function (req, res, next) {
 	management.isFollowed(req, res);
@@ -56,27 +53,6 @@ router.post('/follow_check', function (req, res, next) {
 
 router.post('/checkAuth', function (req, res, next) {
 	management.checkAuth(req, res);
-});
-
-router.get('/host/list', function (req, res, next) {
-	management.listOfHost(req, res);
-});
-
-router.get('/host/request/list', function (req, res, next) {
-	management.listOfRequestedHost(req, res);
-});
-
-router.post('/host/request', function (req, res, next) {
-	management.requestHost(req, res);
-});
-router.post('/host/allow', function (req, res, next) {
-	management.allowHost(req, res);
-});
-router.post('/host/deny', function (req, res, next) {
-	management.denyHost(req, res);
-});
-router.post('/host/demote', function (req, res, next) {
-	management.demote(req, res);
 });
 
 router.post('/block', function (req, res, next) {

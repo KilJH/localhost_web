@@ -29,6 +29,7 @@ export interface Host {
 	language1: string;
 	language2: string;
 	language3: string;
+	on: number;
 }
 
 export interface Plan {
