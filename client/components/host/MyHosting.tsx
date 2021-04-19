@@ -12,11 +12,17 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
 import { useInput } from './../../hooks/useInput';
 import TextField from '@material-ui/core/TextField';
+import Input from '../reuse/Input';
+import SearchPlace from '../search/SearchPlace';
+import Fade from '@material-ui/core/Fade';
+import { Place } from '../../interfaces';
+import Modal from '@material-ui/core/Modal';
+import ReuseButton from '../reuse/Button';
 
 interface Props {
   host: Host;
@@ -51,6 +57,27 @@ const DescriptionField = styled(TextField)`
     width: 100%;
   }
 `;
+
+const StyledModal = styled(Modal)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & .searchForm {
+    width: 80vw;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    outline: 0;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+  }
+`;
+const UpdateButton = styled(ReuseButton)`
+  margin: 5em auto 2em auto;
+  display: flex;
+`;
+
 export default function MyHosting({ host }: Props): ReactElement {
   const [isOn, setIsOn] = React.useState(host[0].on);
   const [country, setCountry] = React.useState(host[0].country);
@@ -59,12 +86,20 @@ export default function MyHosting({ host }: Props): ReactElement {
     language2: host[0].language2,
     language3: host[0].language3,
   });
-  const description = useInput(host[0].description);
 
+  const description = useInput(host[0].description);
+  const [place, setPlace] = useState<Place>({
+    name: '',
+    formatted_address: '',
+    geometry: { location: { lat: 0, lng: 0 } },
+  });
   const [languageSave, setLanguageSave] = React.useState(language);
-  const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
   const [countrySave, setCountrySave] = React.useState(country);
-  const [isCountryOpen, setIsCountryOpen] = React.useState(false);
+
+  const [languageOpen, setLanguageOpen] = React.useState(false);
+  const [countryOpen, setCountryOpen] = React.useState(false);
+  const [placeOpen, setPlaceOpen] = useState(false);
+
   const countries = [
     '대한민국',
     '일본',
@@ -89,29 +124,37 @@ export default function MyHosting({ host }: Props): ReactElement {
     '포르투갈어',
     '힌디어',
   ];
-  const handleIsCountryOpen = () => {
-    setIsCountryOpen(true);
+  const handlecountryOpen = () => {
+    setCountryOpen(true);
   };
   const handleCountryClose = () => {
     setCountrySave(country);
-    setIsCountryOpen(false);
+    setCountryOpen(false);
   };
   const handleCountryCancle = () => {
     setCountry(countrySave);
-    setIsCountryOpen(false);
+    setCountryOpen(false);
   };
 
-  const handleIsLanguageOpen = () => {
-    setIsLanguageOpen(true);
+  const handlelanguageOpen = () => {
+    setLanguageOpen(true);
   };
   const handleLanguageClose = () => {
     setLanguageSave(language);
-    setIsLanguageOpen(false);
+    setLanguageOpen(false);
   };
   const handleLanguageCancle = () => {
     setLanguage(languageSave);
-    setIsLanguageOpen(false);
+    setLanguageOpen(false);
   };
+
+  const handlePlaceOpen = () => {
+    setPlaceOpen(true);
+  };
+  const handlePlaceClose = () => {
+    setPlaceOpen(false);
+  };
+
   const language1HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -167,6 +210,9 @@ export default function MyHosting({ host }: Props): ReactElement {
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry((event.target as HTMLInputElement).value);
   };
+
+  const onSubmitHandler = () => {};
+
   return (
     <div>
       <h3>마이 호스팅</h3>
@@ -179,11 +225,11 @@ export default function MyHosting({ host }: Props): ReactElement {
       />
 
       {/* 국가 선택 */}
-      <ButtonLabel onClick={handleIsCountryOpen}>국가 선택</ButtonLabel>
+      <ButtonLabel onClick={handlecountryOpen}>국가 선택</ButtonLabel>
       <Dialog
         disableBackdropClick
         disableEscapeKeyDown
-        open={isCountryOpen}
+        open={countryOpen}
         onClose={handleCountryClose}
       >
         <DialogTitle>거주 국가를 선택해주세요</DialogTitle>
@@ -212,11 +258,11 @@ export default function MyHosting({ host }: Props): ReactElement {
       </Dialog>
 
       {/* 언어 선택 */}
-      <ButtonLabel onClick={handleIsLanguageOpen}>언어 선택</ButtonLabel>
+      <ButtonLabel onClick={handlelanguageOpen}>언어 선택</ButtonLabel>
       <Dialog
         disableBackdropClick
         disableEscapeKeyDown
-        open={isLanguageOpen}
+        open={languageOpen}
         onClose={handleLanguageClose}
       >
         <DialogTitle>사용 가능한 언어를 선택해주세요</DialogTitle>
@@ -282,6 +328,29 @@ export default function MyHosting({ host }: Props): ReactElement {
       {/* 자기소개 수정 */}
       <Label>자기소개 수정</Label>
       <DescriptionField {...description} variant='outlined' multiline />
+
+      {/* 지역 수정 */}
+      <Label>활동지역 수정</Label>
+      <Input
+        type='address'
+        width='100%'
+        borderRadius='0.25rem'
+        border='1px solid rgba(0,0,0,0.41)'
+        textAlign='left'
+        value={place.name ? `${place.formatted_address}(${place.name})` : ''}
+        onClick={handlePlaceOpen}
+        onChange={handlePlaceOpen}
+      />
+      <StyledModal open={placeOpen} onClose={handlePlaceClose}>
+        <Fade in={placeOpen}>
+          <div className='searchForm'>
+            <SearchPlace setPlace={setPlace} />
+          </div>
+        </Fade>
+      </StyledModal>
+      <UpdateButton type='submit' onSubmit={onSubmitHandler}>
+        정보수정
+      </UpdateButton>
     </div>
   );
 }
