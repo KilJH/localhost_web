@@ -29,20 +29,41 @@ const ItemContainer = styled.div`
 `;
 
 const ListContainer = styled.div`
-	height: 16em;
+	max-height: 16em;
 	overflow-y: auto;
+	position: absolute;
+	width: 100%;
+	background: rgba(255, 255, 255, 1);
+	border-radius: 0.5rem;
+
+	animation: transHeight 0.3s ease 0s;
+	transition: all 0.5s ease;
+
+	@keyframes transHeight {
+		from {
+			max-height: 0;
+		}
+		to {
+			max-height: 16em;
+		}
+	}
 `;
 
 const StyledForm = styled.form`
 	width: 100%;
 	display: flex;
-	margin-bottom: 1rem;
+	/* margin-bottom: 1rem; */
 	& > input {
 		flex: 1;
 	}
 	& > button {
 		margin: 0 0 0 0.5rem;
 	}
+`;
+
+const Container = styled.div`
+	width: 100%;
+	position: relative;
 `;
 
 const PlaceItem = (props: PlaceProps) => {
@@ -64,15 +85,15 @@ const SearchPlace = (props: Props) => {
 	const input = useInput('');
 	const { setPlace } = props;
 	const [places, setPlaces] = useState([]);
-	const onSubmit = (e: React.FormEvent) => {
+	const onSearch = (e: React.FormEvent) => {
 		e.preventDefault();
 		axios.get(`/api/map/searchPlaces?search=${input.value}`).then((res) => {
 			setPlaces(res.data.places);
 		});
 	};
 	return (
-		<div>
-			<StyledForm onSubmit={onSubmit}>
+		<Container>
+			<StyledForm onSubmit={onSearch}>
 				<Input
 					{...input}
 					placeholder='주소를 검색해주세요'
@@ -84,12 +105,16 @@ const SearchPlace = (props: Props) => {
 					<Search />
 				</Button>
 			</StyledForm>
-			<ListContainer>
-				{places.map((place) => (
-					<PlaceItem place={place} setPlace={setPlace} />
-				))}
-			</ListContainer>
-		</div>
+			{places.length > 0 ? (
+				<ListContainer>
+					{places.map((place) => (
+						<PlaceItem place={place} setPlace={setPlace} />
+					))}
+				</ListContainer>
+			) : (
+				''
+			)}
+		</Container>
 	);
 };
 
