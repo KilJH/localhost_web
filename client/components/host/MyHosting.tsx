@@ -23,6 +23,9 @@ import Fade from '@material-ui/core/Fade';
 import { Place } from '../../interfaces';
 import Modal from '@material-ui/core/Modal';
 import ReuseButton from '../reuse/Button';
+import axios from 'axios';
+import Router from 'next/router';
+import SERVER from '../../utils/url';
 
 interface Props {
   host: Host;
@@ -77,21 +80,51 @@ const UpdateButton = styled(ReuseButton)`
   margin: 5em auto 2em auto;
   display: flex;
 `;
+const DialogueTitle = styled(DialogTitle)`
+  color: rgb(33, 33, 33);
 
+  & .MuiTypography-h6 {
+    font-size: 0.95em;
+    font-weight: bold;
+  }
+  &.MuiDialogTitle-root {
+    padding: 2em 6em;
+  }
+`;
+const RadioLabel = styled(FormControlLabel)`
+  & .MuiRadio-colorSecondary.Mui-checked {
+    color: #5197d5;
+    &:hover {
+      background-color: rgba(81, 151, 213, 0.1);
+    }
+  }
+  & .MuiButtonBase-root {
+    &:hover {
+      color: #5197d5;
+      background-color: rgba(81, 151, 213, 0.1);
+    }
+  }
+  &:hover {
+    color: #5197d5;
+  }
+`;
+const LanguageControl = styled(FormControl)`
+  width: 7em;
+`;
 export default function MyHosting({ host }: Props): ReactElement {
   const [isOn, setIsOn] = React.useState(host[0].on);
   const [country, setCountry] = React.useState(host[0].country);
   const [language, setLanguage] = React.useState({
-    language1: host[0].language1,
-    language2: host[0].language2,
-    language3: host[0].language3,
+    language1: host[0].language1 === null ? ' ' : host[0].language1,
+    language2: host[0].language2 === null ? ' ' : host[0].language2,
+    language3: host[0].language3 === null ? ' ' : host[0].language3,
   });
 
   const description = useInput(host[0].description);
   const [place, setPlace] = useState<Place>({
     name: '',
     formatted_address: '',
-    geometry: { location: { lat: 0, lng: 0 } },
+    geometry: { location: { lat: host[0].latitude, lng: host[0].longitude } },
   });
   const [languageSave, setLanguageSave] = React.useState(language);
   const [countrySave, setCountrySave] = React.useState(country);
@@ -158,11 +191,25 @@ export default function MyHosting({ host }: Props): ReactElement {
   const language1HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
+    if (event.target.value === ' ') {
+      if (
+        event.target.value === ' ' &&
+        language.language2 === ' ' &&
+        language.language3 === ' '
+      )
+        alert('최소 언어 하나를 선택해주시기 바랍니다.');
+      else {
+        setLanguage({
+          language1: event.target.value,
+          language2: language.language2,
+          language3: language.language3,
+        });
+      }
+    } else if (
       event.target.value === language.language2 ||
       event.target.value === language.language3
     )
-      alert('중복된 언어가 선택되었습니다!');
+      alert('중복된 언어를 선택하셨습니다.');
     else {
       setLanguage({
         language1: event.target.value,
@@ -174,11 +221,25 @@ export default function MyHosting({ host }: Props): ReactElement {
   const language2HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
+    if (event.target.value === ' ') {
+      if (
+        event.target.value === ' ' &&
+        language.language1 === ' ' &&
+        language.language3 === ' '
+      )
+        alert('최소 언어 하나를 선택해주시기 바랍니다.');
+      else {
+        setLanguage({
+          language1: language.language1,
+          language2: event.target.value,
+          language3: language.language3,
+        });
+      }
+    } else if (
       event.target.value === language.language1 ||
       event.target.value === language.language3
     )
-      alert('중복된 언어가 선택되었습니다!');
+      alert('중복된 언어를 선택하셨습니다.');
     else {
       setLanguage({
         language1: language.language1,
@@ -190,11 +251,25 @@ export default function MyHosting({ host }: Props): ReactElement {
   const language3HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (
+    if (event.target.value === ' ') {
+      if (
+        event.target.value === ' ' &&
+        language.language1 === ' ' &&
+        language.language2 === ' '
+      )
+        alert('최소 언어 하나를 선택해주시기 바랍니다.');
+      else {
+        setLanguage({
+          language1: language.language1,
+          language2: language.language2,
+          language3: event.target.value,
+        });
+      }
+    } else if (
       event.target.value === language.language1 ||
       event.target.value === language.language2
     )
-      alert('중복된 언어가 선택되었습니다!');
+      alert('중복된 언어를 선택하셨습니다.');
     else {
       setLanguage({
         language1: language.language1,
@@ -203,6 +278,7 @@ export default function MyHosting({ host }: Props): ReactElement {
       });
     }
   };
+  console.log(host[0]);
   const isOnHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isOn === 0) setIsOn(1);
     else setIsOn(0);
@@ -211,7 +287,32 @@ export default function MyHosting({ host }: Props): ReactElement {
     setCountry((event.target as HTMLInputElement).value);
   };
 
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('hi');
+    try {
+      const res = await axios.post(`${SERVER}/api/host/update`, {
+        on: isOn,
+        country: country,
+        language1: language.language1 === ' ' ? null : language.language1,
+        language2: language.language2 === ' ' ? null : language.language2,
+        language3: language.language3 === ' ' ? null : language.language3,
+        description: description.value,
+        latitude: place.geometry.location.lat,
+        longitude: place.geometry.location.lng,
+        address: place.formatted_address,
+
+        id: host[0].id,
+        reqCountry: host[0].reqcountry,
+      });
+      if (res.data.success) {
+        alert('호스트 정보 수정이 완료되었습니다!');
+        Router.push('/');
+      }
+    } catch (err) {
+      return console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -220,7 +321,9 @@ export default function MyHosting({ host }: Props): ReactElement {
       {/* 호스트 설정 */}
       <Label>호스트 활성</Label>
       <SwitchForm
-        control={<IsOn onChange={isOnHandleChange} color='primary' />}
+        control={
+          <IsOn checked={isOn} onChange={isOnHandleChange} color='primary' />
+        }
         label=''
       />
 
@@ -232,12 +335,12 @@ export default function MyHosting({ host }: Props): ReactElement {
         open={countryOpen}
         onClose={handleCountryClose}
       >
-        <DialogTitle>거주 국가를 선택해주세요</DialogTitle>
+        <DialogueTitle>거주 국가를 선택해주세요</DialogueTitle>
         <DialogContent>
           <form>
             <RadioGroup value={country} onChange={countryHandleChange}>
               {countries.map((value) => (
-                <FormControlLabel
+                <RadioLabel
                   value={value}
                   control={<Radio />}
                   label={value}
@@ -248,7 +351,7 @@ export default function MyHosting({ host }: Props): ReactElement {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCountryCancle} color='primary'>
+          <Button onClick={handleCountryCancle} color='secondary'>
             취소
           </Button>
           <Button onClick={handleCountryClose} color='primary'>
@@ -265,58 +368,58 @@ export default function MyHosting({ host }: Props): ReactElement {
         open={languageOpen}
         onClose={handleLanguageClose}
       >
-        <DialogTitle>사용 가능한 언어를 선택해주세요</DialogTitle>
+        <DialogueTitle>사용 가능한 언어를 선택해주세요</DialogueTitle>
         <DialogContent>
           <form>
-            <FormControl>
+            <LanguageControl>
               <InputLabel>언어1</InputLabel>
               <Select
                 value={language.language1}
                 onChange={language1HandleChange}
                 input={<SelectInput />}
               >
-                <MenuItem value=''>
+                <MenuItem value=' '>
                   <em>선택안함</em>
                 </MenuItem>
                 {languages.map((value) => (
                   <MenuItem value={value}>{value}</MenuItem>
                 ))}
               </Select>
-            </FormControl>
-            <FormControl>
+            </LanguageControl>
+            <LanguageControl>
               <InputLabel>언어2</InputLabel>
               <Select
                 value={language.language2}
                 onChange={language2HandleChange}
                 input={<SelectInput />}
               >
-                <MenuItem value=''>
+                <MenuItem value=' '>
                   <em>선택안함</em>
                 </MenuItem>
                 {languages.map((value) => (
                   <MenuItem value={value}>{value}</MenuItem>
                 ))}
               </Select>
-            </FormControl>
-            <FormControl>
+            </LanguageControl>
+            <LanguageControl>
               <InputLabel>언어3</InputLabel>
               <Select
                 value={language.language3}
                 onChange={language3HandleChange}
                 input={<SelectInput />}
               >
-                <MenuItem value=''>
+                <MenuItem value=' '>
                   <em>선택안함</em>
                 </MenuItem>
                 {languages.map((value) => (
                   <MenuItem value={value}>{value}</MenuItem>
                 ))}
               </Select>
-            </FormControl>
+            </LanguageControl>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleLanguageCancle} color='primary'>
+          <Button onClick={handleLanguageCancle} color='secondary'>
             취소
           </Button>
           <Button onClick={handleLanguageClose} color='primary'>
@@ -348,7 +451,7 @@ export default function MyHosting({ host }: Props): ReactElement {
           </div>
         </Fade>
       </StyledModal>
-      <UpdateButton type='submit' onSubmit={onSubmitHandler}>
+      <UpdateButton type='button' onClick={onSubmitHandler}>
         정보수정
       </UpdateButton>
     </div>
