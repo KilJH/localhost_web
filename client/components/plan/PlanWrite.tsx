@@ -18,6 +18,8 @@ import { useInput } from '../../hooks/useInput';
 import { Plan, PlanDay, PlanTime } from '../../interfaces';
 import SERVER from '../../utils/url';
 import Button from '../reuse/Button';
+import Input from '../reuse/Input';
+import Textarea from '../reuse/Textarea';
 import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
 
@@ -30,13 +32,6 @@ interface WrapperProps {
 	setStep: Function;
 	children?: React.ReactNode;
 	plan?: Plan;
-}
-
-interface InputProps {
-	width?: string;
-	border?: string;
-	borderRadius?: string;
-	textAlign?: string;
 }
 
 const countries = [
@@ -176,60 +171,6 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		to {
 			background-position: 400px 0;
 		}
-	}
-`;
-
-const Input = styled.input<InputProps>`
-	font-size: 0.8em;
-	border-radius: ${(props) => props.borderRadius || 0};
-	border: ${(props) => props.border || 'none'};
-	border-bottom: ${(props) =>
-		props.border ? '' : '1px solid rgba(0, 0, 0, 0.42)'};
-	text-align: ${(props) => props.textAlign || 'center'};
-	padding: 0.75rem;
-	width: ${(props) => props.width || '8em'};
-	height: 2.5rem;
-	box-sizing: border-box;
-
-	transition: all 0.2s ease;
-
-	&:hover {
-		border-width: 2px;
-		border-color: rgba(0, 0, 0, 0.87);
-	}
-	&:focus {
-		border-width: 2px;
-		border-color: rgb(58, 75, 170);
-	}
-
-	&[type='number']::-webkit-inner-spin-button,
-	&[type='number']::-webkit-outer-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-`;
-
-const Textarea = styled.textarea`
-	font-size: 0.8em;
-	border-radius: 0.25rem;
-	border: 1px solid rgba(0, 0, 0, 0.42);
-	width: 100%;
-	padding: 0.75rem;
-	height: 16em;
-
-	box-sizing: border-box;
-
-	resize: none;
-
-	font-family: inherit;
-
-	transition: border 0.2s ease;
-	&:hover {
-		border: 2px solid rgba(0, 0, 0, 0.87);
-	}
-	&:focus {
-		outline: none;
-		border: 2px solid rgb(58, 75, 170);
 	}
 `;
 

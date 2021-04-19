@@ -7,29 +7,29 @@ import HostApprovalList from '../../../../components/admin/host/approval/HostApp
 import AdminLayout from '../../../../components/admin/AdminLayout';
 
 type Props = {
-  pageProps: {
-    items: Host[];
-  };
+	pageProps: {
+		items: Host[];
+	};
 };
 
 const index = ({ pageProps }: Props) => {
-  return (
-    <AdminLayout title='호스트 신청자목록' selected='approval'>
-      <HostApprovalList {...pageProps} />
-    </AdminLayout>
-  );
+	return (
+		<AdminLayout title='호스트 신청자목록' selected='approval'>
+			<HostApprovalList {...pageProps} />
+		</AdminLayout>
+	);
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  // Example for including static props in a Next.js function component page.
-  // Don't forget to include the respective types for any props passed into
-  // the component.
+	// Example for including static props in a Next.js function component page.
+	// Don't forget to include the respective types for any props passed into
+	// the component.
 
-  const items: User[] = await (
-    await axios.get(`${SERVER}/api/user/host/request/list`)
-  ).data.requestedHosts;
+	const items: User[] = await (
+		await axios.get(`${SERVER}/api/host/request/list`)
+	).data.requestedHosts;
 
-  return { props: { items } };
+	return { props: { items } };
 };
 
 export default index;

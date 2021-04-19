@@ -22,13 +22,15 @@ export interface Host {
 	password?: string;
 	phone?: string;
 	address?: string;
-	country?: string;
 	photo?: string;
 	description: string;
-	createTime: string;
+	reqCountry: number;
+	createTime?: string;
 	language1: string;
 	language2: string;
 	language3: string;
+	on: boolean;
+	place: Place;
 }
 
 export interface Plan {
@@ -89,4 +91,10 @@ export interface Comment {
 	user: User;
 	description: string;
 	createTime: string;
+}
+
+export interface Place {
+	formatted_address: string;
+	geometry: { location: { lat: number; lng: number } };
+	name: string;
 }
