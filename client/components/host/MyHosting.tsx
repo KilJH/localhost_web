@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Input from '@material-ui/core/Input';
+import SelectInput from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
@@ -15,6 +15,8 @@ import Switch from '@material-ui/core/Switch';
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
+import { useInput } from './../../hooks/useInput';
+import TextField from '@material-ui/core/TextField';
 
 interface Props {
   host: Host;
@@ -23,6 +25,12 @@ interface Props {
 const Label = styled.p`
   margin: 2em 0 0.5em 0;
 `;
+
+const ButtonLabel = styled.p`
+  margin: 2em 0 0.5em 0;
+  cursor: pointer;
+`;
+
 const SwitchForm = styled(FormControlLabel)`
   &.MuiFormControlLabel-labelPlacementStart {
     margin-left: 0;
@@ -37,6 +45,12 @@ const IsOn = styled(Switch)`
     background-color: #5197d5;
   }
 `;
+
+const DescriptionField = styled(TextField)`
+  &.MuiFormControl-root {
+    width: 100%;
+  }
+`;
 export default function MyHosting({ host }: Props): ReactElement {
   const [isOn, setIsOn] = React.useState(host[0].on);
   const [country, setCountry] = React.useState(host[0].country);
@@ -45,9 +59,12 @@ export default function MyHosting({ host }: Props): ReactElement {
     language2: host[0].language2,
     language3: host[0].language3,
   });
-  const [languageSave, setLanguageSave] = React.useState(language);
-  const [languageOpen, setLanguageOpen] = React.useState(false);
+  const description = useInput(host[0].description);
 
+  const [languageSave, setLanguageSave] = React.useState(language);
+  const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
+  const [countrySave, setCountrySave] = React.useState(country);
+  const [isCountryOpen, setIsCountryOpen] = React.useState(false);
   const countries = [
     '대한민국',
     '일본',
@@ -61,7 +78,7 @@ export default function MyHosting({ host }: Props): ReactElement {
     '스페인',
     '이탈리아',
   ];
-  const languages = [
+  let languages = [
     '한국어',
     '일본어',
     '중국어',
@@ -72,49 +89,77 @@ export default function MyHosting({ host }: Props): ReactElement {
     '포르투갈어',
     '힌디어',
   ];
+  const handleIsCountryOpen = () => {
+    setIsCountryOpen(true);
+  };
+  const handleCountryClose = () => {
+    setCountrySave(country);
+    setIsCountryOpen(false);
+  };
+  const handleCountryCancle = () => {
+    setCountry(countrySave);
+    setIsCountryOpen(false);
+  };
 
-  const handleLanguageOpen = () => {
-    setLanguageOpen(true);
+  const handleIsLanguageOpen = () => {
+    setIsLanguageOpen(true);
   };
   const handleLanguageClose = () => {
     setLanguageSave(language);
-    setLanguageOpen(false);
+    setIsLanguageOpen(false);
   };
   const handleLanguageCancle = () => {
     setLanguage(languageSave);
-    setLanguageOpen(false);
+    setIsLanguageOpen(false);
   };
-
   const language1HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setLanguage({
-      language1: event.target.value,
-      language2: language.language2,
-      language3: language.language3,
-    });
+    if (
+      event.target.value === language.language2 ||
+      event.target.value === language.language3
+    )
+      alert('중복된 언어가 선택되었습니다!');
+    else {
+      setLanguage({
+        language1: event.target.value,
+        language2: language.language2,
+        language3: language.language3,
+      });
+    }
   };
   const language2HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setLanguage({
-      language1: language.language1,
-      language2: event.target.value,
-      language3: language.language3,
-    });
-    console.log(language);
+    if (
+      event.target.value === language.language1 ||
+      event.target.value === language.language3
+    )
+      alert('중복된 언어가 선택되었습니다!');
+    else {
+      setLanguage({
+        language1: language.language1,
+        language2: event.target.value,
+        language3: language.language3,
+      });
+    }
   };
   const language3HandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setLanguage({
-      language1: language.language1,
-      language2: language.language2,
-      language3: event.target.value,
-    });
-    console.log(language);
+    if (
+      event.target.value === language.language1 ||
+      event.target.value === language.language2
+    )
+      alert('중복된 언어가 선택되었습니다!');
+    else {
+      setLanguage({
+        language1: language.language1,
+        language2: language.language2,
+        language3: event.target.value,
+      });
+    }
   };
-
   const isOnHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isOn === 0) setIsOn(1);
     else setIsOn(0);
@@ -122,34 +167,56 @@ export default function MyHosting({ host }: Props): ReactElement {
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry((event.target as HTMLInputElement).value);
   };
-
   return (
     <div>
       <h3>마이 호스팅</h3>
+
       {/* 호스트 설정 */}
       <Label>호스트 활성</Label>
       <SwitchForm
         control={<IsOn onChange={isOnHandleChange} color='primary' />}
         label=''
       />
+
       {/* 국가 선택 */}
-      <Label>국가 선택</Label>
-      <RadioGroup value={country} onChange={countryHandleChange}>
-        {countries.map((value) => (
-          <FormControlLabel
-            value={value}
-            control={<Radio />}
-            label={value}
-            checked={country === value}
-          />
-        ))}
-      </RadioGroup>
-      {/* 언어 선택 */}
-      <Label onClick={handleLanguageOpen}>언어 선택</Label>
+      <ButtonLabel onClick={handleIsCountryOpen}>국가 선택</ButtonLabel>
       <Dialog
         disableBackdropClick
         disableEscapeKeyDown
-        open={languageOpen}
+        open={isCountryOpen}
+        onClose={handleCountryClose}
+      >
+        <DialogTitle>거주 국가를 선택해주세요</DialogTitle>
+        <DialogContent>
+          <form>
+            <RadioGroup value={country} onChange={countryHandleChange}>
+              {countries.map((value) => (
+                <FormControlLabel
+                  value={value}
+                  control={<Radio />}
+                  label={value}
+                  checked={country === value}
+                />
+              ))}
+            </RadioGroup>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCountryCancle} color='primary'>
+            취소
+          </Button>
+          <Button onClick={handleCountryClose} color='primary'>
+            수정
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 언어 선택 */}
+      <ButtonLabel onClick={handleIsLanguageOpen}>언어 선택</ButtonLabel>
+      <Dialog
+        disableBackdropClick
+        disableEscapeKeyDown
+        open={isLanguageOpen}
         onClose={handleLanguageClose}
       >
         <DialogTitle>사용 가능한 언어를 선택해주세요</DialogTitle>
@@ -160,7 +227,7 @@ export default function MyHosting({ host }: Props): ReactElement {
               <Select
                 value={language.language1}
                 onChange={language1HandleChange}
-                input={<Input />}
+                input={<SelectInput />}
               >
                 <MenuItem value=''>
                   <em>선택안함</em>
@@ -175,7 +242,7 @@ export default function MyHosting({ host }: Props): ReactElement {
               <Select
                 value={language.language2}
                 onChange={language2HandleChange}
-                input={<Input />}
+                input={<SelectInput />}
               >
                 <MenuItem value=''>
                   <em>선택안함</em>
@@ -190,7 +257,7 @@ export default function MyHosting({ host }: Props): ReactElement {
               <Select
                 value={language.language3}
                 onChange={language3HandleChange}
-                input={<Input />}
+                input={<SelectInput />}
               >
                 <MenuItem value=''>
                   <em>선택안함</em>
@@ -207,10 +274,14 @@ export default function MyHosting({ host }: Props): ReactElement {
             취소
           </Button>
           <Button onClick={handleLanguageClose} color='primary'>
-            Ok
+            수정
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* 자기소개 수정 */}
+      <Label>자기소개 수정</Label>
+      <DescriptionField {...description} variant='outlined' multiline />
     </div>
   );
 }
