@@ -6,25 +6,25 @@ import SERVER from '../../../../utils/url';
 import axios from 'axios';
 
 type Props = {
-  pageProps: {
-    items: Host[];
-  };
+	pageProps: {
+		items: Host[];
+	};
 };
 
 const details = ({ pageProps }: Props) => {
-  return <Layout title='신청자목록 | localhost'></Layout>;
+	return <Layout title='신청자목록 | localhost'></Layout>;
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  // Example for including static props in a Next.js function component page.
-  // Don't forget to include the respective types for any props passed into
-  // the component.
+	// Example for including static props in a Next.js function component page.
+	// Don't forget to include the respective types for any props passed into
+	// the component.
 
-  const items: User[] = await (
-    await axios.get(`${SERVER}/api/user/host/request/list`)
-  ).data.requestedHosts;
+	const items: User[] = await (
+		await axios.get(`${SERVER}/api/host/request/list`)
+	).data.requestedHosts;
 
-  return { props: { items } };
+	return { props: { items } };
 };
 
 export default details;
