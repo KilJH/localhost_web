@@ -32,17 +32,27 @@ interface Props {
 }
 
 const Label = styled.p`
-  margin: 2em 0 0.5em 0;
+  margin: 2em 0 1em 0;
+  font-size: 1em;
 `;
 
-const ButtonLabel = styled.p`
-  margin: 2em 0 0.5em 0;
-  cursor: pointer;
+const ButtonLabel = styled(Button)`
+  &.MuiButton-root {
+    color: #5197d5;
+    margin: 0 1em 0 0;
+    &:hover {
+      color: rgb(33, 33, 33);
+    }
+  }
 `;
 
 const SwitchForm = styled(FormControlLabel)`
+  display: inline;
   &.MuiFormControlLabel-labelPlacementStart {
     margin-left: 0;
+  }
+  &.MuiFormControlLabel-root {
+    margin-left: 0.5em;
   }
 `;
 
@@ -58,6 +68,10 @@ const IsOn = styled(Switch)`
 const DescriptionField = styled(TextField)`
   &.MuiFormControl-root {
     width: 100%;
+  }
+  & > div {
+    font-size: 0.9em;
+    opacity: 0.9;
   }
 `;
 
@@ -77,18 +91,23 @@ const StyledModal = styled(Modal)`
   }
 `;
 const UpdateButton = styled(ReuseButton)`
-  margin: 5em auto 2em auto;
+  margin: 5em auto 2.5em auto;
   display: flex;
 `;
 const DialogueTitle = styled(DialogTitle)`
   color: rgb(33, 33, 33);
-
+  text-align: center;
   & .MuiTypography-h6 {
     font-size: 0.95em;
     font-weight: bold;
   }
   &.MuiDialogTitle-root {
     padding: 2em 6em;
+  }
+`;
+const DialogueContent = styled(DialogContent)`
+  &.MuiDialogContent-root {
+    margin: 2em auto 4em auto;
   }
 `;
 const RadioLabel = styled(FormControlLabel)`
@@ -110,7 +129,20 @@ const RadioLabel = styled(FormControlLabel)`
 `;
 const LanguageControl = styled(FormControl)`
   width: 7em;
+  &.MuiFormControl-root {
+    margin: 0 0.5em;
+  }
+  & .MuiFormLabel-root.Mui-focused {
+    color: #5197d5;
+  }
+  & .MuiInput-underline:after {
+    border-bottom: 2px solid #5197d5;
+  }
+  & .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-color: #5197d5;
+  }
 `;
+const ButtonDiv = styled.div``;
 export default function MyHosting({ host }: Props): ReactElement {
   const [isOn, setIsOn] = React.useState(host[0].on);
   const [country, setCountry] = React.useState(host[0].country);
@@ -315,11 +347,11 @@ export default function MyHosting({ host }: Props): ReactElement {
   };
 
   return (
-    <div>
-      <h3>마이 호스팅</h3>
+    <div style={{ marginTop: '3em' }}>
+      <h3 style={{ marginBottom: '2em' }}>나의 호스팅</h3>
 
       {/* 호스트 설정 */}
-      <Label>호스트 활성</Label>
+      <Label style={{ display: 'inline' }}>호스트 활성</Label>
       <SwitchForm
         control={
           <IsOn checked={isOn} onChange={isOnHandleChange} color='primary' />
@@ -327,110 +359,119 @@ export default function MyHosting({ host }: Props): ReactElement {
         label=''
       />
 
-      {/* 국가 선택 */}
-      <ButtonLabel onClick={handlecountryOpen}>국가 선택</ButtonLabel>
-      <Dialog
-        disableBackdropClick
-        disableEscapeKeyDown
-        open={countryOpen}
-        onClose={handleCountryClose}
-      >
-        <DialogueTitle>거주 국가를 선택해주세요</DialogueTitle>
-        <DialogContent>
-          <form>
-            <RadioGroup value={country} onChange={countryHandleChange}>
-              {countries.map((value) => (
-                <RadioLabel
-                  value={value}
-                  control={<Radio />}
-                  label={value}
-                  checked={country === value}
-                />
-              ))}
-            </RadioGroup>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCountryCancle} color='secondary'>
-            취소
-          </Button>
-          <Button onClick={handleCountryClose} color='primary'>
-            수정
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* 언어 선택 */}
-      <ButtonLabel onClick={handlelanguageOpen}>언어 선택</ButtonLabel>
-      <Dialog
-        disableBackdropClick
-        disableEscapeKeyDown
-        open={languageOpen}
-        onClose={handleLanguageClose}
-      >
-        <DialogueTitle>사용 가능한 언어를 선택해주세요</DialogueTitle>
-        <DialogContent>
-          <form>
-            <LanguageControl>
-              <InputLabel>언어1</InputLabel>
-              <Select
-                value={language.language1}
-                onChange={language1HandleChange}
-                input={<SelectInput />}
-              >
-                <MenuItem value=' '>
-                  <em>선택안함</em>
-                </MenuItem>
-                {languages.map((value) => (
-                  <MenuItem value={value}>{value}</MenuItem>
-                ))}
-              </Select>
-            </LanguageControl>
-            <LanguageControl>
-              <InputLabel>언어2</InputLabel>
-              <Select
-                value={language.language2}
-                onChange={language2HandleChange}
-                input={<SelectInput />}
-              >
-                <MenuItem value=' '>
-                  <em>선택안함</em>
-                </MenuItem>
-                {languages.map((value) => (
-                  <MenuItem value={value}>{value}</MenuItem>
-                ))}
-              </Select>
-            </LanguageControl>
-            <LanguageControl>
-              <InputLabel>언어3</InputLabel>
-              <Select
-                value={language.language3}
-                onChange={language3HandleChange}
-                input={<SelectInput />}
-              >
-                <MenuItem value=' '>
-                  <em>선택안함</em>
-                </MenuItem>
-                {languages.map((value) => (
-                  <MenuItem value={value}>{value}</MenuItem>
-                ))}
-              </Select>
-            </LanguageControl>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLanguageCancle} color='secondary'>
-            취소
-          </Button>
-          <Button onClick={handleLanguageClose} color='primary'>
-            수정
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       {/* 자기소개 수정 */}
       <Label>자기소개 수정</Label>
-      <DescriptionField {...description} variant='outlined' multiline />
+      <DescriptionField
+        {...description}
+        rows={8}
+        variant='outlined'
+        multiline
+      />
+
+      {/* 국가 및 언어 설정 */}
+      <Label>국가 및 언어 설정</Label>
+      <ButtonDiv>
+        {/* 국가 선택 */}
+        <ButtonLabel onClick={handlecountryOpen}>국가 선택</ButtonLabel>
+        <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
+          open={countryOpen}
+          onClose={handleCountryClose}
+        >
+          <DialogueTitle>거주 국가를 선택해주세요</DialogueTitle>
+          <DialogContent>
+            <form>
+              <RadioGroup value={country} onChange={countryHandleChange}>
+                {countries.map((value) => (
+                  <RadioLabel
+                    value={value}
+                    control={<Radio />}
+                    label={value}
+                    checked={country === value}
+                  />
+                ))}
+              </RadioGroup>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCountryCancle} color='secondary'>
+              취소
+            </Button>
+            <Button onClick={handleCountryClose} color='primary'>
+              수정
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* 언어 선택 */}
+        <ButtonLabel onClick={handlelanguageOpen}>언어 선택</ButtonLabel>
+        <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
+          open={languageOpen}
+          onClose={handleLanguageClose}
+        >
+          <DialogueTitle>사용 가능한 언어를 선택해주세요</DialogueTitle>
+          <DialogueContent>
+            <form>
+              <LanguageControl>
+                <InputLabel>언어1</InputLabel>
+                <Select
+                  value={language.language1}
+                  onChange={language1HandleChange}
+                  input={<SelectInput />}
+                >
+                  <MenuItem value=' '>
+                    <em>선택안함</em>
+                  </MenuItem>
+                  {languages.map((value) => (
+                    <MenuItem value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
+              </LanguageControl>
+              <LanguageControl>
+                <InputLabel>언어2</InputLabel>
+                <Select
+                  value={language.language2}
+                  onChange={language2HandleChange}
+                  input={<SelectInput />}
+                >
+                  <MenuItem value=' '>
+                    <em>선택안함</em>
+                  </MenuItem>
+                  {languages.map((value) => (
+                    <MenuItem value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
+              </LanguageControl>
+              <LanguageControl>
+                <InputLabel>언어3</InputLabel>
+                <Select
+                  value={language.language3}
+                  onChange={language3HandleChange}
+                  input={<SelectInput />}
+                >
+                  <MenuItem value=' '>
+                    <em>선택안함</em>
+                  </MenuItem>
+                  {languages.map((value) => (
+                    <MenuItem value={value}>{value}</MenuItem>
+                  ))}
+                </Select>
+              </LanguageControl>
+            </form>
+          </DialogueContent>
+          <DialogActions>
+            <Button onClick={handleLanguageCancle} color='secondary'>
+              취소
+            </Button>
+            <Button onClick={handleLanguageClose} color='primary'>
+              수정
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </ButtonDiv>
 
       {/* 지역 수정 */}
       <Label>활동지역 수정</Label>
@@ -440,9 +481,14 @@ export default function MyHosting({ host }: Props): ReactElement {
         borderRadius='0.25rem'
         border='1px solid rgba(0,0,0,0.41)'
         textAlign='left'
-        value={place.name ? `${place.formatted_address}(${place.name})` : ''}
+        value={
+          place.name
+            ? `${place.formatted_address}(${place.name})`
+            : host[0].address
+        }
         onClick={handlePlaceOpen}
         onChange={handlePlaceOpen}
+        style={{ opacity: 0.7 }}
       />
       <StyledModal open={placeOpen} onClose={handlePlaceClose}>
         <Fade in={placeOpen}>
