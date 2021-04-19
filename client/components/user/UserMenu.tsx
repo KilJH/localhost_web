@@ -70,7 +70,7 @@ const UserMenu = (props: Props) => {
             </a>
           </Link>
           {currentUser.isHost ? (
-            <Link href='/hosts/'>
+            <Link href='/hosts/myhosting'>
               <a>
                 <li>나의 호스팅</li>
               </a>
