@@ -138,7 +138,7 @@ const Request = (props: Props) => {
 			description: description.value,
 		};
 
-		const res = await axios.post(`${SERVER}/api/user/host/request`, {
+		const res = await axios.post(`${SERVER}/api/host/request`, {
 			userId: currentUser.id,
 			hostInfo,
 		});
