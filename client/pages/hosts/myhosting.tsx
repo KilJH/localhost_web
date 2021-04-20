@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { GetServerSideProps, GetStaticProps } from 'next';
-import React, { ReactElement } from 'react';
+import { GetServerSideProps } from 'next';
+import React from 'react';
 import MyHosting from '../../components/host/MyHosting';
 import Layout from '../../components/main/Layout';
 import { Host } from '../../interfaces';
@@ -9,7 +9,6 @@ import SERVER from '../../utils/url';
 interface Props {
   pageProps: {
     host: Host;
-    comments: Array<String>;
   };
 }
 
@@ -36,7 +35,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     id: userId,
   });
   const host = resLoadHost.data.host;
-  const comments = resLoadHost.data.comments;
-  return { props: { host, comments } };
+  return { props: { host } };
 };
 export default myhosting;
