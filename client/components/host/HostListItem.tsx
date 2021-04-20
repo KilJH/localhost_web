@@ -13,7 +13,10 @@ const HostListItemContainer = styled.div`
 	display: flex;
 	align-items: center;
 	padding: 0.5rem;
+	height: 7em;
 
+	cursor: pointer;
+	transition: opacity 0.2s ease;
 	& div.flex {
 		display: flex;
 		justify-content: space-between;
@@ -41,11 +44,17 @@ const HostListItemContainer = styled.div`
 
 	& .description {
 		margin: 0;
-		flex: 1;
 		font-size: 0.9em;
 		color: #333;
 		white-space: pre-line;
+
 		overflow: hidden;
+		height: 2rem;
+
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 	}
 	& .language {
 		display: flex;
@@ -57,13 +66,17 @@ const HostListItemContainer = styled.div`
 			padding: 0 0.25em;
 		}
 	}
+
+	&:hover {
+		opacity: 0.9;
+	}
 `;
 
 const HostListItem = (props: Props) => {
 	const { host } = props;
 	return (
 		<HostListItemContainer>
-			<UserPhoto src={host.photo} width={6} margin='0 0.5rem' />
+			<UserPhoto src={host.photo} width={5} margin='0 0.5rem' />
 			<div className='flex flexColumn'>
 				<h4>{host.nickname}</h4>
 				<div className='point'>
@@ -72,9 +85,7 @@ const HostListItem = (props: Props) => {
 				<p className='description'>{host.description}</p>
 				<div className='flex'>
 					<div className='language'>
-						<span>{host.language1}</span>
-						<span>{host.language2}</span>
-						<span>{host.language3}</span>
+						{/* {host?.languages.map((lang) => (lang ? <span>{lang}</span> : ''))} */}
 					</div>
 
 					<Link href='/hosts/[id]' as={`/hosts/${host.id}`}>
