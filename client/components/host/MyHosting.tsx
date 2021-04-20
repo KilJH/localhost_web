@@ -326,6 +326,7 @@ export default function MyHosting(props: Props): ReactElement {
         return console.log(err);
       });
   }, [isOn]);
+
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // setCountry((event.target as HTMLInputElement).value);
   };

@@ -208,7 +208,7 @@ module.exports.load = (req, res) => {
   // 특정 host를 불러오는 API
   const id = req.body.id; // userId
 
-  const hostSql = `SELECT *, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
+  const hostSql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
   mysql.query(hostSql, (err, host) => {
     if (err) return console.log('hostSql err', err);
     const reviewSql = `SELECT *, host_review.user_id AS reviewerId  ,host_review.id AS reviewId FROM host_review LEFT JOIN host ON host.id = host_review.host_user_id LEFT JOIN user ON user.id = host.user_id WHERE host_user_id = ${host[0].host_id};`;
@@ -227,7 +227,7 @@ module.exports.load = (req, res) => {
           languages: [rows.language1, rows.language2, rows.language3],
           on: rows.on,
           place: {
-            formatted_address: rows.address,
+            formatted_address: rows.formattedAddress,
             geometry: {
               location: { lat: rows.host_latitude, lng: rows.host_longitude },
               distance: rows.distance,
@@ -251,7 +251,7 @@ module.exports.load = (req, res) => {
         };
       });
 
-      res.json({ success: true, host: hosts[0], reviews });
+      res.json({ success: true, host: hosts, reviews });
     });
   });
 };
