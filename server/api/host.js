@@ -242,7 +242,7 @@ module.exports.update = (req, res) => {
   const reqCountry = req.body.reqCountry;
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
- 
+
   const address = req.body.address;
 
   const sql = `UPDATE host SET country = "${country}", language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
