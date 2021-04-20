@@ -9,7 +9,6 @@ import SERVER from '../../utils/url';
 interface Props {
   pageProps: {
     host: Host;
-    comments: Array<String>;
   };
 }
 

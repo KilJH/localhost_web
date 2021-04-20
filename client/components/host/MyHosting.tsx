@@ -150,25 +150,24 @@ const PlaceInput = styled(Input)`
 
 const ButtonDiv = styled.div``;
 export default function MyHosting({ host }: Props): ReactElement {
-  const [isOn, setIsOn] = React.useState(host[0].on);
-  const [country, setCountry] = React.useState(host[0].reqCountry);
-  const [language, setLanguage] = React.useState({
-    language1: host[0].language1 === null ? ' ' : host[0].language1,
-    language2: host[0].language2 === null ? ' ' : host[0].language2,
-    language3: host[0].language3 === null ? ' ' : host[0].language3,
+  const [isOn, setIsOn] = useState(host[0].on);
+  const [country, setCountry] = useState(host[0].reqCountry);
+  const [language, setLanguage] = useState({
+    language1: host[0].language1 === null ? ' ' : host[0].languages[0],
+    language2: host[0].language2 === null ? ' ' : host[0].languages[1],
+    language3: host[0].language3 === null ? ' ' : host[0].languages[2],
   });
 
   const description = useInput(host[0].description);
   const [place, setPlace] = useState<Place>({
-    name: '',
-    formatted_address: '',
+    name: host[0].place.name,
+    formatted_address: host[0].place.formatted_address,
     geometry: { location: { lat: host[0].latitude, lng: host[0].longitude } },
   });
-  const [languageSave, setLanguageSave] = React.useState(language);
-  const [countrySave, setCountrySave] = React.useState(country);
-  console.log(host[0].place);
-  const [languageOpen, setLanguageOpen] = React.useState(false);
-  const [countryOpen, setCountryOpen] = React.useState(false);
+  const [languageSave, setLanguageSave] = useState(language);
+  const [countrySave, setCountrySave] = useState(country);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
   const [placeOpen, setPlaceOpen] = useState(false);
 
   const countries = [
@@ -316,18 +315,18 @@ export default function MyHosting({ host }: Props): ReactElement {
       });
     }
   };
-  console.log(host[0]);
   const isOnHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (isOn === 0) setIsOn(1);
     else setIsOn(0);
-    // try {
-    //   const res = await axios.post(`${SERVER}/api/host/on`, {
-    //     on: isOn,
-    //   });
-    // } catch (err) {
-    //   return console.log(err);
-    // }
+    try {
+      const res = await axios.post(`${SERVER}/api/host/status`, {
+        id: host[0].id,
+        on: isOn,
+      });
+    } catch (err) {
+      return console.log(err);
+    }
   };
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry((event.target as HTMLInputElement).value);
@@ -335,7 +334,6 @@ export default function MyHosting({ host }: Props): ReactElement {
 
   const onSubmitHandler = async (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('hi');
     try {
       const res = await axios.post(`${SERVER}/api/host/update`, {
         reqCountry: country,
