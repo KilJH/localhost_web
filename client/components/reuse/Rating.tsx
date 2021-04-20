@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 interface Props {
   rating: number;
+  isFilled?: boolean;
 }
 
 const StarOutlined = styled(StarOutlineRoundedIcon)`
@@ -20,7 +21,8 @@ const StarFilled = styled(StarRoundedIcon)`
 const StarDiv = styled.div`
   display: inline;
 `;
-const Rating = ({ rating }: Props) => {
+const Rating = (props: Props) => {
+  const { rating, isFilled } = props;
   const drawFullStar = () => {
     switch (Math.floor(rating)) {
       case 5:
@@ -71,10 +73,54 @@ const Rating = ({ rating }: Props) => {
     else if (decimal < 0.5) return <StarOutlined />;
     else return <StarHalfFilled />;
   };
+  const fillTheSpace = () => {
+    console.log(rating - Math.ceil(rating));
+    switch (Math.ceil(rating)) {
+      case 0:
+        return (
+          <StarDiv>
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+          </StarDiv>
+        );
+      case 1:
+        return (
+          <StarDiv>
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+          </StarDiv>
+        );
+      case 2:
+        return (
+          <StarDiv>
+            <StarOutlined />
+            <StarOutlined />
+            <StarOutlined />
+          </StarDiv>
+        );
+      case 3:
+        return (
+          <StarDiv>
+            <StarOutlined />
+            <StarOutlined />
+          </StarDiv>
+        );
+      case 4:
+        return <StarOutlined />;
+      case 5:
+        return;
+    }
+  };
   return (
     <StarDiv>
-      {drawFullStar()}
-      {drawRestStar()}
+      {rating <= 5 ? drawFullStar() : 'excessed the boundary'}
+      {rating <= 5 ? drawRestStar() : ''}
+      {rating <= 5 ? !isFilled || fillTheSpace() : ''}
     </StarDiv>
   );
 };
