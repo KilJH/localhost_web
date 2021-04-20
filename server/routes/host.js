@@ -39,4 +39,8 @@ router.post('/update', function (req, res, next) {
   management.update(req, res);
 });
 
+router.post('/status', function (req, res, next) {
+	management.status(req, res);
+  });
+
 module.exports = router;
