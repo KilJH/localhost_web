@@ -12,7 +12,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
 import { useInput } from './../../hooks/useInput';
@@ -149,21 +149,18 @@ const PlaceInput = styled(Input)`
 `;
 
 const ButtonDiv = styled.div``;
-export default function MyHosting({ host }: Props): ReactElement {
-  const [isOn, setIsOn] = useState(host[0].on);
-  const [country, setCountry] = useState(host[0].reqCountry);
+export default function MyHosting(props: Props): ReactElement {
+  const { host } = props;
+  const [isOn, setIsOn] = useState(host.on);
+  const [country, setCountry] = useState(host.reqCountry);
   const [language, setLanguage] = useState({
-    language1: host[0].language1 === null ? ' ' : host[0].languages[0],
-    language2: host[0].language2 === null ? ' ' : host[0].languages[1],
-    language3: host[0].language3 === null ? ' ' : host[0].languages[2],
+    language1: host.languages[0] === null ? ' ' : host.languages[0],
+    language2: host.languages[1] === null ? ' ' : host.languages[1],
+    language3: host.languages[2] === null ? ' ' : host.languages[2],
   });
 
-  const description = useInput(host[0].description);
-  const [place, setPlace] = useState<Place>({
-    name: host[0].place.name,
-    formatted_address: host[0].place.formatted_address,
-    geometry: { location: { lat: host[0].latitude, lng: host[0].longitude } },
-  });
+  const description = useInput(host.description);
+  const [place, setPlace] = useState<Place>(host.place);
   const [languageSave, setLanguageSave] = useState(language);
   const [countrySave, setCountrySave] = useState(country);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -315,27 +312,28 @@ export default function MyHosting({ host }: Props): ReactElement {
       });
     }
   };
-  const isOnHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const isOnHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (isOn === 0) setIsOn(1);
-    else setIsOn(0);
-    try {
-      const res = await axios.post(`${SERVER}/api/host/status`, {
-        id: host[0].id,
-        on: isOn,
+    setIsOn(!isOn);
+  };
+  useEffect(() => {
+    axios
+      .post(`${SERVER}/api/host/status`, {
+        id: host.id,
+        on: isOn === true ? 1 : 0,
+      })
+      .catch((err) => {
+        return console.log(err);
       });
-    } catch (err) {
-      return console.log(err);
-    }
-  };
+  }, [isOn]);
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCountry((event.target as HTMLInputElement).value);
+    // setCountry((event.target as HTMLInputElement).value);
   };
-
   const onSubmitHandler = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${SERVER}/api/host/update`, {
+        id: host.id,
         reqCountry: country,
         language1: language.language1 === ' ' ? null : language.language1,
         language2: language.language2 === ' ' ? null : language.language2,
@@ -347,7 +345,7 @@ export default function MyHosting({ host }: Props): ReactElement {
       });
       if (res.data.success) {
         alert('호스트 정보 수정이 완료되었습니다!');
-        Router.push('/');
+        // Router.push('/');
       }
     } catch (err) {
       return console.log(err);
@@ -396,7 +394,7 @@ export default function MyHosting({ host }: Props): ReactElement {
                     value={value}
                     control={<Radio />}
                     label={value}
-                    checked={country === value}
+                    // checked={country === value}
                   />
                 ))}
               </RadioGroup>
@@ -489,7 +487,7 @@ export default function MyHosting({ host }: Props): ReactElement {
         borderRadius='0.25rem'
         border='1px solid rgba(0,0,0,0.41)'
         textAlign='left'
-        value={place.name ? `${place.formatted_address}(${place.name})` : ''}
+        value={place.formatted_address}
         onClick={handlePlaceOpen}
         onChange={handlePlaceOpen}
         readOnly

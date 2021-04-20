@@ -251,7 +251,7 @@ module.exports.load = (req, res) => {
         };
       });
 
-      res.json({ success: true, host: hosts, reviews });
+      res.json({ success: true, host: hosts[0], reviews });
     });
   });
 };
@@ -267,9 +267,7 @@ module.exports.update = (req, res) => {
   const reqCountry = req.body.reqCountry;
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
-
   const address = req.body.address;
-
   const sql = `UPDATE host SET country = "${country}", language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
   , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
 
@@ -318,7 +316,6 @@ module.exports.status = (req, res) => {
   // host 상태 설정 API
   const id = req.body.id; // userId;
   const on = req.body.on;
-
   const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
   mysql.query(sql, (err) => {
     if (err) console.log('status err', err);
