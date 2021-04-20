@@ -24,12 +24,11 @@ export interface Host {
 	address?: string;
 	photo?: string;
 	description: string;
-	reqCountry: number;
+	reqCountry?: number;
 	createTime?: string;
-	language1: string;
-	language2: string;
-	language3: string;
-	on: boolean;
+	languages: string[];
+	rating?: number;
+	on?: boolean;
 	place: Place;
 }
 
@@ -95,6 +94,6 @@ export interface Comment {
 
 export interface Place {
 	formatted_address: string;
-	geometry: { location: { lat: number; lng: number } };
-	name: string;
+	geometry: { location: { lat: number; lng: number }; distance?: number };
+	name?: string;
 }
