@@ -203,7 +203,7 @@ module.exports.load = (req, res) => {
     mysql.query(reviewSql, (err2, reviewsRows) => {
       if (err2) return console.log('hostReviews err', err2);
 	  
-	  const host = host.map((rows) => {
+	  const hosts = host.map((rows) => {
 		return {
 		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
 		  languages:[ rows.language1, rows.language2, rows.language3],
@@ -226,7 +226,7 @@ module.exports.load = (req, res) => {
 		  }
 	  });
 	  
-      res.json({ success: true, host, reviews });
+      res.json({ success: true, host: hosts, reviews });
     });
   });
 };
