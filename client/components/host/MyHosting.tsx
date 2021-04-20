@@ -142,10 +142,16 @@ const LanguageControl = styled(FormControl)`
     border-color: #5197d5;
   }
 `;
+const PlaceInput = styled(Input)`
+  opacity: 0.7;
+  background: rgba(33, 33, 33, 0.1);
+  cursor: pointer;
+`;
+
 const ButtonDiv = styled.div``;
 export default function MyHosting({ host }: Props): ReactElement {
   const [isOn, setIsOn] = React.useState(host[0].on);
-  const [country, setCountry] = React.useState(host[0].country);
+  const [country, setCountry] = React.useState(host[0].reqCountry);
   const [language, setLanguage] = React.useState({
     language1: host[0].language1 === null ? ' ' : host[0].language1,
     language2: host[0].language2 === null ? ' ' : host[0].language2,
@@ -160,7 +166,7 @@ export default function MyHosting({ host }: Props): ReactElement {
   });
   const [languageSave, setLanguageSave] = React.useState(language);
   const [countrySave, setCountrySave] = React.useState(country);
-
+  console.log(host[0].place);
   const [languageOpen, setLanguageOpen] = React.useState(false);
   const [countryOpen, setCountryOpen] = React.useState(false);
   const [placeOpen, setPlaceOpen] = useState(false);
@@ -311,9 +317,17 @@ export default function MyHosting({ host }: Props): ReactElement {
     }
   };
   console.log(host[0]);
-  const isOnHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isOnHandleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     if (isOn === 0) setIsOn(1);
     else setIsOn(0);
+    // try {
+    //   const res = await axios.post(`${SERVER}/api/host/on`, {
+    //     on: isOn,
+    //   });
+    // } catch (err) {
+    //   return console.log(err);
+    // }
   };
   const countryHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCountry((event.target as HTMLInputElement).value);
@@ -324,8 +338,7 @@ export default function MyHosting({ host }: Props): ReactElement {
     console.log('hi');
     try {
       const res = await axios.post(`${SERVER}/api/host/update`, {
-        on: isOn,
-        country: country,
+        reqCountry: country,
         language1: language.language1 === ' ' ? null : language.language1,
         language2: language.language2 === ' ' ? null : language.language2,
         language3: language.language3 === ' ' ? null : language.language3,
@@ -333,9 +346,6 @@ export default function MyHosting({ host }: Props): ReactElement {
         latitude: place.geometry.location.lat,
         longitude: place.geometry.location.lng,
         address: place.formatted_address,
-
-        id: host[0].id,
-        reqCountry: host[0].reqcountry,
       });
       if (res.data.success) {
         alert('호스트 정보 수정이 완료되었습니다!');
@@ -475,20 +485,16 @@ export default function MyHosting({ host }: Props): ReactElement {
 
       {/* 지역 수정 */}
       <Label>활동지역 수정</Label>
-      <Input
+      <PlaceInput
         type='address'
         width='100%'
         borderRadius='0.25rem'
         border='1px solid rgba(0,0,0,0.41)'
         textAlign='left'
-        value={
-          place.name
-            ? `${place.formatted_address}(${place.name})`
-            : host[0].address
-        }
+        value={place.name ? `${place.formatted_address}(${place.name})` : ''}
         onClick={handlePlaceOpen}
         onChange={handlePlaceOpen}
-        style={{ opacity: 0.7 }}
+        readOnly
       />
       <StyledModal open={placeOpen} onClose={handlePlaceClose}>
         <Fade in={placeOpen}>

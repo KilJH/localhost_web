@@ -1,26 +1,15 @@
 import React from 'react';
 import HostListItem from './HostListItem';
 import styled from 'styled-components';
+import { Host } from '../../interfaces';
 
-interface Props {}
-
-const sampleHost = {
-	id: 1,
-	name: '김호스트',
-	nickname: '포스틱',
-	sex: '남자',
-	email: 'email@naver.com',
-	phone: '0100000000',
-	address: '주소',
-	country: '한국',
-	description: '설명입니다',
-	createTime: '010',
-	language1: '한국어',
-	language2: '영어',
-	language3: '프랑스어',
-};
+interface Props {
+	nearbyHosts: Host[];
+}
 
 const HostListContainer = styled.section`
+	overflow-y: auto;
+	font-size: 0.9em;
 	& > div {
 		border-bottom: 1px solid #aaa;
 	}
@@ -33,11 +22,13 @@ const HostListContainer = styled.section`
 `;
 
 const HostList = (props: Props) => {
+	const { nearbyHosts } = props;
+	console.log(nearbyHosts);
 	return (
 		<HostListContainer>
-			<HostListItem host={sampleHost} />
-			<HostListItem host={sampleHost} />
-			<HostListItem host={sampleHost} />
+			{nearbyHosts.map((host) => (
+				<HostListItem host={host} key={host.id} />
+			))}
 		</HostListContainer>
 	);
 };

@@ -1,20 +1,20 @@
 import { GetStaticProps } from 'next';
 import React from 'react';
-import HostList from '../../components/host/HostList';
 import Layout from '../../components/main/Layout';
+import HostMain from '../../components/host/HostMain';
 
 interface Props {}
 
-const index = (props: Props) => {
+const IndexHost = (props: Props) => {
 	return (
 		<Layout>
-			<HostList />
+			<HostMain />
 		</Layout>
 	);
 };
 
-export default index;
-
 export const getStaticProps: GetStaticProps = async () => {
 	return { props: {} };
 };
+
+export default IndexHost;
