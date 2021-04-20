@@ -10,8 +10,14 @@ module.exports.list = (req, res) => {
 
     const host = rows.map((rows) => {
       return {
-        id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-        languages:[ rows.language1, rows.language2, rows.language3],
+        id: rows.user_id,
+        name: rows.name,
+        nickname: rows.nickname,
+        sex: rows.sex,
+        email: rows.email,
+        photo: rows.photo,
+        description: rows.description,
+        languages: [rows.language1, rows.language2, rows.language3],
         place: {
           formatted_address: rows.formattedAddress,
           geometry: {
@@ -174,19 +180,25 @@ module.exports.searchHost = (req, res) => {
   mysql.query(sql, (err, rows) => {
     if (err) return console.log(err);
 
-	const searchedHosts = rows.map((rows) => {
-		return {
-		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-		  languages:[ rows.language1, rows.language2, rows.language3],
-		  place: {
-			formatted_address: rows.formattedAddress,
-			geometry: {
-			  location: { lat: rows.host_latitude, lng: rows.host_longitude },
-			},
-			name: rows.address,
-		  },
-		};
-	  });
+    const searchedHosts = rows.map((rows) => {
+      return {
+        id: rows.user_id,
+        name: rows.name,
+        nickname: rows.nickname,
+        sex: rows.sex,
+        email: rows.email,
+        photo: rows.photo,
+        description: rows.description,
+        languages: [rows.language1, rows.language2, rows.language3],
+        place: {
+          formatted_address: rows.formattedAddress,
+          geometry: {
+            location: { lat: rows.host_latitude, lng: rows.host_longitude },
+          },
+          name: rows.address,
+        },
+      };
+    });
 
     res.status(200).json({ success: true, searchedHosts: searchedHosts });
   });
@@ -202,30 +214,43 @@ module.exports.load = (req, res) => {
     const reviewSql = `SELECT *, host_review.user_id AS reviewerId  ,host_review.id AS reviewId FROM host_review LEFT JOIN host ON host.id = host_review.host_user_id LEFT JOIN user ON user.id = host.user_id WHERE host_user_id = ${host[0].host_id};`;
     mysql.query(reviewSql, (err2, reviewsRows) => {
       if (err2) return console.log('hostReviews err', err2);
-	  
-	  const hosts = host.map((rows) => {
-		return {
-		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-		  languages:[ rows.language1, rows.language2, rows.language3],
-		  on: rows.on,
-		  place: {
-			formatted_address: rows.address,
-			geometry: {
-			  location: { lat: rows.host_latitude, lng: rows.host_longitude }, distance: rows.distance
-			},
-			name: rows.address,
-		  },
-		};
-	  });
-      const reviews = reviewsRows.map((reviewsRow)=>{
-		  return{
-			  id: reviewsRow.reviewId,
-			  user: {
-				  id: reviewsRow.reviewerId,name:reviewsRow.name,email:reviewsRow.email,nickname:reviewsRow.nickname,sex:reviewsRow.sex,country:reviewsRow.country,photo:reviewsRow.photo
-			  }
-		  }
-	  });
-	  
+
+      const hosts = host.map((rows) => {
+        return {
+          id: rows.user_id,
+          name: rows.name,
+          nickname: rows.nickname,
+          sex: rows.sex,
+          email: rows.email,
+          photo: rows.photo,
+          description: rows.description,
+          languages: [rows.language1, rows.language2, rows.language3],
+          on: rows.on,
+          place: {
+            formatted_address: rows.address,
+            geometry: {
+              location: { lat: rows.host_latitude, lng: rows.host_longitude },
+              distance: rows.distance,
+            },
+            name: rows.address,
+          },
+        };
+      });
+      const reviews = reviewsRows.map((reviewsRow) => {
+        return {
+          id: reviewsRow.reviewId,
+          user: {
+            id: reviewsRow.reviewerId,
+            name: reviewsRow.name,
+            email: reviewsRow.email,
+            nickname: reviewsRow.nickname,
+            sex: reviewsRow.sex,
+            country: reviewsRow.country,
+            photo: reviewsRow.photo,
+          },
+        };
+      });
+
       res.json({ success: true, host: hosts, reviews });
     });
   });
@@ -263,34 +288,41 @@ module.exports.nearbyList = (req, res) => {
   mysql.query(sql, (err, rows, fields) => {
     if (err) console.log('nearby err', err);
 
-	const nearbyhosts = rows.map((rows) => {
-		return {
-		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-		  languages:[ rows.language1, rows.language2, rows.language3],
-		  on: rows.on,
-		  place: {
-			formatted_address: rows.address,
-			geometry: {
-			  location: { lat: rows.host_latitude, lng: rows.host_longitude }, distance: rows.distance
-			},
-			name: rows.address,
-		  },
-		};
-	  });
+    const nearbyhosts = rows.map((rows) => {
+      return {
+        id: rows.user_id,
+        name: rows.name,
+        nickname: rows.nickname,
+        sex: rows.sex,
+        email: rows.email,
+        photo: rows.photo,
+        description: rows.description,
+        languages: [rows.language1, rows.language2, rows.language3],
+        on: rows.on,
+        place: {
+          formatted_address: rows.address,
+          geometry: {
+            location: { lat: rows.host_latitude, lng: rows.host_longitude },
+            distance: rows.distance,
+          },
+          name: rows.address,
+        },
+      };
+    });
 
     res.json({ success: true, nearbyhosts });
   });
 };
 
 module.exports.status = (req, res) => {
-	// host 상태 설정 API
-	const id = req.body.id; // userId;
-	const on = req.body.on;
+  // host 상태 설정 API
+  const id = req.body.id; // userId;
+  const on = req.body.on;
 
-	const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
-	mysql.query(sql, (err)=>{
-		if(err) console.log("status err", err);
+  const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
+  mysql.query(sql, (err) => {
+    if (err) console.log('status err', err);
 
-		res.json({ success: true });
-	})
-}
+    res.json({ success: true });
+  });
+};
