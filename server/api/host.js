@@ -3,7 +3,7 @@ const mysql = require('../db/mysql');
 
 module.exports.list = (req, res) => {
   // host의 host정보 불러오기
-  const sql = `select *, host.latitude AS host_latitude, host.longitude AS host_longitude from host left join user on user.id = host.user_id`;
+  const sql = `select *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude from host left join user on user.id = host.user_id`;
 
   mysql.query(sql, (err, rows, fields) => {
     if (err) console.log('list err', err);
@@ -11,12 +11,9 @@ module.exports.list = (req, res) => {
     const host = rows.map((rows) => {
       return {
         id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-        language1: rows.language1,
-        language2: rows.language2,
-        language3: rows.language3,
-		on: rows.on,
+        languages:[ rows.language1, rows.language2, rows.language3],
         place: {
-          formatted_address: rows.address,
+          formatted_address: rows.formattedAddress,
           geometry: {
             location: { lat: rows.host_latitude, lng: rows.host_longitude },
           },
@@ -161,23 +158,37 @@ module.exports.searchHost = (req, res) => {
   let sql = '';
   switch (type) {
     case 'name':
-      sql = `SELECT * FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.name LIKE "%${item}%"`;
+      sql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.name LIKE "%${item}%"`;
       break;
     case 'nickname':
-      sql = `SELECT * FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.nickname LIKE "%${item}%"`;
+      sql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.nickname LIKE "%${item}%"`;
       break;
     case 'email':
-      sql = `SELECT * FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.email LIKE "%${item}%"`;
+      sql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.email LIKE "%${item}%"`;
       break;
     default:
-      sql = `SELECT * FROM host LEFT JOIN user ON host.user_id=user.id`;
+      sql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude FROM host LEFT JOIN user ON host.user_id=user.id`;
       break;
   }
 
   mysql.query(sql, (err, rows) => {
     if (err) return console.log(err);
 
-    res.status(200).json({ success: true, users: rows });
+	const searchedHosts = rows.map((rows) => {
+		return {
+		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
+		  languages:[ rows.language1, rows.language2, rows.language3],
+		  place: {
+			formatted_address: rows.formattedAddress,
+			geometry: {
+			  location: { lat: rows.host_latitude, lng: rows.host_longitude },
+			},
+			name: rows.address,
+		  },
+		};
+	  });
+
+    res.status(200).json({ success: true, searchedHosts: searchedHosts });
   });
 };
 
@@ -185,20 +196,17 @@ module.exports.load = (req, res) => {
   // 특정 host를 불러오는 API
   const id = req.body.id; // userId
 
-  const hostSql = `SELECT *, user.id AS user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
+  const hostSql = `SELECT *, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
   mysql.query(hostSql, (err, host) => {
     if (err) return console.log('hostSql err', err);
-
-    const reviewSql = `SELECT * FROM host_review WHERE host_review.host_user_id = ${id};`;
+    const reviewSql = `SELECT *, host_review.user_id AS reviewerId  ,host_review.id AS reviewId FROM host_review LEFT JOIN host ON host.id = host_review.host_user_id LEFT JOIN user ON user.id = host.user_id WHERE host_user_id = ${host[0].host_id};`;
     mysql.query(reviewSql, (err2, reviewsRows) => {
       if (err2) return console.log('hostReviews err', err2);
 	  
-	  const hostObj = host.map((rows) => {
+	  const host = host.map((rows) => {
 		return {
 		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-		  language1: rows.language1,
-		  language2: rows.language2,
-		  language3: rows.language3,
+		  languages:[ rows.language1, rows.language2, rows.language3],
 		  on: rows.on,
 		  place: {
 			formatted_address: rows.address,
@@ -209,15 +217,23 @@ module.exports.load = (req, res) => {
 		  },
 		};
 	  });
-      const reviews = reviewsRows.map((reviewsRow) => reviewsRow);
-      res.json({ success: true, hostObj, reviews });
+      const reviews = reviewsRows.map((reviewsRow)=>{
+		  return{
+			  id: reviewsRow.reviewId,
+			  user: {
+				  id: reviewsRow.reviewerId,name:reviewsRow.name,email:reviewsRow.email,nickname:reviewsRow.nickname,sex:reviewsRow.sex,country:reviewsRow.country,photo:reviewsRow.photo
+			  }
+		  }
+	  });
+	  
+      res.json({ success: true, host, reviews });
     });
   });
 };
 
 module.exports.update = (req, res) => {
   // host정보를 수정하는 API
-  const id = req.body.id; // host_id
+  const id = req.body.id; // user_id
   const country = req.body.country;
   const language1 = req.body.language1;
   const language2 = req.body.language2;
@@ -226,10 +242,11 @@ module.exports.update = (req, res) => {
   const reqCountry = req.body.reqCountry;
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
-  const on = req.body.on;
+ 
   const address = req.body.address;
 
-  const sql = `UPDATE host SET country = "${country}", language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}", reqcountry = "${reqCountry}" WHERE id = "${id}";`;
+  const sql = `UPDATE host SET country = "${country}", language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
+  , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
 
   mysql.query(sql, (err) => {
     if (err) return console.log('host update err', err);
@@ -246,12 +263,10 @@ module.exports.nearbyList = (req, res) => {
   mysql.query(sql, (err, rows, fields) => {
     if (err) console.log('nearby err', err);
 
-	const host = rows.map((rows) => {
+	const nearbyhosts = rows.map((rows) => {
 		return {
 		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
-		  language1: rows.language1,
-		  language2: rows.language2,
-		  language3: rows.language3,
+		  languages:[ rows.language1, rows.language2, rows.language3],
 		  on: rows.on,
 		  place: {
 			formatted_address: rows.address,
@@ -263,6 +278,19 @@ module.exports.nearbyList = (req, res) => {
 		};
 	  });
 
-    res.json({ success: true, host });
+    res.json({ success: true, nearbyhosts });
   });
 };
+
+module.exports.status = (req, res) => {
+	// host 상태 설정 API
+	const id = req.body.id; // userId;
+	const on = req.body.on;
+
+	const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
+	mysql.query(sql, (err)=>{
+		if(err) console.log("status err", err);
+
+		res.json({ success: true });
+	})
+}
