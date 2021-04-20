@@ -4,25 +4,17 @@ const mysql = require('../db/mysql');
 module.exports.list = (req, res) => {
   // host의 host정보 불러오기
   const sql = `select *, host.latitude AS host_latitude, host.longitude AS host_longitude from host left join user on user.id = host.user_id`;
+
   mysql.query(sql, (err, rows, fields) => {
     if (err) console.log('list err', err);
 
     const host = rows.map((rows) => {
       return {
-        id: rows.user_id,
-        on: rows.on,
-        name: rows.name,
-        nickname: rows.nickname,
-        sex: rows.sex,
-        email: rows.email,
-        password: rows.pw,
-        phone: rows.phone,
-        address: rows.address,
-        photo: rows.photo,
-        description: rows.description,
+        id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
         language1: rows.language1,
         language2: rows.language2,
         language3: rows.language3,
+		on: rows.on,
         place: {
           formatted_address: rows.address,
           geometry: {
@@ -191,18 +183,34 @@ module.exports.searchHost = (req, res) => {
 
 module.exports.load = (req, res) => {
   // 특정 host를 불러오는 API
-  const id = req.body.id; // hostId
+  const id = req.body.id; // userId
 
   const hostSql = `SELECT *, user.id AS user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
   mysql.query(hostSql, (err, host) => {
     if (err) return console.log('hostSql err', err);
 
-    const commentSql = `SELECT * FROM host_review WHERE host_review.host_user_id = ${id};`;
-    mysql.query(commentSql, (err2, commentsRows) => {
-      if (err2) return console.log('hostComments err', err2);
-
-      const comments = commentsRows.map((commentsRow) => commentsRow);
-      res.json({ success: true, host, comments });
+    const reviewSql = `SELECT * FROM host_review WHERE host_review.host_user_id = ${id};`;
+    mysql.query(reviewSql, (err2, reviewsRows) => {
+      if (err2) return console.log('hostReviews err', err2);
+	  
+	  const hostObj = host.map((rows) => {
+		return {
+		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
+		  language1: rows.language1,
+		  language2: rows.language2,
+		  language3: rows.language3,
+		  on: rows.on,
+		  place: {
+			formatted_address: rows.address,
+			geometry: {
+			  location: { lat: rows.host_latitude, lng: rows.host_longitude }, distance: rows.distance
+			},
+			name: rows.address,
+		  },
+		};
+	  });
+      const reviews = reviewsRows.map((reviewsRow) => reviewsRow);
+      res.json({ success: true, hostObj, reviews });
     });
   });
 };
@@ -234,10 +242,27 @@ module.exports.nearbyList = (req, res) => {
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
 
-  const sql = `SELECT *, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host WHERE host.on = 1 HAVING distance <= 20 ORDER BY distance`;
+  const sql = `SELECT *,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id WHERE host.on = 1 HAVING distance <= 4 ORDER BY distance`;
   mysql.query(sql, (err, rows, fields) => {
     if (err) console.log('nearby err', err);
 
-    res.json({ success: true, rows });
+	const host = rows.map((rows) => {
+		return {
+		  id: rows.user_id, name: rows.name, nickname: rows.nickname, sex: rows.sex, email: rows.email, photo: rows.photo, description: rows.description,
+		  language1: rows.language1,
+		  language2: rows.language2,
+		  language3: rows.language3,
+		  on: rows.on,
+		  place: {
+			formatted_address: rows.address,
+			geometry: {
+			  location: { lat: rows.host_latitude, lng: rows.host_longitude }, distance: rows.distance
+			},
+			name: rows.address,
+		  },
+		};
+	  });
+
+    res.json({ success: true, host });
   });
 };
