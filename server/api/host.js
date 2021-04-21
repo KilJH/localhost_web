@@ -211,7 +211,7 @@ module.exports.load = (req, res) => {
   const hostSql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
   mysql.query(hostSql, (err, host) => {
     if (err) return console.log('hostSql err', err);
-    const reviewSql = `SELECT *, host_review.user_id AS reviewerId  ,host_review.id AS reviewId FROM host_review LEFT JOIN host ON host.id = host_review.host_user_id LEFT JOIN user ON user.id = host.user_id WHERE host_user_id = ${host[0].host_id};`;
+    const reviewSql = `SELECT *, host_review.user_id AS reviewerId ,host_review.id AS reviewId FROM host_review LEFT JOIN host ON host.id = host_review.host_user_id LEFT JOIN user ON user.id = host.user_id WHERE host_user_id = ${host[0].host_id};`;
     mysql.query(reviewSql, (err2, reviewsRows) => {
       if (err2) return console.log('hostReviews err', err2);
 	  
@@ -270,7 +270,7 @@ module.exports.nearbyList = (req, res) => {
 	const latitude = req.body.latitude;
 	const longitude = req.body.longitude;
 
-	const sql = `SELECT *,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id WHERE host.on = 1 HAVING distance <= 4 ORDER BY distance`;
+	const sql = `SELECT *, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id WHERE host.on = 1 HAVING distance <= 4 ORDER BY distance`;
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) console.log('nearby err', err);
 
@@ -286,7 +286,7 @@ module.exports.nearbyList = (req, res) => {
 				languages: [rows.language1, rows.language2, rows.language3],
 				on: rows.on,
 				place: {
-					formatted_address: rows.address,
+					formatted_address: rows.formattedAddress,
 					geometry: {
 						location: { lat: rows.host_latitude, lng: rows.host_longitude },
 						distance: rows.distance,
