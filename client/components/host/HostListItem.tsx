@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import UserPhoto from '../user/UserPhoto';
 import Button from '../reuse/Button';
 import Link from 'next/link';
+import Rating from '../reuse/Rating';
 
 interface Props {
 	host: Host;
@@ -31,6 +32,8 @@ const HostListItemContainer = styled.div`
 
 	& .point {
 		font-size: 0.8em;
+		display: flex;
+		align-items: center;
 		& span {
 			display: inline-block;
 			border-radius: 0.25rem;
@@ -39,6 +42,13 @@ const HostListItemContainer = styled.div`
 
 			background: #5197d5;
 			color: #eee;
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+		&:hover {
+			& span {
+				opacity: 1;
+			}
 		}
 	}
 
@@ -74,18 +84,24 @@ const HostListItemContainer = styled.div`
 
 const HostListItem = (props: Props) => {
 	const { host } = props;
+	const randomRating = Number((Math.random() * 5).toFixed(1));
 	return (
 		<HostListItemContainer>
 			<UserPhoto src={host.photo} width={5} margin='0 0.5rem' />
 			<div className='flex flexColumn'>
-				<h4>{host.nickname}</h4>
-				<div className='point'>
-					⭐️⭐️⭐️⭐️⭐️ <span>5.0</span>
+				<div className='flex'>
+					<h4>{host.nickname}</h4>
+					<div className='point'>
+						<span>{randomRating.toFixed(1)}</span>
+						<Rating rating={randomRating} isFilled />
+					</div>
 				</div>
 				<p className='description'>{host.description}</p>
 				<div className='flex'>
 					<div className='language'>
-						{/* {host?.languages.map((lang) => (lang ? <span>{lang}</span> : ''))} */}
+						{host?.languages.map((lang) =>
+							lang ? <span key={lang}>{lang}</span> : ''
+						)}
 					</div>
 
 					<Link href='/hosts/[id]' as={`/hosts/${host.id}`}>
