@@ -63,7 +63,7 @@ const HostMain = (props: Props) => {
 				longitude: coord.lng,
 			})
 			.then((res) => {
-				setNearbyHosts(res.data.host);
+				setNearbyHosts(res.data.nearbyhosts);
 			});
 	}, [coord]);
 

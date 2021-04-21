@@ -23,10 +23,9 @@ const HostListContainer = styled.section`
 
 const HostList = (props: Props) => {
 	const { nearbyHosts } = props;
-	console.log(nearbyHosts);
 	return (
 		<HostListContainer>
-			{nearbyHosts.map((host) => (
+			{nearbyHosts?.map((host) => (
 				<HostListItem host={host} key={host.id} />
 			))}
 		</HostListContainer>

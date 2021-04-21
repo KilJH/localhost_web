@@ -41,7 +41,7 @@ const Maps = (props: Props) => {
 				<Marker lat={lat} lng={lng} />
 
 				{/* 호스트 위치 */}
-				{nearbyHosts.map((host) => (
+				{nearbyHosts?.map((host) => (
 					<HostIcon
 						host={host}
 						lat={host.place.geometry.location.lat}
