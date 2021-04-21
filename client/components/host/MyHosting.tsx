@@ -320,7 +320,7 @@ export default function MyHosting(props: Props): ReactElement {
     axios
       .post(`${SERVER}/api/host/status`, {
         id: host.id,
-        on: isOn === true ? 1 : 0,
+        on: isOn ? 1 : 0,
       })
       .catch((err) => {
         return console.log(err);

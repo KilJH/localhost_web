@@ -225,7 +225,7 @@ module.exports.load = (req, res) => {
           photo: rows.photo,
           description: rows.description,
           languages: [rows.language1, rows.language2, rows.language3],
-          on: rows.on,
+          on: Boolean(rows.on),
           place: {
             formatted_address: rows.formattedAddress,
             geometry: {
