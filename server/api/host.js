@@ -251,7 +251,7 @@ module.exports.load = (req, res) => {
         };
       });
 
-      res.json({ success: true, host: hosts, reviews });
+      res.json({ success: true, host: hosts[0], reviews });
     });
   });
 };

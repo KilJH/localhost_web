@@ -16,7 +16,7 @@ const myhosting = ({ pageProps }: Props) => {
   return (
     <div>
       <Layout title='나의 호스팅 | localhost'>
-        <MyHosting host={pageProps.host[0]} />
+        <MyHosting host={pageProps.host} />
       </Layout>
     </div>
   );
