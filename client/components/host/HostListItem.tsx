@@ -26,7 +26,8 @@ const HostListItemContainer = styled.div`
 		flex-direction: column;
 		flex: 1;
 	}
-	& h4 {
+	& h3,
+	& p {
 		margin: 0;
 	}
 
@@ -34,26 +35,37 @@ const HostListItemContainer = styled.div`
 		font-size: 0.8em;
 		display: flex;
 		align-items: center;
-		& span {
-			display: inline-block;
-			border-radius: 0.25rem;
-			padding: 0.25em 0.5em;
-			margin: 0 0.25em;
 
-			background: #5197d5;
-			color: #eee;
-			opacity: 0;
-			transition: opacity 0.2s ease;
+		& > .absolute {
+			position: absolute;
+			display: none;
+
+			& span {
+				border-radius: 0.25rem;
+				padding: 0.25em 0.5em;
+
+				position: relative;
+				top: 1.8em;
+				left: 6.4em;
+
+				background: #5197d5;
+				color: #eee;
+				overflow: hidden;
+			}
 		}
 		&:hover {
-			& span {
-				opacity: 1;
+			& > .absolute {
+				display: block;
+				animation: fadeIn 0.3s ease;
 			}
 		}
 	}
 
+	& .name {
+		align-items: center;
+	}
+
 	& .description {
-		margin: 0;
 		font-size: 0.9em;
 		color: #333;
 		white-space: pre-line;
@@ -76,9 +88,22 @@ const HostListItemContainer = styled.div`
 			padding: 0 0.25em;
 		}
 	}
+	& .follower {
+		font-size: 0.6em;
+		margin-left: 0.25rem;
+	}
 
 	&:hover {
 		opacity: 0.9;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 `;
 
@@ -90,10 +115,15 @@ const HostListItem = (props: Props) => {
 			<UserPhoto src={host.photo} width={5} margin='0 0.5rem' />
 			<div className='flex flexColumn'>
 				<div className='flex'>
-					<h4>{host.nickname}</h4>
+					<div className='flex name'>
+						<h3>{host.nickname}</h3>
+						<p className='follower'>팔로워 {host.follower}</p>
+					</div>
 					<div className='point'>
-						<span>{randomRating.toFixed(1)}</span>
 						<Rating rating={randomRating} isFilled />
+						<div className='absolute'>
+							<span>{randomRating.toFixed(1)}</span>
+						</div>
 					</div>
 				</div>
 				<p className='description'>{host.description}</p>

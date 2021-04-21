@@ -30,6 +30,7 @@ export interface Host {
 	rating?: number;
 	on?: boolean;
 	place: Place;
+	follower: number;
 }
 
 export interface Plan {

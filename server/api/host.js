@@ -282,7 +282,7 @@ module.exports.nearbyList = (req, res) => {
 	const latitude = req.body.latitude;
 	const longitude = req.body.longitude;
 
-	const sql = `SELECT *, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id WHERE host.on = 1 HAVING distance <= 4 ORDER BY distance`;
+	const sql = `SELECT user.*, host.*, COUNT(follow.follower_id) AS followerNum, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id LEFT JOIN follow ON follow.user_id = user.id WHERE host.on = 1 GROUP BY host.id HAVING distance <= 4 ORDER BY distance`;
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) console.log('nearby err', err);
 
@@ -305,6 +305,7 @@ module.exports.nearbyList = (req, res) => {
 					},
 					name: rows.address,
 				},
+        follower: rows.followerNum
 			};
 		});
 		res.json({ success: true, nearbyhosts });
