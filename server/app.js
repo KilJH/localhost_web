@@ -12,7 +12,6 @@ const s3Router = require('./routes/s3');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-
 const cors = require('cors');
 
 const corsOptions = {

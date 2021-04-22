@@ -8,7 +8,12 @@ router.use(cors());
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });
-
+router.get('/applyList', function (req, res, next) {
+	management.applyList(req, res);
+});
+router.get('/matchList', function (req, res, next) {
+	management.matchList(req, res);
+});
 router.post('/nearbyList', function (req, res, next) {
 	management.nearbyList(req, res);
 });
@@ -43,4 +48,11 @@ router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
 
+router.post('/applyHosting', function (req, res, next) {
+	management.applyHosting(req, res);
+});
+
+router.post('/approveHosting', function (req, res, next) {
+	management.approveHosting(req, res);
+});
 module.exports = router;

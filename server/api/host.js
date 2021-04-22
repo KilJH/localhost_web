@@ -288,10 +288,15 @@ module.exports.nearbyList = (req, res) => {
 
 		const nearbyhosts = rows.map(rows => {
 			return {
-				...rows,
 				id: rows.user_id,
+				name: rows.name,
+				nickname: rows.nickname,
+				sex: rows.sex,
+				email: rows.email,
+				photo: rows.photo,
 				description: rows.description,
 				languages: [rows.language1, rows.language2, rows.language3],
+				on: rows.on,
 				place: {
 					formatted_address: rows.formattedAddress,
 					geometry: {
@@ -317,4 +322,72 @@ module.exports.status = (req, res) => {
 
 		res.json({ success: true });
 	});
+};
+
+module.exports.applyList = (req, res) => {
+	// applyHosting list를 불러오는 API
+	const sql = `SELECT * FROM host_user_apply`;
+
+	mysql.query(sql, (err, rows) => {
+		if (err) console.log('applyList err', err);
+
+		res.json({ success: true, applyList: rows });
+	});
+};
+
+module.exports.matchList = (req, res) => {
+	// applyHosting list를 불러오는 API
+	const sql = `SELECT * FROM host_match`;
+
+	mysql.query(sql, (err, rows) => {
+		if (err) console.log('matchList err', err);
+
+		res.json({ success: true, matchList: rows });
+	});
+};
+
+module.exports.applyHosting = (req, res) => {
+	// user가 host에게 호스팅 신청하는 API
+	const id = req.body.id; // userId;
+	const hostId = req.body.hostId;
+
+	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id) VALUES("${hostId}", "${id}");`;
+
+	mysql.query(sql, err => {
+		if (err) console.log('applyHosting err', err);
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.approveHosting = (req, res) => {
+	// host 가 user의 신청을 승인하는 API
+	const id = req.body.id; // requestUserId
+	const hostId = req.body.hostId; // hostId
+
+	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id};`;
+	mysql.query(selectSql, (err, user) => {
+		if (err) console.log('selectSql err', err);
+
+		const insertSql = `INSERT INTO host_match(host_user_id, user_user_id) VALUES("${hostId}", "${id}")`;
+
+		mysql.query(insertSql, err => {
+			if (err) console.log('InsertSql err', err);
+		});
+
+		const deleteSql = `DELETE FROM host_user_apply WHERE id = ${user[0].id}`;
+		mysql.query(deleteSql, err => {
+			if (err) console.log('deleteSql err', err);
+
+			res.json({ success: true });
+		});
+	});
+};
+
+module.exports.reviewWrite = (req, res) => {
+	// host review작성 API
+
+	const id = req.body.id; // userId
+
+	const sql = `SELECT * FROM `;
 };
