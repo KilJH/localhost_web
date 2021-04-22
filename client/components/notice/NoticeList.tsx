@@ -17,7 +17,7 @@ const NoticeList = (props: Props) => {
 	return (
 		// id가 큰 순서대로 앞으로 오게ㅂ
 		<NoticeListContainer>
-			{props.notices.map((notice) => (
+			{props.notices.map(notice => (
 				<NoticeItem notice={notice} key={notice.id} />
 			))}
 		</NoticeListContainer>

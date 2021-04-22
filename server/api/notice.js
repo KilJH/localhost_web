@@ -2,8 +2,8 @@ const mysql = require('../db/mysql');
 
 // 공지사항에 관련된 API를 작성하세요
 
-module.exports.parseDate = (rows) => {
-	return rows.map((notice) => {
+module.exports.parseDate = rows => {
+	return rows.map(notice => {
 		const date = new Date(notice.create_time);
 		return {
 			...notice,
@@ -53,7 +53,7 @@ module.exports.write = (req, res) => {
 
 	const sql = `INSERT INTO notice(title, description) VALUES(?,?)`;
 
-	mysql.query(sql, [title, description], (err) => {
+	mysql.query(sql, [title, description], err => {
 		if (err) return console.log(err);
 
 		res.status(200).json({ success: true });
@@ -68,7 +68,7 @@ module.exports.update = (req, res) => {
 
 	const sql = `UPDATE notice SET title = ?, description = ? WHERE id =?`;
 
-	mysql.query(sql, [title, description, id], (err) => {
+	mysql.query(sql, [title, description, id], err => {
 		if (err) {
 			res.json({
 				success: false,
@@ -87,7 +87,7 @@ module.exports.delete = (req, res) => {
 
 	const sql = `DELETE FROM notice WHERE id = ?`;
 
-	mysql.query(sql, id, (err) => {
+	mysql.query(sql, id, err => {
 		if (err) {
 			res.json({
 				success: false,

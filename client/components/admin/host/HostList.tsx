@@ -54,7 +54,7 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DisableHostCheckedItems = (state) => {
+const DisableHostCheckedItems = state => {
 	// 호스트 해제 기능
 	const keys = Object.keys(state);
 	const values = Object.values(state);
@@ -161,7 +161,7 @@ export default function HostList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map((item) => (
+					{items.map(item => (
 						<UserItem
 							key={item.id}
 							user={item}

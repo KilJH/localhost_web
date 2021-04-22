@@ -21,7 +21,7 @@ const CommentContainer = (props: Props) => {
 	return (
 		<Container>
 			<h4>댓글[{props.comments.length}]</h4>
-			{props.comments.map((comment) => (
+			{props.comments.map(comment => (
 				<CommentItem comment={comment} />
 			))}
 			<CommentWrite

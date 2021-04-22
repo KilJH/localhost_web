@@ -32,15 +32,15 @@ router.post('/demote', function (req, res, next) {
 });
 
 router.post('/load', function (req, res, next) {
-  management.load(req, res);
+	management.load(req, res);
 });
 
 router.post('/update', function (req, res, next) {
-  management.update(req, res);
+	management.update(req, res);
 });
 
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
-  });
+});
 
 module.exports = router;

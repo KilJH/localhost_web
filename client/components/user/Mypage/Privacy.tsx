@@ -90,7 +90,7 @@ const Privacy = (props: Props) => {
 				id: currentUser.id,
 				url: '',
 			})
-			.then((res) => {
+			.then(res => {
 				console.log(res);
 			});
 	};
@@ -105,7 +105,7 @@ const Privacy = (props: Props) => {
 			formData.append('name', `user_profile_${currentUser.id}`);
 			axios
 				.post(`${SERVER}/api/s3/upload`, formData)
-				.then((res) => {
+				.then(res => {
 					// 뷰에 포토 수정
 					const time = new Date().getTime();
 					setPhotoUrl(`${res.data.url}?time=${time}`);
@@ -115,11 +115,11 @@ const Privacy = (props: Props) => {
 							id: currentUser.id,
 							url: res.data.url,
 						})
-						.then((res) => {
+						.then(res => {
 							console.log(res);
 						});
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log(err);
 				});
 		}
@@ -167,11 +167,11 @@ const Privacy = (props: Props) => {
 														email: currentUser.email,
 														pw: pwInput.value,
 													})
-													.then((res) => {
+													.then(res => {
 														alert(
 															res.data.success
 																? res.data.message
-																: '비밀번호 변경에 실패했습니다.'
+																: '비밀번호 변경에 실패했습니다.',
 														);
 													});
 											}

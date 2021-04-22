@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 const ScrollContext = createContext({
 	state: { isUp: true },
 	actions: {
-		setIsUp: (bool) => {},
+		setIsUp: bool => {},
 	},
 });
 

@@ -129,8 +129,8 @@ const HostListItem = (props: Props) => {
 				<p className='description'>{host.description}</p>
 				<div className='flex'>
 					<div className='language'>
-						{host?.languages.map((lang) =>
-							lang ? <span key={lang}>{lang}</span> : ''
+						{host?.languages.map(lang =>
+							lang ? <span key={lang}>{lang}</span> : '',
 						)}
 					</div>
 

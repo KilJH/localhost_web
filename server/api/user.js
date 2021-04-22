@@ -57,7 +57,7 @@ module.exports.updatePhoto = (req, res) => {
 	const userId = req.body.id;
 	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${userId}"`;
 
-	mysql.query(sql, (err) => {
+	mysql.query(sql, err => {
 		if (err) return console.log(err);
 
 		res.json({ success: true, message: '프로필 이미지 변경' });
@@ -72,7 +72,7 @@ module.exports.updatePW = (req, res) => {
 
 	const update = `UPDATE user SET pw = "${hashPW}" WHERE email = "${email}";`;
 
-	mysql.query(update, (err) => {
+	mysql.query(update, err => {
 		if (err) return err;
 		res.json({ success: true, message: '비밀번호 변경에 성공했습니다.' });
 	});
@@ -83,7 +83,7 @@ module.exports.delete = (req, res) => {
 
 	const sql = `DELETE FROM user WHERE id = ?`;
 
-	mysql.query(sql, userId, (err) => {
+	mysql.query(sql, userId, err => {
 		if (err) {
 			res.json({
 				success: false,
@@ -190,7 +190,7 @@ module.exports.followList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 
-		const followingUsers = rows.map((user) => {
+		const followingUsers = rows.map(user => {
 			return {
 				id: user.user_id,
 				name: user.name,
@@ -216,7 +216,7 @@ module.exports.followerList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		const followers = rows.map((user) => {
+		const followers = rows.map(user => {
 			return {
 				id: user.user_id,
 				name: user.name,
@@ -271,7 +271,7 @@ module.exports.block = (req, res) => {
 
 	const sql = `INSERT INTO ban(user_id, reason) VALUES(?,?)`;
 
-	mysql.query(sql, [userId, reason], (err) => {
+	mysql.query(sql, [userId, reason], err => {
 		if (err) return console.log(err);
 
 		res.status(200).json({ success: true, message: '회원을 차단했습니다.' });

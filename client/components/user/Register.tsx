@@ -110,17 +110,17 @@ export default function Register() {
 	const passwordInput = useInput('', (value: string) => value.length <= 16);
 	const nicknameInput = useInput(
 		'',
-		(value: string) => !speCharReg.test(value)
+		(value: string) => !speCharReg.test(value),
 	);
 	const addressInput = useInput('');
 	const emailInput = useInput('');
 	const nameInput = useInput(
 		'',
-		(value: string) => !(speCharReg.test(value) || numReg.test(value))
+		(value: string) => !(speCharReg.test(value) || numReg.test(value)),
 	);
 	const phoneNumInput = useInput(
 		'',
-		(value: string) => !numExceptReg.test(value) && value.length <= 12
+		(value: string) => !numExceptReg.test(value) && value.length <= 12,
 	);
 
 	const onClickHandler = (value: boolean) => {

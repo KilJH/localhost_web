@@ -89,8 +89,8 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: ${(props) => (props.isFull ? 'center' : 'flex-start')};
-	height: ${(props) => (props.isFull ? '80vh' : '')};
+	justify-content: ${props => (props.isFull ? 'center' : 'flex-start')};
+	height: ${props => (props.isFull ? '80vh' : '')};
 	& label {
 		font-weight: bold;
 		margin: 0.25rem;
@@ -105,15 +105,14 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 	& .progressWrapper {
 		width: 100%;
 		max-width: 800px;
-		position: ${(props) => (props.isFull ? 'absolute' : 'sticky')};
-		top: ${(props) =>
-			props.isFull ? (props.isMobile ? '2.5rem' : '4rem') : 0};
+		position: ${props => (props.isFull ? 'absolute' : 'sticky')};
+		top: ${props => (props.isFull ? (props.isMobile ? '2.5rem' : '4rem') : 0)};
 		padding: 2rem 0;
 		background: white;
 		z-index: 1;
 	}
 	& div[role='progressbar'] {
-		height: ${(props) => (props.isMobile ? '4px' : '8px')};
+		height: ${props => (props.isMobile ? '4px' : '8px')};
 		& > div {
 			animation: progress 1.5s infinite;
 			background: linear-gradient(
@@ -273,7 +272,7 @@ const WriteWrapper = (props: WrapperProps) => {
 	const onNextStep = () => {
 		if (step === 4) {
 			const userId = currentUser.id;
-			axios.post(`${SERVER}/api/plan/write`, { userId, plan }).then((res) => {
+			axios.post(`${SERVER}/api/plan/write`, { userId, plan }).then(res => {
 				if (res.data.success) {
 					setStep(step + 1);
 				} else {
@@ -337,14 +336,14 @@ const PlanWrite = (props: Props): JSX.Element => {
 	// 나라와 도시
 	const country = useInput(countries[0].nation);
 	const [cities, setCities] = useState(
-		countries.filter((item) => item.nation === country.value)[0].cities
+		countries.filter(item => item.nation === country.value)[0].cities,
 	);
 	const [city, setCity] = useState(cities[0]);
 
 	//// 나라가 변하면 도시목록이 변하게
 	useEffect(() => {
 		setCities(
-			countries.filter((item) => item.nation === country.value)[0].cities
+			countries.filter(item => item.nation === country.value)[0].cities,
 		);
 	}, [country]);
 	//// 도시목록이 변하면 도시상태가 첫번째로 변하게
@@ -409,7 +408,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 		setWholePlan(
 			wholePlan.length < date
 				? wholePlan.concat(dayPlan)
-				: wholePlan.map((item, i) => (i === date - 1 ? dayPlan : item))
+				: wholePlan.map((item, i) => (i === date - 1 ? dayPlan : item)),
 		);
 	}
 	// 이전 날
@@ -437,7 +436,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 				>
 					<label>나라를 선택해주세요</label>
 					<StyledSelect {...country}>
-						{countries.map((country) => (
+						{countries.map(country => (
 							<MenuItem value={country.nation}>{country.nation}</MenuItem>
 						))}
 						<MenuItem disabled>다른 국가는 아직 서비스 전입니다.</MenuItem>
@@ -450,7 +449,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 							setCity(e.target.value);
 						}}
 					>
-						{cities.map((city) => (
+						{cities.map(city => (
 							<MenuItem value={city}>{city}</MenuItem>
 						))}
 						<MenuItem disabled>다른 도시는 아직 서비스 전입니다.</MenuItem>
@@ -548,7 +547,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 										margin='normal'
 										id='time-picker'
 										value={time}
-										onChange={(date) => {
+										onChange={date => {
 											setTime(date);
 										}}
 										KeyboardButtonProps={{
@@ -566,7 +565,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 										setTimePlan({ ...timePlan, type: e.target.value });
 									}}
 								>
-									{types.map((type) => (
+									{types.map(type => (
 										<MenuItem value={type}>{type}</MenuItem>
 									))}
 									<MenuItem value='기타'>기타</MenuItem>
@@ -595,7 +594,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 								border='1px solid rgba(0,0,0,0.41)'
 								textAlign='left'
 								value={timePlan.place}
-								onChange={(e) => {
+								onChange={e => {
 									setTimePlan({ ...timePlan, place: e.target.value });
 								}}
 							/>
@@ -608,7 +607,7 @@ const PlanWrite = (props: Props): JSX.Element => {
 							<label>부가설명</label>
 							<Textarea
 								value={timePlan.description}
-								onChange={(e) => {
+								onChange={e => {
 									setTimePlan({ ...timePlan, description: e.target.value });
 								}}
 							/>
