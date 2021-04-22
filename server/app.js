@@ -9,7 +9,6 @@ const boardRouter = require('./routes/board');
 const planRouter = require('./routes/plan');
 const hostRouter = require('./routes/host');
 const s3Router = require('./routes/s3');
-const mapRouter = require('./routes/map');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
@@ -33,7 +32,6 @@ app.use('/api/board', boardRouter);
 app.use('/api/plan', planRouter);
 app.use('/api/host', hostRouter);
 app.use('/api/s3', s3Router);
-app.use('/api/map', mapRouter);
 
 mysql.connect(err => {
 	if (err) return console.log('err: ', err);

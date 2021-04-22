@@ -11,15 +11,15 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const StyledButton = styled.button<Props>`
-	color: ${(props) => (props.default ? 'black' : 'white')};
-	background-color: ${(props) =>
+	color: ${props => (props.default ? 'black' : 'white')};
+	background-color: ${props =>
 		props.default ? '#ddd' : 'rgb(81, 151, 213, 1)'};
-	width: ${(props) => props.width || ''};
+	width: ${props => props.width || ''};
 	border: none;
-	padding: ${(props) => props.padding || '0.5rem 1rem'};
+	padding: ${props => props.padding || '0.5rem 1rem'};
 	transition: all 0.3s ease;
 	&:hover {
-		background-color: ${(props) =>
+		background-color: ${props =>
 			props.default ? '#aaa' : 'rgb(61, 131, 203, 1)'};
 	}
 `;

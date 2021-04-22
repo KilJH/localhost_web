@@ -7,7 +7,7 @@ interface Props {}
 
 const IndexHost = (props: Props) => {
 	return (
-		<Layout>
+		<Layout title='호스트 검색 | localhost'>
 			<HostMain />
 		</Layout>
 	);

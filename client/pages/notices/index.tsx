@@ -21,7 +21,7 @@ const index = ({ pageProps }: Props) => {
 	);
 };
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getStaticProps: GetStaticProps = async ctx => {
 	const res = await axios.get(`${SERVER}/api/notice/list`);
 	console.log(res.data);
 

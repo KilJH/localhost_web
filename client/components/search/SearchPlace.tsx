@@ -94,7 +94,7 @@ const SearchPlace = (props: Props) => {
 	const [open, setOpen] = useState(false);
 	const onSearch = (e: React.FormEvent) => {
 		e.preventDefault();
-		axios.get(`/api/map/searchPlaces?search=${input.value}`).then((res) => {
+		axios.get(`/api/map/searchPlaces?search=${input.value}`).then(res => {
 			setPlaces(res.data.places);
 			handleOpen();
 		});
@@ -136,7 +136,7 @@ const SearchPlace = (props: Props) => {
 			<ListContainer id='placesList' onBlur={handleClose}>
 				{places.length > 0 && open ? (
 					<div>
-						{places.map((place) => (
+						{places.map(place => (
 							<PlaceItem
 								place={place}
 								setPlace={setPlace}

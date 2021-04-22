@@ -12,14 +12,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const StyledInput = styled.input<InputProps>`
 	font-size: 0.8em;
-	border-radius: ${(props) => props.borderRadius || 0};
-	border: ${(props) => props.border || 'none'};
-	border-bottom: ${(props) =>
+	border-radius: ${props => props.borderRadius || 0};
+	border: ${props => props.border || 'none'};
+	border-bottom: ${props =>
 		props.border ? '' : '1px solid rgba(0, 0, 0, 0.42)'};
-	text-align: ${(props) => props.textAlign || 'center'};
-	padding: ${(props) => props.padding || '0.75rem'};
-	margin: ${(props) => props.margin || ''};
-	width: ${(props) => props.width || '8em'};
+	text-align: ${props => props.textAlign || 'center'};
+	padding: ${props => props.padding || '0.75rem'};
+	margin: ${props => props.margin || ''};
+	width: ${props => props.width || '8em'};
 	height: 2.5rem;
 	box-sizing: border-box;
 

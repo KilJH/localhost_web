@@ -164,7 +164,7 @@ const SearchDetail = (props: Props) => {
 
 	// 출발일, 도착일 두개로 나눠야 함
 	const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-		new Date()
+		new Date(),
 	);
 
 	const handleDateChange = (date: Date | null) => {
@@ -176,16 +176,16 @@ const SearchDetail = (props: Props) => {
 			<MuiPickersUtilsProvider utils={DateFnsUtils}>
 				<FlexDiv>
 					<h2>원하는 여행을 검색해보세요.</h2>
-					<LocationInput label="목적지" variant="filled"></LocationInput>
-					<LocationInput label="출발지" variant="filled"></LocationInput>
+					<LocationInput label='목적지' variant='filled'></LocationInput>
+					<LocationInput label='출발지' variant='filled'></LocationInput>
 					<DateDiv>
 						<DateInput
 							disableToolbar
-							variant="inline"
-							format="MM/dd/yyyy"
-							margin="normal"
-							id="date-picker-inline"
-							label="출발일"
+							variant='inline'
+							format='MM/dd/yyyy'
+							margin='normal'
+							id='date-picker-inline'
+							label='출발일'
 							value={selectedDate}
 							onChange={handleDateChange}
 							KeyboardButtonProps={{
@@ -194,11 +194,11 @@ const SearchDetail = (props: Props) => {
 						/>
 						<DateInput
 							disableToolbar
-							variant="inline"
-							format="MM/dd/yyyy"
-							margin="normal"
-							id="date-picker-inline"
-							label="복귀일"
+							variant='inline'
+							format='MM/dd/yyyy'
+							margin='normal'
+							id='date-picker-inline'
+							label='복귀일'
 							value={selectedDate}
 							onChange={handleDateChange}
 							KeyboardButtonProps={{
@@ -218,7 +218,7 @@ const SearchDetail = (props: Props) => {
 							<span {...options[5]}>쇼핑</span>
 						</div>
 					</OptionDiv>
-					<YellowButton variant="contained">플랜 검색</YellowButton>
+					<YellowButton variant='contained'>플랜 검색</YellowButton>
 				</FlexDiv>
 			</MuiPickersUtilsProvider>
 		</StylesProvider>

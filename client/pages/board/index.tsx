@@ -28,7 +28,7 @@ const index = ({ pageProps }: Props) => {
 
 export default index;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ctx => {
 	const page = ctx.query.page || 1;
 	const res = await axios.get(`${SERVER}/api/board/list?page=${page}`);
 

@@ -16,7 +16,7 @@ const PlanListContainer = styled.section`
 const PlanList = (props: Props) => {
 	return (
 		<PlanListContainer>
-			{props.plans.map((plan) => (
+			{props.plans.map(plan => (
 				<Link
 					as={`/plans/${plan.id}`}
 					href={`/plans/id=${plan.id}`}

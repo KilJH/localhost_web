@@ -133,12 +133,12 @@ const PlanOverviewContent = styled.div`
 	}
 `;
 
-const PlanOverview: React.FC<Props> = (props) => {
+const PlanOverview: React.FC<Props> = props => {
 	return (
 		<PlanOverviewGrid container spacing={2}>
 			<Grid item xs={12} md={6}>
 				<PlanOverviewImg>
-					<div className="imgBtnWrapper">
+					<div className='imgBtnWrapper'>
 						<Button>
 							<ArrowBackIosIcon />
 						</Button>
@@ -146,42 +146,42 @@ const PlanOverview: React.FC<Props> = (props) => {
 							<ArrowForwardIosIcon />
 						</Button>
 					</div>
-					<img alt="여행사진" src={`/img/plan/plan${props.plan.id}.jpeg`}></img>
+					<img alt='여행사진' src={`/img/plan/plan${props.plan.id}.jpeg`}></img>
 				</PlanOverviewImg>
 			</Grid>
 			<Grid item xs={12} md={6}>
 				<PlanOverviewContent>
 					<h2>{props.plan.title}</h2>
-					<div className="subTitle">
-						<span className="howLong">
+					<div className='subTitle'>
+						<span className='howLong'>
 							{props.plan.sleepDays}박{props.plan.travelDays}일
 						</span>
-						{props.plan.tags.map((tag) => (
+						{props.plan.tags.map(tag => (
 							<span className={tag}>{tag}</span>
 						))}
 					</div>
 
-					<div className="content">{props.plan.description}</div>
+					<div className='content'>{props.plan.description}</div>
 
-					<div className="price">
+					<div className='price'>
 						<p>
 							₩{' '}
 							{Intl.NumberFormat().format(
-								Math.floor(props.plan.price / props.plan.travelDays)
+								Math.floor(props.plan.price / props.plan.travelDays),
 							)}{' '}
 							/ 일
 						</p>
 						<h2>₩ {Intl.NumberFormat().format(props.plan.price)}</h2>
 					</div>
 
-					<div className="buttons">
-						<Button variant="outlined">
+					<div className='buttons'>
+						<Button variant='outlined'>
 							<FavoriteBorderIcon />
 						</Button>
-						<Button variant="outlined">
+						<Button variant='outlined'>
 							<ThumbUpAltIcon />0
 						</Button>
-						<Button variant="contained" color="primary">
+						<Button variant='contained' color='primary'>
 							나의 일정으로 담기
 						</Button>
 					</div>

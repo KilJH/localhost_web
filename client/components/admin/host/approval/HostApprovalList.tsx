@@ -67,7 +67,7 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DenyCheckedItems = (state) => {
+const DenyCheckedItems = state => {
 	// 호스트 승인 거부 기능
 	const keys = Object.keys(state);
 	const values = Object.values(state);
@@ -87,7 +87,7 @@ const DenyCheckedItems = (state) => {
 		}
 	}
 };
-const ApproveCheckedItems = (state) => {
+const ApproveCheckedItems = state => {
 	// 호스트 승인 기능
 	const keys = Object.keys(state);
 	const values = Object.values(state);
@@ -126,7 +126,7 @@ export default function HostApprovalList(props: Props) {
 		location.href = `/admin/host/approval`;
 	};
 	const HostApprovalButtonHandler = (
-		e: React.MouseEvent<HTMLButtonElement>
+		e: React.MouseEvent<HTMLButtonElement>,
 	) => {
 		e.preventDefault();
 		ApproveCheckedItems(state);
@@ -201,7 +201,7 @@ export default function HostApprovalList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map((item) => (
+					{items.map(item => (
 						<HostApprovalItem
 							key={item.id}
 							user={item}

@@ -32,7 +32,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	// Get the paths we want to pre-render based on users
 	const paths = await (
 		await axios.get(`${SERVER}/api/notice/list`)
-	).data.notices.map((notice) => ({
+	).data.notices.map(notice => ({
 		params: { id: notice.id.toString() },
 	}));
 

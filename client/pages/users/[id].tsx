@@ -59,14 +59,14 @@ export default StaticPropsDetail;
 // This function gets called at build time on server-side.
 // It won't be called on client-side, so you can even do
 // direct database queries.
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async context => {
 	try {
 		const id = context.params?.id;
 		const item = await (await axios.get(`${SERVER}/api/user/${id}`)).data.user;
 		const res = await axios.post(
 			`${SERVER}/api/auth/check`,
 			{ token: context.req.cookies.token },
-			{ withCredentials: true }
+			{ withCredentials: true },
 		);
 		const isFollowed = await (
 			await axios.post(`${SERVER}/api/user/follow_check`, {

@@ -91,7 +91,7 @@ const Pagination = (props: Props) => {
 						</button>
 					</Link>
 				</PageButton>
-				{idxs.map((idx) =>
+				{idxs.map(idx =>
 					idx == currentIdx ? (
 						<PageButton key={idx}>
 							<button className='current'>{idx}</button>
@@ -108,7 +108,7 @@ const Pagination = (props: Props) => {
 								</button>
 							</Link>
 						</PageButton>
-					)
+					),
 				)}
 
 				<PageButton>

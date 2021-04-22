@@ -13,7 +13,7 @@ export const UserStateContext = createContext({
 
 // type UserSetter = Dispatch<SetStateAction<User>>;
 
-export const UserSetterContext = createContext((user) => {
+export const UserSetterContext = createContext(user => {
 	console.log('setUser() is default');
 });
 

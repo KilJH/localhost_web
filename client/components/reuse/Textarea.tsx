@@ -10,7 +10,7 @@ const StyledTextarea = styled.textarea<Props>`
 	border: 1px solid rgba(0, 0, 0, 0.42);
 	width: 100%;
 	padding: 0.75rem;
-	height: ${(props) => props.height || '16em'};
+	height: ${props => props.height || '16em'};
 
 	box-sizing: border-box;
 
