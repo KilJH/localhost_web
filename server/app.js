@@ -17,8 +17,8 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 
 const corsOptions = {
-  origin: ['http://localhost:3000'],
-  credentials: true,
+	origin: ['http://localhost:3000'],
+	credentials: true,
 };
 
 app.use(bodyParser.json());
@@ -35,11 +35,11 @@ app.use('/api/host', hostRouter);
 app.use('/api/s3', s3Router);
 app.use('/api/map', mapRouter);
 
-mysql.connect((err) => {
-  if (err) return console.log('err: ', err);
-  console.log('db연결 생성!');
+mysql.connect(err => {
+	if (err) return console.log('err: ', err);
+	console.log('db연결 생성!');
 });
 
 app.listen(PORT, (req, res) => {
-  console.log('PORT server on');
+	console.log('PORT server on');
 });
