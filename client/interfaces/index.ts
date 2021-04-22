@@ -93,6 +93,14 @@ export interface Comment {
 	createTime: string;
 }
 
+export interface Review {
+	id?: number;
+	user?: User;
+	rating?: number;
+	description?: string;
+	createTime?: string;
+}
+
 export interface Place {
 	formatted_address: string;
 	geometry: { location: { lat: number; lng: number }; distance?: number };
