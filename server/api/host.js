@@ -259,7 +259,6 @@ module.exports.load = (req, res) => {
 module.exports.update = (req, res) => {
   // host정보를 수정하는 API
   const id = req.body.id; // user_id
-  const country = req.body.country;
   const language1 = req.body.language1;
   const language2 = req.body.language2;
   const language3 = req.body.language3;
@@ -268,7 +267,7 @@ module.exports.update = (req, res) => {
   const latitude = req.body.latitude;
   const longitude = req.body.longitude;
   const address = req.body.address;
-  const sql = `UPDATE host SET country = "${country}", language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
+  const sql = `UPDATE host SET language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
   , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
 
   mysql.query(sql, (err) => {
