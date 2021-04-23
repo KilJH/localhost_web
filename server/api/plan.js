@@ -191,10 +191,8 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${
-							planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${
-							planTime.placeInfo
+						`(${planDayId + i}, "${planTime.description}", ${planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
 						}", "${planTime.photo}")`,
 					);
 				});
