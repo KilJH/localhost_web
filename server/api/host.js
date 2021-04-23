@@ -326,23 +326,26 @@ module.exports.status = (req, res) => {
 module.exports.applyList = (req, res) => {
 	// applyHosting list를 불러오는 API
 	const hostUserId = req.body.hostUserId;
-	const sql = `SELECT * FROM host_user_apply WHERE host_user_id = ${hostUserId}`;
+	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId};`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
+		const users = rows.map(row => row)
 
-		res.json({ success: true, applyList: rows });
+		res.json({ success: true, applyList: users });
 	});
 };
 
 module.exports.matchList = (req, res) => {
-	// applyHosting list를 불러오는 API
-	const sql = `SELECT * FROM host_match`;
+	// match list를 불러오는 API
+	const hostUserId = req.body.hostUserId;
+	const sql = `select * from host_match h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId};`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('matchList err', err);
+		const users = rows.map(row => row)
 
-		res.json({ success: true, matchList: rows });
+		res.json({ success: true, matchList: users });
 	});
 };
 
