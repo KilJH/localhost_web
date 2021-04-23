@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
 import Layout from '../../components/main/Layout';
 import Mypage from '../../components/user/Mypage';
-import { sampleUserData } from '../../utils/sample-data';
 import { LoginProps, User } from '../../interfaces/index';
 import { GetServerSideProps, GetStaticProps } from 'next';
-import { UserStateContext } from '../../context/user';
 import axios from 'axios';
 import SERVER from '../../utils/url';
 
@@ -26,12 +24,12 @@ const mypage = ({ pageProps }: Props) => {
 	);
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ctx => {
 	// 로그인 유저 id 가져오기
 	const res = await axios.post(
 		`${SERVER}/api/auth/check`,
 		{ token: ctx.req.cookies.token },
-		{ withCredentials: true }
+		{ withCredentials: true },
 	);
 
 	const userId = res.data.user.id;

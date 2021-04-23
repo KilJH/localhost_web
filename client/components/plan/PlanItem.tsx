@@ -101,35 +101,35 @@ const PlanItem = (props: Props) => {
 	return (
 		<StyledListRoot>
 			<img
-				className="thumb"
-				alt="thumbnail"
+				className='thumb'
+				alt='thumbnail'
 				src={`img/thumb/thumb${props.plan.id}.jpeg`}
 			></img>
 			<StyledListBody>
 				<div>
-					<div className="title">
+					<div className='title'>
 						<h2>{props.plan.title}</h2>
-						<span className="howLong">
+						<span className='howLong'>
 							{props.plan.sleepDays}박{props.plan.travelDays}일
 						</span>
-						{props.plan.tags.map((tag) => (
+						{props.plan.tags.map(tag => (
 							<span className={tag} key={tag}>
 								{tag}
 							</span>
 						))}
 					</div>
-					<div className="price">
+					<div className='price'>
 						<h2>₩ {Intl.NumberFormat().format(props.plan.price)}</h2>
 						<p>
 							₩{' '}
 							{Intl.NumberFormat().format(
-								Math.floor(props.plan.price / props.plan.travelDays)
+								Math.floor(props.plan.price / props.plan.travelDays),
 							)}{' '}
 							/ 일
 						</p>
 					</div>
 				</div>
-				<div className="description">
+				<div className='description'>
 					<p>{props.plan.description}</p>
 				</div>
 			</StyledListBody>

@@ -44,7 +44,7 @@ module.exports.login = (req, res) => {
 				};
 				const token = this.createToken(user, res);
 				// 여기서 토큰 검사해야 됨
-				mysql.query(updateSql, [token, rows[0].id], (err3) => {
+				mysql.query(updateSql, [token, rows[0].id], err3 => {
 					if (err3) return console.log('input token err: ', err3);
 					else {
 						res
@@ -92,7 +92,7 @@ module.exports.logout = (req, res) => {
 		if (err) return res.json({ success: false, message: err });
 
 		const sql = `UPDATE user SET token = ? WHERE id = ?`;
-		mysql.query(sql, ['', decoded.id], (err) => {
+		mysql.query(sql, ['', decoded.id], err => {
 			if (err) return err;
 			else res.json({ success: true });
 		});

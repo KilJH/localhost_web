@@ -21,7 +21,7 @@ export default class MyDocument extends Document<Props> {
 				originalRenderPage({
 					enhanceApp: (App: any) => (props: any) =>
 						styledComponentSheet.collectStyles(
-							materialSheets.collect(<App {...props} />)
+							materialSheets.collect(<App {...props} />),
 						),
 				});
 

@@ -15,6 +15,6 @@ const write = (props: Props) => {
 
 export default write;
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getStaticProps: GetStaticProps = async ctx => {
 	return { props: {} };
 };

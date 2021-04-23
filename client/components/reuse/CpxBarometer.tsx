@@ -11,13 +11,13 @@ const CpxBox = styled.div<{ color: string }>`
 	margin: 0 2px;
 	height: 0.25em;
 	flex: 1;
-	background-color: ${(props) => props.color};
+	background-color: ${props => props.color};
 	transition: all 0.3s ease;
 `;
 
 const FlexDiv = styled.div<{ width?: string }>`
 	display: flex;
-	width: ${(props) => props.width || '100%'};
+	width: ${props => props.width || '100%'};
 	align-items: center;
 	animation: fadeIn 0.3s ease;
 

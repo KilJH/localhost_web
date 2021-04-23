@@ -16,16 +16,16 @@ interface PhotoProps {
 }
 
 const Photo = styled.img<PhotoProps>`
-	width: ${(props) => props.width || 5}em;
-	height: ${(props) => props.width || 5}em;
+	width: ${props => props.width || 5}em;
+	height: ${props => props.width || 5}em;
 	border-radius: 50%;
-	margin: ${(props) => props.margin || '0 auto'};
+	margin: ${props => props.margin || '0 auto'};
 	display: block;
 	transition: all 0.3s ease;
 	object-fit: cover;
 	&:hover {
-		opacity: ${(props) => (props.hover ? 0.8 : 1)};
-		cursor: ${(props) => (props.hover ? 'pointer' : 'default')};
+		opacity: ${props => (props.hover ? 0.8 : 1)};
+		cursor: ${props => (props.hover ? 'pointer' : 'default')};
 	}
 `;
 

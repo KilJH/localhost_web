@@ -30,7 +30,6 @@ const SortContainer = styled.div`
 const HostList = (props: Props) => {
 	const { nearbyHosts } = props;
 	const [sortOpt, setSortOpt] = useState({ property: 'distance', asc: true });
-	// const [sortedHosts, setSortedHosts] = useState(nearbyHosts);
 
 	const compareValue = (a, b) => {
 		return sortOpt.asc ? a - b : b - a;
@@ -55,7 +54,7 @@ const HostList = (props: Props) => {
 		return compareValue(a.value, b.value);
 	});
 	// Sort 결과에 따라 hostList 재배열
-	const sortedHosts = mapped.map((el) => {
+	const sortedHosts = mapped.map(el => {
 		return nearbyHosts[el.index];
 	});
 
@@ -80,7 +79,7 @@ const HostList = (props: Props) => {
 					팔로워순{sortOpt.asc ? '▲' : '▼'}
 				</Button>
 			</SortContainer>
-			{sortedHosts?.map((host) => (
+			{sortedHosts?.map(host => (
 				<HostListItem host={host} key={host.id} />
 			))}
 		</HostListContainer>

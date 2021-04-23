@@ -156,7 +156,7 @@ const Request = (props: Props) => {
 					...checked.slice(Number(e.target.id) - 1 + 1),
 				]);
 			} else {
-				setLangs(langs.filter((lang) => lang !== e.target.value));
+				setLangs(langs.filter(lang => lang !== e.target.value));
 				setChecked([
 					...checked.slice(0, Number(e.target.id) - 1),
 					false,
@@ -197,7 +197,7 @@ const Request = (props: Props) => {
 				<div>
 					<label>사용가능 언어를 선택해주세요(최대 3개)</label>
 					<FormGroup row>
-						{languages.map((lang) => (
+						{languages.map(lang => (
 							<FormControlLabel
 								key={lang.name}
 								control={

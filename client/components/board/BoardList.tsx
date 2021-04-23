@@ -45,7 +45,7 @@ const BoardList = (props: Props) => {
 				onSubmit={onSubmit}
 			/>
 			<div>
-				{boards.map((board) => (
+				{boards.map(board => (
 					<BoardItem board={board} key={board.id} />
 				))}
 			</div>

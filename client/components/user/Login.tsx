@@ -33,9 +33,9 @@ const Login = (props: Props) => {
 					email: email.value,
 					pw: pw.value,
 				},
-				{ withCredentials: true }
+				{ withCredentials: true },
 			)
-			.then((res) => {
+			.then(res => {
 				if (res.data.success) {
 					location.href = '/';
 				} else {

@@ -140,7 +140,7 @@ const PhotoSlider = (props: Props) => {
 			</SliderBtnWrapper>
 
 			<SliderContainer ref={slideRef}>
-				{props.imgSrcArray!.map((src) => (
+				{props.imgSrcArray!.map(src => (
 					<Slide key={src} src={src} height={props.height} />
 				))}
 			</SliderContainer>

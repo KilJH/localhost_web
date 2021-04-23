@@ -74,7 +74,7 @@ const CommentWrite = (props: Props) => {
 			<form>
 				<textarea
 					value={comment}
-					onChange={(e) => {
+					onChange={e => {
 						setComment(e.target.value);
 					}}
 				/>

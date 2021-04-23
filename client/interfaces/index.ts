@@ -1,10 +1,10 @@
 export interface User {
-	id: number;
-	name: string;
+	id?: number;
+	name?: string;
 	email: string;
 	password?: string;
-	nickname: string;
-	sex: string;
+	nickname?: string;
+	sex?: string;
 	country?: string;
 	phone?: string;
 	address?: string;
@@ -15,22 +15,22 @@ export interface User {
 
 export interface Host {
 	id: number;
-	name: string;
-	nickname: string;
-	sex: string;
-	email: string;
+	name?: string;
+	nickname?: string;
+	sex?: string;
+	email?: string;
 	password?: string;
 	phone?: string;
 	address?: string;
 	photo?: string;
-	description: string;
+	description?: string;
 	reqCountry?: number;
 	createTime?: string;
 	languages: string[];
 	rating?: number;
 	on?: boolean;
-	place: Place;
-	follower: number;
+	place?: Place;
+	follower?: number;
 }
 
 export interface Plan {
@@ -91,6 +91,14 @@ export interface Comment {
 	user: User;
 	description: string;
 	createTime: string;
+}
+
+export interface Review {
+	id?: number;
+	user?: User;
+	rating?: number;
+	description?: string;
+	createTime?: string;
 }
 
 export interface Place {

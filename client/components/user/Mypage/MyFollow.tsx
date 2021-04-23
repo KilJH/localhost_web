@@ -62,7 +62,7 @@ const MyFollow = (props: Props) => {
 			<section>
 				<h3>팔로잉 {followingUsers.length}</h3>
 				<FollowContainer>
-					{followingUsers.map((user) => (
+					{followingUsers.map(user => (
 						<div key={user.id}>
 							<Link href='/users/[id]' as={`/users/${user.id}`}>
 								<a>
@@ -87,7 +87,7 @@ const MyFollow = (props: Props) => {
 			<section>
 				<h3>팔로워 {followers.length}</h3>
 				<FollowContainer>
-					{followers.map((user) => (
+					{followers.map(user => (
 						<div key={user.id}>
 							<Link href='/users/[id]' as={`/users/${user.id}`}>
 								<a>

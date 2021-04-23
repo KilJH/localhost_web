@@ -4,58 +4,58 @@ import { Notice } from '../../../interfaces';
 import NoticeUpdate from './NoticeUpdate';
 
 type Props = {
-  item: Notice;
-  state: object;
-  handleChange: React.ChangeEventHandler<HTMLInputElement>;
+	item: Notice;
+	state: object;
+	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 const Checkbox = styled.input.attrs({
-  type: 'checkbox',
+	type: 'checkbox',
 })`
-  border-radius: 1rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
+	border-radius: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
 `;
 const PushElement = styled.a`
-  cursor: pointer;
+	cursor: pointer;
 `;
 export default function NoticeItem(props: Props) {
-  const { item, state, handleChange } = props;
-  const [detailState, setDetailState] = useState(false);
-  const onClickHandler = (e: MouseEvent<HTMLHeadingElement>) => {
-    setDetailState(!detailState);
-  };
-  return (
-    <React.Fragment>
-      <tr>
-        <td
-          style={
-            !detailState
-              ? { borderBottom: 0 }
-              : { borderBottom: '1px solid black' }
-          }
-        >
-          <Checkbox
-            id={item.id.toString()}
-            isChecked={state}
-            onChange={handleChange}
-          ></Checkbox>
-        </td>
-        <td>
-          <PushElement onClick={onClickHandler}>{item.id}</PushElement>
-        </td>
-        <td>
-          <PushElement onClick={onClickHandler}>{item.title}</PushElement>
-        </td>
-        <td>
-          <PushElement onClick={onClickHandler}>{item.createTime}</PushElement>
-        </td>
-      </tr>
-      <tr>
-        <td style={{ padding: 0 }} colSpan={4}>
-          <NoticeUpdate item={item} visibility={detailState} />
-        </td>
-      </tr>
-    </React.Fragment>
-  );
+	const { item, state, handleChange } = props;
+	const [detailState, setDetailState] = useState(false);
+	const onClickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
+		setDetailState(!detailState);
+	};
+	return (
+		<React.Fragment>
+			<tr>
+				<td
+					style={
+						!detailState
+							? { borderBottom: 0 }
+							: { borderBottom: '1px solid black' }
+					}
+				>
+					<Checkbox
+						id={item.id.toString()}
+						isChecked={state}
+						onChange={handleChange}
+					></Checkbox>
+				</td>
+				<td>
+					<PushElement onClick={onClickHandler}>{item.id}</PushElement>
+				</td>
+				<td>
+					<PushElement onClick={onClickHandler}>{item.title}</PushElement>
+				</td>
+				<td>
+					<PushElement onClick={onClickHandler}>{item.createTime}</PushElement>
+				</td>
+			</tr>
+			<tr>
+				<td style={{ padding: 0 }} colSpan={4}>
+					<NoticeUpdate item={item} visibility={detailState} />
+				</td>
+			</tr>
+		</React.Fragment>
+	);
 }

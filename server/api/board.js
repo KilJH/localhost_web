@@ -4,7 +4,7 @@ const {
 const mysql = require('../db/mysql');
 
 // DATE formatting function
-const formatDate = (date) => {
+const formatDate = date => {
 	const day = new Date(date);
 	const now = new Date();
 	// 날짜가 오늘이면 hh:mm
@@ -44,7 +44,7 @@ module.exports.list = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err: ', err);
 
-		const boards = rows.map((board) => {
+		const boards = rows.map(board => {
 			return {
 				id: board.board_id,
 				title: board.title,
@@ -96,7 +96,7 @@ module.exports.load = (req, res) => {
 
 	// 0. 조회수 1 증가
 	const hitSql = `UPDATE board SET hit = hit+1 WHERE id = ?`;
-	mysql.query(hitSql, id, (err3) => {
+	mysql.query(hitSql, id, err3 => {
 		if (err3) return console.log('조회수 증가 실패', err3);
 	});
 
@@ -130,7 +130,7 @@ module.exports.load = (req, res) => {
 			};
 
 			// 댓글 배열 생성
-			const comments = commentsRows.map((comment) => {
+			const comments = commentsRows.map(comment => {
 				return {
 					id: comment.comment_id,
 					description: comment.description,
@@ -159,7 +159,7 @@ module.exports.update = (req, res) => {
 
 	const sql = `UPDATE board SET title = "${title}", description = "${description}" WHERE id = "${id}";`;
 
-	mysql.query(sql, (err) => {
+	mysql.query(sql, err => {
 		if (err) return err;
 
 		res.status(200).json({ success: true });
@@ -171,7 +171,7 @@ module.exports.delete = (req, res) => {
 
 	const sql = `DELETE FROM board WHERE id = ${id}`;
 
-	mysql.query(sql, (err) => {
+	mysql.query(sql, err => {
 		if (err) {
 			res.json({
 				success: false,
@@ -190,7 +190,7 @@ module.exports.comment = (req, res) => {
 	const description = req.body.description;
 	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
 
-	mysql.query(sql, (err) => {
+	mysql.query(sql, err => {
 		if (err) res.json({ success: false, message: '댓글 작성에 실패했습니다.' });
 	});
 	res.json({ success: true, message: '댓글 달기 성공' });
@@ -219,7 +219,7 @@ module.exports.search = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('serach err: ', err);
 
-		const boards = rows.map((board) => {
+		const boards = rows.map(board => {
 			return {
 				id: board.board_id,
 				title: board.title,

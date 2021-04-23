@@ -46,7 +46,7 @@ const HostMain = (props: Props) => {
 	// 첫 로딩 때 GPS 읽어서 현재위치로
 	useEffect(() => {
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
+			navigator.geolocation.getCurrentPosition(position => {
 				setCoord({
 					lat: position.coords.latitude,
 					lng: position.coords.longitude,
@@ -62,7 +62,7 @@ const HostMain = (props: Props) => {
 				latitude: coord.lat,
 				longitude: coord.lng,
 			})
-			.then((res) => {
+			.then(res => {
 				setNearbyHosts(res.data.nearbyhosts);
 			});
 	}, [coord]);

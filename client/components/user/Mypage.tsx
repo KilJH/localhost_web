@@ -21,7 +21,7 @@ const Tabs = styled.div<TabsProps>`
 	display: flex;
 	position: sticky;
 	background-color: white;
-	top: ${(props) =>
+	top: ${props =>
 		props.fixed ? (props.isMobile ? '2.5rem' : '4rem') : '-4rem'};
 	z-index: 2;
 	text-align: center;
