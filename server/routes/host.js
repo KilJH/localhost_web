@@ -8,10 +8,10 @@ router.use(cors());
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });
-router.get('/applyList', function (req, res, next) {
+router.post('/applyList', function (req, res, next) {
 	management.applyList(req, res);
 });
-router.get('/matchList', function (req, res, next) {
+router.post('/matchList', function (req, res, next) {
 	management.matchList(req, res);
 });
 router.post('/nearbyList', function (req, res, next) {
@@ -54,5 +54,13 @@ router.post('/applyHosting', function (req, res, next) {
 
 router.post('/approveHosting', function (req, res, next) {
 	management.approveHosting(req, res);
+});
+
+router.post('/denyHosting', function (req, res, next) {
+	management.denyHosting(req, res);
+});
+
+router.post('/reviewWrite', function (req, res, next) {
+	management.reviewWrite(req, res);
 });
 module.exports = router;

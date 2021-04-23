@@ -326,7 +326,8 @@ module.exports.status = (req, res) => {
 
 module.exports.applyList = (req, res) => {
 	// applyHosting list를 불러오는 API
-	const sql = `SELECT * FROM host_user_apply`;
+	const hostUserId = req.body.hostUserId;
+	const sql = `SELECT * FROM host_user_apply WHERE host_user_id = ${hostUserId}`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
@@ -365,7 +366,7 @@ module.exports.approveHosting = (req, res) => {
 	const id = req.body.id; // requestUserId
 	const hostId = req.body.hostId; // hostId
 
-	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id};`;
+	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id} && host_user_id = ${hostId};`;
 	mysql.query(selectSql, (err, user) => {
 		if (err) console.log('selectSql err', err);
 
@@ -384,10 +385,40 @@ module.exports.approveHosting = (req, res) => {
 	});
 };
 
+module.exports.denyHosting = (req, res) => {
+	// host 가 user의 신청을 승인하는 API
+	const id = req.body.id; // requestUserId
+	const hostId = req.body.hostId; // hostId
+
+	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id} && host_user_id = ${hostId}`;
+	mysql.query(selectSql, (err, user) => {
+		if (err) console.log('selectSql err', err);
+		const deleteSql = `DELETE FROM host_user_apply WHERE id = ${user[0].id}`;
+
+		mysql.query(deleteSql, err => {
+			if (err) console.log('deleteSql err', err);
+
+			res.json({ success: true });
+		});
+	});
+};
+// 수정중입니다
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
-
 	const id = req.body.id; // userId
+	const hostId = req.body.hostId;
+	const description = req.body.description;
+	const rating = req.body.rating;
 
-	const sql = `SELECT * FROM `;
+	const sql = `INSERT INTO host_review(user_id, description, host_user_id, rating) VALUES("${id}","${description}","${hostId}","${rating}")`;
+
+	mysql.query(sql, err => {
+		if (err) console.log('reviewWrite err', err);
+	}).then;
+	const selectSql = `SELECT * FROM host left join host_review on host_review.host_user_id = host.id WHERE host.user_id = ${hostId};`;
+	mysql.query(selectSql, (err, rows) => {
+		if (err) console.log('selectSql err', err);
+
+		console.log(rows[0].review_count);
+	});
 };
