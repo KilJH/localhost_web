@@ -36,17 +36,17 @@ const HostListItemContainer = styled.div`
 		display: flex;
 		align-items: center;
 
-		& > .absolute {
-			position: absolute;
+		& > .point_detail {
+			position: relative;
 			display: none;
 
 			& span {
 				border-radius: 0.25rem;
 				padding: 0.25em 0.5em;
 
-				position: relative;
-				top: 1.8em;
-				left: 6.4em;
+				position: absolute;
+				top: 0.8em;
+				left: -2.4em;
 
 				background: #5197d5;
 				color: #eee;
@@ -54,7 +54,7 @@ const HostListItemContainer = styled.div`
 			}
 		}
 		&:hover {
-			& > .absolute {
+			& > .point_detail {
 				display: block;
 				animation: fadeIn 0.3s ease;
 			}
@@ -63,6 +63,12 @@ const HostListItemContainer = styled.div`
 
 	& .name {
 		align-items: center;
+		& h3 {
+			max-width: 85px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 	}
 
 	& .description {
@@ -116,12 +122,12 @@ const HostListItem = (props: Props) => {
 			<div className='flex flexColumn'>
 				<div className='flex'>
 					<div className='flex name'>
-						<h3>{host.nickname}</h3>
+						<h3 title={host.nickname}>{host.nickname}</h3>
 						<p className='follower'>팔로워 {host.follower}</p>
 					</div>
 					<div className='point'>
 						<Rating rating={randomRating} isFilled />
-						<div className='absolute'>
+						<div className='point_detail'>
 							<span>{randomRating.toFixed(1)}</span>
 						</div>
 					</div>
