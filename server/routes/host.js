@@ -53,6 +53,9 @@ router.post('/approveHosting', function (req, res, next) {
 router.post('/denyHosting', function (req, res, next) {
 	management.denyHosting(req, res);
 });
+router.post('/cancleHosting', function (req, res, next) {
+	management.cancleHosting(req, res);
+});
 router.post('/reviewWrite', function (req, res, next) {
 	management.reviewWrite(req, res);
 });
