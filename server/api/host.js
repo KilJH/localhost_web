@@ -1,5 +1,30 @@
 const mysql = require('../db/mysql');
 // 호스트 관련된 API를 작성하세요
+const formatDate = date => {
+	const day = new Date(date);
+	const now = new Date();
+	// 날짜가 오늘이면 hh:mm
+
+	const yyyy = day.getFullYear();
+	const MM = day.getMonth() < 9 ? `0${day.getMonth() + 1}` : day.getMonth() + 1;
+	const dd = day.getDate() < 9 ? `0${day.getDate()}` : day.getDate();
+
+	const hh = day.getHours() < 10 ? `0${day.getHours()}` : day.getHours();
+	const mm = day.getMinutes() < 10 ? `0${day.getMinutes()}` : day.getMinutes();
+
+	if (
+		!(
+			now.getFullYear() - day.getFullYear() ||
+			now.getMonth() - day.getMonth() ||
+			now.getDate() - day.getDate()
+		)
+	) {
+		return `${hh} : ${mm}`;
+	} else {
+		// 아니면 yyyy-MM-dd hh:mm
+		return `${yyyy}-${MM}-${dd} ${hh} : ${mm}`;
+	}
+};
 
 module.exports.list = (req, res) => {
 	// host의 host정보 불러오기
@@ -327,20 +352,25 @@ module.exports.status = (req, res) => {
 module.exports.applyList = (req, res) => {
 	// applyHosting list를 불러오는 API
 	const hostUserId = req.body.hostUserId;
-	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId};`;
+	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${0} ;`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
-		const users = rows.map(row => row);
+		const users = rows.map((row) => {
+			return {
+				user: row,
+				date: formatDate(row.create_time)
+			}
+		});
 
-		res.json({ success: true, applyList: users });
+		res.json({ success: true, applicant: users });
 	});
 };
 
 module.exports.matchList = (req, res) => {
 	// match list를 불러오는 API
 	const hostUserId = req.body.hostUserId;
-	const sql = `select * from host_match h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId};`;
+	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${1};`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('matchList err', err);

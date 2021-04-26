@@ -8,21 +8,18 @@ router.use(cors());
 router.post('/register', function (req, res, next) {
 	management.register(req, res);
 });
-
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
 router.post('/update/photo', function (req, res, next) {
 	management.updatePhoto(req, res);
 });
-
 router.post('/updatePW', function (req, res, next) {
 	management.updatePW(req, res);
 });
 router.post('/delete', function (req, res, next) {
 	management.delete(req, res);
 });
-
 // 팔로우
 router.post('/follow', function (req, res, next) {
 	management.follow(req, res);
@@ -36,7 +33,6 @@ router.post('/followerList/', function (req, res, next) {
 router.get('/follow', function (req, res, next) {
 	management.followList(req, res);
 });
-
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });
@@ -46,15 +42,12 @@ router.get('/:id', function (req, res, next) {
 router.post('/search', function (req, res, next) {
 	management.search(req, res);
 });
-
 router.post('/follow_check', function (req, res, next) {
 	management.isFollowed(req, res);
 });
-
 router.post('/checkAuth', function (req, res, next) {
 	management.checkAuth(req, res);
 });
-
 router.post('/block', function (req, res, next) {
 	management.block(req, res);
 });
