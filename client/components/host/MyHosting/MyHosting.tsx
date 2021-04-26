@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import HostInfoChange from './HostInfoChange';
 import IconButton from '@material-ui/core/IconButton';
 import HostingApplicantItem from './HostingApplicantItem';
+import CloseIcon from '@material-ui/icons/Close';
+
 interface Props {
 	host: Host;
 	applyList: Applicant[];
@@ -35,7 +37,7 @@ const HostInfoChangeDialogue = styled(Dialog)`
 		min-width: 40em;
 	}
 	& > div > div > div {
-		margin: 2em;
+		margin: 0 2em;
 		&.HostInfoChange__ComponentDiv-sc-4jyjzj-0 {
 			margin-bottom: 0;
 		}
@@ -67,22 +69,15 @@ const UserTable = styled.table`
 		background-color: rgba(81, 151, 213, 0.2);
 	}
 `;
-
-const CssIconButton = styled(IconButton)`
-	&.MuiIconButton-root {
-		padding: 0;
+const CloseButtonDiv = styled(DialogActions)`
+	&.MuiDialogActions-root {
+		padding: 0.5em 0 0 0;
+		margin: 0;
 	}
 `;
 export default function MyHosting(props: Props): ReactElement {
 	const { applyList, host, userId } = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
-	const [nameState, setNameState] = useState(false);
-	let applicants = [];
-	const getApplicants = () => {
-		props.applyList.map(value => {
-			if (props.host.id === 20) applicants.push(value);
-		});
-	};
 
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
@@ -129,18 +124,19 @@ export default function MyHosting(props: Props): ReactElement {
 			<ButtonLabel onClick={handleDialogueOpen} color='primary'>
 				정보 변경
 			</ButtonLabel>
+			{/* 다이알로그 창 */}
 			<HostInfoChangeDialogue
 				disableBackdropClick
 				disableEscapeKeyDown
 				open={dialogueOpen}
 				onClose={handleDialogueClose}
 			>
-				<HostInfoChange host={host} />
-				<DialogActions>
-					<Button onClick={handleDialogueClose} color='secondary'>
-						나가기
+				<CloseButtonDiv>
+					<Button onClick={handleDialogueClose}>
+						<CloseIcon />
 					</Button>
-				</DialogActions>
+				</CloseButtonDiv>
+				<HostInfoChange host={host} />
 			</HostInfoChangeDialogue>
 		</div>
 	);

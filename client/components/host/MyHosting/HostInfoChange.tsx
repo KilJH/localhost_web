@@ -27,7 +27,11 @@ import SERVER from '../../../utils/url';
 interface Props {
 	host: Host;
 }
-const ComponentDiv = styled.div``;
+const ComponentDiv = styled.div`
+	& > h3 {
+		margin: 0 auto 2em auto;
+	}
+`;
 const Label = styled.p`
 	margin: 2em 0 1em 0;
 	font-size: 1em;
@@ -306,7 +310,7 @@ export default function MyHosting(props: Props): ReactElement {
 
 	return (
 		<ComponentDiv>
-			<h3 style={{ marginBottom: '2em' }}>나의 호스트 정보</h3>
+			<h3>나의 호스트 정보</h3>
 
 			{/* 호스트 설정 */}
 			<Label style={{ display: 'inline' }}>호스트 활성</Label>
