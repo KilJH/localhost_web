@@ -2,17 +2,24 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { Host } from '../../interfaces';
+import { Applicant, Host, User } from '../../../interfaces';
 import Button from '@material-ui/core/Button';
-import ReuseButton from '../reuse/Button';
+import ReuseButton from '../../reuse/Button';
 import HostInfoChange from './HostInfoChange';
 import IconButton from '@material-ui/core/IconButton';
+import { hostname } from 'node:os';
+import HostingApplicantItem from './HostingApplicantItem';
 interface Props {
 	host: Host;
+	applyList: Applicant[];
 }
 const Label = styled.p`
 	margin: 2em 0 1em 0;
-	font-size: 1em;
+	font-size: 0.95em;
+	font-weight: bold;
+	&#table {
+		margin-bottom: 0.25em;
+	}
 `;
 
 const ButtonLabel = styled(Button)`
@@ -46,19 +53,20 @@ const UserTable = styled.table`
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
+	font-size: 0.9em;
 	& th {
-		font-size: 1em;
+		padding: 0.25em 0;
 	}
 	& thead {
-		border-bottom: 2px solid #5197d5;
+		border-top: 1px solid gray;
+		border-bottom: 1px solid gray;
 	}
 	& td {
-		border-bottom: 1px solid black;
+		border-bottom: 1px solid gray;
 	}
-`;
-
-const CssTh = styled.th`
-	padding-left: 1em;
+	& tbody > tr:nth-child(odd) {
+		background-color: rgba(81, 151, 213, 0.2);
+	}
 `;
 
 const CssIconButton = styled(IconButton)`
@@ -66,9 +74,16 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-export default function MyHosting(host: Props): ReactElement {
-	const [DialogueOpen, setDialogueOpen] = useState(false);
+export default function MyHosting(props: Props): ReactElement {
+	const [dialogueOpen, setDialogueOpen] = useState(false);
 	const [nameState, setNameState] = useState(false);
+	let applicants = [];
+	const getApplicants = () => {
+		props.applyList.map(value => {
+			if (props.host.id === 20) applicants.push(value);
+		});
+	};
+
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
 	};
@@ -87,27 +102,28 @@ export default function MyHosting(host: Props): ReactElement {
 	// 		});
 	// 	}
 	// };
+	console.log(props.applyList);
 	return (
 		<div>
 			{/* 호스팅 신청자 목록 */}
-			<Label>호스팅 신청자 목록</Label>
+			<Label id='table'>호스팅 신청자 목록</Label>
 			<UserTable>
 				<thead>
 					<tr>
-						<CssTh>닉네임</CssTh>
-						<CssTh>날짜</CssTh>
-						<CssTh></CssTh>
+						<th>닉네임</th>
+						<th>날짜</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-					{/* {sortedHosts?.map(host => (
-						<HostListItem host={host} key={host.id} />
-					))} */}
+					{props.applyList.map(value => (
+						<HostingApplicantItem applicant={value} />
+					))}
 				</tbody>
 			</UserTable>
 
 			{/* 이전 호스팅 목록 */}
-			<Label>이전 호스팅 목록</Label>
+			<Label id='table'>이전 호스팅 목록</Label>
 
 			{/* 호스트 정보 변경 */}
 			<Label>호스트 정보 변경</Label>
@@ -117,10 +133,10 @@ export default function MyHosting(host: Props): ReactElement {
 			<HostInfoChangeDialogue
 				disableBackdropClick
 				disableEscapeKeyDown
-				open={DialogueOpen}
+				open={dialogueOpen}
 				onClose={handleDialogueClose}
 			>
-				<HostInfoChange {...host} />
+				<HostInfoChange host={props.host} />
 				<DialogActions>
 					<Button onClick={handleDialogueClose} color='secondary'>
 						나가기

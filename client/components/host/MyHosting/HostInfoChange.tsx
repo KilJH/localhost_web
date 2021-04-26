@@ -12,17 +12,17 @@ import Select from '@material-ui/core/Select';
 import Switch from '@material-ui/core/Switch';
 import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Host } from '../../interfaces';
-import { useInput } from './../../hooks/useInput';
+import { Host } from '../../../interfaces';
+import { useInput } from '../../../hooks/useInput';
 import TextField from '@material-ui/core/TextField';
-import Input from '../reuse/Input';
-import SearchPlace from '../search/SearchPlace';
+import Input from '../../reuse/Input';
+import SearchPlace from '../../search/SearchPlace';
 import Fade from '@material-ui/core/Fade';
-import { Place } from '../../interfaces';
+import { Place } from '../../../interfaces';
 import Modal from '@material-ui/core/Modal';
-import ReuseButton from '../reuse/Button';
+import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
-import SERVER from '../../utils/url';
+import SERVER from '../../../utils/url';
 
 interface Props {
 	host: Host;

@@ -106,3 +106,8 @@ export interface Place {
 	geometry: { location: { lat: number; lng: number }; distance?: number };
 	name?: string;
 }
+
+export interface Applicant {
+	user: User;
+	date: string;
+}
