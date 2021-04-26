@@ -23,7 +23,6 @@ import Modal from '@material-ui/core/Modal';
 import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
-import Router from 'next/router';
 
 interface Props {
 	host: Host;

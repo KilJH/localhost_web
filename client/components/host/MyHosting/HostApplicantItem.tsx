@@ -1,5 +1,5 @@
-import { Applicant, Host, User } from '../../../interfaces';
-import React, { useState } from 'react';
+import { Applicant} from '../../../interfaces';
+import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
@@ -10,17 +10,6 @@ type Props = {
 	applicant: Applicant;
 	userId: number;
 };
-
-// const Checkbox = styled.input.attrs({
-// 	type: 'checkbox',
-// })`
-// 	border-radius: 1rem;
-// 	margin-left: 1rem;
-// 	margin-right: 1rem;
-// `;
-const PushElement = styled.a`
-	cursor: pointer;
-`;
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
 		color: #5197d5;
@@ -38,7 +27,7 @@ const ButtonTd = styled.td`
 	max-width: 10em;
 	min-width: 10em;
 `;
-export default function UserItem(props: Props) {
+export default function HostApplicantItem(props: Props) {
 	const { applicant, userId } = props;
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();

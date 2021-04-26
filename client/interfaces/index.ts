@@ -111,3 +111,10 @@ export interface Applicant {
 	user: User;
 	date: string;
 }
+
+export interface PreviousApplicant {
+	user: User;
+	place: Place;
+	date: string;
+	rating: number;
+}

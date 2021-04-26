@@ -6,13 +6,16 @@ import { Applicant, Host } from '../../../interfaces';
 import Button from '@material-ui/core/Button';
 import HostInfoChange from './HostInfoChange';
 import IconButton from '@material-ui/core/IconButton';
-import HostingApplicantItem from './HostingApplicantItem';
+import HostApplicantItem from './HostApplicantItem';
 import CloseIcon from '@material-ui/icons/Close';
+import HostPreviousApplicantItem from './HostPreviousApplicantItem';
+import { PreviousApplicant } from './../../../interfaces/index';
 
 interface Props {
 	host: Host;
 	applyList: Applicant[];
 	userId: number;
+	previousApplicant: PreviousApplicant[];
 }
 const Label = styled.p`
 	margin: 2em 0 1em 0;
@@ -75,8 +78,8 @@ const CloseButtonDiv = styled(DialogActions)`
 		margin: 0;
 	}
 `;
-export default function MyHosting(props: Props): ReactElement {
-	const { applyList, host, userId } = props;
+export default function MyHostingPage(props: Props): ReactElement {
+	const { applyList, host, userId, previousApplicant } = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
 
 	const handleDialogueOpen = () => {
@@ -85,18 +88,6 @@ export default function MyHosting(props: Props): ReactElement {
 	const handleDialogueClose = () => {
 		setDialogueOpen(false);
 	};
-	// const nameSortHandler = () => {
-	// 	setNameState(!nameState);
-	// 	if (nameState) {
-	// 		host.sort(function (a: any, b: any) {
-	// 			return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-	// 		});
-	// 	} else {
-	// 		host.sort(function (a: any, b: any) {
-	// 			return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
-	// 		});
-	// 	}
-	// };
 	return (
 		<div>
 			{/* 호스팅 신청자 목록 */}
@@ -111,14 +102,32 @@ export default function MyHosting(props: Props): ReactElement {
 				</thead>
 				<tbody>
 					{applyList.map(value => (
-						<HostingApplicantItem applicant={value} userId={userId} />
+						<HostApplicantItem applicant={value} userId={userId} />
 					))}
 				</tbody>
 			</UserTable>
 
 			{/* 이전 호스팅 목록 */}
 			<Label id='table'>이전 호스팅 목록</Label>
-
+			<UserTable>
+				<thead>
+					<tr>
+						<th>날짜</th>
+						<th>장소</th>
+						<th>닉네임</th>
+						<th>평점</th>
+					</tr>
+				</thead>
+				{/* <tbody>
+					{previousApplicant.map(value => (
+						<HostPreviousApplicantItem applicant={value} />
+					))}
+				</tbody> */}
+				<tbody>
+					<HostPreviousApplicantItem />
+					<HostPreviousApplicantItem />
+				</tbody>
+			</UserTable>
 			{/* 호스트 정보 변경 */}
 			<Label>호스트 정보 변경</Label>
 			<ButtonLabel onClick={handleDialogueOpen} color='primary'>
@@ -136,7 +145,7 @@ export default function MyHosting(props: Props): ReactElement {
 						<CloseIcon />
 					</Button>
 				</CloseButtonDiv>
-				<HostInfoChange host={host}/>
+				<HostInfoChange host={host} />
 			</HostInfoChangeDialogue>
 		</div>
 	);
