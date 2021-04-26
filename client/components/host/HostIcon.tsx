@@ -3,11 +3,13 @@ import { Host } from '../../interfaces';
 import PersonIcon from '@material-ui/icons/Person';
 import styled from 'styled-components';
 import UserPhoto from '../user/UserPhoto';
+import { Fade } from '@material-ui/core';
 
 interface Props {
 	host?: Host;
-	lat: number;
-	lng: number;
+	isShow?: boolean;
+	lat?: number;
+	lng?: number;
 }
 
 const HostIconContainer = styled.div`
@@ -60,7 +62,7 @@ const HostInfo = styled.section`
 `;
 
 const HostIcon = (props: Props) => {
-	const { host } = props;
+	const { host, isShow = true } = props;
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleOpen = () => {
@@ -71,24 +73,26 @@ const HostIcon = (props: Props) => {
 	};
 
 	return (
-		<HostIconContainer>
-			<div onMouseEnter={handleOpen} onMouseLeave={handleClose}>
-				<PersonIcon fontSize='large' style={{ color: '#333' }} />
-			</div>
-			{isOpen ? (
-				<HostInfo onMouseEnter={handleOpen} onMouseLeave={handleClose}>
-					<UserPhoto src={host?.photo} />
-					<h3 className='nickname'>{host.nickname}</h3>
-					<div className='distance'>
-						{host.place.geometry.distance.toFixed(2)}km
-					</div>
-					<div className='languages'></div>
-					<p className='description'>{host.description}</p>
-				</HostInfo>
-			) : (
-				''
-			)}
-		</HostIconContainer>
+		<Fade in={isShow} timeout={500}>
+			<HostIconContainer>
+				<div onMouseEnter={handleOpen} onMouseLeave={handleClose}>
+					<PersonIcon fontSize='large' style={{ color: '#333' }} />
+				</div>
+				{isOpen ? (
+					<HostInfo onMouseEnter={handleOpen} onMouseLeave={handleClose}>
+						<UserPhoto src={host?.photo} />
+						<h3 className='nickname'>{host.nickname}</h3>
+						<div className='distance'>
+							{host.place.geometry.distance.toFixed(2)}km
+						</div>
+						<div className='languages'></div>
+						<p className='description'>{host.description}</p>
+					</HostInfo>
+				) : (
+					''
+				)}
+			</HostIconContainer>
+		</Fade>
 	);
 };
 
