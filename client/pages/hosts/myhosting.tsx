@@ -10,10 +10,12 @@ interface Props {
 	pageProps: {
 		host: Host;
 		applyList: Applicant[];
+		userId: number;
 	};
 }
 
 const myhosting = ({ pageProps }: Props) => {
+	console.log(pageProps.host);
 	return (
 		<div>
 			<Layout title='나의 호스팅 | localhost'>
@@ -42,6 +44,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 			hostUserId: userId,
 		})
 	).data.applicant;
-	return { props: { host, applyList } };
+	return { props: { host, applyList, userId } };
 };
 export default myhosting;

@@ -2,16 +2,15 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { Applicant, Host, User } from '../../../interfaces';
+import { Applicant, Host } from '../../../interfaces';
 import Button from '@material-ui/core/Button';
-import ReuseButton from '../../reuse/Button';
 import HostInfoChange from './HostInfoChange';
 import IconButton from '@material-ui/core/IconButton';
-import { hostname } from 'node:os';
 import HostingApplicantItem from './HostingApplicantItem';
 interface Props {
 	host: Host;
 	applyList: Applicant[];
+	userId: number;
 }
 const Label = styled.p`
 	margin: 2em 0 1em 0;
@@ -75,6 +74,7 @@ const CssIconButton = styled(IconButton)`
 	}
 `;
 export default function MyHosting(props: Props): ReactElement {
+	const { applyList, host, userId } = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
 	const [nameState, setNameState] = useState(false);
 	let applicants = [];
@@ -102,7 +102,6 @@ export default function MyHosting(props: Props): ReactElement {
 	// 		});
 	// 	}
 	// };
-	console.log(props.applyList);
 	return (
 		<div>
 			{/* 호스팅 신청자 목록 */}
@@ -112,12 +111,12 @@ export default function MyHosting(props: Props): ReactElement {
 					<tr>
 						<th>닉네임</th>
 						<th>날짜</th>
-						<th></th>
+						<th>승인여부</th>
 					</tr>
 				</thead>
 				<tbody>
-					{props.applyList.map(value => (
-						<HostingApplicantItem applicant={value} />
+					{applyList.map(value => (
+						<HostingApplicantItem applicant={value} userId={userId} />
 					))}
 				</tbody>
 			</UserTable>
@@ -136,7 +135,7 @@ export default function MyHosting(props: Props): ReactElement {
 				open={dialogueOpen}
 				onClose={handleDialogueClose}
 			>
-				<HostInfoChange host={props.host} />
+				<HostInfoChange host={host} />
 				<DialogActions>
 					<Button onClick={handleDialogueClose} color='secondary'>
 						나가기
