@@ -374,7 +374,12 @@ module.exports.matchList = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('matchList err', err);
-		const users = rows.map(row => row);
+		const users = rows.map((row) => {
+			return {
+				user: row,
+				date: formatDate(row.create_time)
+			}
+		});
 
 		res.json({ success: true, matchList: users });
 	});
@@ -383,9 +388,9 @@ module.exports.matchList = (req, res) => {
 module.exports.applyHosting = (req, res) => {
 	// user가 host에게 호스팅 신청하는 API
 	const id = req.body.id; // userId;
-	const hostId = req.body.hostId;
+	const hostUserId = req.body.hostUserId;
 
-	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id) VALUES("${hostId}", "${id}");`;
+	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id) VALUES("${hostUserId}", "${id}");`;
 
 	mysql.query(sql, err => {
 		if (err) console.log('applyHosting err', err);
@@ -397,58 +402,55 @@ module.exports.applyHosting = (req, res) => {
 module.exports.approveHosting = (req, res) => {
 	// host 가 user의 신청을 승인하는 API
 	const id = req.body.id; // requestUserId
-	const hostId = req.body.hostId; // hostId
+	const hostUserId = req.body.hostUserId; // hostUserId
 
-	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id} && host_user_id = ${hostId};`;
-	mysql.query(selectSql, (err, user) => {
-		if (err) console.log('selectSql err', err);
+	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`
+	mysql.query(updateSql, (err) => {
+		if (err) return console.log("updateSql err", err);
 
-		const insertSql = `INSERT INTO host_match(host_user_id, user_user_id) VALUES("${hostId}", "${id}")`;
-
-		mysql.query(insertSql, err => {
-			if (err) console.log('InsertSql err', err);
-		});
-
-		const deleteSql = `DELETE FROM host_user_apply WHERE id = ${user[0].id}`;
-		mysql.query(deleteSql, err => {
-			if (err) console.log('deleteSql err', err);
-
-			res.json({ success: true });
-		});
-	});
+		res.json({ success: true });
+	})
 };
 
 module.exports.denyHosting = (req, res) => {
-	// host 가 user의 신청을 승인하는 API
+	// host 가 user의 신청을 취소하는 API
 	const id = req.body.id; // requestUserId
-	const hostId = req.body.hostId; // hostId
+	const hostUserId = req.body.hostUserId; // hostUserId
 
-	const selectSql = `SELECT * FROM host_user_apply WHERE user_user_id = ${id} && host_user_id = ${hostId}`;
-	mysql.query(selectSql, (err, user) => {
-		if (err) console.log('selectSql err', err);
-		const deleteSql = `DELETE FROM host_user_apply WHERE id = ${user[0].id}`;
+	const updateSql = `UPDATE host_user_apply SET status=${2} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`
+	mysql.query(updateSql, (err) => {
+		if (err) return console.log("updateSql err", err);
 
-		mysql.query(deleteSql, err => {
-			if (err) console.log('deleteSql err', err);
+		res.json({ success: true });
+	})
+};
 
-			res.json({ success: true });
-		});
-	});
+module.exports.cancleHosting = (req, res) => {
+	// user 가 호스팅을 취소하는 API
+	const id = req.body.id; // requestUserId
+	const hostUserId = req.body.hostUserId; // hostUserId
+
+	const updateSql = `UPDATE host_user_apply SET status=${3} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`
+	mysql.query(updateSql, (err) => {
+		if (err) return console.log("updateSql err", err);
+
+		res.json({ success: true });
+	})
 };
 // 수정중입니다
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
 	const id = req.body.id; // userId
-	const hostId = req.body.hostId;
+	const hostUserId = req.body.hostUserId;
 	const description = req.body.description;
 	const rating = req.body.rating;
 
-	const sql = `INSERT INTO host_review(user_id, description, host_user_id, rating) VALUES("${id}","${description}","${hostId}","${rating}")`;
+	const sql = `INSERT INTO host_review(user_id, description, host_user_id, rating) VALUES("${id}","${description}","${hostUserId}","${rating}")`;
 
 	mysql.query(sql, err => {
 		if (err) console.log('reviewWrite err', err);
 	}).then;
-	const selectSql = `SELECT * FROM host left join host_review on host_review.host_user_id = host.id WHERE host.user_id = ${hostId};`;
+	const selectSql = `SELECT * FROM host left join host_review on host_review.host_user_id = host.id WHERE host.user_id = ${hostUserId};`;
 	mysql.query(selectSql, (err, rows) => {
 		if (err) console.log('selectSql err', err);
 
