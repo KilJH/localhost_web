@@ -23,6 +23,7 @@ import Modal from '@material-ui/core/Modal';
 import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
+import Router from 'next/router';
 
 interface Props {
 	host: Host;
@@ -136,7 +137,6 @@ const PlaceInput = styled(Input)`
 export default function MyHosting(props: Props): ReactElement {
 	const { host } = props;
 	const [isOn, setIsOn] = useState(host.on);
-	const [country, setCountry] = useState(host.reqCountry);
 	const [language, setLanguage] = useState({
 		language1: host.languages[0] === null ? ' ' : host.languages[0],
 		language2: host.languages[1] === null ? ' ' : host.languages[1],
@@ -290,7 +290,6 @@ export default function MyHosting(props: Props): ReactElement {
 		try {
 			const res = await axios.post(`${SERVER}/api/host/update`, {
 				id: host.id,
-				reqCountry: country,
 				language1: language.language1 === ' ' ? null : language.language1,
 				language2: language.language2 === ' ' ? null : language.language2,
 				language3: language.language3 === ' ' ? null : language.language3,
@@ -301,7 +300,7 @@ export default function MyHosting(props: Props): ReactElement {
 			});
 			if (res.data.success) {
 				alert('호스트 정보 수정이 완료되었습니다!');
-				// Router.push('/');
+				window.location.replace('/hosts/myhosting'); // 새로고침
 			}
 		} catch (err) {
 			return console.log(err);

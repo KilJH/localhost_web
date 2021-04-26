@@ -136,7 +136,7 @@ export default function MyHosting(props: Props): ReactElement {
 						<CloseIcon />
 					</Button>
 				</CloseButtonDiv>
-				<HostInfoChange host={host} />
+				<HostInfoChange host={host}/>
 			</HostInfoChangeDialogue>
 		</div>
 	);
