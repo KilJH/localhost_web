@@ -35,32 +35,26 @@ router.post('/deny', function (req, res, next) {
 router.post('/demote', function (req, res, next) {
 	management.demote(req, res);
 });
-
 router.post('/load', function (req, res, next) {
 	management.load(req, res);
 });
-
 router.post('/update', function (req, res, next) {
 	management.update(req, res);
 });
-
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
-
 router.post('/applyHosting', function (req, res, next) {
 	management.applyHosting(req, res);
 });
-
 router.post('/approveHosting', function (req, res, next) {
 	management.approveHosting(req, res);
 });
-
 router.post('/denyHosting', function (req, res, next) {
 	management.denyHosting(req, res);
 });
-
 router.post('/reviewWrite', function (req, res, next) {
 	management.reviewWrite(req, res);
 });
+
 module.exports = router;
