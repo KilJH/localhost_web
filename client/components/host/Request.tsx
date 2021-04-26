@@ -19,34 +19,9 @@ import Input from '../reuse/Input';
 import Button from '../reuse/Button';
 import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
+import { languages } from '../../utils/nation';
 
 interface Props {}
-
-const countries = [
-	'대한민국',
-	'일본',
-	'중국',
-	'베트남',
-	'태국',
-	'프랑스',
-	'영국',
-	'독일',
-	'포르투갈',
-	'스페인',
-	'이탈리아',
-];
-
-const languages = [
-	{ id: 1, name: '한국어' },
-	{ id: 2, name: '일본어' },
-	{ id: 3, name: '중국어' },
-	{ id: 4, name: '영어' },
-	{ id: 5, name: '프랑스어' },
-	{ id: 6, name: '독일어' },
-	{ id: 7, name: '스페인어' },
-	{ id: 8, name: '포르투갈어' },
-	{ id: 9, name: '힌디어' },
-];
 
 const RequestContainer = styled.div`
 	margin: 2rem auto;
