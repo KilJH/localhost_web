@@ -31,7 +31,7 @@ const StyledInput = styled.input<InputProps>`
 	}
 	&:focus {
 		border-width: 2px;
-		border-color: rgb(58, 75, 170);
+		border-color: rgb(81, 151, 213);
 	}
 
 	&[type='number']::-webkit-inner-spin-button,
