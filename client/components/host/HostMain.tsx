@@ -48,8 +48,8 @@ const HostMain = (props: Props) => {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(position => {
 				setCoord({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
+					lat: position.coords.latitude || 0,
+					lng: position.coords.longitude || 0,
 				});
 			});
 		}
@@ -71,7 +71,11 @@ const HostMain = (props: Props) => {
 		<Container>
 			<div>
 				<SearchPlace setPlace={setPlace} />
-				<HostList nearbyHosts={nearbyHosts} />
+				<HostList
+					nearbyHosts={nearbyHosts}
+					setNearbyHosts={setNearbyHosts}
+					coord={coord}
+				/>
 			</div>
 			<div>
 				<Maps {...coord} nearbyHosts={nearbyHosts} />
