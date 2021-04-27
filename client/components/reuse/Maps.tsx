@@ -58,6 +58,7 @@ const Maps = (props: Props) => {
 						lat={host.place.geometry.location.lat}
 						lng={host.place.geometry.location.lng}
 						isShow={markerShow}
+						key={host.id}
 					/>
 				))}
 			</GoogleMap>
