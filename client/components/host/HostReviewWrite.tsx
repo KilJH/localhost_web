@@ -22,6 +22,7 @@ const SubmitButton = styled(Button)`
 	margin: 0.5em 0 0 auto;
 `;
 const RatingDiv = styled.div`
+	height: 1.5em;
 	margin: 0 0 1em 0.25em;
 	display: flex;
 	align-items: center;
