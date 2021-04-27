@@ -6,8 +6,10 @@ import TuneIcon from '@material-ui/icons/Tune';
 import HostFilter from './HostFilter';
 
 interface Props {
+	origin: Host[];
+	setOrigin: Dispatch<SetStateAction<Host[]>>;
 	nearbyHosts: Host[];
-	setNearbyHosts: Dispatch<SetStateAction<any>>;
+	setNearbyHosts: Dispatch<SetStateAction<Host[]>>;
 	coord: { lat: number; lng: number };
 }
 const HostListContainer = styled.section`
@@ -49,7 +51,7 @@ const SortContainer = styled.div`
 `;
 
 const HostList = (props: Props) => {
-	const { nearbyHosts, setNearbyHosts, coord } = props;
+	const { origin, setOrigin, nearbyHosts, setNearbyHosts, coord } = props;
 	const [sortOpt, setSortOpt] = useState({ property: 'distance', asc: true });
 	const [filterOn, setFilterOn] = useState(false);
 
@@ -124,7 +126,9 @@ const HostList = (props: Props) => {
 					<span>필터</span>
 				</button>
 				<HostFilter
-					on={filterOn}
+					onShow={filterOn}
+					origin={origin}
+					setOrigin={setOrigin}
 					setNearbyHosts={setNearbyHosts}
 					onClose={onCloseFilter}
 					coord={coord}

@@ -8,12 +8,17 @@ import React, {
 	useState,
 } from 'react';
 import styled from 'styled-components';
+import { Host } from '../../interfaces';
 import SERVER from '../../utils/url';
 import Button from '../reuse/Button';
+import Input from '../reuse/Input';
+import LanguageSelect from '../reuse/LanguageSelect';
 
 interface FilterProps {
-	setNearbyHosts: Dispatch<SetStateAction<any>>;
-	on?: boolean;
+	origin: Host[];
+	setOrigin: Dispatch<SetStateAction<Host[]>>;
+	setNearbyHosts: Dispatch<SetStateAction<Host[]>>;
+	onShow?: boolean;
 	onClose?: Function;
 	coord: { lat: number; lng: number };
 }
@@ -50,7 +55,14 @@ const StyledSlider = styled(Slider)`
 `;
 
 const HostFilter = (props: FilterProps) => {
-	const { setNearbyHosts, on = true, onClose, coord } = props;
+	const {
+		origin,
+		setOrigin,
+		setNearbyHosts,
+		onShow = true,
+		onClose,
+		coord,
+	} = props;
 	const [distance, setDistance] = useState(4);
 
 	useEffect(() => {
@@ -62,7 +74,7 @@ const HostFilter = (props: FilterProps) => {
 				distance: distance,
 			})
 			.then(res => {
-				setNearbyHosts(res.data.nearbyhosts);
+				setOrigin(res.data.nearbyhosts);
 			});
 	}, [distance]);
 
@@ -72,17 +84,30 @@ const HostFilter = (props: FilterProps) => {
 		{ value: 16, label: '16km' },
 	];
 
+	const onLangChange = (langs: string[]) => {
+		// origin 호스트 목록에서 비교를 통해
+		if (langs.length > 0) {
+			const filteredList = origin.filter(host => {
+				return host.languages.filter(lang => langs.includes(lang)).length;
+			});
+			// filtered 호스트 목록을 set 해준다.
+			setNearbyHosts(filteredList);
+		} else {
+			setNearbyHosts(origin);
+		}
+	};
+
 	return (
-		<Grow in={on} timeout={200}>
+		<Grow in={onShow} timeout={200}>
 			<div style={{ position: 'relative', top: '2.5rem', left: '-240px' }}>
 				<FilterContainer>
 					<div>
 						<label>여행스타일</label>
-						<input />
+						<Input />
 					</div>
 					<div>
 						<label>언어</label>
-						<input />
+						<LanguageSelect onChange={onLangChange} />
 					</div>
 					<div>
 						<label>거리</label>
