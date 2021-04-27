@@ -2,20 +2,17 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { Applicant, Host } from '../../../interfaces';
+import { Application, Host, PreviousApplication } from '../../../interfaces';
 import Button from '@material-ui/core/Button';
 import HostInfoChange from './HostInfoChange';
-import IconButton from '@material-ui/core/IconButton';
 import HostApplicantItem from './HostApplicantItem';
 import CloseIcon from '@material-ui/icons/Close';
 import HostPreviousApplicantItem from './HostPreviousApplicantItem';
-import { PreviousApplicant } from './../../../interfaces/index';
-
 interface Props {
 	host: Host;
-	applyList: Applicant[];
+	applyList: Application[];
 	userId: number;
-	previousApplicant: PreviousApplicant[];
+	previousApplicant: PreviousApplication[];
 }
 const Label = styled.p`
 	margin: 2em 0 1em 0;
@@ -81,7 +78,7 @@ const CloseButtonDiv = styled(DialogActions)`
 export default function MyHostingPage(props: Props): ReactElement {
 	const { applyList, host, userId, previousApplicant } = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
-
+	console.log(previousApplicant);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
 	};
@@ -118,14 +115,10 @@ export default function MyHostingPage(props: Props): ReactElement {
 						<th>평점</th>
 					</tr>
 				</thead>
-				{/* <tbody>
+				<tbody>
 					{previousApplicant.map(value => (
 						<HostPreviousApplicantItem applicant={value} />
 					))}
-				</tbody> */}
-				<tbody>
-					<HostPreviousApplicantItem />
-					<HostPreviousApplicantItem />
 				</tbody>
 			</UserTable>
 			{/* 호스트 정보 변경 */}

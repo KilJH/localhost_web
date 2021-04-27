@@ -3,16 +3,15 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import MyHostingPage from '../../components/host/MyHosting/MyHostingPage';
 import Layout from '../../components/main/Layout';
-import { Applicant, Host, User } from '../../interfaces';
+import { Application, Host, PreviousApplication } from '../../interfaces';
 import SERVER from '../../utils/url';
-import { PreviousApplicant } from './../../interfaces/index';
 
 interface Props {
 	pageProps: {
 		host: Host;
-		applyList: Applicant[];
+		applyList: Application[];
 		userId: number;
-		previousApplicant: PreviousApplicant[];
+		previousApplicant: PreviousApplication[];
 	};
 }
 
@@ -28,6 +27,7 @@ const myhosting = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	// 로그인 유저 id 가져오기
+
 	const res = await axios.post(
 		`${SERVER}/api/auth/check`,
 		{ token: ctx.req.cookies.token },
@@ -46,12 +46,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		})
 	).data.applicant;
 
-	// const prevoisApplicantList = await (
-	// 	await axios.post(`${SERVER}/api/host/prevoisApplicantList`, {
-	// 		hostUserId: userId,
-	// 	})
-	// ).data.applicant;
-
-	return { props: { host, applyList, userId } };
+	const previousApplicant = await (
+		await axios.post(`${SERVER}/api/host/doneHosting`, {
+			hostUserId: host.id,
+		})
+	).data.previousApplicant;
+	return { props: { host, applyList, userId, previousApplicant } };
 };
 export default myhosting;
