@@ -10,6 +10,7 @@ import { useInput } from '../../hooks/useInput';
 interface Props {
 	hostUserId: number;
 }
+
 const TextArea = styled.textarea`
 	width: 100%;
 	resize: none;
