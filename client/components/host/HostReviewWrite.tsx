@@ -6,25 +6,31 @@ import { UserStateContext } from '../../context/user';
 import axios from 'axios';
 import SERVER from '../../utils/url';
 import { useInput } from '../../hooks/useInput';
+import Textarea from '../reuse/Textarea';
 
 interface Props {
 	hostUserId: number;
 }
 
-const TextArea = styled.textarea`
-	width: 100%;
-	resize: none;
-	height: 6em;
+const Label = styled.p`
+	margin: 2em 0 1em 0;
+	font-size: 0.95em;
+	font-weight: bold;
 `;
 const SubmitButton = styled(Button)`
 	display: block;
-	margin: 0.25em 0 0 auto;
+	margin: 0.5em 0 0 auto;
 `;
 const RatingDiv = styled.div`
-	margin-top: 0.5em;
+	margin: 0 0 1em 0.25em;
+	display: flex;
+	align-items: center;
 	& > label {
-		display: block;
-		margin: 0.25em 0 0 0.25em;
+		margin-left: 0.25em;
+		color: #5197d5;
+		font-weight: bold;
+		font-size: 1.25em;
+		display: inline;
 	}
 `;
 const HostRating = styled(Rating)`
@@ -35,7 +41,7 @@ const HostRating = styled(Rating)`
 
 const Request = (props: Props) => {
 	const { hostUserId } = props;
-	const [rating, setRating] = useState(0);
+	const [rating, setRating] = useState(null);
 	const [hover, setHover] = useState(-1);
 	const desc = useInput('');
 	const currentUser = useContext(UserStateContext);
@@ -43,8 +49,8 @@ const Request = (props: Props) => {
 		e: React.MouseEventHandler<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.preventDefault();
-		if (desc.value === '') alert('후기를 작성해주세요!');
-		else if (rating === 0) alert('별점을 등록해주세요!');
+		if (rating === 0 || rating === null) alert('별점을 등록해주세요!');
+		else if (desc.value === '') alert('후기를 작성해주세요!');
 		else {
 			try {
 				const res = await axios.post(`${SERVER}/api/host/reviewWrite`, {
@@ -61,7 +67,7 @@ const Request = (props: Props) => {
 	};
 	return (
 		<div>
-			<TextArea {...desc} placeholder='후기를 작성해주세요'></TextArea>
+			<Label>별점을 등록해주세요</Label>
 			<RatingDiv>
 				<HostRating
 					value={rating}
@@ -75,12 +81,16 @@ const Request = (props: Props) => {
 				/>
 				<label>
 					{hover === -1
-						? rating === 0
-							? '별점을 선택해주세요'
-							: rating
-						: hover}
+						? rating == null || rating.toFixed(1) + '점'
+						: hover.toFixed(1)}
 				</label>
 			</RatingDiv>
+			<Label>후기를 작성해주세요</Label>
+			<Textarea
+				{...desc}
+				height='8em'
+				placeholder='따뜻한 후기는 호스트에게 큰 힘이 됩니다:)'
+			></Textarea>
 			<SubmitButton onClick={onSubmit}>리뷰작성</SubmitButton>
 		</div>
 	);
