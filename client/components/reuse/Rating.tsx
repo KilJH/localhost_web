@@ -20,7 +20,7 @@ const StarDiv = styled.div`
 const drawFullStar = (rating: number) => {
 	const icons = [];
 	for (let i = 0; i < Math.floor(rating); i++) {
-		icons.push(<StarRoundedIcon />);
+		icons.push(<StarRoundedIcon key={i} />);
 	}
 
 	return icons;
@@ -29,7 +29,7 @@ const drawFullStar = (rating: number) => {
 const fillTheSpace = (rating: number) => {
 	const icons = [];
 	for (let i = 5; i > Math.ceil(rating); i--) {
-		icons.push(<StarOutlineRoundedIcon />);
+		icons.push(<StarOutlineRoundedIcon key={i} />);
 	}
 
 	return icons;
