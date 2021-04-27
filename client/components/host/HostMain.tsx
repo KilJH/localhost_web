@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Maps from '../../components/reuse/Maps';
 import SearchPlace from '../../components/search/SearchPlace';
-import { Place } from '../../interfaces';
+import { Host, Place } from '../../interfaces';
 import styled from 'styled-components';
 import SERVER from '../../utils/url';
 import HostList from '../../components/host/HostList';
@@ -36,7 +36,8 @@ const HostMain = (props: Props) => {
 	});
 
 	const [coord, setCoord] = useState({ lat: 0, lng: 0 });
-	const [nearbyHosts, setNearbyHosts] = useState([]);
+	const [nearbyHosts, setNearbyHosts] = useState<Host[]>([]);
+	const [filteredHosts, setFilteredHosts] = useState<Host[]>([]);
 
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
@@ -67,13 +68,19 @@ const HostMain = (props: Props) => {
 			});
 	}, [coord]);
 
+	useEffect(() => {
+		setFilteredHosts(nearbyHosts);
+	}, [nearbyHosts]);
+
 	return (
 		<Container>
 			<div>
 				<SearchPlace setPlace={setPlace} />
 				<HostList
-					nearbyHosts={nearbyHosts}
-					setNearbyHosts={setNearbyHosts}
+					origin={nearbyHosts}
+					setOrigin={setNearbyHosts}
+					nearbyHosts={filteredHosts}
+					setNearbyHosts={setFilteredHosts}
 					coord={coord}
 				/>
 			</div>

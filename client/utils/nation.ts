@@ -7,5 +7,10 @@ export const languages = [
 	{ id: 6, name: '독일어' },
 	{ id: 7, name: '스페인어' },
 	{ id: 8, name: '포르투갈어' },
-	{ id: 9, name: '힌디어' },
+	{ id: 9, name: '아랍어' },
+	{ id: 10, name: '힌디어' },
+	{ id: 11, name: '뱅골어' },
+	{ id: 12, name: '인도네시아어' },
+	{ id: 13, name: '베트남어' },
+	{ id: 14, name: '태국어' },
 ];
