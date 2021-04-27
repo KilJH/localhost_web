@@ -354,6 +354,8 @@ module.exports.doneHosting = (req, res) => {
 	const userId = req.body.userId;
 	const hostUserId = req.body.hostUserId;
 
+	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
+
 	let sql = ``;
 	if (userId)
 		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${4} ;`;
@@ -382,8 +384,15 @@ module.exports.doneHosting = (req, res) => {
 
 module.exports.applyList = (req, res) => {
 	// applyHosting list를 불러오는 API
+	const userId = req.body.userId;
 	const hostUserId = req.body.hostUserId;
-	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${0} ;`;
+
+	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
+	let sql = ``;
+	if (userId)
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${0} ;`;
+	else if (hostUserId)
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${0} ;`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
@@ -400,9 +409,16 @@ module.exports.applyList = (req, res) => {
 
 module.exports.matchList = (req, res) => {
 	// match list를 불러오는 API
+	const userId = req.body.userId;
 	const hostUserId = req.body.hostUserId;
-	const sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${1};`;
 
+	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
+
+	let sql = ``;
+	if (userId)
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${1};`;
+	else if (hostUserId)
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${1};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('matchList err', err);
 		const users = rows.map(row => {
