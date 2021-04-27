@@ -1,21 +1,22 @@
 // import { Tab, Tabs } from '@material-ui/core';
 import React, { ReactNode, useContext } from 'react';
-import { User } from '../../interfaces/index';
-import MyBoard from './Mypage/MyBoard';
-import MyFollow from './Mypage/MyFollow';
-import Privacy from './Mypage/Privacy';
+import { User } from '../../../interfaces/index';
+import MyBoard from './MyBoard';
+import MyFollow from './MyFollow';
+import Privacy from './Privacy';
 import styled from 'styled-components';
-import ScrollContext from '../../context/scroll';
+import ScrollContext from '../../../context/scroll';
 import { useMediaQuery } from '@material-ui/core';
 
 interface Props {
-	followingUsers?: User[];
-	followers?: User[];
+	children?: ReactNode;
+	tabNum?: number;
 }
 
 interface TabsProps {
 	fixed: boolean;
 	isMobile: boolean;
+	tabNum?: number;
 }
 const Tabs = styled.div<TabsProps>`
 	display: flex;
@@ -37,40 +38,38 @@ const Tabs = styled.div<TabsProps>`
 			background-color: rgba(81, 151, 213, 0.1);
 			border-bottom: 2px solid #5197d5;
 		}
+		&:nth-child(${props => props.tabNum || 1}) {
+			background-color: rgba(81, 151, 213, 0.1);
+			border-bottom: 2px solid #5197d5;
+		}
 	}
 `;
 
 const MyPageContainer = styled.div`
-	& > hr {
-		margin: 4rem 0;
+	margin: 2rem 0 3rem 0;
+	& hr {
+		margin: 3rem 0;
 	}
 `;
 
-const Mypage = (props: Props) => {
+const MypageLayout = (props: Props) => {
 	const { state } = useContext(ScrollContext);
+	const { tabNum, children } = props;
 
 	const isMobile = useMediaQuery('(max-width: 600px)');
 
 	return (
-		<MyPageContainer>
-			<Tabs fixed={state.isUp} isMobile={isMobile}>
-				<a href='#'>회원정보</a>
-				<a href='#follow'>팔로우</a>
+		<>
+			<Tabs fixed={state.isUp} isMobile={isMobile} tabNum={tabNum}>
+				<a href='/users/mypage'>회원정보</a>
+				<a href='/users/mypage/host'>호스트</a>
 				<a href='#board'>내가 쓴 글</a>
 				<a href='#wishlist'>위시리스트</a>
 			</Tabs>
 
-			<Privacy id='pravacy' />
-			<hr />
-			<MyFollow
-				id='follow'
-				followingUsers={props.followingUsers}
-				followers={props.followers}
-			/>
-			<hr />
-			<MyBoard id='board' />
-		</MyPageContainer>
+			<MyPageContainer>{children}</MyPageContainer>
+		</>
 	);
 };
 
-export default Mypage;
+export default MypageLayout;

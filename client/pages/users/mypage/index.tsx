@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import Layout from '../../components/main/Layout';
-import Mypage from '../../components/user/Mypage';
-import { LoginProps, User } from '../../interfaces/index';
-import { GetServerSideProps, GetStaticProps } from 'next';
+import React from 'react';
+import Layout from '../../../components/main/Layout';
+import Mypage from '../../../components/user/Mypage/Mypage';
+import { User } from '../../../interfaces/index';
+import { GetServerSideProps } from 'next';
 import axios from 'axios';
-import SERVER from '../../utils/url';
+import SERVER from '../../../utils/url';
 
 interface Props {
 	pageProps: {
