@@ -358,7 +358,7 @@ module.exports.doneHosting = (req, res) => {
 
 	let sql = ``;
 	if (userId)
-		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${4} ;`;
+		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${4} ;`;
 	else if (hostUserId)
 		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${4} ;`;
 
@@ -390,7 +390,7 @@ module.exports.applyList = (req, res) => {
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 	let sql = ``;
 	if (userId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${0} ;`;
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && h.status = ${0} ;`;
 	else if (hostUserId)
 		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${0} ;`;
 
@@ -400,6 +400,7 @@ module.exports.applyList = (req, res) => {
 			return {
 				user: row,
 				date: formatDate(row.create_time),
+				status: row.status,
 			};
 		});
 
@@ -416,7 +417,7 @@ module.exports.matchList = (req, res) => {
 
 	let sql = ``;
 	if (userId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${1};`;
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && h.status = ${1};`;
 	else if (hostUserId)
 		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${1};`;
 	mysql.query(sql, (err, rows) => {
@@ -425,6 +426,7 @@ module.exports.matchList = (req, res) => {
 			return {
 				user: row,
 				date: formatDate(row.create_time),
+				status: row.status,
 			};
 		});
 
