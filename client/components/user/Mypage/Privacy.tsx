@@ -1,7 +1,7 @@
-import { Grid, Avatar } from '@material-ui/core';
+import { Grid, Avatar, Modal, Fade } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../hooks/useInput';
-import { User } from '../../../interfaces';
+import { Place, User } from '../../../interfaces';
 import styled from 'styled-components';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
@@ -9,6 +9,8 @@ import SERVER from '../../../utils/url';
 import UserPhoto from '../UserPhoto';
 import Button from '../../reuse/Button';
 import CpxBarometer from '../../reuse/CpxBarometer';
+import Input from '../../reuse/Input';
+import SearchPlace from '../../search/SearchPlace';
 
 interface Props {
 	id: string;
@@ -43,6 +45,32 @@ const PrivacyContainer = styled.div`
 		}
 	}
 `;
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& .searchForm {
+		width: 80vw;
+		max-width: 800px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: 0;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+	}
+`;
+
+const inputProps = {
+	width: '100% !important',
+	borderRadius: '0.25rem',
+	border: '1px solid rgba(0,0,0,0.41)',
+	textAlign: 'left',
+};
+
+const btnProps = {
+	padding: '0.75rem 1rem',
+};
 
 const Privacy = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
@@ -50,7 +78,6 @@ const Privacy = (props: Props) => {
 	const pwInput = useInput('');
 	const nnInput = useInput(currentUser.nickname);
 	const phInput = useInput(currentUser.phone);
-	const adInput = useInput(currentUser.address);
 
 	const [disabledPw, setDisabledPw] = useState(true);
 
@@ -58,13 +85,13 @@ const Privacy = (props: Props) => {
 
 	const [photoUrl, setPhotoUrl] = useState(currentUser.photo);
 
-	const onSubmit = async (e: React.FormEvent) => {
+	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		const user = {
 			email: currentUser.email,
 			nickname: nnInput.value,
 			phone: phInput.value,
-			address: adInput.value,
+			address: `${place.formatted_address}(${place.name})`,
 		};
 		// 유저정보 변경
 		const res = await axios.post(`${SERVER}/api/user/update`, { ...user });
@@ -72,7 +99,7 @@ const Privacy = (props: Props) => {
 		if (res.data.success) alert(res.data.message);
 	};
 
-	const onClickPhoto = (e: React.MouseEvent) => {
+	const onClickPhoto = (e: React.MouseEvent<HTMLButtonElement>) => {
 		const input: any = document.createElement('input');
 		input.type = 'file';
 		input.accept = 'image/*';
@@ -125,9 +152,26 @@ const Privacy = (props: Props) => {
 		}
 	}, [img]);
 
+	const [place, setPlace] = useState<Place>({
+		name: '',
+		formatted_address: '',
+		geometry: { location: { lat: 0, lng: 0 } },
+	});
+	// 모달을 위한 State
+	const [open, setOpen] = useState(false);
+	const handleOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
+	useEffect(() => {
+		setOpen(false);
+	}, [place]);
+
 	return (
 		<section id={props.id}>
-			<form onSubmit={onSubmit}>
+			<div>
 				<section>
 					<header>
 						<h3>기본 회원정보</h3>
@@ -144,7 +188,12 @@ const Privacy = (props: Props) => {
 									hover
 								/>
 
-								<Button default type='button' onClick={onClickReset}>
+								<Button
+									{...btnProps}
+									default
+									type='button'
+									onClick={onClickReset}
+								>
 									기본이미지로 변경
 								</Button>
 							</div>
@@ -155,10 +204,16 @@ const Privacy = (props: Props) => {
 						</div>
 						<div>
 							<div>패스워드: </div>
-							<div>
-								<input type='password' disabled={disabledPw} {...pwInput} />
-								<span>
+							<div style={{ display: 'flex' }}>
+								<Input
+									type='password'
+									{...inputProps}
+									disabled={disabledPw}
+									{...pwInput}
+								/>
+								<span style={{ whiteSpace: 'nowrap' }}>
 									<Button
+										{...btnProps}
 										type='button'
 										onClick={() => {
 											if (!disabledPw) {
@@ -186,6 +241,7 @@ const Privacy = (props: Props) => {
 										''
 									) : (
 										<Button
+											{...btnProps}
 											default
 											type='button'
 											onClick={() => {
@@ -206,37 +262,60 @@ const Privacy = (props: Props) => {
 						<div>
 							<div>닉네임:</div>
 							<div>
-								<input {...nnInput} />
+								<Input {...inputProps} {...nnInput} />
 							</div>
 						</div>
 						<div>
 							<div>휴대폰: </div>
 							<div>
-								<input {...phInput} />
+								<Input {...inputProps} {...phInput} />
 							</div>
 						</div>
 						<div>
 							<div>주소: </div>
 							<div>
-								<input {...adInput} />
+								<Input
+									{...inputProps}
+									value={
+										place.name
+											? `${place.formatted_address}(${place.name})`
+											: currentUser.address
+									}
+									onClick={handleOpen}
+									onChange={handleOpen}
+								/>
+
+								<StyledModal open={open} onClose={handleClose}>
+									<Fade in={open}>
+										<div className='searchForm'>
+											<SearchPlace setPlace={setPlace} />
+										</div>
+									</Fade>
+								</StyledModal>
 							</div>
 						</div>
 					</PrivacyContainer>
 				</section>
 				<section>
-					<header>
-						<h3>추가 회원정보(선택)</h3>
-					</header>
+					<header>{/* <h3>추가 회원정보(선택)</h3> */}</header>
 					<PrivacyContainer>
 						<div></div>
 					</PrivacyContainer>
 				</section>
-
-				<Button type='submit'>수정</Button>
-				<Button type='button' default>
-					취소
-				</Button>
-			</form>
+				<div style={{ textAlign: 'right' }}>
+					<Button
+						type='button'
+						default
+						padding='0.75rem 2rem'
+						style={{ marginRight: '0.25rem' }}
+					>
+						취소
+					</Button>
+					<Button type='submit' onClick={onSubmit} padding='0.75rem 2rem'>
+						수정
+					</Button>
+				</div>
+			</div>
 		</section>
 	);
 };
