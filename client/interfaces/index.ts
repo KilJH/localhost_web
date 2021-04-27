@@ -103,18 +103,20 @@ export interface Review {
 
 export interface Place {
 	formatted_address: string;
-	geometry: { location: { lat: number; lng: number }; distance?: number };
+	geometry?: { location: { lat: number; lng: number }; distance?: number };
 	name?: string;
 }
 
-export interface Applicant {
+export interface Application {
 	user: User;
 	date: string;
+	status: number;
 }
 
-export interface PreviousApplicant {
+export interface PreviousApplication {
 	user: User;
-	place: Place;
+	place?: Place;
 	date: string;
-	rating: number;
+	status?: number;
+	review?: Review;
 }
