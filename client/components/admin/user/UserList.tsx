@@ -79,9 +79,8 @@ const BlockCheckedItems = state => {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
-					console.log(res.data);
-					alert(res.data.message);
 					if (res.data.success) {
+						alert(res.data.message);
 						Router.push('/admin/user/list');
 					}
 				});
@@ -99,9 +98,8 @@ const DeleteCheckedItems = state => {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
-					console.log(res.data);
-					alert(res.data.message);
 					if (res.data.success) {
+						alert(res.data.message);
 						Router.push('/admin/user/list');
 					}
 				});
@@ -125,12 +123,10 @@ export default function UserList(props: Props) {
 	const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		DeleteCheckedItems(state);
-		location.href = `/admin/user/list`;
 	};
 	const blockButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		BlockCheckedItems(state);
-		location.href = `/admin/user/list`;
 	};
 
 	const emailSortHandler = () => {
@@ -204,7 +200,6 @@ export default function UserList(props: Props) {
 				</thead>
 				<tbody>
 					{items.map(item => {
-						console.log(item);
 						if (item.isHost === 0) {
 							return (
 								<UserItem

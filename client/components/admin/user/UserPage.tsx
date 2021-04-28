@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Search from '../../search/Search';
 import { User } from '../../../interfaces';
 import axios from 'axios';
@@ -20,6 +20,11 @@ export default function UserPage(props: Props) {
 		});
 		setFoundItems(res.data.users);
 	};
+
+	useEffect(() => {
+		console.log(11);
+		setFoundItems(items);
+	}, [items]);
 
 	return (
 		<div>
