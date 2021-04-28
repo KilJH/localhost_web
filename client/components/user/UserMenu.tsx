@@ -54,25 +54,25 @@ const UserMenu = (props: Props) => {
 						</a>
 					</Link>
 
-					<Link href='/users/mypage#follow'>
+					<Link href='/users/mypage/host'>
 						<a>
-							<li>팔로우 확인</li>
+							<li>신청한 호스트</li>
 						</a>
 					</Link>
-					<Link href='/users/mypage#'>
+					<Link href='/users/mypage/plan'>
+						<a>
+							<li>나의 플랜</li>
+						</a>
+					</Link>
+					<Link href='/users/mypage/board'>
 						<a>
 							<li>내가 쓴 글</li>
-						</a>
-					</Link>
-					<Link href='/users/mypage#'>
-						<a>
-							<li>나의 여행</li>
 						</a>
 					</Link>
 					{currentUser.isHost ? (
 						<Link href='/hosts/myhosting'>
 							<a>
-								<li>나의 호스팅</li>
+								<li>나의 호스트정보</li>
 							</a>
 						</Link>
 					) : (
