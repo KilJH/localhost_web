@@ -1,4 +1,4 @@
-import { Applicant} from '../../../interfaces';
+import { Application } from '../../../interfaces';
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
@@ -7,7 +7,7 @@ import SERVER from '../../../utils/url';
 import Router from 'next/router';
 
 type Props = {
-	applicant: Applicant;
+	applicant: Application;
 	userId: number;
 };
 const ButtonLabel = styled(Button)`
@@ -20,7 +20,7 @@ const ButtonLabel = styled(Button)`
 		}
 	}
 	&.MuiButton-textSecondary {
-		color: #f50057;
+		color: #e74c3c;
 	}
 `;
 const ButtonTd = styled.td`
@@ -32,13 +32,13 @@ export default function HostApplicantItem(props: Props) {
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/approveHosting`, {
+			const res = await axios.post(`${SERVER}/api/host/allow`, {
 				id: applicant.user.id,
 				hostUserId: userId,
 			});
 			if (res.data.success) {
 				alert('승인 처리되었습니다.');
-				Router.push('http://localhost:3000/hosts/myhosting');
+				Router.push('/hosts/myhosting');
 			}
 		} catch (err) {
 			return console.log(err);
@@ -47,13 +47,13 @@ export default function HostApplicantItem(props: Props) {
 	const onDenialHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/denyHosting`, {
+			const res = await axios.post(`${SERVER}/api/host/deny`, {
 				id: applicant.user.id,
 				hostUserId: userId,
 			});
 			if (res.data.success) {
 				alert('거부 처리되었습니다.');
-				Router.push('http://localhost:3000/hosts/myhosting');
+				Router.push('/hosts/myhosting');
 			}
 		} catch (err) {
 			return console.log(err);
@@ -62,7 +62,7 @@ export default function HostApplicantItem(props: Props) {
 	return (
 		<React.Fragment>
 			<tr>
-				<td>{applicant?.user.name || '이름'}</td>
+				<td>{applicant?.user.nickname || '닉네임'}</td>
 				<td>{applicant?.date || '2021-01-01'}</td>
 				<ButtonTd>
 					<ButtonLabel onClick={onApprovalHandler}>승인</ButtonLabel>

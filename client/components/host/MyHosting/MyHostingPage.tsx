@@ -1,6 +1,6 @@
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Application, Host, PreviousApplication } from '../../../interfaces';
 import Button from '@material-ui/core/Button';
@@ -8,20 +8,14 @@ import HostInfoChange from './HostInfoChange';
 import HostApplicantItem from './HostApplicantItem';
 import CloseIcon from '@material-ui/icons/Close';
 import HostPreviousApplicantItem from './HostPreviousApplicantItem';
+import HostMatchedApplicantItem from './HostMatchedApplicantItem';
 interface Props {
 	host: Host;
 	applyList: Application[];
 	userId: number;
 	previousApplicant: PreviousApplication[];
+	matchedApplicant: Application[];
 }
-const Label = styled.p`
-	margin: 2em 0 1em 0;
-	font-size: 0.95em;
-	font-weight: bold;
-	&#table {
-		margin-bottom: 0.25em;
-	}
-`;
 
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
@@ -63,10 +57,11 @@ const UserTable = styled.table`
 		border-bottom: 1px solid gray;
 	}
 	& td {
+		padding: 1rem 0.5rem;
 		border-bottom: 1px solid gray;
 	}
 	& tbody > tr:nth-child(odd) {
-		background-color: rgba(81, 151, 213, 0.2);
+		background-color: #eee;
 	}
 `;
 const CloseButtonDiv = styled(DialogActions)`
@@ -75,10 +70,30 @@ const CloseButtonDiv = styled(DialogActions)`
 		margin: 0;
 	}
 `;
+
+const NoItem = ({
+	children,
+	colspan,
+}: {
+	children: ReactNode;
+	colspan: number;
+}) => (
+	<tr>
+		<td colSpan={colspan} style={{ fontWeight: 500 }}>
+			{children}
+		</td>
+	</tr>
+);
+
 export default function MyHostingPage(props: Props): ReactElement {
-	const { applyList, host, userId, previousApplicant } = props;
+	const {
+		applyList,
+		host,
+		userId,
+		previousApplicant,
+		matchedApplicant,
+	} = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
-	console.log(previousApplicant);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
 	};
@@ -88,7 +103,27 @@ export default function MyHostingPage(props: Props): ReactElement {
 	return (
 		<div>
 			{/* 호스팅 신청자 목록 */}
-			<Label id='table'>호스팅 신청자 목록</Label>
+			<h3>현재 호스팅 목록</h3>
+			<UserTable>
+				<thead>
+					<tr>
+						<th>닉네임</th>
+						<th>날짜</th>
+					</tr>
+				</thead>
+				<tbody>
+					{applyList.length ? (
+						matchedApplicant.map(value => (
+							<HostMatchedApplicantItem applicant={value} />
+						))
+					) : (
+						<NoItem colspan={2}>진행중인 호스팅이 없습니다.</NoItem>
+					)}
+				</tbody>
+			</UserTable>
+
+			{/* 호스팅 신청자 목록 */}
+			<h3>호스팅 신청자 목록</h3>
 			<UserTable>
 				<thead>
 					<tr>
@@ -98,14 +133,18 @@ export default function MyHostingPage(props: Props): ReactElement {
 					</tr>
 				</thead>
 				<tbody>
-					{applyList.map(value => (
-						<HostApplicantItem applicant={value} userId={userId} />
-					))}
+					{applyList.length ? (
+						applyList.map(value => (
+							<HostApplicantItem applicant={value} userId={userId} />
+						))
+					) : (
+						<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
+					)}
 				</tbody>
 			</UserTable>
 
 			{/* 이전 호스팅 목록 */}
-			<Label id='table'>이전 호스팅 목록</Label>
+			<h3>이전 호스팅 목록</h3>
 			<UserTable>
 				<thead>
 					<tr>
@@ -116,13 +155,17 @@ export default function MyHostingPage(props: Props): ReactElement {
 					</tr>
 				</thead>
 				<tbody>
-					{previousApplicant.map(value => (
-						<HostPreviousApplicantItem applicant={value} />
-					))}
+					{applyList.length ? (
+						previousApplicant.map(value => (
+							<HostPreviousApplicantItem applicant={value} />
+						))
+					) : (
+						<NoItem colspan={4}>진행중인 호스팅이 없습니다.</NoItem>
+					)}
 				</tbody>
 			</UserTable>
 			{/* 호스트 정보 변경 */}
-			<Label>호스트 정보 변경</Label>
+			<h3>호스트 정보 변경</h3>
 			<ButtonLabel onClick={handleDialogueOpen} color='primary'>
 				정보 변경
 			</ButtonLabel>

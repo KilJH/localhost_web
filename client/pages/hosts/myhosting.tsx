@@ -12,6 +12,7 @@ interface Props {
 		applyList: Application[];
 		userId: number;
 		previousApplicant: PreviousApplication[];
+		matchedApplicant: Application[];
 	};
 }
 
@@ -27,7 +28,7 @@ const myhosting = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	// 로그인 유저 id 가져오기
-
+	let matchedApplicant = [];
 	const res = await axios.post(
 		`${SERVER}/api/auth/check`,
 		{ token: ctx.req.cookies.token },
@@ -41,16 +42,28 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	const host = resLoadHost.data.host;
 
 	const applyList = await (
-		await axios.post(`${SERVER}/api/host/applyList`, {
+		await axios.post(`${SERVER}/api/host/application/list`, {
 			hostUserId: userId,
 		})
 	).data.applicant;
 
 	const previousApplicant = await (
-		await axios.post(`${SERVER}/api/host/doneHosting`, {
+		await axios.post(`${SERVER}/api/host/application/history`, {
 			hostUserId: host.id,
 		})
 	).data.previousApplicant;
-	return { props: { host, applyList, userId, previousApplicant } };
+
+	const applicationList = await (
+		await axios.post(`${SERVER}/api/host/application/list`, {
+			hostUserId: host.id,
+		})
+	).data.applicant;
+
+	applicationList.map(value => {
+		if (value.status === 1) matchedApplicant.push(value);
+	});
+	return {
+		props: { host, applyList, userId, previousApplicant, matchedApplicant },
+	};
 };
 export default myhosting;
