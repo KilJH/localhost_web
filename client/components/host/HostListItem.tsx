@@ -142,7 +142,9 @@ const HostListItem = (props: Props) => {
 					</div>
 
 					<Link href='/hosts/[id]' as={`/hosts/${host.id}`}>
-						<Button>자세히보기</Button>
+						<a>
+							<Button>자세히보기</Button>
+						</a>
 					</Link>
 				</div>
 			</div>

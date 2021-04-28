@@ -1,8 +1,4 @@
-import {
-	DatePicker,
-	KeyboardDatePicker,
-	MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
@@ -16,6 +12,7 @@ import axios from 'axios';
 import { UserStateContext } from '../../context/user';
 import SERVER from '../../utils/url';
 import Router from 'next/router';
+import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface Props {
 	host: Host;
@@ -92,15 +89,16 @@ const HostDetail = ({ host }: Props) => {
 	const currentUser = useContext(UserStateContext);
 
 	const onApply = async () => {
-		const res = await axios.post(`${SERVER}/api/host/applyHosting`, {
+		const res = await axios.post(`${SERVER}/api/host/application`, {
 			id: currentUser.id,
-			hostId: host.id,
+			hostUserId: host.id,
 			date: date,
 		});
 
 		res.data.success ? Router.push('/hosts') : alert('신청에 실패했습니다.');
 	};
 
+	const [on, setOn] = useState(false);
 	return (
 		<HostDetailContainer>
 			<div className='profile'>
@@ -122,7 +120,11 @@ const HostDetail = ({ host }: Props) => {
 							disableToolbar
 						/>
 					</MuiPickersUtilsProvider>
-					<Button padding='0.5em 1.5rem' onClick={onApply}>
+					<Button
+						padding='0.5em 1.5rem'
+						onClick={onApply}
+						style={{ fontSize: '1em', fontWeight: 600 }}
+					>
 						신청
 					</Button>
 				</div>
@@ -158,7 +160,15 @@ const HostDetail = ({ host }: Props) => {
 				<table>
 					<tr>
 						<td>여행스타일</td>
-						<td></td>
+						<td>
+							<TravelStyleTag
+								travelStyle='문화재'
+								onClick={() => {
+									setOn(!on);
+								}}
+								on={on}
+							/>
+						</td>
 					</tr>
 					<tr>
 						<td>매칭횟수</td>

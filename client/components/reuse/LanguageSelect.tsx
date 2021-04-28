@@ -56,7 +56,7 @@ const Selected = styled.div`
 	}
 `;
 
-const LanguageSelectList = styled.div<{ onShow: boolean }>`
+const LanguageSelectList = styled.div<{ open: boolean }>`
 	position: absolute;
 	background: white;
 	padding: 1rem;
@@ -68,7 +68,7 @@ const LanguageSelectList = styled.div<{ onShow: boolean }>`
 	box-sizing: border-box;
 	overflow-y: auto;
 
-	animation: ${props => (props.onShow ? topToBtm(0, 20) : topToBtm(20, 0))} 0.5s
+	animation: ${props => (props.open ? topToBtm(0, 20) : topToBtm(20, 0))} 0.5s
 		ease forwards;
 
 	& label {
@@ -120,7 +120,7 @@ const LanguageSelect = (props: Props) => {
 	return (
 		<>
 			<div style={{ position: 'relative', top: '1rem' }}>
-				<LanguageSelectList onShow={open}>
+				<LanguageSelectList open={open}>
 					{languages.map(lang => (
 						<label key={lang.id}>
 							<StyledCheckbox
