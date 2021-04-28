@@ -78,9 +78,8 @@ const DenyCheckedItems = state => {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
-					console.log(res.data);
-					alert(res.data.message);
 					if (res.data.success) {
+						alert(res.data.message);
 						Router.push('/admin/host/approval');
 					}
 				});
@@ -98,9 +97,8 @@ const ApproveCheckedItems = state => {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
-					console.log(res.data);
-					alert(res.data.message);
 					if (res.data.success) {
+						alert(res.data.message);
 						Router.push('/admin/host/approval');
 					}
 				});

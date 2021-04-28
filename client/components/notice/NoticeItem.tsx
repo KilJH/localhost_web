@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
 import { Notice } from '../../interfaces';
-import Layout from '../main/Layout';
 import Link from 'next/link';
 
 interface Props {
