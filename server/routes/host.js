@@ -62,7 +62,7 @@ router.post('/application/cancel', function (req, res, next) {
 router.post('/application', function (req, res, next) {
 	management.applyHosting(req, res);
 });
-router.post('/reviewWrite', function (req, res, next) {
+router.post('/review/write', function (req, res, next) {
 	management.reviewWrite(req, res);
 });
 
