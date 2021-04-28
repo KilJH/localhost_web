@@ -11,6 +11,7 @@ import Button from '../../reuse/Button';
 import CpxBarometer from '../../reuse/CpxBarometer';
 import Input from '../../reuse/Input';
 import SearchPlace from '../../search/SearchPlace';
+import Router from 'next/router';
 
 interface Props {
 	id: string;
@@ -143,7 +144,7 @@ const Privacy = (props: Props) => {
 							url: res.data.url,
 						})
 						.then(res => {
-							console.log(res);
+							location.href = '/users/mypage';
 						});
 				})
 				.catch(err => {
