@@ -454,17 +454,16 @@ module.exports.cancelHosting = (req, res) => {
 // 수정중입니다
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
-	const id = req.body.id; // userId
-	const hostUserId = req.body.hostUserId;
+	const id = req.body.id; // host_user_apply id를 입력해야합니다!!
 	const description = req.body.description;
 	const rating = req.body.rating;
 
-	const sql = `INSERT INTO host_review(user_id, description, host_user_id, rating) VALUES("${id}","${description}","${hostUserId}","${rating}")`;
+	const sql = `INSERT INTO host_review(host_user_apply_id, description , rating) VALUES("${id}","${description}","${rating}")`;
 
 	mysql.query(sql, err => {
 		if (err) console.log('reviewWrite err', err);
 	});
-	const selectSql = `SELECT *, AVG(host_review.rating) avg FROM host_review WHERE host_user_id = ?;`;
+	const selectSql = `SELECT r.*,h.id host_id, AVG(r.rating) avg FROM host_review r LEFT JOIN host_user_apply h ON h.id = r.host_user_apply_id WHERE host_id = ?;`;
 	mysql.query(selectSql, hostUserId, (err, rows, fields) => {
 		if (err) return console.log('insert err', err);
 
