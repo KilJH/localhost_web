@@ -1,6 +1,8 @@
+import axios from 'axios';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Application, PreviousApplication } from '../../../interfaces';
+import SERVER from '../../../utils/url';
 import Button from '../../reuse/Button';
 import Rating from '../../reuse/Rating';
 import MypageLayout from './MypageHeader';
@@ -68,14 +70,31 @@ const Status = status => {
 	}
 };
 
-const ApplicationItem = ({ application }: { application: Application }) => (
-	<tr>
-		<td>{application.date}</td>
-		<td>{application.user.nickname}</td>
-		<td>{Status(application.status || 0)}</td>
-		<td>{application.status < 2 ? <Button default>취소</Button> : ''}</td>
-	</tr>
-);
+const ApplicationItem = ({ application }: { application: Application }) => {
+	const onCancle = () => {
+		axios
+			.post(`${SERVER}/api/host/application/cancle`, { id: application.id })
+			.then(res => {
+				if (res.data.success) alert('취소가 완료되었습니다.');
+			});
+	};
+	return (
+		<tr>
+			<td>{application.date}</td>
+			<td>{application.user.nickname}</td>
+			<td>{Status(application.status || 0)}</td>
+			<td>
+				{application.status < 2 ? (
+					<Button default onClick={onCancle}>
+						취소
+					</Button>
+				) : (
+					''
+				)}
+			</td>
+		</tr>
+	);
+};
 
 const HistoryItem = ({ history }: { history: PreviousApplication }) => (
 	<tr>
@@ -83,7 +102,7 @@ const HistoryItem = ({ history }: { history: PreviousApplication }) => (
 		<td>{history.user.nickname}</td>
 		<td>{history.place.formatted_address}</td>
 		<td>
-			{history.review ? (
+			{history.review.description ? (
 				<Rating rating={history.review.rating} />
 			) : (
 				<Button>리뷰작성</Button>

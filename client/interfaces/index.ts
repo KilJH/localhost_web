@@ -108,12 +108,14 @@ export interface Place {
 }
 
 export interface Application {
+	id: number;
 	user: User;
 	date: string;
 	status: number;
 }
 
 export interface PreviousApplication {
+	id: number;
 	user: User;
 	place?: Place;
 	date: string;
