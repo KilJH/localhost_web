@@ -12,7 +12,6 @@ type Props = {
 export default function UserPage(props: Props) {
 	const { items } = props;
 	const [foundItems, setFoundItems] = useState(items);
-
 	const onSubmit = async (event: React.FormEvent, type, item) => {
 		event.preventDefault();
 		const res = await axios.post(`${SERVER}/api/user/search`, {

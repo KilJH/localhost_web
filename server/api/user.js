@@ -2,6 +2,14 @@
 const crypto = require('crypto');
 const mysql = require('../db/mysql');
 
+module.exports.userMapping = userList => {
+	return userList.map(user => ({
+		...user,
+		isHost: user.ishost,
+		isAdmin: user.isadmin,
+	}));
+};
+
 module.exports.register = (req, res) => {
 	// 회원가입
 	const email = req.body.email || req.query.email;
@@ -103,7 +111,7 @@ module.exports.list = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 		console.log('검색된 회원수: ', rows.length);
-		res.status(200).json({ success: true, users: rows });
+		res.status(200).json({ success: true, users: this.userMapping(rows) });
 	});
 };
 module.exports.find = (req, res) => {
@@ -116,7 +124,7 @@ module.exports.find = (req, res) => {
 	mysql.query(sql, id, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 		console.log('검색결과', rows);
-		res.status(200).json({ success: true, user: rows[0] });
+		res.status(200).json({ success: true, user: this.userMapping(rows)[0] });
 	});
 };
 
@@ -143,7 +151,7 @@ module.exports.search = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).json({ success: true, users: rows });
+		res.status(200).json({ success: true, users: this.userMapping(rows) });
 	});
 };
 

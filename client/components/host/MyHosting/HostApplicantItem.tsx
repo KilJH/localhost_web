@@ -32,7 +32,7 @@ export default function HostApplicantItem(props: Props) {
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/allow`, {
+			const res = await axios.post(`${SERVER}/api/host/application/approve`, {
 				id: applicant.user.id,
 				hostUserId: userId,
 			});
@@ -47,7 +47,7 @@ export default function HostApplicantItem(props: Props) {
 	const onDenialHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/deny`, {
+			const res = await axios.post(`${SERVER}/api/host/application/deny`, {
 				id: applicant.user.id,
 				hostUserId: userId,
 			});

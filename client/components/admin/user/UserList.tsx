@@ -175,6 +175,7 @@ export default function UserList(props: Props) {
 			});
 		}
 	};
+
 	return (
 		<div>
 			<UserTable>
@@ -203,6 +204,7 @@ export default function UserList(props: Props) {
 				</thead>
 				<tbody>
 					{items.map(item => {
+						console.log(item);
 						if (item.isHost === 0) {
 							return (
 								<UserItem

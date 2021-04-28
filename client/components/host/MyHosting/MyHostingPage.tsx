@@ -102,7 +102,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 	};
 	return (
 		<div>
-			{/* 호스팅 신청자 목록 */}
+			{/* 현재 호스팅 목록 */}
 			<h3>현재 호스팅 목록</h3>
 			<UserTable>
 				<thead>
