@@ -1,8 +1,10 @@
+import { Modal } from '@material-ui/core';
 import axios from 'axios';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Application, PreviousApplication } from '../../../interfaces';
 import SERVER from '../../../utils/url';
+import HostReviewWrite from '../../host/HostReviewWrite';
 import Button from '../../reuse/Button';
 import Rating from '../../reuse/Rating';
 import MypageLayout from './MypageHeader';
@@ -42,6 +44,22 @@ const Table = styled.table`
 	}
 	& td {
 		padding: 1em 0.5em;
+	}
+`;
+
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& .modalItem {
+		width: 80vw;
+		max-width: 800px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: 0;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
 	}
 `;
 
@@ -96,20 +114,36 @@ const ApplicationItem = ({ application }: { application: Application }) => {
 	);
 };
 
-const HistoryItem = ({ history }: { history: PreviousApplication }) => (
-	<tr>
-		<td>{history.date}</td>
-		<td>{history.user.nickname}</td>
-		<td>{history.place.formatted_address}</td>
-		<td>
-			{history.review.description ? (
-				<Rating rating={history.review.rating} />
-			) : (
-				<Button>리뷰작성</Button>
-			)}
-		</td>
-	</tr>
-);
+const HistoryItem = ({ history }: { history: PreviousApplication }) => {
+	// 모달을 위한 State
+	const [open, setOpen] = useState(false);
+	const handleOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	return (
+		<tr>
+			<td>{history.date}</td>
+			<td>{history.user.nickname}</td>
+			<td>{history.place.formatted_address}</td>
+			<td>
+				{history.review.description ? (
+					<Rating rating={history.review.rating} />
+				) : (
+					<Button onClick={handleOpen}>리뷰작성</Button>
+				)}
+			</td>
+			<StyledModal open={open} onClose={handleClose}>
+				<div className='modalItem'>
+					<HostReviewWrite applicationId={history.id} onClose={handleClose} />
+				</div>
+			</StyledModal>
+		</tr>
+	);
+};
 
 const NoItem = ({ children }: { children: ReactNode }) => (
 	<tr>

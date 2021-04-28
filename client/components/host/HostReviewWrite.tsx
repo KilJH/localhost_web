@@ -7,9 +7,11 @@ import axios from 'axios';
 import SERVER from '../../utils/url';
 import { useInput } from '../../hooks/useInput';
 import Textarea from '../reuse/Textarea';
+import Router from 'next/router';
 
 interface Props {
-	hostUserId: number;
+	applicationId: number;
+	onClose?: Function;
 }
 
 const Label = styled.p`
@@ -41,26 +43,25 @@ const HostRating = styled(Rating)`
 `;
 
 const Request = (props: Props) => {
-	const { hostUserId } = props;
+	const { applicationId, onClose } = props;
 	const [rating, setRating] = useState(null);
 	const [hover, setHover] = useState(-1);
 	const desc = useInput('');
-	const currentUser = useContext(UserStateContext);
-	const onSubmit = async (
-		e: React.MouseEventHandler<HTMLButtonElement, MouseEvent>,
-	) => {
-		e.preventDefault();
+	const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		if (rating === 0 || rating === null) alert('별점을 등록해주세요!');
 		else if (desc.value === '') alert('후기를 작성해주세요!');
 		else {
 			try {
-				const res = await axios.post(`${SERVER}/api/host/reviewWrite`, {
-					id: currentUser.id,
-					hostUserId: hostUserId,
+				const res = await axios.post(`${SERVER}/api/host/review/write`, {
+					id: applicationId,
 					description: desc.value,
 					rating: rating,
 				});
-				if (res.data.success) alert('후기가 등록되었습니다!');
+				if (res.data.success) {
+					alert('후기가 등록되었습니다!');
+					onClose();
+					Router.push('/users/mypage/host');
+				}
 			} catch (err) {
 				return console.log(err);
 			}
