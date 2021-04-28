@@ -23,7 +23,7 @@ interface Props {
 const mypage = ({ pageProps }: Props) => {
 	return (
 		<Layout title='마이페이지 | localhost'>
-			<MyHostLog />
+			<MyHostLog {...pageProps} />
 		</Layout>
 	);
 };
@@ -38,17 +38,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
 	const userId = res.data.user.id;
 
-	const resApp = await axios.post(`${SERVER}/api/host/applyList`, {
+	const resApp = await axios.post(`${SERVER}/api/host/application/list`, {
 		userId,
 	});
-	const resPreApp = await axios.post(`${SERVER}/api/host/doneHosting`, {
+	const resPreApp = await axios.post(`${SERVER}/api/host/application/history`, {
 		userId,
 	});
 
 	const applications = resApp.data.applicant;
 	const preApplications = resPreApp.data.previousApplicant;
-
-	console.log(applications, preApplications);
 
 	return { props: { applications, preApplications } };
 };
