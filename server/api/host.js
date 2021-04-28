@@ -27,6 +27,7 @@ module.exports.list = (req, res) => {
 				email: rows.email,
 				photo: rows.photo,
 				description: rows.description,
+				rating: rows.rating,
 				languages: [rows.language1, rows.language2, rows.language3],
 				place: {
 					formatted_address: rows.formattedAddress,
@@ -199,6 +200,7 @@ module.exports.searchHost = (req, res) => {
 				email: rows.email,
 				photo: rows.photo,
 				description: rows.description,
+				rating: rows.rating,
 				languages: [rows.language1, rows.language2, rows.language3],
 				place: {
 					formatted_address: rows.formattedAddress,
@@ -235,6 +237,7 @@ module.exports.load = (req, res) => {
 					email: rows.email,
 					photo: rows.photo,
 					description: rows.description,
+					rating: rows.rating,
 					languages: [rows.language1, rows.language2, rows.language3],
 					on: Boolean(rows.on),
 					place: {
@@ -302,6 +305,7 @@ module.exports.nearbyList = (req, res) => {
 				email: rows.email,
 				photo: rows.photo,
 				description: rows.description,
+				rating: rows.rating,
 				languages: [rows.language1, rows.language2, rows.language3],
 				on: rows.on,
 				place: {

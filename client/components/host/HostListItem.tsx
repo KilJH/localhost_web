@@ -116,7 +116,6 @@ const HostListItemContainer = styled.div`
 
 const HostListItem = (props: Props) => {
 	const { host } = props;
-	const randomRating = Number((Math.random() * 5).toFixed(1));
 	return (
 		<HostListItemContainer>
 			<UserPhoto src={host.photo} width={5} margin='0 0.5rem' />
@@ -127,9 +126,9 @@ const HostListItem = (props: Props) => {
 						<p className='follower'>팔로워 {host.follower}</p>
 					</div>
 					<div className='point'>
-						<Rating rating={randomRating} isFilled />
+						<Rating rating={host.rating} isFilled />
 						<div className='point_detail'>
-							<span>{randomRating.toFixed(1)}</span>
+							<span>{host.rating.toFixed(1)}</span>
 						</div>
 					</div>
 				</div>
