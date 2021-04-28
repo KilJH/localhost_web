@@ -44,22 +44,16 @@ router.post('/update', function (req, res, next) {
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
-router.post('/doneHosting', function (req, res, next) {
+router.post('/application/history', function (req, res, next) {
 	management.doneHosting(req, res);
 });
-router.post('/applyHosting', function (req, res, next) {
+router.post('/application/list', function (req, res, next) {
+	management.showHosting(req, res);
+});
+router.post('/application', function (req, res, next) {
 	management.applyHosting(req, res);
 });
-router.post('/approveHosting', function (req, res, next) {
-	management.approveHosting(req, res);
-});
-router.post('/denyHosting', function (req, res, next) {
-	management.denyHosting(req, res);
-});
-router.post('/cancelHosting', function (req, res, next) {
-	management.cancelHosting(req, res);
-});
-router.post('/reviewWrite', function (req, res, next) {
+router.post('/application/review', function (req, res, next) {
 	management.reviewWrite(req, res);
 });
 
