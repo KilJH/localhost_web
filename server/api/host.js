@@ -8,22 +8,7 @@ const formatDate = date => {
 	const yyyy = day.getFullYear();
 	const MM = day.getMonth() < 9 ? `0${day.getMonth() + 1}` : day.getMonth() + 1;
 	const dd = day.getDate() < 9 ? `0${day.getDate()}` : day.getDate();
-
-	const hh = day.getHours() < 10 ? `0${day.getHours()}` : day.getHours();
-	const mm = day.getMinutes() < 10 ? `0${day.getMinutes()}` : day.getMinutes();
-
-	if (
-		!(
-			now.getFullYear() - day.getFullYear() ||
-			now.getMonth() - day.getMonth() ||
-			now.getDate() - day.getDate()
-		)
-	) {
-		return `${hh} : ${mm}`;
-	} else {
-		// 아니면 yyyy-MM-dd hh:mm
-		return `${yyyy}-${MM}-${dd} ${hh} : ${mm}`;
-	}
+	return `${yyyy}-${MM}-${dd}`;
 };
 
 module.exports.list = (req, res) => {
@@ -382,7 +367,7 @@ module.exports.doneHosting = (req, res) => {
 	});
 };
 
-module.exports.applyList = (req, res) => {
+module.exports.showHosting = (req, res) => {
 	// applyHosting list를 불러오는 API
 	const userId = req.body.userId;
 	const hostUserId = req.body.hostUserId;
@@ -390,9 +375,9 @@ module.exports.applyList = (req, res) => {
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 	let sql = ``;
 	if (userId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && h.status = ${0} ;`;
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId}`;
 	else if (hostUserId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${0} ;`;
+		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId}`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
@@ -408,38 +393,13 @@ module.exports.applyList = (req, res) => {
 	});
 };
 
-module.exports.matchList = (req, res) => {
-	// match list를 불러오는 API
-	const userId = req.body.userId;
-	const hostUserId = req.body.hostUserId;
-
-	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
-
-	let sql = ``;
-	if (userId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && h.status = ${1};`;
-	else if (hostUserId)
-		sql = `select * from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${1};`;
-	mysql.query(sql, (err, rows) => {
-		if (err) console.log('matchList err', err);
-		const users = rows.map(row => {
-			return {
-				user: row,
-				date: formatDate(row.create_time),
-				status: row.status,
-			};
-		});
-
-		res.json({ success: true, matchList: users });
-	});
-};
-
 module.exports.applyHosting = (req, res) => {
 	// user가 host에게 호스팅 신청하는 API
 	const id = req.body.id; // userId;
 	const hostUserId = req.body.hostUserId;
+	const date = req.body.date;
 
-	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id) VALUES("${hostUserId}", "${id}");`;
+	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id, date) VALUES("${hostUserId}", "${id}", "${date}");`;
 
 	mysql.query(sql, err => {
 		if (err) console.log('applyHosting err', err);
@@ -448,44 +408,6 @@ module.exports.applyHosting = (req, res) => {
 	});
 };
 
-module.exports.approveHosting = (req, res) => {
-	// host 가 user의 신청을 승인하는 API
-	const id = req.body.id; // requestUserId
-	const hostUserId = req.body.hostUserId; // hostUserId
-
-	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
-	mysql.query(updateSql, err => {
-		if (err) return console.log('updateSql err', err);
-
-		res.json({ success: true });
-	});
-};
-
-module.exports.denyHosting = (req, res) => {
-	// host 가 user의 신청을 취소하는 API
-	const id = req.body.id; // requestUserId
-	const hostUserId = req.body.hostUserId; // hostUserId
-
-	const updateSql = `UPDATE host_user_apply SET status=${2} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
-	mysql.query(updateSql, err => {
-		if (err) return console.log('updateSql err', err);
-
-		res.json({ success: true });
-	});
-};
-
-module.exports.cancelHosting = (req, res) => {
-	// user 가 호스팅을 취소하는 API
-	const id = req.body.id; // requestUserId
-	const hostUserId = req.body.hostUserId; // hostUserId
-
-	const updateSql = `UPDATE host_user_apply SET status=${3} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
-	mysql.query(updateSql, err => {
-		if (err) return console.log('updateSql err', err);
-
-		res.json({ success: true });
-	});
-};
 // 수정중입니다
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
