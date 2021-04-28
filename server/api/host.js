@@ -343,17 +343,16 @@ module.exports.doneHosting = (req, res) => {
 
 	let sql = ``;
 	if (userId)
-		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.user_user_id = ${userId} && h.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,h.address addr, h.latitude lat, h.longitude lon FROM host_user_apply a LEFT JOIN user u ON u.id = a.host_user_id LEFT JOIN host h ON h.user_id = a.host_user_id WHERE a.user_user_id = ${userId} && a.status = ${4} ;`;
 	else if (hostUserId)
-		sql = `select h.*,u.*,o.latitude lat, o.longitude lon, o.address addr, r.rating from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id LEFT JOIN host_review r ON r.user_id = h.user_user_id LEFT JOIN host o ON o.user_id =h.user_user_id WHERE h.host_user_id = ${hostUserId} && h.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,h.address addr, h.latitude lat, h.longitude lon FROM host_user_apply a LEFT JOIN user u ON u.id = a.user_user_id LEFT JOIN host h ON h.user_id = a.host_user_id WHERE a.host_user_id = ${hostUserId} && a.status = ${4} ;`;
 
 	mysql.query(sql, (err, rows) => {
-		if (err) console.log('applyList err', err);
+		if (err) console.log('doneHosting err', err);
 		const users = rows.map(row => {
 			return {
 				user: row,
 				date: formatDate(row.create_time),
-				rate: row.rating,
 				place: {
 					formatted_address: rows[0].addr,
 					geometry: {
@@ -362,8 +361,27 @@ module.exports.doneHosting = (req, res) => {
 				},
 			};
 		});
+		let reviewSql = ``;
 
-		res.json({ success: true, previousApplicant: users });
+		if (userId) {
+			const host = rows[0].host_user_id;
+			reviewSql = `SELECT * FROM host_review h LEFT JOIN user u ON u.id = h.user_id WHERE user_id = "${userId}" && host_user_id = "${host}"`;
+		} else if (hostUserId) {
+			const user = rows[0].user_user_id;
+			reviewSql = `SELECT * FROM host_review h LEFT JOIN user u ON u.id = h.user_id WHERE user_id = "${user}" && host_user_id = "${hostUserId}"`;
+		}
+		mysql.query(reviewSql, (err, reviews, fields) => {
+			if (err) return console.log('review err', err);
+			const review = reviews.map(review => {
+				return {
+					user: review,
+					rating: review.rating,
+					description: review.description,
+					createTime: formatDate(review.create_time),
+				};
+			});
+			res.json({ success: true, previousApplicant: users, review });
+		});
 	});
 };
 
@@ -403,6 +421,45 @@ module.exports.applyHosting = (req, res) => {
 
 	mysql.query(sql, err => {
 		if (err) console.log('applyHosting err', err);
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.approveHosting = (req, res) => {
+	// host 가 user의 신청을 승인하는 API
+	const id = req.body.id; // requestUserId
+	const hostUserId = req.body.hostUserId; // hostUserId
+
+	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
+	mysql.query(updateSql, err => {
+		if (err) return console.log('approveHosting err', err);
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.denyHosting = (req, res) => {
+	// host 가 user의 신청을 취소하는 API
+	const id = req.body.id; // requestUserId
+	const hostUserId = req.body.hostUserId; // hostUserId
+
+	const updateSql = `UPDATE host_user_apply SET status=${2} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
+	mysql.query(updateSql, err => {
+		if (err) return console.log('updateSql err', err);
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.cancelHosting = (req, res) => {
+	// user 가 호스팅을 취소하는 API
+	const id = req.body.id; // requestUserId
+	const hostUserId = req.body.hostUserId; // hostUserId
+
+	const updateSql = `UPDATE host_user_apply SET status=${3} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
+	mysql.query(updateSql, err => {
+		if (err) return console.log('updateSql err', err);
 
 		res.json({ success: true });
 	});

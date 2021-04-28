@@ -50,10 +50,19 @@ router.post('/application/history', function (req, res, next) {
 router.post('/application/list', function (req, res, next) {
 	management.showHosting(req, res);
 });
+router.post('/application/approve', function (req, res, next) {
+	management.approveHosting(req, res);
+});
+router.post('/application/deny', function (req, res, next) {
+	management.denyHosting(req, res);
+});
+router.post('/application/cancel', function (req, res, next) {
+	management.cancelHosting(req, res);
+});
 router.post('/application', function (req, res, next) {
 	management.applyHosting(req, res);
 });
-router.post('/application/review', function (req, res, next) {
+router.post('/reviewWrite', function (req, res, next) {
 	management.reviewWrite(req, res);
 });
 
