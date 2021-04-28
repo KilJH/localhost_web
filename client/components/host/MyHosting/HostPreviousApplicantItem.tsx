@@ -1,17 +1,25 @@
 import { PreviousApplication } from '../../../interfaces';
 import React from 'react';
+import Rating from '../../reuse/Rating';
 
 type Props = {
-	applicant?: PreviousApplication;
+	applicant: PreviousApplication;
 };
 export default function HostPreviousApplicantItem({ applicant }: Props) {
+	console.log(applicant.review);
 	return (
 		<React.Fragment>
 			<tr>
-				<td>{applicant?.date || '2021-04-26'}</td>
-				<td>{applicant?.place.name || '월드메르디앙'}</td>
-				<td>{applicant?.user.name || '황인종'}</td>
-				<td>{applicant?.rate || '4.5'}</td>
+				<td>{applicant.date}</td>
+				<td>{applicant.place.formatted_address}</td>
+				<td>{applicant.user.nickname}</td>
+				<td style={{ color: 'rgba(33,33,33,.6)' }}>
+					{applicant.review ? (
+						<Rating rating={applicant?.review.rating} isFilled={true} />
+					) : (
+						'후기가 아직 없네요..'
+					)}
+				</td>
 			</tr>
 		</React.Fragment>
 	);

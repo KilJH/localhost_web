@@ -22,7 +22,6 @@ export default function UserPage(props: Props) {
 	};
 
 	useEffect(() => {
-		console.log(11);
 		setFoundItems(items);
 	}, [items]);
 

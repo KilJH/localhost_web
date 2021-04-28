@@ -1,5 +1,5 @@
 import { Application } from '../../../interfaces';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
@@ -29,11 +29,17 @@ const ButtonTd = styled.td`
 `;
 export default function HostApplicantItem(props: Props) {
 	const { applicant, userId } = props;
+	const [list, setList] = useState(applicant);
+
+	useEffect(() => {
+		setList(applicant);
+	}, [applicant]);
+
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
 			const res = await axios.post(`${SERVER}/api/host/application/approve`, {
-				id: applicant.user.id,
+				id: list.user.id,
 				hostUserId: userId,
 			});
 			if (res.data.success) {
@@ -48,7 +54,7 @@ export default function HostApplicantItem(props: Props) {
 		e.preventDefault();
 		try {
 			const res = await axios.post(`${SERVER}/api/host/application/deny`, {
-				id: applicant.user.id,
+				id: list.user.id,
 				hostUserId: userId,
 			});
 			if (res.data.success) {

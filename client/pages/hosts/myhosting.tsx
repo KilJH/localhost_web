@@ -9,7 +9,7 @@ import SERVER from '../../utils/url';
 interface Props {
 	pageProps: {
 		host: Host;
-		applyList: Application[];
+		waitingApplicant: Application[];
 		userId: number;
 		previousApplicant: PreviousApplication[];
 		matchedApplicant: Application[];
@@ -28,7 +28,9 @@ const myhosting = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	// 로그인 유저 id 가져오기
+	let waitingApplicant = [];
 	let matchedApplicant = [];
+
 	const res = await axios.post(
 		`${SERVER}/api/auth/check`,
 		{ token: ctx.req.cookies.token },
@@ -47,6 +49,10 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		})
 	).data.applicant;
 
+	applyList.map(value => {
+		if (value.status === 0) waitingApplicant.push(value);
+	});
+
 	const previousApplicant = await (
 		await axios.post(`${SERVER}/api/host/application/history`, {
 			hostUserId: host.id,
@@ -62,8 +68,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	applicationList.map(value => {
 		if (value.status === 1) matchedApplicant.push(value);
 	});
+	console.log(waitingApplicant);
 	return {
-		props: { host, applyList, userId, previousApplicant, matchedApplicant },
+		props: {
+			host,
+			waitingApplicant,
+			userId,
+			previousApplicant,
+			matchedApplicant,
+		},
 	};
 };
 export default myhosting;

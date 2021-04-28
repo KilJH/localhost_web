@@ -11,12 +11,14 @@ import HostPreviousApplicantItem from './HostPreviousApplicantItem';
 import HostMatchedApplicantItem from './HostMatchedApplicantItem';
 interface Props {
 	host: Host;
-	applyList: Application[];
+	waitingApplicant: Application[];
 	userId: number;
 	previousApplicant: PreviousApplication[];
 	matchedApplicant: Application[];
 }
-
+const Layout = styled.div`
+	padding-top: 2em;
+`;
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
 		color: #5197d5;
@@ -45,24 +47,23 @@ const HostInfoChangeDialogue = styled(Dialog)`
 const UserTable = styled.table`
 	width: 100%;
 	min-width: 32em;
-	margin: 0 auto;
+	margin: 0 auto 3em auto;
 	text-align: center;
 	border-collapse: collapse;
-	font-size: 0.9em;
+	font-size: 1em;
 	& th {
 		padding: 0.25em 0;
 	}
 	& thead {
-		border-top: 1px solid gray;
-		border-bottom: 1px solid gray;
+		border-bottom: 1px solid #aaa;
 	}
 	& td {
 		padding: 1rem 0.5rem;
-		border-bottom: 1px solid gray;
+		border-bottom: 1px solid #aaa;
 	}
-	& tbody > tr:nth-child(odd) {
+	/* & tbody > tr:nth-child(odd) {
 		background-color: #eee;
-	}
+	} */
 `;
 const CloseButtonDiv = styled(DialogActions)`
 	&.MuiDialogActions-root {
@@ -87,7 +88,7 @@ const NoItem = ({
 
 export default function MyHostingPage(props: Props): ReactElement {
 	const {
-		applyList,
+		waitingApplicant,
 		host,
 		userId,
 		previousApplicant,
@@ -101,18 +102,18 @@ export default function MyHostingPage(props: Props): ReactElement {
 		setDialogueOpen(false);
 	};
 	return (
-		<div>
+		<Layout>
 			{/* 현재 호스팅 목록 */}
 			<h3>현재 호스팅 목록</h3>
 			<UserTable>
 				<thead>
 					<tr>
-						<th>닉네임</th>
-						<th>날짜</th>
+						<th style={{ width: '50%' }}>닉네임</th>
+						<th style={{ width: '50%' }}>날짜</th>
 					</tr>
 				</thead>
 				<tbody>
-					{applyList.length ? (
+					{matchedApplicant.length ? (
 						matchedApplicant.map(value => (
 							<HostMatchedApplicantItem applicant={value} />
 						))
@@ -127,18 +128,18 @@ export default function MyHostingPage(props: Props): ReactElement {
 			<UserTable>
 				<thead>
 					<tr>
-						<th>닉네임</th>
-						<th>날짜</th>
-						<th>승인여부</th>
+						<th style={{ width: '35%' }}>닉네임</th>
+						<th style={{ width: '35%' }}>날짜</th>
+						<th style={{ width: '30%' }}>승인여부</th>
 					</tr>
 				</thead>
 				<tbody>
-					{applyList.length ? (
-						applyList.map(value => (
+					{waitingApplicant.length ? (
+						waitingApplicant.map(value => (
 							<HostApplicantItem applicant={value} userId={userId} />
 						))
 					) : (
-						<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
+						<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>
 					)}
 				</tbody>
 			</UserTable>
@@ -148,19 +149,19 @@ export default function MyHostingPage(props: Props): ReactElement {
 			<UserTable>
 				<thead>
 					<tr>
-						<th>날짜</th>
-						<th>장소</th>
-						<th>닉네임</th>
-						<th>평점</th>
+						<th style={{ width: '20%' }}>날짜</th>
+						<th style={{ width: '40%' }}>장소</th>
+						<th style={{ width: '20%' }}>닉네임</th>
+						<th style={{ width: '20%', minWidth: '11em' }}>평점</th>
 					</tr>
 				</thead>
 				<tbody>
-					{applyList.length ? (
+					{previousApplicant.length ? (
 						previousApplicant.map(value => (
 							<HostPreviousApplicantItem applicant={value} />
 						))
 					) : (
-						<NoItem colspan={4}>진행중인 호스팅이 없습니다.</NoItem>
+						<NoItem colspan={4}>호스팅 내역이 없습니다.</NoItem>
 					)}
 				</tbody>
 			</UserTable>
@@ -183,6 +184,6 @@ export default function MyHostingPage(props: Props): ReactElement {
 				</CloseButtonDiv>
 				<HostInfoChange host={host} />
 			</HostInfoChangeDialogue>
-		</div>
+		</Layout>
 	);
 }

@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { User } from '../../../interfaces';
 import React from 'react';
 import axios from 'axios';
@@ -13,19 +13,18 @@ type Props = {
 };
 
 const list = ({ pageProps }: Props) => {
+	const { items } = pageProps;
 	return (
 		<AdminLayout title='회원목록' selected='user'>
-			<UserPage {...pageProps} />
+			<UserPage items={items} />
 		</AdminLayout>
 	);
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-	// Example for including static props in a Next.js function component page.
-	// Don't forget to include the respective types for any props passed into
-	// the component.
+export const getServerSideProps: GetServerSideProps = async ctx => {
 	const items: User[] = await (await axios.get(`${SERVER}/api/user/list`)).data
 		.users;
+
 	return { props: { items } };
 };
 
