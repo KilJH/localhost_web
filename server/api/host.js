@@ -1,4 +1,5 @@
 const mysql = require('../db/mysql');
+const userApi = require('./user');
 // 호스트 관련된 API를 작성하세요
 const formatDate = date => {
 	const day = new Date(date);
@@ -11,44 +12,101 @@ const formatDate = date => {
 	return `${yyyy}-${MM}-${dd}`;
 };
 
+module.exports.hostMapping = host => {
+	return {
+		id: host.host_user_id || host.user_id,
+		name: host.host_name || host.name,
+		email: host.email,
+		nickname: host.nickname,
+		sex: host.sex,
+		phone: host.phone,
+		address: host.user_address || host.address,
+		photo: host.photo || '',
+		description: host.host_description || host.description,
+		reqCountry: host.reqcountry || 0,
+		createTime: formatDate(host.create_time) || '',
+		languages: [host.language1, host.language2, host.language3],
+		rating: host.host_rating || host.rating,
+		on: Boolean(host.on),
+		place: {
+			formatted_address:
+				host.formattedAddress || host.host_address || host.address,
+			geometry: {
+				location: {
+					lat: host.host_latitude || host.latitude,
+					lng: host.host_longitude || host.longitude,
+				},
+				distance: host.distance,
+			},
+			name: host.formattedAddress || host.host_address || host.address,
+		},
+		follower: host.followerNum || host.follower,
+	};
+};
+
+module.exports.hostListMapping = hostList => {
+	return hostList.map(host => this.hostMapping(host));
+};
+
+module.exports.reviewMapping = review => {
+	return {
+		id: review.review_id || review.id,
+		user: userApi.userMapping(review),
+		rating: review.review_rating || review.rating,
+		description: review.review_description || review.description,
+		createTime: formatDate(review.create_time),
+	};
+};
+module.exports.applicationMapping = app => {
+	return {
+		id: app.appId || app.app_id || app.id,
+		user: userApi.userMapping(app),
+		date: formatDate(app.create_time),
+		status: app.status,
+	};
+};
+module.exports.preApplicationMapping = preApp => {
+	return {
+		id: preApp.appId || preApp.app_id || preApp.id,
+		user: userApi.userMapping(preApp),
+		place: {
+			formatted_address:
+				preApp.formattedAddress || preApp.preApp_address || preApp.address,
+			geometry: {
+				location: {
+					lat: preApp.app_latitude || preApp.latitude,
+					lng: preApp.app_longitude || preApp.longitude,
+				},
+			},
+			name: preApp.formattedAddress || preApp.preApp_address || preApp.address,
+		},
+		date: formatDate(preApp.create_time),
+		status: preApp.status,
+		review: this.reviewMapping(preApp),
+	};
+};
+
 module.exports.list = (req, res) => {
 	// host의 host정보 불러오기
 	const sql = `select *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude from host left join user on user.id = host.user_id`;
 
-	mysql.query(sql, (err, rows, fields) => {
+	mysql.query(sql, (err, rows) => {
 		if (err) console.log('list err', err);
 
-		const host = rows.map(rows => {
-			return {
-				id: rows.user_id,
-				name: rows.name,
-				nickname: rows.nickname,
-				sex: rows.sex,
-				email: rows.email,
-				photo: rows.photo,
-				description: rows.description,
-				rating: rows.rating,
-				languages: [rows.language1, rows.language2, rows.language3],
-				place: {
-					formatted_address: rows.formattedAddress,
-					geometry: {
-						location: { lat: rows.host_latitude, lng: rows.host_longitude },
-					},
-					name: rows.address,
-				},
-			};
-		});
-		res.json({ success: true, list: host });
+		const hosts = this.hostListMapping(rows);
+		res.json({ success: true, list: hosts });
 	});
 };
 
 module.exports.listOfRequestedHost = (req, res) => {
-	const sql = `SELECT * FROM host_request LEFT JOIN user ON host_request.user_id=user.id`;
+	const sql = `SELECT * host.address AS formattedAddress, FROM host_request h LEFT JOIN user ON h.user_id=user.id`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).json({ success: true, requestedHosts: rows });
+		res
+			.status(200)
+			.json({ success: true, requestedHosts: this.hostListMapping(rows) });
 	});
 };
 
@@ -191,28 +249,9 @@ module.exports.searchHost = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		const searchedHosts = rows.map(rows => {
-			return {
-				id: rows.user_id,
-				name: rows.name,
-				nickname: rows.nickname,
-				sex: rows.sex,
-				email: rows.email,
-				photo: rows.photo,
-				description: rows.description,
-				rating: rows.rating,
-				languages: [rows.language1, rows.language2, rows.language3],
-				place: {
-					formatted_address: rows.formattedAddress,
-					geometry: {
-						location: { lat: rows.host_latitude, lng: rows.host_longitude },
-					},
-					name: rows.address,
-				},
-			};
-		});
+		const searchedHosts = this.hostListMapping(rows);
 
-		res.status(200).json({ success: true, searchedHosts: searchedHosts });
+		res.status(200).json({ success: true, searchedHosts });
 	});
 };
 
@@ -221,47 +260,17 @@ module.exports.load = (req, res) => {
 	const id = req.body.id; // userId
 
 	const hostSql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
-	mysql.query(hostSql, (err, host) => {
+	mysql.query(hostSql, (err, hostRows) => {
 		if (err) return console.log('hostSql err', err);
 
-		const reviewSql = `SELECT r.*,u.nickname, u.photo FROM host_review r LEFT JOIN host_user_apply a ON a.id = r.host_user_apply_id LEFT JOIN user u ON u.id = a.user_user_id WHERE a.host_user_id = ${host[0].user_id};`;
-		mysql.query(reviewSql, (err2, reviewsRows) => {
+		const reviewSql = `SELECT r.*,u.nickname, u.photo FROM host_review r LEFT JOIN host_user_apply a ON a.id = r.host_user_apply_id LEFT JOIN user u ON u.id = a.user_user_id WHERE a.host_user_id = ${hostRows[0].user_id};`;
+		mysql.query(reviewSql, (err2, reviewRows) => {
 			if (err2) return console.log('hostReviews err', err2);
 
-			const hosts = host.map(rows => {
-				return {
-					id: rows.user_id,
-					name: rows.name,
-					nickname: rows.nickname,
-					sex: rows.sex,
-					email: rows.email,
-					photo: rows.photo,
-					description: rows.description,
-					rating: rows.rating,
-					languages: [rows.language1, rows.language2, rows.language3],
-					on: Boolean(rows.on),
-					place: {
-						formatted_address: rows.formattedAddress,
-						geometry: {
-							location: { lat: rows.host_latitude, lng: rows.host_longitude },
-							distance: rows.distance,
-						},
-						name: rows.address,
-					},
-				};
-			});
-			const reviews = reviewsRows.map(review => {
-				return {
-					...review,
-					createTime: formatDate(review.create_time),
-					user: {
-						nickname: review.nickname,
-						photo: review.photo,
-					},
-				};
-			});
+			const host = this.hostMapping(hostRows[0]);
+			const reviews = reviewRows.map(review => this.reviewMapping(review));
 
-			res.json({ success: true, host: hosts[0], reviews });
+			res.json({ success: true, host, reviews });
 		});
 	});
 };
@@ -293,32 +302,10 @@ module.exports.nearbyList = (req, res) => {
 	const distance = req.body.distance || 4;
 
 	const sql = `SELECT user.*, host.*, COUNT(follow.follower_id) AS followerNum, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id LEFT JOIN follow ON follow.user_id = user.id WHERE host.on = 1 GROUP BY host.id HAVING distance <= ${distance} ORDER BY distance`;
-	mysql.query(sql, (err, rows, fields) => {
+	mysql.query(sql, (err, rows) => {
 		if (err) console.log('nearby err', err);
 
-		const nearbyhosts = rows.map(rows => {
-			return {
-				id: rows.user_id,
-				name: rows.name,
-				nickname: rows.nickname,
-				sex: rows.sex,
-				email: rows.email,
-				photo: rows.photo,
-				description: rows.description,
-				rating: rows.rating,
-				languages: [rows.language1, rows.language2, rows.language3],
-				on: rows.on,
-				place: {
-					formatted_address: rows.formattedAddress,
-					geometry: {
-						location: { lat: rows.host_latitude, lng: rows.host_longitude },
-						distance: rows.distance,
-					},
-					name: rows.address,
-				},
-				follower: rows.followerNum,
-			};
-		});
+		const nearbyhosts = this.hostListMapping(rows);
 		res.json({ success: true, nearbyhosts });
 	});
 };
@@ -344,31 +331,14 @@ module.exports.doneHosting = (req, res) => {
 
 	let sql = ``;
 	if (userId)
-		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address addr, h.latitude lat, h.longitude lon FROM host_user_apply a LEFT JOIN user u ON u.id = a.host_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.user_user_id = ${userId} && a.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.host_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.user_user_id = ${userId} && a.status = ${4} ;`;
 	else if (hostUserId)
-		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address addr, h.latitude lat, h.longitude lon FROM host_user_apply a LEFT JOIN user u ON u.id = a.user_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.host_user_id = ${hostUserId} && a.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.user_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.host_user_id = ${hostUserId} && a.status = ${4} ;`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('doneHosting err', err);
-		const users = rows.map(row => {
-			return {
-				id: row.appId,
-				user: { nickname: row.nickname, photo: row.photo },
-				date: formatDate(row.date),
-				place: {
-					formatted_address: row.addr,
-					geometry: {
-						location: { lat: row.lat, lng: row.lon },
-					},
-				},
-				review: {
-					rating: row.rating,
-					description: row.description,
-					createTime: formatDate(row.create_time),
-				},
-			};
-		});
-		res.json({ success: true, previousApplicant: users });
+		const previousApplicant = rows.map(row => this.preApplicationMapping(row));
+		res.json({ success: true, previousApplicant });
 	});
 };
 
@@ -386,16 +356,9 @@ module.exports.showHosting = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
-		const users = rows.map(row => {
-			return {
-				id: row.appId,
-				user: row,
-				date: formatDate(row.day),
-				status: row.status,
-			};
-		});
+		const applicant = rows.map(row => this.applicationMapping(row));
 
-		res.json({ success: true, applicant: users });
+		res.json({ success: true, applicant });
 	});
 };
 

@@ -5,20 +5,20 @@ export interface User {
 	password?: string;
 	nickname?: string;
 	sex?: string;
-	country?: string;
 	phone?: string;
 	address?: string;
 	photo?: string;
 	isAdmin?: number;
 	isHost?: number;
+	follower?: number;
 }
 
 export interface Host {
 	id: number;
 	name?: string;
+	email?: string;
 	nickname?: string;
 	sex?: string;
-	email?: string;
 	password?: string;
 	phone?: string;
 	address?: string;
