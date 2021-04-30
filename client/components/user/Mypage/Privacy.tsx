@@ -98,6 +98,17 @@ const Privacy = (props: Props) => {
 		setOnToase(false);
 	};
 
+	const onReset = () => {
+		pwInput.setValue('');
+		nnInput.setValue(currentUser.nickname);
+		phInput.setValue(currentUser.phone);
+		setPlace({
+			name: '',
+			formatted_address: currentUser.address,
+			geometry: { location: { lat: 0, lng: 0 } },
+		});
+	};
+
 	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		const address =
@@ -325,6 +336,7 @@ const Privacy = (props: Props) => {
 						default
 						padding='0.75rem 2rem'
 						style={{ marginRight: '0.25rem' }}
+						onClick={onReset}
 					>
 						취소
 					</Button>
