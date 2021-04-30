@@ -224,7 +224,7 @@ module.exports.load = (req, res) => {
 	mysql.query(hostSql, (err, host) => {
 		if (err) return console.log('hostSql err', err);
 
-		const reviewSql = `SELECT r.*,u.nickname, u.photo FROM host_review r LEFT JOIN host_user_apply a ON r.host_user_apply_id = a.id LEFT JOIN user u ON u.id=a.user_user_id WHERE a.host_user_id = ${host[0].host_id};`;
+		const reviewSql = `SELECT r.*,u.nickname, u.photo FROM host_review r LEFT JOIN host_user_apply a ON a.id = r.host_user_apply_id LEFT JOIN user u ON u.id = a.user_user_id WHERE a.host_user_id = ${host[0].user_id};`;
 		mysql.query(reviewSql, (err2, reviewsRows) => {
 			if (err2) return console.log('hostReviews err', err2);
 
@@ -467,7 +467,7 @@ module.exports.reviewWrite = (req, res) => {
 	mysql.query(selectSql, id, (err, rows, fields) => {
 		if (err) return console.log('insert err', err);
 
-		const select2Sql = `SELECT *, AVG(r.rating) AVG FROM host_user_apply a LEFT JOIN host h ON a.host_user_id = h.user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id  WHERE h.user_id = ?  GROUP BY h.user_id `;
+		const select2Sql = `SELECT AVG(r.rating) AVG FROM host_user_apply a LEFT JOIN host h ON a.host_user_id = h.user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id  WHERE h.user_id = ?`;
 		mysql.query(select2Sql, rows[0].host_user_id, (err, rows2) => {
 			if (err) return console.log('update err', err);
 
@@ -475,7 +475,7 @@ module.exports.reviewWrite = (req, res) => {
 			mysql.query(updateSql, [rows2[0].AVG, rows[0].host_user_id], err => {
 				if (err) return console.log('AVG update err', err);
 
-				res.json({ success: true });
+				res.json({ success: true, test: rows2[0].AVG });
 			});
 		});
 	});
