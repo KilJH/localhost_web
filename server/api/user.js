@@ -2,12 +2,23 @@
 const crypto = require('crypto');
 const mysql = require('../db/mysql');
 
-module.exports.userMapping = userList => {
-	return userList.map(user => ({
-		...user,
+module.exports.userMapping = user => {
+	return {
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		nickname: user.nickname,
+		sex: user.sex,
+		phone: user.phone,
+		address: user.address,
+		photo: user.photo,
 		isHost: user.ishost,
 		isAdmin: user.isadmin,
-	}));
+	};
+};
+
+module.exports.userListMapping = userList => {
+	return userList.map(user => this.userMapping(user));
 };
 
 module.exports.register = (req, res) => {
@@ -111,7 +122,7 @@ module.exports.list = (req, res) => {
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
 		console.log('검색된 회원수: ', rows.length);
-		res.status(200).json({ success: true, users: this.userMapping(rows) });
+		res.status(200).json({ success: true, users: this.userListMapping(rows) });
 	});
 };
 module.exports.find = (req, res) => {
@@ -123,8 +134,7 @@ module.exports.find = (req, res) => {
 
 	mysql.query(sql, id, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		console.log('검색결과', rows);
-		res.status(200).json({ success: true, user: this.userMapping(rows)[0] });
+		res.status(200).json({ success: true, user: this.userMapping(rows[0]) });
 	});
 };
 
@@ -151,7 +161,7 @@ module.exports.search = (req, res) => {
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
 
-		res.status(200).json({ success: true, users: this.userMapping(rows) });
+		res.status(200).json({ success: true, users: this.userListMapping(rows) });
 	});
 };
 
@@ -198,15 +208,7 @@ module.exports.followList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 
-		const followingUsers = rows.map(user => {
-			return {
-				id: user.user_id,
-				name: user.name,
-				email: user.email,
-				nickname: user.nickname,
-				photo: user.photo,
-			};
-		});
+		const followingUsers = this.userListMapping(rows);
 
 		res.json({ success: true, followingUsers });
 	});
@@ -224,15 +226,7 @@ module.exports.followerList = (req, res) => {
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
-		const followers = rows.map(user => {
-			return {
-				id: user.user_id,
-				name: user.name,
-				email: user.email,
-				nickname: user.nickname,
-				photo: user.photo,
-			};
-		});
+		const followers = this.userListMapping(rows);
 
 		res.json({ success: true, followers });
 	});
