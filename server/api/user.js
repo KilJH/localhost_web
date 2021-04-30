@@ -23,13 +23,7 @@ module.exports.userListMapping = userList => {
 
 module.exports.register = (req, res) => {
 	// 회원가입
-	const email = req.body.email || req.query.email;
-	const pw = req.body.pw || req.query.pw;
-	const name = req.body.name || req.query.name;
-	const sex = req.body.sex || req.query.sex;
-	const nickname = req.body.nickname || req.query.nickname;
-	const phone = req.body.phone || req.query.phone;
-	const address = req.body.address || req.query.address;
+	const { email, pw, name, sex, nickname, phone, address } = req.body;
 	const sql = `SELECT * FROM user WHERE email = ?`;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
 
@@ -72,8 +66,7 @@ module.exports.update = (req, res) => {
 
 module.exports.updatePhoto = (req, res) => {
 	// 프로필 이미지 수정
-	const url = req.body.url;
-	const userId = req.body.id;
+	const { url, userId } = req.body;
 	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${userId}"`;
 
 	mysql.query(sql, err => {
@@ -85,10 +78,8 @@ module.exports.updatePhoto = (req, res) => {
 
 module.exports.updatePW = (req, res) => {
 	console.log('왔냐?');
-	const email = req.body.email || req.query.email;
-	const pw = req.body.pw || req.query.pw;
+	const { email, pw } = req.body;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
-
 	const update = `UPDATE user SET pw = "${hashPW}" WHERE email = "${email}";`;
 
 	mysql.query(update, err => {
@@ -172,9 +163,7 @@ module.exports.follow = (req, res) => {
 		res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
-	const userId = req.body.userId;
-	const followerId = req.body.followerId;
-
+	const { userId, followerId } = req.body;
 	const sql = `SELECT * FROM follow WHERE user_id = ? AND follower_id = ?`;
 
 	mysql.query(sql, [userId, followerId], (err, rows, fields) => {
@@ -233,9 +222,7 @@ module.exports.followerList = (req, res) => {
 };
 
 module.exports.isFollowed = (req, res) => {
-	const userId = req.body.userId;
-	const followerId = req.body.followerId;
-
+	const { userId, followerId } = req.body;
 	const sql = `SELECT * FROM follow WHERE user_id = ? AND follower_id = ?`;
 
 	mysql.query(sql, [userId, followerId], (err, rows) => {
@@ -268,8 +255,7 @@ module.exports.checkAuth = (req, res) => {
 };
 
 module.exports.block = (req, res) => {
-	const userId = req.body.userId;
-	const reason = req.body.reason;
+	const { userId, reason } = req.body;
 
 	const sql = `INSERT INTO ban(user_id, reason) VALUES(?,?)`;
 

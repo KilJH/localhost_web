@@ -47,8 +47,7 @@ module.exports.find = (req, res) => {
 
 // C
 module.exports.write = (req, res) => {
-	const title = req.body.title;
-	const description = req.body.description;
+	const { title, description } = req.body;
 
 	const sql = `INSERT INTO notice(title, description) VALUES(?,?)`;
 
@@ -61,9 +60,7 @@ module.exports.write = (req, res) => {
 
 // U
 module.exports.update = (req, res) => {
-	const id = req.body.id;
-	const title = req.body.title;
-	const description = req.body.description;
+	const { id, title, description } = req.body;
 
 	const sql = `UPDATE notice SET title = ?, description = ? WHERE id =?`;
 
@@ -83,7 +80,6 @@ module.exports.update = (req, res) => {
 // D
 module.exports.delete = (req, res) => {
 	const id = req.body.id;
-
 	const sql = `DELETE FROM notice WHERE id = ?`;
 
 	mysql.query(sql, id, err => {
@@ -103,6 +99,7 @@ module.exports.delete = (req, res) => {
 module.exports.search = (req, res) => {
 	const type = req.body.type || 'title';
 	const item = req.body.item;
+
 	let sql = '';
 	switch (type) {
 		case 'title':

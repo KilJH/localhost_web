@@ -152,15 +152,9 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.write = (req, res) => {
-	const userId = req.body.userId;
-	const title = req.body.plan.title;
-	const description = req.body.plan.description;
-	const sleepDays = req.body.plan.sleepDays;
-	const travelDays = req.body.plan.travelDays;
-	const tags = req.body.plan.tags;
-	const planDays = req.body.plan.planDays;
-
+	const { userId, title, description, sleepDays, travelDays, tags, planDays } = req.body;
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
+
 	mysql.query(sql, (err, rows) => {
 		if (err) {
 			return err;
@@ -214,9 +208,7 @@ module.exports.write = (req, res) => {
 
 module.exports.delete = (req, res) => {
 	// 삭제
-	const id = req.body.id; // 플랜 id
-	const planDayId = req.body.planDayId;
-	const planTimeId = req.body.planTimeId;
+	const { id, planDayId, planTimeId } = req.body; // 플랜 id
 
 	let sql = '';
 	if (id) sql = `DELETE FROM plan WHERE id = "${id}";`;
@@ -231,10 +223,7 @@ module.exports.delete = (req, res) => {
 
 module.exports.timeUpdate = (req, res) => {
 	//시간 수정
-	const id = req.body.id; // plan_timeId
-	const description = req.body.description;
-	const price = req.body.price;
-	const time = req.body.time;
+	const { id, description, price, time } = req.body; // plan_timeId
 
 	const sql = `UPDATE plan_time SET description = "${description}", price = "${price}", time = "${time}" WHERE id = "${id}";`;
 
@@ -246,9 +235,7 @@ module.exports.timeUpdate = (req, res) => {
 
 module.exports.dayUpdate = (req, res) => {
 	//데이 수정
-	const id = req.body.id; // plan_dayId
-	const description = req.body.description;
-	const date = req.body.date;
+	const { id, description, date } = req.body; // plan_dayId
 
 	const sql = `UPDATE plan_day SET description = "${description}", date = "${date}" WHERE id = "${id}";`;
 
@@ -260,8 +247,7 @@ module.exports.dayUpdate = (req, res) => {
 
 module.exports.planUpdate = (req, res) => {
 	//플랜 수정
-	const id = req.body.id; // planId
-	const title = req.body.title;
+	const { id, title } = req.body; // planId
 
 	const sql = `UPDATE plan SET title = "${title}" WHERE id = "${id}";`;
 

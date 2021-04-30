@@ -111,8 +111,8 @@ module.exports.listOfRequestedHost = (req, res) => {
 };
 
 module.exports.requestHost = (req, res) => {
-	const userId = req.body.userId;
-	const hostInfo = req.body.hostInfo;
+	const { userId, hostInfo } = req.body;
+
 
 	let languages = [...hostInfo.languages];
 	for (let i = languages.length; i < 3; i++) {
@@ -277,15 +277,8 @@ module.exports.load = (req, res) => {
 
 module.exports.update = (req, res) => {
 	// host정보를 수정하는 API
-	const id = req.body.id; // user_id
-	const language1 = req.body.language1;
-	const language2 = req.body.language2;
-	const language3 = req.body.language3;
-	const description = req.body.description;
-	const reqCountry = req.body.reqCountry;
-	const latitude = req.body.latitude;
-	const longitude = req.body.longitude;
-	const address = req.body.address;
+	const { id, language1, language2, language3, description, reqCountry, latitude, longitude, address } = req.body;
+
 	const sql = `UPDATE host SET language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
   , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
 
@@ -297,8 +290,7 @@ module.exports.update = (req, res) => {
 
 module.exports.nearbyList = (req, res) => {
 	// 사용자와 호스트의 거리를 구하는 API
-	const latitude = req.body.latitude;
-	const longitude = req.body.longitude;
+	const { latitude, longitude } = req.body;
 	const distance = req.body.distance || 4;
 
 	const sql = `SELECT user.*, host.*, COUNT(follow.follower_id) AS followerNum, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id LEFT JOIN follow ON follow.user_id = user.id WHERE host.on = 1 GROUP BY host.id HAVING distance <= ${distance} ORDER BY distance`;
@@ -312,8 +304,8 @@ module.exports.nearbyList = (req, res) => {
 
 module.exports.status = (req, res) => {
 	// host 상태 설정 API
-	const id = req.body.id; // userId;
-	const on = req.body.on;
+	const { id, on } = req.body; // userId;
+
 	const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
 	mysql.query(sql, err => {
 		if (err) console.log('status err', err);
@@ -324,8 +316,7 @@ module.exports.status = (req, res) => {
 
 module.exports.doneHosting = (req, res) => {
 	// 끝난 호스트를 불러오는 API default는 hostUserId
-	const userId = req.body.userId;
-	const hostUserId = req.body.hostUserId;
+	const { userId, hostUserId } = req.body;
 
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 
@@ -344,8 +335,7 @@ module.exports.doneHosting = (req, res) => {
 
 module.exports.showHosting = (req, res) => {
 	// applyHosting list를 불러오는 API
-	const userId = req.body.userId;
-	const hostUserId = req.body.hostUserId;
+	const { userId, hostUserId } = req.body;
 
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 	let sql = ``;
@@ -364,9 +354,7 @@ module.exports.showHosting = (req, res) => {
 
 module.exports.applyHosting = (req, res) => {
 	// user가 host에게 호스팅 신청하는 API
-	const id = req.body.id; // userId;
-	const hostUserId = req.body.hostUserId;
-	const date = req.body.date;
+	const { id, hostUserId, date } = req.body;
 
 	const sql = `INSERT INTO host_user_apply(host_user_id, user_user_id, date) VALUES("${hostUserId}", "${id}", "${date}");`;
 
@@ -379,8 +367,7 @@ module.exports.applyHosting = (req, res) => {
 
 module.exports.approveHosting = (req, res) => {
 	// host 가 user의 신청을 승인하는 API
-	const id = req.body.id; // requestUserId
-	const hostUserId = req.body.hostUserId; // hostUserId
+	const { id, hostUserId } = req.body; // requestUserId
 
 	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
 	mysql.query(updateSql, err => {
@@ -417,9 +404,7 @@ module.exports.cancleHosting = (req, res) => {
 // 수정중입니다*/
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
-	const id = req.body.id; // host_user_apply id를 입력해야합니다!!
-	const description = req.body.description;
-	const rating = req.body.rating;
+	const { id, description, rating } = req.body; // host_user_apply id를 입력해야합니다!!
 
 	const sql = `INSERT INTO host_review(host_user_apply_id, description , rating) VALUES("${id}","${description}","${rating}")`;
 

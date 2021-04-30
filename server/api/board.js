@@ -78,9 +78,7 @@ module.exports.list = (req, res) => {
 
 module.exports.write = (req, res) => {
 	// 게시글 작성
-	const userId = req.body.userId;
-	const title = req.body.title;
-	const description = req.body.description;
+	const { userId, title, description } = req.body;
 	const sql = `INSERT INTO board(user_id, title, description) VALUES("${userId}", "${title}", "${description}");`;
 
 	mysql.query(sql, (err, rows, fields) => {
@@ -153,9 +151,7 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.update = (req, res) => {
-	const id = req.body.id; // board id
-	const title = req.body.title;
-	const description = req.body.description;
+	const { id, title, description } = req.body; // board id
 
 	const sql = `UPDATE board SET title = "${title}", description = "${description}" WHERE id = "${id}";`;
 
@@ -185,9 +181,7 @@ module.exports.delete = (req, res) => {
 };
 
 module.exports.comment = (req, res) => {
-	const id = req.body.id; // board id
-	const userId = req.body.userId;
-	const description = req.body.description;
+	const { id, userId, description } = req.body; // board id
 	const sql = `INSERT INTO board_comment(board_id, user_Id, description) VALUES("${id}", "${userId}", "${description}");`;
 
 	mysql.query(sql, err => {
