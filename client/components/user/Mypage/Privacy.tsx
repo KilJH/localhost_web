@@ -1,9 +1,9 @@
-import { Grid, Avatar, Modal, Fade } from '@material-ui/core';
+import { Modal, Fade, Snackbar } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../hooks/useInput';
 import { Place, User } from '../../../interfaces';
 import styled from 'styled-components';
-import { UserStateContext } from '../../../context/user';
+import { UserSetterContext, UserStateContext } from '../../../context/user';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import UserPhoto from '../UserPhoto';
@@ -12,19 +12,13 @@ import CpxBarometer from '../../reuse/CpxBarometer';
 import Input from '../../reuse/Input';
 import SearchPlace from '../../search/SearchPlace';
 import Router from 'next/router';
+import Alert from '@material-ui/lab/Alert';
 
 interface Props {
 	id: string;
 	followingUsers?: User[];
 	followers?: User[];
 }
-
-// const Button = styled.button`
-// 	padding: 0.5rem 1rem;
-// 	background-color: #5197d5;
-// 	border: none;
-// 	color: white;
-// `;
 
 const PrivacyContainer = styled.div`
 	margin: 0 auto;
@@ -75,29 +69,56 @@ const btnProps = {
 
 const Privacy = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
+	const setCurrentUser = useContext(UserSetterContext);
 
+	// 입력받는 데이터
 	const pwInput = useInput('');
 	const nnInput = useInput(currentUser.nickname);
 	const phInput = useInput(currentUser.phone);
-
-	const [disabledPw, setDisabledPw] = useState(true);
+	const [place, setPlace] = useState<Place>({
+		name: '',
+		formatted_address: currentUser.address,
+		geometry: { location: { lat: 0, lng: 0 } },
+	});
 
 	const [img, setImg] = useState(null);
-
 	const [photoUrl, setPhotoUrl] = useState(currentUser.photo);
+
+	// 패스워드 수정 on/off
+	const [disabledPw, setDisabledPw] = useState(true);
+
+	const [onToast, setOnToase] = useState(false);
+	const onOpenToast = () => {
+		setOnToase(true);
+	};
+	const onCloseToast = (event?: React.SyntheticEvent, reason?: string) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOnToase(false);
+	};
 
 	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
+		const address =
+			place.name === '' || !place.name
+				? place.formatted_address
+				: `${place.formatted_address}(${place.name})`;
 		const user = {
 			email: currentUser.email,
 			nickname: nnInput.value,
 			phone: phInput.value,
-			address: `${place.formatted_address}(${place.name})`,
+			address: address,
 		};
 		// 유저정보 변경
 		const res = await axios.post(`${SERVER}/api/user/update`, { ...user });
 
-		if (res.data.success) alert(res.data.message);
+		if (res.data.success) {
+			// alert(res.data.message);
+			setCurrentUser({ ...currentUser, ...user });
+			onOpenToast();
+			Router.push('/users/mypage');
+		}
 	};
 
 	const onClickPhoto = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -153,11 +174,6 @@ const Privacy = (props: Props) => {
 		}
 	}, [img]);
 
-	const [place, setPlace] = useState<Place>({
-		name: '',
-		formatted_address: '',
-		geometry: { location: { lat: 0, lng: 0 } },
-	});
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => {
@@ -305,7 +321,7 @@ const Privacy = (props: Props) => {
 				</section>
 				<div style={{ textAlign: 'right' }}>
 					<Button
-						type='button'
+						type='reset'
 						default
 						padding='0.75rem 2rem'
 						style={{ marginRight: '0.25rem' }}
@@ -317,6 +333,16 @@ const Privacy = (props: Props) => {
 					</Button>
 				</div>
 			</div>
+			<Snackbar open={onToast} autoHideDuration={5000} onClose={onCloseToast}>
+				<Alert
+					onClose={onCloseToast}
+					severity='success'
+					elevation={6}
+					variant='filled'
+				>
+					정보 수정에 성공했습니다.
+				</Alert>
+			</Snackbar>
 		</section>
 	);
 };
