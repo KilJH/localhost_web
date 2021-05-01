@@ -2,9 +2,9 @@ import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 interface Props {
-	travelStyle: string;
+	label: string;
 	onClick?: MouseEventHandler<HTMLSpanElement>;
-	on?: boolean;
+	checked?: boolean;
 }
 
 const Tag = styled.span<Props & { color: string }>`
@@ -21,10 +21,13 @@ const Tag = styled.span<Props & { color: string }>`
 		0px 1px 2px 0px rgb(0 0 0 / 14%), 0px 0px 5px 0px rgb(0 0 0 / 12%);
 	/* 클릭가능하면 기본색 */
 	cursor: ${props => (props.onClick ? 'pointer' : 'default')};
-	color: ${props => (props.onClick && !props.on ? '#aaa' : props.color)};
-	background-color: ${props => (props.onClick && !props.on ? '#eee' : 'white')};
+	color: ${props => (props.onClick && !props.checked ? '#aaa' : props.color)};
+	background-color: ${props =>
+		props.onClick && !props.checked ? '#eee' : 'white'};
 	border: ${props =>
-		props.onClick && !props.on ? '2px solid #aaa' : `2px solid ${props.color}`};
+		props.onClick && !props.checked
+			? '2px solid #aaa'
+			: `2px solid ${props.color}`};
 
 	&:first-child {
 		margin-left: 0;
@@ -35,11 +38,11 @@ const Tag = styled.span<Props & { color: string }>`
 `;
 
 const TravelStyleTag = (props: Props) => {
-	const { travelStyle } = props;
+	const { label } = props;
 
 	let color = '#aaa';
 
-	switch (travelStyle) {
+	switch (label) {
 		case '문화재':
 			color = '#e67e22';
 			break;
@@ -62,7 +65,7 @@ const TravelStyleTag = (props: Props) => {
 
 	return (
 		<Tag {...props} color={color}>
-			{props.travelStyle}
+			{label}
 		</Tag>
 	);
 };
