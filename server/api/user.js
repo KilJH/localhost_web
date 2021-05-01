@@ -78,7 +78,6 @@ module.exports.updatePhoto = (req, res) => {
 };
 
 module.exports.updatePW = (req, res) => {
-	console.log('왔냐?');
 	const { email, pw } = req.body;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
 	const update = `UPDATE user SET pw = "${hashPW}" WHERE email = "${email}";`;

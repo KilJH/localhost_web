@@ -85,8 +85,9 @@ const Privacy = (props: Props) => {
 	const [photoUrl, setPhotoUrl] = useState(currentUser.photo);
 
 	// 패스워드 수정 on/off
-	const [disabledPw, setDisabledPw] = useState(true);
+	const [enabledPw, setEnabledPw] = useState(false);
 
+	// 정보변경 알림
 	const [onToast, setOnToase] = useState(false);
 	const onOpenToast = () => {
 		setOnToase(true);
@@ -97,7 +98,19 @@ const Privacy = (props: Props) => {
 		}
 		setOnToase(false);
 	};
+	// 패스워드 변경 알림
+	const [onPwToast, setOnPwToase] = useState(false);
+	const onOpenPwToast = () => {
+		setOnPwToase(true);
+	};
+	const onClosePwToast = (event?: React.SyntheticEvent, reason?: string) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOnPwToase(false);
+	};
 
+	// 취소버튼
 	const onReset = () => {
 		pwInput.setValue('');
 		nnInput.setValue(currentUser.nickname);
@@ -107,8 +120,9 @@ const Privacy = (props: Props) => {
 			formatted_address: currentUser.address,
 			geometry: { location: { lat: 0, lng: 0 } },
 		});
+		setEnabledPw(false);
 	};
-
+	// 수정버튼
 	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		const address =
@@ -125,11 +139,31 @@ const Privacy = (props: Props) => {
 		const res = await axios.post(`${SERVER}/api/user/update`, { ...user });
 
 		if (res.data.success) {
-			// alert(res.data.message);
 			setCurrentUser({ ...currentUser, ...user });
 			onOpenToast();
-			Router.push('/users/mypage');
+			// Router.push('/users/mypage');
 		}
+	};
+
+	// 비밀번호 변경버튼
+	const onClickPw = () => {
+		if (enabledPw) {
+			axios
+				.post(`${SERVER}/api/user/updatePW`, {
+					email: currentUser.email,
+					pw: pwInput.value,
+				})
+				.then(res => {
+					res.data.success ? onOpenPwToast() : '';
+				});
+		}
+		pwInput.setValue('');
+		setEnabledPw(!enabledPw);
+	};
+	// 비밀번호 취소버튼
+	const onResetPw = () => {
+		pwInput.setValue('');
+		setEnabledPw(false);
 	};
 
 	const onClickPhoto = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -232,54 +266,37 @@ const Privacy = (props: Props) => {
 						</div>
 						<div>
 							<div>패스워드: </div>
-							<div style={{ display: 'flex' }}>
-								<Input
-									type='password'
-									{...inputProps}
-									disabled={disabledPw}
-									{...pwInput}
-								/>
-								<span style={{ whiteSpace: 'nowrap' }}>
-									<Button
-										{...btnProps}
-										type='button'
-										onClick={() => {
-											if (!disabledPw) {
-												axios
-													.post(`${SERVER}/api/user/updatePW`, {
-														email: currentUser.email,
-														pw: pwInput.value,
-													})
-													.then(res => {
-														alert(
-															res.data.success
-																? res.data.message
-																: '비밀번호 변경에 실패했습니다.',
-														);
-													});
-											}
-											pwInput.setValue('');
-											setDisabledPw(!disabledPw);
-										}}
-										default={disabledPw}
-									>
-										변경
-									</Button>
-									{disabledPw ? (
-										''
-									) : (
+							<div>
+								<div style={{ display: 'flex' }}>
+									<Input
+										type='password'
+										{...inputProps}
+										disabled={!enabledPw}
+										{...pwInput}
+									/>
+									<span style={{ whiteSpace: 'nowrap' }}>
 										<Button
 											{...btnProps}
-											default
 											type='button'
-											onClick={() => {
-												setDisabledPw(!disabledPw);
-											}}
+											onClick={onClickPw}
+											default={!enabledPw}
 										>
-											취소
+											변경
 										</Button>
-									)}
-								</span>
+										{enabledPw ? (
+											<Button
+												{...btnProps}
+												default
+												type='button'
+												onClick={onResetPw}
+											>
+												취소
+											</Button>
+										) : (
+											''
+										)}
+									</span>
+								</div>
 								<CpxBarometer value={pwInput.value} />
 							</div>
 						</div>
@@ -324,13 +341,7 @@ const Privacy = (props: Props) => {
 						</div>
 					</PrivacyContainer>
 				</section>
-				<section>
-					<header>{/* <h3>추가 회원정보(선택)</h3> */}</header>
-					<PrivacyContainer>
-						<div></div>
-					</PrivacyContainer>
-				</section>
-				<div style={{ textAlign: 'right' }}>
+				<div style={{ textAlign: 'right', marginTop: '2rem' }}>
 					<Button
 						type='reset'
 						default
@@ -345,7 +356,7 @@ const Privacy = (props: Props) => {
 					</Button>
 				</div>
 			</div>
-			<Snackbar open={onToast} autoHideDuration={5000} onClose={onCloseToast}>
+			<Snackbar open={onToast} autoHideDuration={4000} onClose={onCloseToast}>
 				<Alert
 					onClose={onCloseToast}
 					severity='success'
@@ -353,6 +364,21 @@ const Privacy = (props: Props) => {
 					variant='filled'
 				>
 					정보 수정에 성공했습니다.
+				</Alert>
+			</Snackbar>
+
+			<Snackbar
+				open={onPwToast}
+				autoHideDuration={4000}
+				onClose={onClosePwToast}
+			>
+				<Alert
+					onClose={onClosePwToast}
+					severity='success'
+					elevation={6}
+					variant='filled'
+				>
+					패스워드 변경에 성공했습니다.
 				</Alert>
 			</Snackbar>
 		</section>
