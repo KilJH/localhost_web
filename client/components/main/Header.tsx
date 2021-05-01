@@ -274,9 +274,6 @@ const Header = (props: Props) => {
 				<MainMenu>
 					<Menu />
 				</MainMenu>
-				<div>
-					<input placeholder='검색창' />
-				</div>
 				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);

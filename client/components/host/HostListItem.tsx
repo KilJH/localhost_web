@@ -123,7 +123,7 @@ const HostListItem = (props: Props) => {
 				<div className='flex'>
 					<div className='flex name'>
 						<h3 title={host.nickname}>{host.nickname}</h3>
-						<p className='follower'>팔로워 {host.follower}</p>
+						<p className='follower'>팔로워 {host.follower || 0}</p>
 					</div>
 					<div className='point'>
 						<Rating rating={host.rating} isFilled />

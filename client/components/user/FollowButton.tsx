@@ -1,16 +1,13 @@
 import axios from 'axios';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import SERVER from '../../utils/url';
-import Router from 'next/router';
 import { Button } from '@material-ui/core';
-import { StylesProvider } from '@material-ui/core';
-import { User } from '../../interfaces/index';
 import { UserStateContext } from '../../context/user';
 
 interface Props {
 	userId: number;
-	isFollowed: boolean;
+	initialFollowed?: boolean;
 }
 
 const Btn = styled(Button)<{ isFollowed }>`
@@ -28,24 +25,34 @@ const Btn = styled(Button)<{ isFollowed }>`
 			0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 3px 12px 2px rgba(0, 0, 0, 0.12) !important;
 	}
 	&:hover {
+		background-color: ${props =>
+			props.isFollowed ? '#a5a7a9' : '#4187C5'} !important;
 	}
 `;
 
 const FollowButton = (props: Props) => {
-	const { userId, isFollowed } = props;
-
-	const [followState, setFollowState] = useState(isFollowed);
+	const { userId, initialFollowed } = props;
 
 	const currentUser = useContext(UserStateContext);
 
+	const [followState, setFollowState] = useState(initialFollowed);
+
+	useEffect(() => {
+		axios
+			.post(`${SERVER}/api/user/follow_check`, {
+				userId: userId,
+				followerId: currentUser.id,
+			})
+			.then(res => setFollowState(res.data.isFollowed));
+	}, [followState]);
+
 	const onClick = async (e: React.MouseEvent) => {
-		// 서버 api
 		try {
 			const res = await axios.post(`${SERVER}/api/user/follow`, {
 				userId,
 				followerId: currentUser.id,
 			});
-			setFollowState(!followState);
+			if (res.data.success) setFollowState(!followState);
 		} catch (err) {
 			return console.log(err);
 		}

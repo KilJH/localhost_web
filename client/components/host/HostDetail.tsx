@@ -13,10 +13,12 @@ import { UserStateContext } from '../../context/user';
 import SERVER from '../../utils/url';
 import Router from 'next/router';
 import TravelStyleTag from '../reuse/TravelStyleTag';
+import FollowButton from '../user/FollowButton';
 
 interface Props {
 	host: Host;
 	reviews?: Review[];
+	initialFollowed?: boolean;
 }
 
 const HostDetailContainer = styled.section`
@@ -36,8 +38,9 @@ const HostDetailContainer = styled.section`
 		& .name {
 			margin: 0;
 			flex: 1;
-			& > h2 {
+			& h2 {
 				margin: 0;
+				margin-right: 1rem;
 			}
 		}
 		& > .apply {
@@ -82,10 +85,15 @@ const HostDetailContainer = styled.section`
 			}
 		}
 	}
+
+	& .flex {
+		display: flex;
+		align-items: center;
+	}
 `;
 
 const HostDetail = (props: Props) => {
-	const { host, reviews } = props;
+	const { host, reviews, initialFollowed } = props;
 	const [date, setDate] = useState(new Date());
 	const onChangeDate = newDate => {
 		if (newDate >= new Date()) setDate(newDate);
@@ -110,7 +118,13 @@ const HostDetail = (props: Props) => {
 				<UserPhoto src={host.photo} width={8} margin='0 1rem 0 0' />
 				<div className='name'>
 					<Rating rating={host.rating || 0} isFilled />
-					<h2>{host.nickname}</h2>
+					<div className='flex'>
+						<h2>{host.nickname}</h2>
+						<FollowButton
+							userId={host.id}
+							initialFollowed={initialFollowed ?? false}
+						/>
+					</div>
 				</div>
 				<div className='apply'>
 					<MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -194,12 +208,20 @@ const HostDetail = (props: Props) => {
 					<h3>후기</h3>
 					<Rating rating={host.rating || 0} isFilled />
 				</div>
-				{reviews.map(review => (
-					<HostReviewItem review={review} key={review.id} />
-				))}
+				{reviews.length ? (
+					reviews.map(review => (
+						<HostReviewItem review={review} key={review.id} />
+					))
+				) : (
+					<NoReview />
+				)}
 			</div>
 		</HostDetailContainer>
 	);
+};
+
+const NoReview = () => {
+	return <div style={{ padding: '0.5rem' }}>후기가 없습니다.</div>;
 };
 
 export default HostDetail;

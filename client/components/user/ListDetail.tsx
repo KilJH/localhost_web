@@ -12,7 +12,7 @@ const ListDetail = ({ item: user, isFollowed }: ListDetailProps) => (
 	<div>
 		<h1>Detail for {user.name}</h1>
 		<p>ID: {user.id}</p>
-		<FollowButton userId={user.id} isFollowed={isFollowed} />
+		<FollowButton userId={user.id} initialFollowed={isFollowed} />
 	</div>
 );
 
