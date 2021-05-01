@@ -3,20 +3,20 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import React from 'react';
 import HostDetail from '../../components/host/HostDetail';
 import Layout from '../../components/main/Layout';
-import { Host } from '../../interfaces';
+import { Host, Review } from '../../interfaces';
 import SERVER from '../../utils/url';
 
 interface Props {
 	pageProps: {
 		host: Host;
-		reviews: any;
+		reviews: Review[];
 	};
 }
 
 const HostDetailPage = ({ pageProps }: Props) => {
 	return (
 		<Layout title='호스트 정보 | localhost'>
-			<HostDetail host={pageProps.host} />
+			<HostDetail {...pageProps} />
 		</Layout>
 	);
 };

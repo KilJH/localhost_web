@@ -1,4 +1,3 @@
-import { Visibility } from '@material-ui/icons';
 import React from 'react';
 import styled from 'styled-components';
 import { Host } from '../../../../interfaces';
@@ -80,13 +79,13 @@ export default function HostApprovalDetail(props: Props) {
 				<Email>({user.email})</Email>
 				<Description>"{user.description}"</Description>
 				<SubTitle>호스트 신청 날짜</SubTitle>
-				<Details>{user.createTime.split('T')[0]}</Details>
+				<Details>{user.createTime}</Details>
 				<SubTitle>사용 가능한 언어</SubTitle>
-				<Details>{user.languages.map(lang => lang)}</Details>
+				<Details>{user?.languages.map(lang => lang)}</Details>
 				<SubTitle>성별</SubTitle>
 				<Details>{user.sex === 'male' ? '남성' : '여성'}</Details>
 				<SubTitle>주소</SubTitle>
-				<Details>{user.address}</Details>
+				<Details>{user.place.formatted_address}</Details>
 				<SubTitle>휴대폰 번호</SubTitle>
 				<Details>{user.phone}</Details>
 			</DetailsDiv>

@@ -80,10 +80,11 @@ const HostDetailContainer = styled.section`
 	}
 `;
 
-const HostDetail = ({ host }: Props) => {
+const HostDetail = (props: Props) => {
+	const { host, reviews } = props;
 	const [date, setDate] = useState(new Date());
-	const onChangeDate = date => {
-		if (date >= new Date()) setDate(date);
+	const onChangeDate = newDate => {
+		if (newDate >= new Date()) setDate(newDate);
 	};
 
 	const currentUser = useContext(UserStateContext);
@@ -185,8 +186,9 @@ const HostDetail = ({ host }: Props) => {
 					<h3>후기</h3>
 					<Rating rating={host.rating || 0} isFilled />
 				</div>
-				<HostReviewItem />
-				<HostReviewItem />
+				{reviews.map(review => (
+					<HostReviewItem review={review} />
+				))}
 			</div>
 		</HostDetailContainer>
 	);

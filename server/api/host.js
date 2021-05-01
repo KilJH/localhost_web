@@ -113,7 +113,6 @@ module.exports.listOfRequestedHost = (req, res) => {
 module.exports.requestHost = (req, res) => {
 	const { userId, hostInfo } = req.body;
 
-
 	let languages = [...hostInfo.languages];
 	for (let i = languages.length; i < 3; i++) {
 		languages = [...languages, null];
@@ -277,7 +276,17 @@ module.exports.load = (req, res) => {
 
 module.exports.update = (req, res) => {
 	// host정보를 수정하는 API
-	const { id, language1, language2, language3, description, reqCountry, latitude, longitude, address } = req.body;
+	const {
+		id,
+		language1,
+		language2,
+		language3,
+		description,
+		reqCountry,
+		latitude,
+		longitude,
+		address,
+	} = req.body;
 
 	const sql = `UPDATE host SET language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
   , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;

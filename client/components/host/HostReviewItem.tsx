@@ -54,7 +54,7 @@ const HostReviewItem = ({ review }: Props) => {
 			/>
 			<div>
 				<div className='rating'>
-					<Rating rating={review?.rating || 0} isFilled />
+					<Rating rating={review?.rating ?? 0} isFilled />
 					<div>{review?.createTime || '2021-01-01'}</div>
 				</div>
 				<h3>{review?.user.nickname || '닉네임'}</h3>
