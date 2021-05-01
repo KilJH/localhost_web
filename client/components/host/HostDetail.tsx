@@ -60,6 +60,10 @@ const HostDetailContainer = styled.section`
 	& .additionalInfo {
 		& > table {
 			width: 100%;
+			& tr.introduction {
+				white-space: pre;
+				vertical-align: baseline;
+			}
 			& td {
 				padding: 0.5rem;
 				&:first-child {
@@ -134,51 +138,55 @@ const HostDetail = (props: Props) => {
 			<div className='basicInfo'>
 				<h3>기본정보</h3>
 				<table>
-					<tr>
-						<td>성별</td>
-						<td>{host.sex === 'male' ? '남' : '여'}</td>
-					</tr>
-					<tr>
-						<td>활동지역</td>
-						<td>{host.place.formatted_address}</td>
-					</tr>
-					<tr>
-						<td>사용언어</td>
-						<td>
-							{host.languages.map(lang =>
-								lang ? <LanguageTag language={lang} /> : '',
-							)}
-						</td>
-					</tr>
-					<tr>
-						<td>자기소개</td>
-						<td>{host.description}</td>
-					</tr>
+					<tbody>
+						<tr>
+							<td>성별</td>
+							<td>{host.sex === 'male' ? '남' : '여'}</td>
+						</tr>
+						<tr>
+							<td>활동지역</td>
+							<td>{host.place.formatted_address}</td>
+						</tr>
+						<tr>
+							<td>사용언어</td>
+							<td>
+								{host.languages.map(lang =>
+									lang ? <LanguageTag language={lang} key={lang} /> : '',
+								)}
+							</td>
+						</tr>
+						<tr className='introduction'>
+							<td>자기소개</td>
+							<td>{host.description}</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 			<div className='additionalInfo'>
 				<h3>추가정보</h3>
 				<table>
-					<tr>
-						<td>여행스타일</td>
-						<td>
-							<TravelStyleTag
-								travelStyle='문화재'
-								onClick={() => {
-									setOn(!on);
-								}}
-								on={on}
-							/>
-						</td>
-					</tr>
-					<tr>
-						<td>매칭횟수</td>
-						<td>{0}</td>
-					</tr>
-					<tr>
-						<td>승낙률</td>
-						<td>{0}%</td>
-					</tr>
+					<tbody>
+						<tr>
+							<td>여행스타일</td>
+							<td>
+								<TravelStyleTag
+									label='문화재'
+									onClick={() => {
+										setOn(!on);
+									}}
+									checked={on}
+								/>
+							</td>
+						</tr>
+						<tr>
+							<td>매칭횟수</td>
+							<td>{0}</td>
+						</tr>
+						<tr>
+							<td>승낙률</td>
+							<td>{0}%</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 			<div className='reviews'>
@@ -187,7 +195,7 @@ const HostDetail = (props: Props) => {
 					<Rating rating={host.rating || 0} isFilled />
 				</div>
 				{reviews.map(review => (
-					<HostReviewItem review={review} />
+					<HostReviewItem review={review} key={review.id} />
 				))}
 			</div>
 		</HostDetailContainer>
