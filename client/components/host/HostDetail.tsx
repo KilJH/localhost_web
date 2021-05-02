@@ -14,6 +14,8 @@ import SERVER from '../../utils/url';
 import Router from 'next/router';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import FollowButton from '../user/FollowButton';
+import { Backdrop, CircularProgress } from '@material-ui/core';
+import { useAsync } from 'react-async';
 
 interface Props {
 	host: Host;
@@ -92,6 +94,28 @@ const HostDetailContainer = styled.section`
 	}
 `;
 
+const isFollowed = async ({ userId, followerId }) => {
+	const res = await axios.post(`${SERVER}/api/user/follow_check`, {
+		userId,
+		followerId,
+	});
+	return res.data;
+};
+
+const Loading = () => (
+	<div
+		style={{
+			textAlign: 'center',
+			height: '85vh',
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
+		}}
+	>
+		<CircularProgress />
+	</div>
+);
+
 const HostDetail = (props: Props) => {
 	const { host, reviews, initialFollowed } = props;
 	const [date, setDate] = useState(new Date());
@@ -112,6 +136,22 @@ const HostDetail = (props: Props) => {
 	};
 
 	const [on, setOn] = useState(false);
+
+	const { data: followed, error, isLoading } = useAsync({
+		promiseFn: isFollowed,
+		userId: host.id,
+		followerId: currentUser.id,
+	});
+
+	if (isLoading) return <Loading />;
+	if (error)
+		return (
+			<div style={{ fontSize: '0.5em', color: '#e74c3c' }}>
+				팔로우정보를 가져오지못했습니다.
+			</div>
+		);
+	if (!followed) return null;
+
 	return (
 		<HostDetailContainer>
 			<div className='profile'>
@@ -122,7 +162,7 @@ const HostDetail = (props: Props) => {
 						<h2>{host.nickname}</h2>
 						<FollowButton
 							userId={host.id}
-							initialFollowed={initialFollowed ?? false}
+							initialFollowed={followed ?? false}
 						/>
 					</div>
 				</div>

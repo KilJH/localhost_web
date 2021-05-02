@@ -10,7 +10,7 @@ interface Props {
 	initialFollowed?: boolean;
 }
 
-const Btn = styled(Button)<{ isFollowed }>`
+const Btn = styled(Button)<{ isFollowed? }>`
 	font-size: 0.75em !important;
 	background-color: ${props =>
 		props.isFollowed ? '#c5c7c9' : '#5197D5'} !important;
@@ -32,11 +32,8 @@ const Btn = styled(Button)<{ isFollowed }>`
 
 const FollowButton = (props: Props) => {
 	const { userId, initialFollowed } = props;
-
 	const currentUser = useContext(UserStateContext);
-
-	const [followState, setFollowState] = useState(initialFollowed);
-
+	const [followState, setFollowState] = useState(initialFollowed || false);
 	useEffect(() => {
 		axios
 			.post(`${SERVER}/api/user/follow_check`, {

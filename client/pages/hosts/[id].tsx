@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import React from 'react';
+import React, { useContext } from 'react';
 import HostDetail from '../../components/host/HostDetail';
 import Layout from '../../components/main/Layout';
+import { UserStateContext } from '../../context/user';
 import { Host, Review } from '../../interfaces';
 import SERVER from '../../utils/url';
 
