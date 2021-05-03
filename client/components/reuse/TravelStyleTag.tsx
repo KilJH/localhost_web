@@ -9,13 +9,15 @@ interface Props {
 
 const Tag = styled.span<Props & { color: string }>`
 	display: inline-block;
-	margin: 0.25em;
-	padding: 0.25em;
+	margin: 0.5em;
+	padding: 0.25em 0.5em;
 	box-sizing: border-box;
 	font-weight: 500;
 	font-size: 0.8em;
 
 	transition: all ease 0.2s;
+
+	user-select: none;
 
 	box-shadow: 0px 2px 1px -2px rgb(0 0 0 / 20%),
 		0px 1px 2px 0px rgb(0 0 0 / 14%), 0px 0px 5px 0px rgb(0 0 0 / 12%);
@@ -60,6 +62,9 @@ const TravelStyleTag = (props: Props) => {
 			break;
 		case '쇼핑':
 			color = '#a7ecf2';
+			break;
+		default:
+			color = '#5197d6';
 			break;
 	}
 

@@ -19,7 +19,8 @@ import Input from '../reuse/Input';
 import Button from '../reuse/Button';
 import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
-import { languages } from '../../utils/nation';
+import { languages, travelStyles } from '../../utils/basicData';
+import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface Props {}
 
@@ -34,6 +35,7 @@ const RequestContainer = styled.div`
 			font-weight: 600;
 			flex: 1;
 			padding: 0 1em;
+			line-break: word;
 		}
 		& > *:nth-child(2) {
 			flex: 2;
@@ -71,6 +73,30 @@ const StyledModal = styled(Modal)`
 	}
 `;
 
+const TravelStyleInput = ({
+	value: selectedStyle,
+	setValue: setSelectedStyle,
+}) => {
+	const onClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+		if (selectedStyle === e.currentTarget.innerText) {
+			setSelectedStyle('');
+			return;
+		}
+		setSelectedStyle(e.currentTarget.innerText);
+	};
+	return (
+		<>
+			{travelStyles.map(style => (
+				<TravelStyleTag
+					label={style}
+					checked={style === selectedStyle}
+					onClick={onClick}
+				/>
+			))}
+		</>
+	);
+};
+
 const Request = (props: Props) => {
 	// const country = useInput('대한민국');
 	const [place, setPlace] = useState<Place>({
@@ -79,6 +105,7 @@ const Request = (props: Props) => {
 		geometry: { location: { lat: 0, lng: 0 } },
 	});
 	const [langs, setLangs] = useState([]);
+	const [selectedStyle, setSelectedStyle] = useState('');
 	const description = useInput('');
 	const currentUser = useContext(UserStateContext);
 
@@ -111,6 +138,7 @@ const Request = (props: Props) => {
 			place: place,
 			languages: langs,
 			description: description.value,
+			travelStyle: selectedStyle,
 		};
 
 		const res = await axios.post(`${SERVER}/api/host/request`, {
@@ -208,6 +236,15 @@ const Request = (props: Props) => {
 							label='자국민'
 						/>
 					</RadioGroup>
+				</div>
+				<div>
+					<label>자신을 대표할 여행스타일을 선택해주세요</label>
+					<div>
+						<TravelStyleInput
+							value={selectedStyle}
+							setValue={setSelectedStyle}
+						/>
+					</div>
 				</div>
 				<div>
 					<label>간략한 자기소개를 적어주세요</label>

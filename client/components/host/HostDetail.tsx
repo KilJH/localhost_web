@@ -14,7 +14,7 @@ import SERVER from '../../utils/url';
 import Router from 'next/router';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import FollowButton from '../user/FollowButton';
-import { Backdrop, CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { useAsync } from 'react-async';
 
 interface Props {
