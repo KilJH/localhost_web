@@ -10,7 +10,6 @@ import SERVER from '../../../utils/url';
 import axios, { AxiosResponse } from 'axios';
 import { Plan } from '../../../interfaces';
 import PlanItem from './PlanItem';
-import Link from 'next/link';
 
 type Props = {
 	items: Plan[];
@@ -40,7 +39,7 @@ const DeleteButton = styled(Button)`
 		margin: 4em 0 2em 0;
 		width: 9em;
 	}
-	&.MuiButton-containedPrimary {
+	&.MuiButton-containedSecondary {
 		background-color: #e74c3c;
 	}
 `;
@@ -63,7 +62,7 @@ const CssIconButton = styled(IconButton)`
 	}
 `;
 const DeleteCheckedItems = state => {
-	// 호스트 해제 기능
+	// 플랜 삭제 기능
 	const keys = Object.keys(state);
 	const values = Object.values(state);
 	for (let i = 0; i < values.length; i++) {

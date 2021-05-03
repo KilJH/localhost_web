@@ -25,7 +25,6 @@ export default function PlanItem(props: Props) {
 	const onClickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {
 		setDetailState(!detailState);
 	};
-	console.log(item);
 	return (
 		<React.Fragment>
 			<Link href='/admin/plan/[id]' as={`/admin/plan/${item.id}`}>

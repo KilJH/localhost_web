@@ -4,7 +4,7 @@ import React from 'react';
 import SERVER from '../../../utils/url';
 import axios from 'axios';
 import AdminLayout from '../../../components/admin/AdminLayout';
-import PlanPage from '../../../components/admin/plan/PlanPage';
+import PlanDetail from '../../../components/admin/plan/PlanDetail';
 
 type Props = {
 	pageProps: {
@@ -13,8 +13,8 @@ type Props = {
 };
 
 const list = ({ pageProps }: Props) => (
-	<AdminLayout title='플랜목록' selected='plan'>
-		{/* <PlanPage {...pageProps} /> */}
+	<AdminLayout title='플랜 정보' selected='plan'>
+		<PlanDetail {...pageProps} />
 	</AdminLayout>
 );
 
