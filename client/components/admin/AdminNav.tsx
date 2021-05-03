@@ -162,7 +162,7 @@ export default function AdminLayout(props: Props) {
 				<Divider />
 				{/* 공지 관리 */}
 				{selected !== 'notice' ? ( // 미클릭 시
-					<Item button onClick={() => Router.push('/admin/notice/list')}>
+					<Item button onClick={() => Router.push('/admin/notice')}>
 						<Icon>
 							<NotificationsOutlinedIcon />
 						</Icon>
@@ -170,7 +170,7 @@ export default function AdminLayout(props: Props) {
 					</Item>
 				) : (
 					// 클릭 시
-					<ClickedItem button onClick={() => Router.push('/admin/notice/list')}>
+					<ClickedItem button onClick={() => Router.push('/admin/notice')}>
 						<ClickedIcon>
 							<NotificationsOutlinedIcon />
 						</ClickedIcon>
@@ -208,7 +208,7 @@ export default function AdminLayout(props: Props) {
 				<Collapse in={userOpen} timeout='auto' unmountOnExit>
 					<List component='div' disablePadding>
 						{selected !== 'user' ? ( // 미클릭 시
-							<Item button onClick={() => Router.push('/admin/user/list')}>
+							<Item button onClick={() => Router.push('/admin/user')}>
 								<ArrowIcon>
 									<ArrowRightOutlined />
 								</ArrowIcon>
@@ -219,10 +219,7 @@ export default function AdminLayout(props: Props) {
 							</Item>
 						) : (
 							// 클릭 시
-							<ClickedItem
-								button
-								onClick={() => Router.push('/admin/user/list')}
-							>
+							<ClickedItem button onClick={() => Router.push('/admin/user')}>
 								<ArrowIcon>
 									<ArrowDropDownOutlined />
 								</ArrowIcon>
@@ -278,7 +275,7 @@ export default function AdminLayout(props: Props) {
 				<Collapse in={hostOpen} timeout='auto' unmountOnExit>
 					<List component='div' disablePadding>
 						{selected !== 'host' ? ( // 미클릭 시
-							<Item button onClick={() => Router.push('/admin/host/list')}>
+							<Item button onClick={() => Router.push('/admin/host')}>
 								<ArrowIcon>
 									<ArrowRightOutlined />
 								</ArrowIcon>
@@ -289,10 +286,7 @@ export default function AdminLayout(props: Props) {
 							</Item>
 						) : (
 							// 클릭 시
-							<ClickedItem
-								button
-								onClick={() => Router.push('/admin/host/list')}
-							>
+							<ClickedItem button onClick={() => Router.push('/admin/host')}>
 								<ArrowIcon>
 									<ArrowDropDownOutlined />
 								</ArrowIcon>
@@ -336,7 +330,7 @@ export default function AdminLayout(props: Props) {
 				</Collapse>
 				{/* 플랜 관리 */}
 				{selected !== 'plan' ? ( // 미클릭 시
-					<Item button>
+					<Item button onClick={() => Router.push('/admin/plan')}>
 						<Icon>
 							<AssessmentOutlinedIcon />
 						</Icon>
@@ -344,7 +338,7 @@ export default function AdminLayout(props: Props) {
 					</Item>
 				) : (
 					// 클릭 시
-					<ClickedItem button>
+					<ClickedItem button onClick={() => Router.push('/admin/plan')}>
 						<ClickedIcon>
 							<AssessmentOutlinedIcon />
 						</ClickedIcon>

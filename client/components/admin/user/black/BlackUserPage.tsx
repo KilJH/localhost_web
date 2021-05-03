@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Search from '../../../search/Search';
-import { BlackUser} from '../../../../interfaces';
+import { BlackUser } from '../../../../interfaces';
 import axios from 'axios';
 import SERVER from '../../../../utils/url';
 import BlackUserList from './BlackUserList';
@@ -9,7 +9,7 @@ type Props = {
 	items: BlackUser[];
 };
 
-export default function UserPage(props: Props) {
+export default function BlackUserPage(props: Props) {
 	const { items } = props;
 	const [foundItems, setFoundItems] = useState(items);
 	const onSubmit = async (event: React.FormEvent, type, item) => {

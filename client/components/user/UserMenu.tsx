@@ -83,7 +83,7 @@ const UserMenu = (props: Props) => {
 						</Link>
 					)}
 					{currentUser.isAdmin === 1 ? (
-						<Link href='/admin/notice/list'>
+						<Link href='/admin/notice'>
 							<a>
 								<li style={{ color: '#5197D5' }}>관리자페이지</li>
 							</a>

@@ -79,7 +79,7 @@ const BlockCheckedItems = state => {
 	// }
 };
 
-export default function UserList(props: Props) {
+export default function BlackUserList(props: Props) {
 	const { black } = props;
 	const [state, setState] = useState({});
 	const [reasonState, setReasonState] = useState(false);

@@ -19,7 +19,7 @@ const Checkbox = styled.input.attrs({
 const PushElement = styled.a`
 	cursor: pointer;
 `;
-export default function UserItem(props: Props) {
+export default function blackUserItem(props: Props) {
 	const { black, state, handleChange } = props;
 	const [detailState, setDetailState] = useState(false);
 	const onClickHandler = (e: React.MouseEvent<HTMLAnchorElement>) => {

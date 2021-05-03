@@ -21,11 +21,11 @@ const list = ({ pageProps }: Props) => {
 	);
 };
 
-// export const getServerSideProps: GetServerSideProps = async ctx => {
-// 	const items: BlackUser[] = await (await axios.get(`${SERVER}/api/user/list`))
-// 		.data.users;
+export const getServerSideProps: GetServerSideProps = async ctx => {
+	const items: BlackUser[] = await (await axios.get(`${SERVER}/api/user/list`))
+		.data.users;
 
-// 	return { props: { items } };
-// };
+	return { props: { items } };
+};
 
 export default list;
