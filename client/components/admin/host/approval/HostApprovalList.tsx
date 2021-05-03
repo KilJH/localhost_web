@@ -121,14 +121,14 @@ export default function HostApprovalList(props: Props) {
 	const HostDenialButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		DenyCheckedItems(state);
-		location.href = `/admin/host/approval`;
+		Router.push('/admin/host/approval');
 	};
 	const HostApprovalButtonHandler = (
 		e: React.MouseEvent<HTMLButtonElement>,
 	) => {
 		e.preventDefault();
 		ApproveCheckedItems(state);
-		location.href = `/admin/host/approval`;
+		Router.push('/admin/host/approval');
 	};
 	const emailSortHandler = () => {
 		setNameState(false);

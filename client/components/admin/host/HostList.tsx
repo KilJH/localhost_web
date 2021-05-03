@@ -89,7 +89,6 @@ export default function HostList(props: Props) {
 	const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		DisableHostCheckedItems(state);
-		location.href = `/admin/host/list`;
 	};
 	const emailSortHandler = () => {
 		setNameState(false);

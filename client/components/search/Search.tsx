@@ -55,7 +55,7 @@ interface InputProps {
 // 검색 바디
 const SearchForm = styled.form<FormProps>`
 	display: flex;
-	height: 3em;
+	height: 2.5em;
 	width: ${(props: FormProps) => props.width || 'auto'};
 	margin-top: ${(props: FormProps) => props.marginTop || 0};
 	margin-bottom: ${(props: FormProps) => props.marginBottom || 0};
@@ -64,7 +64,7 @@ const SearchForm = styled.form<FormProps>`
 `;
 
 const SelectControl = styled(FormControl)<SelectProps>`
-	height: 3em;
+	height: 2.5em;
 	&.MuiFormControl-root {
 		width: ${(props: SelectProps) => props.selectWidth || '20%'};
 		margin-right: 0.5rem;
