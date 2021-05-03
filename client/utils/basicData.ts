@@ -14,3 +14,12 @@ export const languages = [
 	{ id: 13, name: '베트남어' },
 	{ id: 14, name: '태국어' },
 ];
+
+export const travelStyles = [
+	'문화재',
+	'감성',
+	'대자연',
+	'힐링',
+	'먹부림',
+	'쇼핑',
+];

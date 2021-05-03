@@ -1,7 +1,7 @@
 import { Checkbox } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { languages } from '../../utils/nation';
+import { languages } from '../../utils/basicData';
 import LanguageTag from './LanguageTag';
 
 interface Props {
