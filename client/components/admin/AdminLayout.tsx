@@ -65,10 +65,15 @@ const MainComponent = styled.div<MobileProps>`
 		}
 	}
 `;
-const EndHr = styled.hr`
-	margin-top: 9em;
+const FooterDiv = styled.footer`
+	text-align: center;
+	font-size: 0.8rem;
+	position: sticky;
+	z-index: 2;
+	border-top: 1px solid #ddd;
+	background: white;
+	padding: 1.25em;
 `;
-const FooterDiv = styled.footer``;
 export default function AdminLayout(props: Props) {
 	const {
 		title = '오류동에서 오류남! | 관리자 | localhost',
@@ -103,11 +108,10 @@ export default function AdminLayout(props: Props) {
 						<Title isMobile={isMobile}>{title}</Title>
 					</TitleDiv>
 					<MainComponent isMobile={isMobile}>{children}</MainComponent>
-					<EndHr />
-					<FooterDiv>
-						<Footer />
-					</FooterDiv>
 				</ComponentDiv>
+				<FooterDiv>
+					<Footer />
+				</FooterDiv>
 			</Layout>
 		</div>
 	);
