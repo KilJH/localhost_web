@@ -99,14 +99,14 @@ module.exports.list = (req, res) => {
 };
 
 module.exports.listOfRequestedHost = (req, res) => {
-	const sql = `SELECT * host.address AS formattedAddress, FROM host_request h LEFT JOIN user ON h.user_id=user.id`;
+	const sql = `SELECT *, h.address AS formattedAddress, h.latitude AS host_latitude, h.longitude AS host_longitude FROM host_request h LEFT JOIN user ON h.user_id=user.id`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
-
-		res
-			.status(200)
-			.json({ success: true, requestedHosts: this.hostListMapping(rows) });
+		console.log(rows);
+		const requestedHosts = this.hostListMapping(rows);
+		console.log(requestedHosts);
+		res.status(200).json({ success: true, requestedHosts });
 	});
 };
 
