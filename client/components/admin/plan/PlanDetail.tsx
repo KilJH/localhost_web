@@ -94,7 +94,6 @@ const DeleteButton = styled(Button)`
 	}
 `;
 export default function PlanItem({ item }: Props) {
-	console.log(item.planDay);
 	const ButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		axios
