@@ -18,6 +18,7 @@ import { ArrowDropDownOutlined, ArrowRightOutlined } from '@material-ui/icons';
 import styled from 'styled-components';
 import Router from 'next/router';
 import ArrowLeftOutlined from '@material-ui/icons/ArrowLeftOutlined';
+import BlockIcon from '@material-ui/icons/Block';
 
 type Props = {
 	selected?: string;
@@ -141,9 +142,13 @@ const ClickedText = styled(ListItemText)`
 `;
 export default function AdminLayout(props: Props) {
 	const { selected } = props;
-	const [open, setOpen] = React.useState(true);
-	const handleClick = () => {
-		setOpen(!open);
+	const [userOpen, setUserOpen] = React.useState(true);
+	const [hostOpen, setHostOpen] = React.useState(true);
+	const handleUserClick = () => {
+		setUserOpen(!userOpen);
+	};
+	const handleHostClick = () => {
+		setHostOpen(!hostOpen);
 	};
 	return (
 		<NavDiv>
@@ -190,17 +195,17 @@ export default function AdminLayout(props: Props) {
 					</ClickedItem>
 				)}
 				{/* 유저 관리 */}
-				<Item button onClick={handleClick}>
+				<Item button onClick={handleUserClick}>
 					<Icon>
 						<PeopleOutlinedIcon />
 					</Icon>
 					<Text primary='유저 관리' />
 					<ArrowIcon>
-						{open ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
+						{userOpen ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
 					</ArrowIcon>
 				</Item>
 				{/* 일반회원 */}
-				<Collapse in={open} timeout='auto' unmountOnExit>
+				<Collapse in={userOpen} timeout='auto' unmountOnExit>
 					<List component='div' disablePadding>
 						{selected !== 'user' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/user/list')}>
@@ -229,8 +234,48 @@ export default function AdminLayout(props: Props) {
 						)}
 					</List>
 				</Collapse>
+				{/* 차단회원 */}
+				<Collapse in={userOpen} timeout='auto' unmountOnExit>
+					<List component='div' disablePadding>
+						{selected !== 'blacklist' ? ( // 미클릭 시
+							<Item button onClick={() => Router.push('/admin/user/blacklist')}>
+								<ArrowIcon>
+									<ArrowRightOutlined />
+								</ArrowIcon>
+								<Icon>
+									<BlockIcon />
+								</Icon>
+								<Text primary='차단회원' />
+							</Item>
+						) : (
+							// 클릭 시
+							<ClickedItem
+								button
+								onClick={() => Router.push('/admin/user/blacklist')}
+							>
+								<ArrowIcon>
+									<ArrowDropDownOutlined />
+								</ArrowIcon>
+								<ClickedIcon>
+									<BlockIcon />
+								</ClickedIcon>
+								<ClickedText primary='차단회원' />
+							</ClickedItem>
+						)}
+					</List>
+				</Collapse>
+				{/* 호스트 관리 */}
+				<Item button onClick={handleHostClick}>
+					<Icon>
+						<PeopleOutlinedIcon />
+					</Icon>
+					<Text primary='호스트 관리' />
+					<ArrowIcon>
+						{hostOpen ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
+					</ArrowIcon>
+				</Item>
 				{/* 호스트 */}
-				<Collapse in={open} timeout='auto' unmountOnExit>
+				<Collapse in={hostOpen} timeout='auto' unmountOnExit>
 					<List component='div' disablePadding>
 						{selected !== 'host' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/host/list')}>
@@ -260,25 +305,35 @@ export default function AdminLayout(props: Props) {
 					</List>
 				</Collapse>
 				{/* 호스트 승인 */}
-				{selected !== 'approval' ? ( // 미클릭 시
-					<Item button onClick={() => Router.push('/admin/host/approval')}>
-						<Icon>
-							<AssignmentTurnedInOutlinedIcon />
-						</Icon>
-						<Text primary='호스트 승인' />
-					</Item>
-				) : (
-					// 클릭 시
-					<ClickedItem
-						button
-						onClick={() => Router.push('/admin/host/approval')}
-					>
-						<ClickedIcon>
-							<AssignmentTurnedInOutlinedIcon />
-						</ClickedIcon>
-						<ClickedText primary='호스트 승인' />
-					</ClickedItem>
-				)}
+				<Collapse in={hostOpen} timeout='auto' unmountOnExit>
+					<List component='div' disablePadding>
+						{selected !== 'approval' ? ( // 미클릭 시
+							<Item button onClick={() => Router.push('/admin/host/approval')}>
+								<ArrowIcon>
+									<ArrowRightOutlined />
+								</ArrowIcon>
+								<Icon>
+									<AssignmentTurnedInOutlinedIcon />
+								</Icon>
+								<Text primary='호스트 승인' />
+							</Item>
+						) : (
+							// 클릭 시
+							<ClickedItem
+								button
+								onClick={() => Router.push('/admin/host/approval')}
+							>
+								<ArrowIcon>
+									<ArrowDropDownOutlined />
+								</ArrowIcon>
+								<ClickedIcon>
+									<AssignmentTurnedInOutlinedIcon />
+								</ClickedIcon>
+								<ClickedText primary='호스트 승인' />
+							</ClickedItem>
+						)}
+					</List>
+				</Collapse>
 				{/* 플랜 관리 */}
 				{selected !== 'plan' ? ( // 미클릭 시
 					<Item button>

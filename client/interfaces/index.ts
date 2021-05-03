@@ -122,3 +122,8 @@ export interface PreviousApplication {
 	status?: number;
 	review?: Review;
 }
+
+export interface BlackUser {
+	user: User;
+	reason: string;
+}

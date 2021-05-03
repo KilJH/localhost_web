@@ -1,7 +1,6 @@
 import { GetStaticProps } from 'next';
 import { Host, User } from '../../../interfaces';
 import React from 'react';
-import Layout from '../../../components/main/Layout';
 import SERVER from '../../../utils/url';
 import axios from 'axios';
 import HostPage from '../../../components/admin/host/HostPage';
