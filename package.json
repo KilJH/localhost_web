@@ -38,6 +38,8 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "serverless-mysql": "^1.5.4",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
