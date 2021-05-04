@@ -4,18 +4,18 @@ module.exports.createRoom = (req, res) => {
     const { hostUserId, userId } = req.body;
 
     const sql = `INSERT INTO message_room(host_user_id, user_user_id) VALUES(?, ?);`;
-    mysql.query(sql, [hostUserId, userId], err => {
+    mysql.query(sql, [hostUserId, userId], (err, rows) => {
         if (err) return console.log("createRoom err", err);
 
-        res.json({ success: true });
+        res.json({ success: true, roomId: rows.insertId });
     });
 };
 
 module.exports.loadRoom = (req, res) => {
     const { hostUserId, userId } = req.body;
 
-    const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE host_user_id = ? && user_user_id = ?;`
-    mysql.query(sql, [hostUserId, userId], (err, messages) => {
+    const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE host_user_id = ? && user_user_id = ? || host_user_id = ? && user_user_id;`
+    mysql.query(sql, [hostUserId, userId, userId, hostUserId], (err, messages) => {
         if (err) return console.log("loadRoom err", err);
 
         const message = messages.map(message => message);
