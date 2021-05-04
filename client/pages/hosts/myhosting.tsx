@@ -68,7 +68,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	applicationList.map(value => {
 		if (value.status === 1) matchedApplicant.push(value);
 	});
-	console.log(waitingApplicant);
 	return {
 		props: {
 			host,
