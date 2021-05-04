@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 const PORT = require('./src/port');
 const mysql = require('./db/mysql');
 const userRouter = require('./routes/user');
@@ -32,11 +34,31 @@ app.use('/api/plan', planRouter);
 app.use('/api/host', hostRouter);
 app.use('/api/s3', s3Router);
 
+io.sockets.on('connection', socket => {
+	var roomName = null;
+	console.log('connect socket');
+
+	socket.on('join', data => {
+		console.log('join event', data);
+		roomName = data;
+		socket.join(data);
+	});
+
+	socket.on('disconnect', () => {
+		console.log('user disconnected');
+	});
+
+	socket.on('message', data => {
+		io.socket.in(roomName).emit('message', 'test');
+		console.log(data);
+	});
+});
+
 mysql.connect(err => {
 	if (err) return console.log('err: ', err);
 	console.log('db연결 생성!');
 });
 
-app.listen(PORT, (req, res) => {
-	console.log('PORT server on');
+server.listen(PORT, (req, res) => {
+	console.log('Socket io PORT server on');
 });
