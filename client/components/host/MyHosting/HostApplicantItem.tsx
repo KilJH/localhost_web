@@ -27,6 +27,7 @@ const ButtonTd = styled.td`
 	max-width: 10em;
 	min-width: 10em;
 `;
+
 export default function HostApplicantItem(props: Props) {
 	const { applicant, userId } = props;
 	const [list, setList] = useState(applicant);

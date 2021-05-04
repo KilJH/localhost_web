@@ -6,7 +6,6 @@ type Props = {
 	applicant: PreviousApplication;
 };
 export default function HostPreviousApplicantItem({ applicant }: Props) {
-	console.log(applicant.review);
 	return (
 		<React.Fragment>
 			<tr>

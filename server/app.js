@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+	cors: {
+		origin: ['http://localhost:3000', 'https://localhost:3000'],
+		methods: ['GET', 'POST'],
+	},
+});
 const PORT = require('./src/port');
 const mysql = require('./db/mysql');
 const userRouter = require('./routes/user');
@@ -34,7 +39,7 @@ app.use('/api/plan', planRouter);
 app.use('/api/host', hostRouter);
 app.use('/api/s3', s3Router);
 
-io.sockets.on('connection', socket => {
+io.on('connection', socket => {
 	var roomName = null;
 	console.log('connect socket');
 
@@ -49,8 +54,7 @@ io.sockets.on('connection', socket => {
 	});
 
 	socket.on('message', data => {
-		io.socket.in(roomName).emit('message', 'test');
-		console.log(data);
+		io.emit('message', data);
 	});
 });
 
