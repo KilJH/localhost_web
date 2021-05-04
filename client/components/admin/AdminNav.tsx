@@ -5,20 +5,21 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import Collapse from '@material-ui/core/Collapse';
-import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
-import PeopleOutlinedIcon from '@material-ui/icons/PeopleOutlined';
-import PersonOutlinedIcon from '@material-ui/icons/PersonOutlined';
-import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import AssignmentIndOutlinedIcon from '@material-ui/icons/AssignmentIndOutlined';
-import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
-import HeadsetMicOutlinedIcon from '@material-ui/icons/HeadsetMicOutlined';
-import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import PeopleIcon from '@material-ui/icons/People';
+import PersonIcon from '@material-ui/icons/Person';
+import ForumIcon from '@material-ui/icons/Forum';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import HeadsetMicIcon from '@material-ui/icons/HeadsetMic';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import { ArrowDropDownOutlined, ArrowRightOutlined } from '@material-ui/icons';
+import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
 import styled from 'styled-components';
 import Router from 'next/router';
-import ArrowLeftOutlined from '@material-ui/icons/ArrowLeftOutlined';
+import ArrowLeft from '@material-ui/icons/ArrowLeft';
 import BlockIcon from '@material-ui/icons/Block';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 type Props = {
 	selected?: string;
@@ -164,7 +165,7 @@ export default function AdminLayout(props: Props) {
 				{selected !== 'notice' ? ( // 미클릭 시
 					<Item button onClick={() => Router.push('/admin/notice')}>
 						<Icon>
-							<NotificationsOutlinedIcon />
+							<NotificationsIcon />
 						</Icon>
 						<Text primary='공지 관리' />
 					</Item>
@@ -172,7 +173,7 @@ export default function AdminLayout(props: Props) {
 					// 클릭 시
 					<ClickedItem button onClick={() => Router.push('/admin/notice')}>
 						<ClickedIcon>
-							<NotificationsOutlinedIcon />
+							<NotificationsIcon />
 						</ClickedIcon>
 						<ClickedText primary='공지 관리' />
 					</ClickedItem>
@@ -181,7 +182,7 @@ export default function AdminLayout(props: Props) {
 				{selected !== 'board' ? ( // 미클릭 시
 					<Item button>
 						<Icon>
-							<ForumOutlinedIcon />
+							<ForumIcon />
 						</Icon>
 						<Text primary='게시물 관리' />
 					</Item>
@@ -189,7 +190,7 @@ export default function AdminLayout(props: Props) {
 					// 클릭 시
 					<ClickedItem button>
 						<ClickedIcon>
-							<ForumOutlinedIcon />
+							<ForumIcon />
 						</ClickedIcon>
 						<ClickedText primary='게시물 관리' />
 					</ClickedItem>
@@ -197,12 +198,10 @@ export default function AdminLayout(props: Props) {
 				{/* 유저 관리 */}
 				<Item button onClick={handleUserClick}>
 					<Icon>
-						<PeopleOutlinedIcon />
+						<PeopleIcon />
 					</Icon>
 					<Text primary='유저 관리' />
-					<ArrowIcon>
-						{userOpen ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
-					</ArrowIcon>
+					<ArrowIcon>{userOpen ? <ArrowDropDown /> : <ArrowLeft />}</ArrowIcon>
 				</Item>
 				{/* 일반회원 */}
 				<Collapse in={userOpen} timeout='auto' unmountOnExit>
@@ -210,10 +209,10 @@ export default function AdminLayout(props: Props) {
 						{selected !== 'user' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/user')}>
 								<ArrowIcon>
-									<ArrowRightOutlined />
+									<ArrowRight />
 								</ArrowIcon>
 								<Icon>
-									<PersonOutlinedIcon />
+									<PersonIcon />
 								</Icon>
 								<Text primary='회원' />
 							</Item>
@@ -221,10 +220,10 @@ export default function AdminLayout(props: Props) {
 							// 클릭 시
 							<ClickedItem button onClick={() => Router.push('/admin/user')}>
 								<ArrowIcon>
-									<ArrowDropDownOutlined />
+									<ArrowDropDown />
 								</ArrowIcon>
 								<ClickedIcon>
-									<PersonOutlinedIcon />
+									<PersonIcon />
 								</ClickedIcon>
 								<ClickedText primary='회원' />
 							</ClickedItem>
@@ -237,7 +236,7 @@ export default function AdminLayout(props: Props) {
 						{selected !== 'blacklist' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/user/blacklist')}>
 								<ArrowIcon>
-									<ArrowRightOutlined />
+									<ArrowRight />
 								</ArrowIcon>
 								<Icon>
 									<BlockIcon />
@@ -251,7 +250,7 @@ export default function AdminLayout(props: Props) {
 								onClick={() => Router.push('/admin/user/blacklist')}
 							>
 								<ArrowIcon>
-									<ArrowDropDownOutlined />
+									<ArrowDropDown />
 								</ArrowIcon>
 								<ClickedIcon>
 									<BlockIcon />
@@ -264,12 +263,10 @@ export default function AdminLayout(props: Props) {
 				{/* 호스트 관리 */}
 				<Item button onClick={handleHostClick}>
 					<Icon>
-						<PeopleOutlinedIcon />
+						<AccountCircleIcon />
 					</Icon>
 					<Text primary='호스트 관리' />
-					<ArrowIcon>
-						{hostOpen ? <ArrowDropDownOutlined /> : <ArrowLeftOutlined />}
-					</ArrowIcon>
+					<ArrowIcon>{hostOpen ? <ArrowDropDown /> : <ArrowLeft />}</ArrowIcon>
 				</Item>
 				{/* 호스트 */}
 				<Collapse in={hostOpen} timeout='auto' unmountOnExit>
@@ -277,10 +274,10 @@ export default function AdminLayout(props: Props) {
 						{selected !== 'host' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/host')}>
 								<ArrowIcon>
-									<ArrowRightOutlined />
+									<ArrowRight />
 								</ArrowIcon>
 								<Icon>
-									<AssignmentIndOutlinedIcon />
+									<AssignmentIndIcon />
 								</Icon>
 								<Text primary='호스트' />
 							</Item>
@@ -288,10 +285,10 @@ export default function AdminLayout(props: Props) {
 							// 클릭 시
 							<ClickedItem button onClick={() => Router.push('/admin/host')}>
 								<ArrowIcon>
-									<ArrowDropDownOutlined />
+									<ArrowDropDown />
 								</ArrowIcon>
 								<ClickedIcon>
-									<AssignmentIndOutlinedIcon />
+									<AssignmentIndIcon />
 								</ClickedIcon>
 								<ClickedText primary='호스트' />
 							</ClickedItem>
@@ -304,10 +301,10 @@ export default function AdminLayout(props: Props) {
 						{selected !== 'approval' ? ( // 미클릭 시
 							<Item button onClick={() => Router.push('/admin/host/approval')}>
 								<ArrowIcon>
-									<ArrowRightOutlined />
+									<ArrowRight />
 								</ArrowIcon>
 								<Icon>
-									<AssignmentTurnedInOutlinedIcon />
+									<AssignmentTurnedInIcon />
 								</Icon>
 								<Text primary='호스트 승인' />
 							</Item>
@@ -318,10 +315,10 @@ export default function AdminLayout(props: Props) {
 								onClick={() => Router.push('/admin/host/approval')}
 							>
 								<ArrowIcon>
-									<ArrowDropDownOutlined />
+									<ArrowDropDown />
 								</ArrowIcon>
 								<ClickedIcon>
-									<AssignmentTurnedInOutlinedIcon />
+									<AssignmentTurnedInIcon />
 								</ClickedIcon>
 								<ClickedText primary='호스트 승인' />
 							</ClickedItem>
@@ -332,7 +329,7 @@ export default function AdminLayout(props: Props) {
 				{selected !== 'plan' ? ( // 미클릭 시
 					<Item button onClick={() => Router.push('/admin/plan')}>
 						<Icon>
-							<AssessmentOutlinedIcon />
+							<AssessmentIcon />
 						</Icon>
 						<Text primary='플랜 관리' />
 					</Item>
@@ -340,7 +337,7 @@ export default function AdminLayout(props: Props) {
 					// 클릭 시
 					<ClickedItem button onClick={() => Router.push('/admin/plan')}>
 						<ClickedIcon>
-							<AssessmentOutlinedIcon />
+							<AssessmentIcon />
 						</ClickedIcon>
 						<ClickedText primary='플랜 관리' />
 					</ClickedItem>
@@ -349,14 +346,14 @@ export default function AdminLayout(props: Props) {
 				{selected !== 'customerService' ? (
 					<Item button>
 						<Icon>
-							<HeadsetMicOutlinedIcon />
+							<HeadsetMicIcon />
 						</Icon>
 						<Text primary='고객센터 관리' />
 					</Item>
 				) : (
 					<ClickedItem button>
 						<ClickedIcon>
-							<HeadsetMicOutlinedIcon />
+							<HeadsetMicIcon />
 						</ClickedIcon>
 						<ClickedText primary='고객센터 관리' />
 					</ClickedItem>

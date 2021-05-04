@@ -5,7 +5,6 @@ import Footer from '../main/Footer';
 import AdminHeader from './AdminHeader';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import AdminNav from './AdminNav';
-import AdminMobileNav from './AdminMobileNav';
 import ScrollContext from '../../context/scroll';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 
