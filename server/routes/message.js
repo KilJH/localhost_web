@@ -5,20 +5,20 @@ const cors = require('cors');
 
 router.use(cors());
 
-router.post('/create/room', function (req, res, next) {
-    management.createRoom(req, res);
+router.post('/room/create', function (req, res, next) {
+	management.createRoom(req, res);
 });
 
-router.post('/load/room', function (req, res, next) {
-    management.loadRoom(req, res);
+router.post('/room/load', function (req, res, next) {
+	management.loadRoom(req, res);
 });
 
-router.post('/exit/room', function (req, res, next) {
-    management.exitRoom(req, res);
+router.post('/room/exit', function (req, res, next) {
+	management.exitRoom(req, res);
 });
 
 router.post('/write', function (req, res, next) {
-    management.writeMessage(req, res);
+	management.writeMessage(req, res);
 });
 
 module.exports = router;
