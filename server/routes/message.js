@@ -21,4 +21,8 @@ router.post('/write', function (req, res, next) {
 	management.writeMessage(req, res);
 });
 
+router.post('/room/list', function (req, res, next) {
+	management.getRoomList(req, res);
+});
+
 module.exports = router;
