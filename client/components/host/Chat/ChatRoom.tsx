@@ -27,31 +27,84 @@ const ChatRoomContainer = styled.div`
 	flex-direction: column;
 	& header {
 	}
-	& .messages {
+	& .messageBox {
 		flex: 1;
 		background: #b6c6d7;
 		border-bottom: 1px solid #aaa;
 		overflow: auto;
+		padding: 1em;
 	}
 	& > form {
 		display: flex;
-		padding: 1rem 0.5rem;
+		padding: 1em 0.5em;
 		& input {
 			flex: 1;
+			font-size: 1em;
 		}
 		& button {
-			margin-left: 1rem;
+			margin-left: 1em;
 		}
 	}
 `;
 
-const OppositeChat = styled.div`
-	text-align: left;
+const ChatContainer = styled.div`
+	padding: 0.75em 1em;
+	& .message {
+		padding: 0.5em 1em;
+		border-radius: 1rem;
+		opacity: 0.9;
+	}
 `;
 
-const MyChat = styled.div`
-	text-align: right;
+const OppositeChatContainer = styled(ChatContainer)`
+	text-align: left;
+	& .message {
+		background: #aaa;
+		color: black;
+	}
+	&::after {
+		content: '23:03';
+		margin: 0 1em;
+		font-size: 0.75em;
+		font-weight: 600;
+		color: #666;
+	}
+
+	& + &::after {
+		/* 시간이 같으면 '' 다르면 시간 */
+		content: '';
+	}
 `;
+
+const MyChatContainer = styled(ChatContainer)`
+	text-align: right;
+	& .message {
+		background: #5197d5;
+		color: #eee;
+	}
+	&::before {
+		content: '23:03';
+		margin: 0 1em;
+		font-size: 0.75em;
+		font-weight: 600;
+		color: #666;
+	}
+
+	& + &::before {
+		content: '';
+	}
+`;
+
+const OppositeChat = ({ children }) => (
+	<OppositeChatContainer>
+		<span className='message'>{children}</span>
+	</OppositeChatContainer>
+);
+const MyChat = ({ children }) => (
+	<MyChatContainer>
+		<span className='message'>{children}</span>
+	</MyChatContainer>
+);
 
 const ChatRoom = (props: Props) => {
 	const chatInput = useInput('');
@@ -99,7 +152,7 @@ const ChatRoom = (props: Props) => {
 	return (
 		<ChatRoomContainer>
 			<header></header>
-			<div className='messages'>
+			<div className='messageBox'>
 				{messages.map((message, i) => {
 					return message.userId === currentUser.id ? (
 						<MyChat key={i}>{message.message}</MyChat>

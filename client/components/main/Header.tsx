@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import PersonIcon from '@material-ui/icons/Person';
 import Link from 'next/link';
 import { User } from '../../interfaces';
+import ChatIcon from '@material-ui/icons/Chat';
 // Mobile
 import MenuIcon from '@material-ui/icons/Menu';
 import { useDrawer } from '../../hooks/useDrawer';
@@ -14,6 +15,7 @@ import UserMenu from '../user/UserMenu';
 import checkScrollDirection from '../../utils/checkScrollDirection';
 import ScrollContext from '../../context/scroll';
 import { UserStateContext } from '../../context/user';
+import ChatRoomList from '../host/Chat/ChatRoomList';
 
 interface Props {
 	isMobile: boolean;
@@ -42,8 +44,8 @@ const menuArray = [
 	{ name: '동행찾기', path: '/hosts' },
 	{ name: '공지사항', path: '/notices' },
 	{ name: '자유게시판', path: '/board' },
-	{ name: '소개', path: '/about' },
-	{ name: '문의하기', path: '/question' },
+	// { name: '소개', path: '/about' },
+	// { name: '문의하기', path: '/question' },
 	{ name: '유저보기', path: '/users' },
 ];
 
@@ -93,6 +95,9 @@ const Logo = styled.div`
 	box-sizing: border-box;
 	padding: 0.25rem 0;
 
+	& > a {
+		height: 100%;
+	}
 	& > a > img {
 		height: 100%;
 		display: block;
@@ -171,6 +176,7 @@ const HamburgerMenu = styled.div`
 
 const EmptyFlexDiv = styled.div`
 	flex: 1;
+	height: 100%;
 `;
 
 const Menu = () => (
@@ -205,6 +211,28 @@ const LoginMenu = (props: LoginProps) => {
 	);
 };
 
+const ChatMenu = () => {
+	const chatDrawer = useDrawer('right');
+	return (
+		<>
+			<IconButton onClick={chatDrawer.onOpen}>
+				<ChatIcon />
+			</IconButton>
+			<Drawer
+				anchor={chatDrawer.anchor}
+				open={chatDrawer.open}
+				onClose={chatDrawer.onClose}
+			>
+				<ChatRoomList />
+			</Drawer>
+		</>
+	);
+};
+
+const FlexItemWrapper = ({ children, align }) => (
+	<div style={{ flex: 1, textAlign: align }}>{children}</div>
+);
+
 const Header = (props: Props) => {
 	const drawer = useDrawer('left');
 
@@ -229,25 +257,26 @@ const Header = (props: Props) => {
 	if (isMobile) {
 		return (
 			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
-				<IconButton>
-					<MenuIcon onClick={drawer.onOpen} />
-				</IconButton>
-				<Drawer
-					anchor={drawer.anchor}
-					open={drawer.open}
-					onClose={drawer.onClose}
-				>
-					<HamburgerMenu>
-						<div>
-							<EmptyFlexDiv />
-							<IconButton>
-								<CloseIcon onClick={drawer.onClose} />
-							</IconButton>
-						</div>
-						<Menu />
-					</HamburgerMenu>
-				</Drawer>
-				<EmptyFlexDiv />
+				<FlexItemWrapper align='left'>
+					<IconButton>
+						<MenuIcon onClick={drawer.onOpen} />
+					</IconButton>
+					<Drawer
+						anchor={drawer.anchor}
+						open={drawer.open}
+						onClose={drawer.onClose}
+					>
+						<HamburgerMenu>
+							<div>
+								<EmptyFlexDiv />
+								<IconButton>
+									<CloseIcon onClick={drawer.onClose} />
+								</IconButton>
+							</div>
+							<Menu />
+						</HamburgerMenu>
+					</Drawer>
+				</FlexItemWrapper>
 				<Logo>
 					<Link href='/'>
 						<a>
@@ -255,8 +284,10 @@ const Header = (props: Props) => {
 						</a>
 					</Link>
 				</Logo>
-				<EmptyFlexDiv />
-				<LoginMenu isLogined={isLogined} />
+				<FlexItemWrapper align='right'>
+					{isLogined ? <ChatMenu /> : ''}
+					<LoginMenu isLogined={isLogined} />
+				</FlexItemWrapper>
 			</HeaderDiv>
 		);
 	} else {
@@ -274,6 +305,7 @@ const Header = (props: Props) => {
 				<MainMenu>
 					<Menu />
 				</MainMenu>
+				{isLogined ? <ChatMenu /> : ''}
 				<LoginMenu isLogined={isLogined} />
 			</HeaderDiv>
 		);

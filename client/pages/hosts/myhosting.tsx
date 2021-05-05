@@ -10,7 +10,6 @@ interface Props {
 	pageProps: {
 		host: Host;
 		waitingApplicant: Application[];
-		userId: number;
 		previousApplicant: PreviousApplication[];
 		matchedApplicant: Application[];
 	};
@@ -72,7 +71,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		props: {
 			host,
 			waitingApplicant,
-			userId,
 			previousApplicant,
 			matchedApplicant,
 		},
