@@ -30,11 +30,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	let waitingApplicant = [];
 	let matchedApplicant = [];
 
-	const res = await axios.post(
-		`${SERVER}/api/auth/check`,
-		{ token: ctx.req.cookies.token },
-		{ withCredentials: true },
-	);
+	const cookie = ctx.req.headers.cookie || '';
+
+	const res = await axios.get(`${SERVER}/api/auth/check`, {
+		withCredentials: true,
+		headers: {
+			cookie,
+		},
+	});
+
 	const userId = res.data.user.id;
 
 	const resLoadHost = await axios.post(`${SERVER}/api/host/load`, {

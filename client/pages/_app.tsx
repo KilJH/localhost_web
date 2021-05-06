@@ -1,11 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GlobalStyle from '../styles/reset';
 import App, { AppContext } from 'next/app';
 import axios from 'axios';
 import SERVER from '../utils/url';
 import { ScrollProvider } from '../context/scroll';
-import { UserContextProvider, UserSetterContext } from '../context/user';
-import { contextType } from 'google-map-react';
+import { UserContextProvider } from '../context/user';
+import { useAsync } from 'react-async';
+
+const getCurrentUser = async () => {
+	const res = await axios.get(`${SERVER}/api/auth/check`, {
+		withCredentials: true,
+	});
+	return res.data;
+};
 
 const _app = (props: any) => {
 	const { Component, title, ...others } = props;
@@ -38,19 +45,23 @@ _app.getInitialProps = async (appContext: any) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext);
 	const { ctx } = appContext;
-	const cookie = ctx.isServer ? ctx.req.cookies.token : '';
-	if (ctx.isServer && cookie) {
-		const token = appContext.ctx.req.cookies.token || '';
-		const res = await axios.post(`${SERVER}/api/auth/check`, {
-			token,
-		});
-		const isLogined = res.data.success;
-		const user = res.data.user || {};
-		const loginProps = { isLogined, user };
-
-		return { ...appProps, loginProps };
+	const cookie = ctx.req.headers.cookie || '';
+	let loginProps = {};
+	// SSR
+	if (ctx.isServer) {
+		console.log('서버에서 동작합니다.');
+		axios.defaults.headers.cookie = cookie;
 	}
-	return { ...appProps, loginProps: { isLogined: false, user: {} } };
+	const res = await axios.get(`${SERVER}/api/auth/check`, {
+		withCredentials: true,
+		headers: {
+			cookie,
+		},
+	});
+	const isLogined = res.data.success;
+	const user = res.data.user || {};
+	loginProps = { isLogined, user };
+	return { ...appProps, loginProps };
 };
 
 export default _app;

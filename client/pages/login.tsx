@@ -3,6 +3,7 @@ import Layout from '../components/main/Layout';
 import Login from '../components/user/Login';
 import styled from 'styled-components';
 import { LoginProps } from '../interfaces';
+import withAuth from '../components/main/hoc/withAuth';
 
 interface Props {}
 
@@ -22,4 +23,4 @@ const login = (props: Props) => {
 	);
 };
 
-export default login;
+export default withAuth(2, 0)(login);

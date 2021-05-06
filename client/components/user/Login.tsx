@@ -5,6 +5,8 @@ import { useInput } from '../../hooks/useInput';
 import axios from 'axios';
 import SERVER from '../../utils/url';
 import Link from 'next/link';
+import withAuth from '../main/hoc/withAuth';
+import { UserSetterContext } from '../../context/user';
 
 interface Props {}
 
@@ -22,6 +24,7 @@ const LoginContainer = styled.div`
 const Login = (props: Props) => {
 	const email = useInput('');
 	const pw = useInput('', (value: string) => !value.includes(';'));
+	const setCurrentUser = useContext(UserSetterContext);
 
 	const onSubmit = (e: any) => {
 		e.preventDefault();
@@ -37,6 +40,7 @@ const Login = (props: Props) => {
 			)
 			.then(res => {
 				if (res.data.success) {
+					setCurrentUser(res.data.user);
 					location.href = '/';
 				} else {
 					alert(res.data.message);

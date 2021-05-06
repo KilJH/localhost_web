@@ -63,15 +63,21 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	try {
 		const id = context.params?.id;
 		const item = await (await axios.get(`${SERVER}/api/user/${id}`)).data.user;
-		const res = await axios.post(
-			`${SERVER}/api/auth/check`,
-			{ token: context.req.cookies.token },
-			{ withCredentials: true },
-		);
+
+		const cookie = context.req.headers.cookie || '';
+
+		const res = await axios.get(`${SERVER}/api/auth/check`, {
+			withCredentials: true,
+			headers: {
+				cookie,
+			},
+		});
+
+		const userId = res.data.user.id;
 		const isFollowed = await (
 			await axios.post(`${SERVER}/api/user/follow_check`, {
 				userId: id,
-				followerId: res.data.user.id,
+				followerId: userId,
 			})
 		).data.isFollowed;
 

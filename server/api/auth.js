@@ -1,26 +1,10 @@
 const mysql = require('../db/mysql');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { redirect } = require('next/dist/next-server/server/api-utils');
+const { userMapping } = require('./user');
 
 // .env 파일로 빼서 gitignore하고 환경변수로 사용
 const SECRET_KEY = 'wearelocalhost';
-
-module.exports.userMapping = user => {
-	const { id, name, email, nickname, sex, phone, address, photo } = user;
-	return {
-		id,
-		name,
-		email,
-		nickname,
-		sex,
-		phone,
-		address,
-		photo,
-		isHost: user.isHost,
-		isAdmin: user.isAdmin,
-	};
-};
 
 module.exports.createToken = (user, res) => {
 	const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1d' });
@@ -31,7 +15,6 @@ module.exports.createToken = (user, res) => {
 };
 
 module.exports.login = (req, res) => {
-	console.log(req.cookies.token);
 	// 로그인
 	if (!req.body.email)
 		res.json({ success: false, message: '아이디를 입력해주세요' });
@@ -81,14 +64,15 @@ module.exports.login = (req, res) => {
 
 // 페이지 인증
 module.exports.checkToken = (req, res) => {
-	jwt.verify(req.cookies.token, SECRET_KEY, (err, decoded) => {
+	const token = req.cookies.token || req.headers.cookie;
+	jwt.verify(token, SECRET_KEY, (err, decoded) => {
 		if (err) return res.json({ success: false, message: err });
 
 		const sql = `SELECT * FROM user WHERE id = ?`;
 		mysql.query(sql, decoded.id, (err2, rows) => {
 			if (err2) return err2;
-			if (rows[0].token === req.body.token) {
-				const user = this.userMapping(rows[0]);
+			if (rows[0].token === token) {
+				const user = userMapping(rows[0]);
 
 				res.status(200).json({ success: true, message: '로그인', user });
 			} else {

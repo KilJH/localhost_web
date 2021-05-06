@@ -2,7 +2,8 @@ import Layout from '../components/main/Layout';
 import { Grid } from '@material-ui/core';
 import Greeting from '../components/Greeting';
 import { LoginProps, User } from '../interfaces';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
+import withAuth from '../components/main/hoc/withAuth';
 
 interface Props {}
 
@@ -18,7 +19,7 @@ const IndexPage = (props: Props) => {
 	);
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
 	return { props: {} };
 };
 

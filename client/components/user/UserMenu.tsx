@@ -41,6 +41,7 @@ const UserMenu = (props: Props) => {
 	};
 
 	const currentUser: User = useContext(UserStateContext);
+	console.log(currentUser, '이런 거 찾기 너무 힘든데');
 	return (
 		<UserMenuContainer>
 			<UserPhoto src={currentUser.photo} />
