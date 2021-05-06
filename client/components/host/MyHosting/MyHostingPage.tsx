@@ -12,7 +12,6 @@ import HostMatchedApplicantItem from './HostMatchedApplicantItem';
 interface Props {
 	host: Host;
 	waitingApplicant: Application[];
-	userId: number;
 	previousApplicant: PreviousApplication[];
 	matchedApplicant: Application[];
 }
@@ -87,13 +86,7 @@ const NoItem = ({
 );
 
 export default function MyHostingPage(props: Props): ReactElement {
-	const {
-		waitingApplicant,
-		host,
-		userId,
-		previousApplicant,
-		matchedApplicant,
-	} = props;
+	const { waitingApplicant, host, previousApplicant, matchedApplicant } = props;
 	const [dialogueOpen, setDialogueOpen] = useState(false);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
@@ -136,7 +129,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 				<tbody>
 					{waitingApplicant.length ? (
 						waitingApplicant.map(value => (
-							<HostApplicantItem applicant={value} userId={userId} />
+							<HostApplicantItem applicant={value} />
 						))
 					) : (
 						<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>

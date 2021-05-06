@@ -6,7 +6,7 @@ import { LoginProps, Plan } from '../../interfaces';
 
 interface Props {
 	pageProps: {
-		plans: Plan[];
+		plans?: Plan[];
 	};
 }
 
@@ -15,7 +15,7 @@ const index = (props: Props) => {
 
 	return (
 		<Layout title='플랜보기 | localhost'>
-			<PlanList plans={pageProps.plans} />
+			<PlanList plans={pageProps.plans || []} />
 		</Layout>
 	);
 };

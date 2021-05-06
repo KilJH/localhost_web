@@ -154,7 +154,7 @@ export default function AdminLayout(props: Props) {
 	return (
 		<NavDiv>
 			<NavList>
-				<NavTitle>
+				<NavTitle button>
 					<NavTitleIcon>
 						<VpnKeyIcon />
 					</NavTitleIcon>

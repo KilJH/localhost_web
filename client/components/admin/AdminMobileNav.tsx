@@ -133,7 +133,7 @@ export default function AdminLayout(props: Props) {
 	return (
 		<NavDiv>
 			<NavList>
-				<NavTitle button onClick={titleHandleClick}>
+				<NavTitle onClick={titleHandleClick}>
 					<NavTitleIcon>
 						<VpnKeyIcon />
 					</NavTitleIcon>

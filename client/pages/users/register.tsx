@@ -2,7 +2,6 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import Layout from '../../components/main/Layout';
 import Register from '../../components/user/Register';
-import { LoginProps } from '../../interfaces';
 
 interface Props {}
 

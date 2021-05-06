@@ -159,11 +159,11 @@ export default function HostList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map(item => (
+					{items.map((item, i) => (
 						<UserItem
 							key={item.id}
 							user={item}
-							state={state}
+							state={state[i]}
 							handleChange={handleChange}
 						/>
 					))}

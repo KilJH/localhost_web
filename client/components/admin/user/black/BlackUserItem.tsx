@@ -5,7 +5,7 @@ import UserDetail from '../UserDetail';
 
 type Props = {
 	black: BlackUser;
-	state: object;
+	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -37,7 +37,7 @@ export default function blackUserItem(props: Props) {
 				>
 					<Checkbox
 						id={black.user.id.toString()}
-						isChecked={state}
+						checked={state}
 						onChange={handleChange}
 					></Checkbox>
 				</td>

@@ -5,7 +5,7 @@ import HostApprovalDetail from './HostApprovalDetail';
 
 type Props = {
 	user: Host;
-	state: object;
+	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -37,7 +37,7 @@ export default function UserItem(props: Props) {
 				>
 					<Checkbox
 						id={user.id.toString()}
-						isChecked={state}
+						checked={state}
 						onChange={handleChange}
 					></Checkbox>
 				</td>

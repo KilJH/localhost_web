@@ -5,6 +5,7 @@ import axios from 'axios';
 import SERVER from '../utils/url';
 import { ScrollProvider } from '../context/scroll';
 import { UserContextProvider, UserSetterContext } from '../context/user';
+import { contextType } from 'google-map-react';
 
 const _app = (props: any) => {
 	const { Component, title, ...others } = props;
@@ -36,15 +37,20 @@ const _app = (props: any) => {
 _app.getInitialProps = async (appContext: any) => {
 	// calls page's `getInitialProps` and fills `appProps.pageProps`
 	const appProps = await App.getInitialProps(appContext);
-	const token = appContext.ctx.req.cookies.token || '';
-	const res = await axios.post(`${SERVER}/api/auth/check`, {
-		token,
-	});
-	const isLogined = res.data.success;
-	const user = res.data.user || {};
-	const loginProps = { isLogined, user };
+	const { ctx } = appContext;
+	const cookie = ctx.isServer ? ctx.req.cookies.token : '';
+	if (ctx.isServer && cookie) {
+		const token = appContext.ctx.req.cookies.token || '';
+		const res = await axios.post(`${SERVER}/api/auth/check`, {
+			token,
+		});
+		const isLogined = res.data.success;
+		const user = res.data.user || {};
+		const loginProps = { isLogined, user };
 
-	return { ...appProps, loginProps };
+		return { ...appProps, loginProps };
+	}
+	return { ...appProps, loginProps: { isLogined: false, user: {} } };
 };
 
 export default _app;

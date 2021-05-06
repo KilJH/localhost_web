@@ -15,6 +15,7 @@ const noticeRouter = require('./routes/notice');
 const boardRouter = require('./routes/board');
 const planRouter = require('./routes/plan');
 const hostRouter = require('./routes/host');
+const messageRouter = require('./routes/message');
 const s3Router = require('./routes/s3');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -37,6 +38,7 @@ app.use('/api/notice', noticeRouter);
 app.use('/api/board', boardRouter);
 app.use('/api/plan', planRouter);
 app.use('/api/host', hostRouter);
+app.use('/api/message', messageRouter);
 app.use('/api/s3', s3Router);
 
 io.on('connection', socket => {

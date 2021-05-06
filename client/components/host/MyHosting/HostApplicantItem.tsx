@@ -1,14 +1,14 @@
 import { Application } from '../../../interfaces';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
 import Router from 'next/router';
+import { UserStateContext } from '../../../context/user';
 
 type Props = {
 	applicant: Application;
-	userId: number;
 };
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
@@ -29,8 +29,9 @@ const ButtonTd = styled.td`
 `;
 
 export default function HostApplicantItem(props: Props) {
-	const { applicant, userId } = props;
+	const { applicant } = props;
 	const [list, setList] = useState(applicant);
+	const currentUser = useContext(UserStateContext);
 
 	useEffect(() => {
 		setList(applicant);
@@ -41,11 +42,20 @@ export default function HostApplicantItem(props: Props) {
 		try {
 			const res = await axios.post(`${SERVER}/api/host/application/approve`, {
 				id: list.user.id,
-				hostUserId: userId,
+				hostUserId: currentUser.id,
 			});
 			if (res.data.success) {
-				alert('승인 처리되었습니다.');
-				Router.push('/hosts/myhosting');
+				const createRoomRes = await axios.post(
+					`${SERVER}/api/message/room/create`,
+					{
+						hostUserId: currentUser.id,
+						userId: list.user.id,
+					},
+				);
+				if (createRoomRes.data.success) {
+					alert('승인 처리되었습니다. 채팅을 통해 약속을 잡으세요');
+					Router.push('/hosts/myhosting');
+				}
 			}
 		} catch (err) {
 			return console.log(err);
@@ -56,7 +66,7 @@ export default function HostApplicantItem(props: Props) {
 		try {
 			const res = await axios.post(`${SERVER}/api/host/application/deny`, {
 				id: list.user.id,
-				hostUserId: userId,
+				hostUserId: currentUser.id,
 			});
 			if (res.data.success) {
 				alert('거부 처리되었습니다.');

@@ -133,7 +133,7 @@ export default function PlanItem({ item }: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{item.planDay.map(day => (
+					{item.planDays.map(day => (
 						<tr>
 							<td>1일차</td>
 							<td>10:00</td>

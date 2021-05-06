@@ -183,11 +183,11 @@ export default function BlackUserList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{black.map(item => {
+					{black.map((item, i) => {
 						return (
 							<BlackUserItem
 								black={item}
-								state={state}
+								state={state[i]}
 								handleChange={handleChange}
 							/>
 						);
