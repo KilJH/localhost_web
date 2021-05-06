@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next client",
-    "build": "next build",
+    "build": "next build client",
     "start": "concurrently \"nodemon server/app\" \"next client\"",
+    "start:client": "next client",
     "start:server": "nodemon server/app",
     "type-check": "tsc"
   },
