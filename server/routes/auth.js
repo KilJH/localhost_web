@@ -13,8 +13,9 @@ router.use(cors(corsOptions));
 router.post('/login', function (req, res, next) {
 	management.login(req, res);
 });
+
 // 페이지 인증
-router.post('/check', function (req, res, next) {
+router.get('/check', function (req, res, next) {
 	management.checkToken(req, res);
 });
 // 로그아웃
