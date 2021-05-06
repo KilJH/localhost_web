@@ -1,0 +1,1 @@
+{"ast":null,"code":"const SERVER = 'http://localhost:5000';\nexport default SERVER;","map":{"version":3,"sources":["/Users/zknock/Develop/localhost_web/client/utils/url.ts"],"names":["SERVER"],"mappings":"AAAA,MAAMA,MAAM,GAAG,uBAAf;AAEA,eAAeA,MAAf","sourcesContent":["const SERVER = 'http://localhost:5000';\n\nexport default SERVER;\n"]},"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"var SERVER = 'http://localhost:5000';\nexport default SERVER;","map":null,"metadata":{},"sourceType":"module"}
