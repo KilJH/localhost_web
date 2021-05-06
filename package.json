@@ -2,8 +2,8 @@
   "name": "with-typescript",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next client",
     "build": "next build client",
+    "next": "next start client",
     "start": "concurrently \"nodemon server/app\" \"next client\"",
     "start:client": "next client",
     "start:server": "nodemon server/app",
