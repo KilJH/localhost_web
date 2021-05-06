@@ -1,0 +1,1 @@
+{"ast":null,"code":"// const SERVER = 'http://localhost:5000';\nvar SERVER = 'http://13.124.129.55:5000';\nexport default SERVER;","map":null,"metadata":{},"sourceType":"module"}

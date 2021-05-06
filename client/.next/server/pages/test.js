@@ -4385,7 +4385,8 @@ const Input = props => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const SERVER = 'http://localhost:5000';
+// const SERVER = 'http://localhost:5000';
+const SERVER = 'http://13.124.129.55:5000';
 /* harmony default export */ __webpack_exports__["a"] = (SERVER);
 
 /***/ }),
