@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 type Props = {
 	item: Plan;
-	state: object;
+	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -32,7 +32,7 @@ export default function PlanItem(props: Props) {
 					<td>
 						<Checkbox
 							id={item.id.toString()}
-							isChecked={state}
+							checked={state}
 							onChange={handleChange}
 						></Checkbox>
 					</td>

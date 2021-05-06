@@ -199,11 +199,11 @@ export default function HostApprovalList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map(item => (
+					{items.map((item, i) => (
 						<HostApprovalItem
 							key={item.id}
 							user={item}
-							state={state}
+							state={state[i]}
 							handleChange={handleChange}
 						/>
 					))}

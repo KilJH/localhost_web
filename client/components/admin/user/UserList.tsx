@@ -199,13 +199,13 @@ export default function UserList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map(item => {
+					{items.map((item, i) => {
 						if (item.isHost === 0) {
 							return (
 								<UserItem
 									key={item.id}
 									user={item}
-									state={state}
+									state={state[i]}
 									handleChange={handleChange}
 								/>
 							);

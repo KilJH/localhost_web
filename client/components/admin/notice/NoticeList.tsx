@@ -190,11 +190,11 @@ export default function NoticeList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map(item => (
+					{items.map((item, i) => (
 						<NoticeItem
 							key={item.id}
 							item={item}
-							state={state}
+							state={state[i]}
 							handleChange={handleChange}
 						/>
 					))}

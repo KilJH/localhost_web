@@ -5,7 +5,7 @@ import NoticeUpdate from './NoticeUpdate';
 
 type Props = {
 	item: Notice;
-	state: object;
+	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -37,7 +37,7 @@ export default function NoticeItem(props: Props) {
 				>
 					<Checkbox
 						id={item.id.toString()}
-						isChecked={state}
+						checked={state}
 						onChange={handleChange}
 					></Checkbox>
 				</td>

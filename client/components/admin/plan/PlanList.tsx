@@ -183,11 +183,11 @@ export default function PlanList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map(item => (
+					{items.map((item, i) => (
 						<PlanItem
 							key={item.id}
 							item={item}
-							state={state}
+							state={state[i]}
 							handleChange={handleChange}
 						/>
 					))}

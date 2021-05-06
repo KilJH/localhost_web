@@ -5,7 +5,7 @@ import UserDetail from './UserDetail';
 
 type Props = {
 	user: User | Host;
-	state: object;
+	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
@@ -37,7 +37,7 @@ export default function UserItem(props: Props) {
 				>
 					<Checkbox
 						id={user.id.toString()}
-						isChecked={state}
+						checked={state}
 						onChange={handleChange}
 					></Checkbox>
 				</td>
@@ -53,7 +53,7 @@ export default function UserItem(props: Props) {
 			</tr>
 			<tr>
 				<td style={{ padding: 0 }} colSpan={4}>
-					<UserDetail user={user} visibility={detailState} />
+					<UserDetail user={user as User} visibility={detailState} />
 				</td>
 			</tr>
 		</React.Fragment>
