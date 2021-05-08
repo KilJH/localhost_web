@@ -50,7 +50,9 @@ module.exports.login = (req, res) => {
 						res
 							.cookie('token', token, {
 								httpOnly: true,
+								sameSite: 'none',
 							})
+							.cookie('test', 'sucess', {})
 							.status(200)
 							.json({ success: true, message: '로그인 성공', user: rows[0] });
 					}

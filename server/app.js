@@ -3,7 +3,8 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
 	cors: {
-		origin: ['http://localhost:3000', 'https://localhost:3000'],
+		origin: true,
+		// origin: ['http://localhost:3000', 'https://localhost:3000'],
 		methods: ['GET', 'POST'],
 	},
 });
@@ -23,7 +24,7 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 
 const corsOptions = {
-	origin: ['http://localhost:3000'],
+	origin: true,
 	credentials: true,
 };
 
