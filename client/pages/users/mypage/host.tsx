@@ -1,11 +1,6 @@
 import React from 'react';
 import Layout from '../../../components/main/Layout';
-import Mypage from '../../../components/user/Mypage/Mypage';
-import {
-	Application,
-	PreviousApplication,
-	User,
-} from '../../../interfaces/index';
+import { Application, PreviousApplication } from '../../../interfaces/index';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import SERVER from '../../../utils/url';
