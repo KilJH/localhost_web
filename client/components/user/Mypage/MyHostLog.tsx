@@ -67,7 +67,8 @@ const StatusSpan = styled.span<{ color?: string }>`
 	display: inline-block;
 	padding: 0.25rem 0.5rem;
 	color: ${props => props.color || 'black'};
-	border: 1px solid ${props => props.color || 'black'};
+	border: 2px solid ${props => props.color || 'black'};
+	font-weight: 600;
 	font-size: 0.8em;
 `;
 
@@ -131,7 +132,7 @@ const HistoryItem = ({ history }: { history: PreviousApplication }) => {
 			<td>{history.place.formatted_address}</td>
 			<td>
 				{history.review.description ? (
-					<Rating rating={history.review.rating} />
+					<Rating rating={history.review.rating} isFilled />
 				) : (
 					<Button onClick={handleOpen}>리뷰작성</Button>
 				)}

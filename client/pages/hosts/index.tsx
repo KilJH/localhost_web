@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next';
 import React from 'react';
 import Layout from '../../components/main/Layout';
 import HostMain from '../../components/host/HostMain';
+import withAuth from '../../components/main/hoc/withAuth';
 
 interface Props {}
 
@@ -17,4 +18,4 @@ export const getStaticProps: GetStaticProps = async () => {
 	return { props: {} };
 };
 
-export default IndexHost;
+export default withAuth(1, 0)(IndexHost);
