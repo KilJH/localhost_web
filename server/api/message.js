@@ -22,7 +22,16 @@ module.exports.loadRoom = (req, res) => {
 			if (err) return console.log('loadRoom err', err);
 
 			const message = messages.map(message => message);
-			res.json({ success: true, messages: message });
+			const messageRoomId = `SELECT * FROM message_room WHERE host_user_id = ? AND user_user_id = ?;`;
+
+			mysql.query(messageRoomId, [hostUserId, userId], (err, room) => {
+				if (err) return console.log('err', err);
+				res.json({
+					success: true,
+					messageRoomId: room[0].id,
+					messages: message,
+				});
+			});
 		},
 	);
 };
