@@ -34,6 +34,6 @@
     "next.config.js",
     "server.js",
     "client/utils/db.js",
-    "context/user.js",
+    "context/user.ts",
     "context/scroll.js"]
 }

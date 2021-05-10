@@ -4,7 +4,7 @@
   "scripts": {
     "build": "next build",
     "next": "next start",
-    "start": "concurrently \"nodemon server/app\" \"next client\"",
+    "start": "nodemon server",
     "start:client": "next",
     "start:nwe" : "node server",
     "type-check": "tsc"
