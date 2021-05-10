@@ -7,7 +7,7 @@ export const useToggle = (initialValue: boolean, name?: string) => {
 	// useRef() 안의 인자는 Typescript 에러검출에서 undefined 를 피하기 위한 객체 생성
 	const ref = useRef<HTMLSpanElement>(null);
 
-	const onClick = (e: any) => {
+	const onClick = () => {
 		setValue(!value);
 	};
 

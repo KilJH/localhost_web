@@ -4,7 +4,7 @@ export const useTabs = (initialTab: number) => {
 	// state 생성 및 초기화
 	const [value, setValue] = useState(initialTab);
 
-	const onChange = (e: React.ChangeEvent<{}>, newValue: number) => {
+	const onChange = (newValue: number) => {
 		setValue(newValue);
 	};
 

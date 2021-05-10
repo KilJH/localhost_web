@@ -1,14 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const management = require('../api/auth');
-const cors = require('cors');
-
-const corsOptions = {
-	origin: true,
-	credentials: true,
-};
-
-router.use(cors(corsOptions));
 
 router.post('/login', function (req, res, next) {
 	management.login(req, res);

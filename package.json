@@ -2,14 +2,13 @@
   "name": "with-typescript",
   "version": "1.0.0",
   "scripts": {
-    "build": "next build client",
-    "next": "next start client",
+    "build": "next build",
+    "next": "next start",
     "start": "concurrently \"nodemon server/app\" \"next client\"",
-    "start:client": "next client",
-    "start:server": "nodemon server/app",
+    "start:client": "next",
+    "start:nwe" : "node server",
     "type-check": "tsc"
   },
-  "proxy": "http://localhost:5000",
   "dependencies": {
     "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.11.3",
