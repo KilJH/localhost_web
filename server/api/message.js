@@ -19,12 +19,12 @@ module.exports.loadRoom = (req, res) => {
 		[hostUserId, userId, userId, hostUserId],
 		(err, messages) => {
 			if (err) return console.log('loadRoom err', err);
-			const message = messages.map(message => {
+			const message = messages.map((message, index) => {
 				return {
-					roomId: messages[0].messageroom_id,
-					userId: messages[0].user_id,
-					message: messages[0].text,
-					createTime: messages[0].create_time,
+					roomId: messages[index].messageroom_id,
+					userId: messages[index].user_id,
+					message: messages[index].text,
+					createTime: messages[index].create_time,
 				};
 			});
 			res.json({ success: true, messages: message });
