@@ -6,7 +6,6 @@ AWS.config.region = 'ap-northeast-2';
 var s3 = new AWS.S3(password.s3);
 
 module.exports.upload = (req, res) => {
-	console.log(req.files.file);
 	var param = {
 		Bucket: 'localhostphoto3',
 		Key: `${req.body.name}.${req.files.file.mimetype.split('/')[1]}`,

@@ -1,1 +1,0 @@
-{"ast":null,"code":"var mysql = require('mysql');\n\nconst mysqlInfo = require('./password');\n\nvar connection = mysql.createConnection(mysqlInfo.mysqlInfo);\nmodule.exports = connection;","map":null,"metadata":{},"sourceType":"script"}
