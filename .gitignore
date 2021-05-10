@@ -13,8 +13,8 @@ keys.ts
 /coverage
 
 # next.js
-/client/.next/
-/client/out/
+/.next/
+/out/
 
 # production
 /build
