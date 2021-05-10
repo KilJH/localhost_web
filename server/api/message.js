@@ -12,41 +12,24 @@ module.exports.createRoom = (req, res) => {
 };
 
 module.exports.loadRoom = (req, res) => {
-	const { roomId, hostUserId, userId } = req.body;
+	const { hostUserId, userId } = req.body;
 	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE host_user_id = ? && user_user_id = ? || host_user_id = ? && user_user_id;`;
-
-	if (roomId) {
-		const hostUserId = `SELECT host_user_id FROM message_room WHERE id = "${roomId}";`;
-		const userId = `SELECT user_user_id FROM message_room WHERE id = "${roomId}";`;
-		mysql.query(
-			sql,
-			[hostUserId, userId, userId, hostUserId],
-			(err, messages) => {
-				if (err) return console.log('loadRoom err', err);
-
-				const message = messages.map(message => message);
-				res.json({
-					success: true,
-					messages: message,
-				});
-			},
-		);
-	} else {
-		mysql.query(
-			sql,
-			[hostUserId, userId, userId, hostUserId],
-			(err, messages) => {
-				if (err) return console.log('loadRoom err', err);
-
-				const message = messages.map(message => message);
-
-				res.json({
-					success: true,
-					messages: message,
-				});
-			},
-		);
-	}
+	mysql.query(
+		sql,
+		[hostUserId, userId, userId, hostUserId],
+		(err, messages) => {
+			if (err) return console.log('loadRoom err', err);
+			const message = messages.map(message => {
+				return {
+					roomId: messages[0].messageroom_id,
+					userId: messages[0].user_id,
+					message: messages[0].text,
+					createTime: messages[0].create_time,
+				};
+			});
+			res.json({ success: true, messages: message });
+		},
+	);
 };
 
 module.exports.exitRoom = (req, res) => {
@@ -95,7 +78,25 @@ module.exports.getRoomList = (req, res) => {
 				return console.log('selectAsHost err: ', err);
 			}
 
-			const result = [...rows1, ...rows2];
+			const row1 = rows1.map(row => {
+				return {
+					roomId: row.id,
+					hostId: row.host_user_id,
+					userId: row.user_user_id,
+					nickname: row.nickname,
+					photo: row.photo,
+				};
+			});
+			const row2 = rows2.map(row => {
+				return {
+					roomId: row.id,
+					hostId: row.host_user_id,
+					userId: row.user_user_id,
+					nickname: row.nickname,
+					photo: row.photo,
+				};
+			});
+			const result = [...row1, ...row2];
 			res.json({ success: true, roomList: result });
 		});
 	});
