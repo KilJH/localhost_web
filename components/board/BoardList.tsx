@@ -7,8 +7,12 @@ import { Board } from '../../interfaces';
 import axios from 'axios';
 import SERVER from '../../client/utils/url';
 import Pagination from '../main/Pagination';
-import { useAsync } from 'react-async';
-import Loading from '../reuse/Loading';
+
+interface Props {
+	pagedBoards: Board[];
+	lastIdx: number;
+	page: number;
+}
 
 const BoardContainer = styled.div`
 	margin: 1rem 0;
@@ -17,58 +21,20 @@ const BoardContainer = styled.div`
 	}
 `;
 
-const getBoards = async ctx => {
-	const { page } = ctx;
-	try {
-		const res = await axios.get(`/api/board/list?page=${page}`);
-		console.log(res.data);
-		return res.data;
-	} catch (err) {
-		return console.log(err);
-	}
-};
-
-const BoardList = () => {
-	// const { boards } = props;
-	const [boards, setBoards] = useState<Board[]>([]);
-	const [pageState, setPageState] = useState(1);
-
-	// const onSubmit = async (e: React.FormEvent, type, item) => {
-	// 	e.preventDefault();
-	// 	const res = await axios.post(`${SERVER}/api/board/search`, {
-	// 		type: type,
-	// 		item: item,
-	// 	});
-
-	// 	setBoards(res.data.list);
-	// };
+const BoardList = (props: Props) => {
+	const { pagedBoards, lastIdx, page } = props;
+	const [boards, setBoards] = useState<Board[]>(pagedBoards);
+	const [pageState, setPageState] = useState(page);
 
 	const onClickPage = idx => {
 		setPageState(idx);
 	};
 
-	const { data, error, isLoading } = useAsync({
-		promiseFn: getBoards,
-		page: pageState,
-	});
-
 	useEffect(() => {
-		setBoards(data?.pagedBoards ?? []);
-	}, [data]);
-
-	useEffect(() => {
-		console.log(pageState);
 		axios.get(`/api/board/list?page=${pageState}`).then(res => {
 			setBoards(res.data.pagedBoards);
 		});
 	}, [pageState]);
-
-	if (isLoading) return <Loading />;
-	if (error)
-		return (
-			<div style={{ fontSize: '0.5em', color: '#e74c3c' }}>!!!에러!!!</div>
-		);
-	if (!data) return null;
 
 	return (
 		<BoardContainer>
@@ -80,7 +46,7 @@ const BoardList = () => {
 				onSubmit={() => {}}
 			/>
 			<div>
-				{boards.map(board => (
+				{boards?.map(board => (
 					<BoardItem board={board} key={board.id} />
 				))}
 			</div>
@@ -90,11 +56,10 @@ const BoardList = () => {
 			</Link>
 			{/* 페이지네이션 */}
 			<Pagination
-				currentIdx={data.page!}
-				lastIdx={data.lastIdx}
+				currentIdx={pageState}
+				lastIdx={lastIdx}
 				url='/board'
 				api={`${SERVER}/api/board/list`}
-				// setItems={setBoards}
 				onClick={onClickPage}
 			/>
 		</BoardContainer>
