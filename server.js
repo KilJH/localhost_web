@@ -1,5 +1,6 @@
 const express = require('express');
 const next = require('next');
+const cors = require('cors');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -9,6 +10,7 @@ const handle = app.getRequestHandler();
 // const io = require('socket.io')();
 
 const PORT = 3000;
+const SOCKETPORT = 4000;
 const mysql = require('./server/db/mysql');
 const userRouter = require('./server/routes/user');
 const authRouter = require('./server/routes/auth');
@@ -40,6 +42,7 @@ app.prepare().then(() => {
 	server.use('/api/host', hostRouter);
 	server.use('/api/message', messageRouter);
 	server.use('/api/s3', s3Router);
+	server.use(cors());
 
 	server.get('/', (req, res) => {
 		return app.render(req, res, '/');
@@ -73,6 +76,9 @@ app.prepare().then(() => {
 			console.log('데이터 수신: ', data);
 			io.emit('message', data);
 		});
+	});
+	httpServer.listen(SOCKETPORT, () => {
+		console.log(`HTTP server is running on ${SOCKETPORT}`);
 	});
 
 	// DB

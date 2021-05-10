@@ -5,7 +5,6 @@ import Button from '../../reuse/Button';
 import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
-import SERVER from '../../../client/utils/url';
 
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
@@ -108,18 +107,16 @@ const MyChat = ({ children }: { children: ReactNode }) => (
 );
 
 const ChatRoom = () => {
+	const CHATTINGSERVER = 'http://localhost:4000';
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext);
-
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>([]);
-
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
-
 	useEffect(() => {
-		setSocket(io(`${SERVER}`));
+		setSocket(io(`${CHATTINGSERVER}`, { transports: ['websocket'] }));
 	}, []);
 
 	useEffect(() => {}, [messages]);
