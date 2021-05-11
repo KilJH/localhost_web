@@ -133,9 +133,6 @@ const ChatRoom = (props: Props) => {
 	useEffect(() => {
 		if (socket) {
 			socket.emit('join', roomId);
-			socket.on('join', roomId => {
-				console.log('room id: ', roomId);
-			});
 		}
 	}, [roomId]);
 
@@ -143,7 +140,16 @@ const ChatRoom = (props: Props) => {
 		setMessages(loadMessages);
 	}, [loadMessages]);
 
-	useEffect(() => {}, [messages]);
+	useEffect(() => {
+		if (socket) {
+			socket.emit('join', roomId);
+		}
+		return () => {
+			if (socket) {
+				socket.off('message');
+			}
+		};
+	}, [socket]);
 
 	useEffect(() => {
 		if (socket) {
