@@ -4,18 +4,19 @@ import axios from 'axios';
 import SERVER from '../../client/utils/url';
 import React from 'react';
 import ChatRoom from '../../components/host/Chat/ChatRoom';
+import { User } from '../../interfaces';
 
 type Props = {
 	pageProps: {
 		loadMessages: Array<Object>;
 		roomId: number;
-		opponent: string;
+		opponent: User;
 	};
 };
 
 const StaticPropsDetail = ({ pageProps }: Props) => {
 	return (
-		<Layout title={`${pageProps.opponent}님과의 채팅 | localhost`}>
+		<Layout title={`${pageProps.opponent.nickname}님과의 채팅 | localhost`}>
 			<ChatRoom {...pageProps} />
 		</Layout>
 	);
@@ -25,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	const opponentId = context.params?.id;
 	const opponent = await (
 		await axios.get(`${SERVER}/api/user/${opponentId}`)
-	).data.user.nickname;
+	).data.user;
 	const cookie = context.req.headers.cookie || '';
 	const userId = await (
 		await axios.get(`${SERVER}/api/auth/check`, {

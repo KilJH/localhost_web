@@ -12,6 +12,8 @@ import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
+import { User } from '../../../interfaces';
+import UserPhoto from '../../user/UserPhoto';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -24,9 +26,9 @@ import axios from 'axios';
 //           내가 보낸 메세지면 오른쪽에 아니면 왼쪽에 표시
 
 interface Props {
-	// 상대방 user 객체(nickname, id, photo)
 	loadMessages: Array<Object>;
 	roomId: number;
+	opponent: User;
 }
 
 interface TimeProps {
@@ -38,6 +40,16 @@ const ChatRoomContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	& header {
+		position: sticky;
+		background: #b6c6d7;
+		& div {
+			display: inline-block;
+			padding: 0.75em 0 0.75em 1.75em;
+		}
+	}
+	& h3 {
+		margin: 0.25em 0 0 0;
+		color: rgba(33, 33, 33, 0.9);
 	}
 	& .messageBox {
 		flex: 1;
@@ -45,6 +57,7 @@ const ChatRoomContainer = styled.div`
 		border-bottom: 1px solid #aaa;
 		overflow: auto;
 		padding: 1em;
+		opacity: 0.93;
 	}
 	& > form {
 		display: flex;
@@ -122,22 +135,22 @@ const MyChat = ({
 );
 
 const ChatRoom = (props: Props) => {
-	const { loadMessages, roomId } = props;
+	const { loadMessages, roomId, opponent } = props;
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext);
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
 
-	useEffect(() => {
-		if (socket) {
-			socket.emit('join', roomId);
-		}
-	}, [roomId]);
+	const receiveMessage = (message: any) => {
+		setMessages([...messages, message]);
+	};
 
+	// 소켓 생성
 	useEffect(() => {
-		setMessages(loadMessages);
-	}, [loadMessages]);
+		setSocket(io(`/`, { transports: ['websocket'] }));
+	}, []);
 
+	// 방 입장 (소켓 생성 시)
 	useEffect(() => {
 		if (socket) {
 			socket.emit('join', roomId);
@@ -149,6 +162,19 @@ const ChatRoom = (props: Props) => {
 		};
 	}, [socket]);
 
+	// 방 입장 (roomId 변경 시)
+	useEffect(() => {
+		if (socket) {
+			socket.emit('join', roomId);
+		}
+	}, [roomId]);
+
+	// 메세지 생성
+	useEffect(() => {
+		setMessages(loadMessages);
+	}, [loadMessages]);
+
+	// 소켓, 메세지 변경 시 메세지 수신
 	useEffect(() => {
 		if (socket) {
 			socket.on('message', data => {
@@ -166,11 +192,15 @@ const ChatRoom = (props: Props) => {
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (chatInput.value === '') return;
+
+		// 소켓 데이터 생성
 		const submitData = {
 			userId: currentUser.id,
 			message: chatInput.value,
 			createTime: new Date(),
 		};
+
+		// 데이터 베이스 전달
 		await axios.post(`/api/message/write`, {
 			messageRoomId: roomId,
 			userId: submitData.userId,
@@ -217,7 +247,12 @@ const ChatRoom = (props: Props) => {
 
 	return (
 		<ChatRoomContainer>
-			<header></header>
+			<header>
+				<div>
+					<UserPhoto width={3.5} src={opponent.photo}></UserPhoto>
+					<h3>{opponent.nickname}</h3>
+				</div>
+			</header>
 			<div ref={scrollRef} className='messageBox'>
 				{messages.map((message, i) => {
 					const currentTime = new Date(message.createTime);
