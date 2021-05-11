@@ -25,7 +25,7 @@ interface Props {
 }
 
 interface TimeProps {
-	createTime: string;
+	createTime?: string;
 }
 
 const ChatRoomContainer = styled.div`
@@ -70,7 +70,7 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 		color: black;
 	}
 	&::after {
-		content: '${(props: TimeProps) => props.createTime?.slice(11, 16) || ''}';
+		content: '${(props: TimeProps) => props.createTime || ''}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -90,7 +90,7 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 		color: #eee;
 	}
 	&::before {
-		content: '${(props: TimeProps) => props.createTime?.slice(11, 16) || ''}';
+		content: '${(props: TimeProps) => props.createTime || ''}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -175,17 +175,35 @@ const ChatRoom = (props: Props) => {
 		chatInput.setValue('');
 	};
 
+	const formatTime = (createTime: string) => {
+		const dt = new Date();
+		const nowMonth =
+			dt.getMonth() + 1 < 10 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1;
+		const nowDay = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+
+		const nowDate = dt.getFullYear() + '-' + nowMonth + '-' + nowDay; // 현재 날짜
+		const createDate = createTime.slice(0, 10); // 채팅이 작성 된 날짜
+		let isToday = true; // 채팅 날짜가 오늘 날짜인지 체크
+
+		createDate.split('-').map((value, index) => {
+			if (value !== nowDate.split('-')[index]) isToday = false;
+		});
+
+		if (isToday) return createTime.slice(11, 16);
+		else return createTime.replaceAll('-', '.').replaceAll(' ', '. ');
+	};
+
 	return (
 		<ChatRoomContainer>
 			<header></header>
 			<div className='messageBox'>
 				{messages.map((message, i) => {
 					return message.userId === currentUser.id ? (
-						<MyChat key={i} createTime={message.createTime}>
+						<MyChat key={i} createTime={formatTime(message.createTime)}>
 							{message.message}
 						</MyChat>
 					) : (
-						<OppositeChat key={i} createTime={message.createTime}>
+						<OppositeChat key={i} createTime={formatTime(message.createTime)}>
 							{message.message}
 						</OppositeChat>
 					);
