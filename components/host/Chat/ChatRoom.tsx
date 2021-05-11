@@ -5,6 +5,8 @@ import Button from '../../reuse/Button';
 import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
+import axios from 'axios';
+import SERVER from '../../../client/utils/url';
 
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
@@ -17,9 +19,15 @@ import { UserStateContext } from '../../../context/user';
 //    - 해결: 서버에 보내는 데이터에 유저정보를 담아보낸다. 다시 데이터를 받게되면 로그인된 유저와의 id값 비교를 통해
 //           내가 보낸 메세지면 오른쪽에 아니면 왼쪽에 표시
 
-// interface Props {
-// 	// 상대방 user 객체(nickname, id, photo)
-// }
+interface Props {
+	// 상대방 user 객체(nickname, id, photo)
+	loadMessages: Array<Object>;
+	roomId: number;
+}
+
+interface TimeProps {
+	createTime: string;
+}
 
 const ChatRoomContainer = styled.div`
 	height: 80vh;
@@ -56,14 +64,14 @@ const ChatContainer = styled.div`
 	}
 `;
 
-const OppositeChatContainer = styled(ChatContainer)`
+const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: left;
 	& .message {
 		background: #aaa;
 		color: black;
 	}
 	&::after {
-		content: '23:03';
+		content: '${(props: TimeProps) => props.createTime.slice(11, 16)}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -76,14 +84,14 @@ const OppositeChatContainer = styled(ChatContainer)`
 	}
 `;
 
-const MyChatContainer = styled(ChatContainer)`
+const MyChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: right;
 	& .message {
 		background: #5197d5;
 		color: #eee;
 	}
 	&::before {
-		content: '23:03';
+		content: '${(props: TimeProps) => props.createTime.slice(11, 16)}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -95,23 +103,36 @@ const MyChatContainer = styled(ChatContainer)`
 	}
 `;
 
-const OppositeChat = ({ children }: { children: ReactNode }) => (
-	<OppositeChatContainer>
+const OppositeChat = ({
+	children,
+	createTime,
+}: {
+	children: ReactNode;
+	createTime: string;
+}) => (
+	<OppositeChatContainer createTime={createTime}>
 		<span className='message'>{children}</span>
 	</OppositeChatContainer>
 );
-const MyChat = ({ children }: { children: ReactNode }) => (
-	<MyChatContainer>
+const MyChat = ({
+	children,
+	createTime,
+}: {
+	children: ReactNode;
+	createTime: string;
+}) => (
+	<MyChatContainer createTime={createTime}>
 		<span className='message'>{children}</span>
 	</MyChatContainer>
 );
 
-const ChatRoom = () => {
+const ChatRoom = (props: Props) => {
+	const { loadMessages, roomId } = props;
 	const CHATTINGSERVER = 'http://localhost:4000';
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext);
 	const [socket, setSocket] = useState<Socket>();
-	const [messages, setMessages] = useState<any[]>([]);
+	const [messages, setMessages] = useState<any[]>(loadMessages);
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
@@ -135,14 +156,18 @@ const ChatRoom = () => {
 		};
 	}, [socket, messages]);
 
-	const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (chatInput.value === '') return;
 		const submitData = {
 			userId: currentUser.id,
 			message: chatInput.value,
 		};
-
+		await axios.post(`${SERVER}/api/message/write`, {
+			messageRoomId: roomId,
+			userId: submitData.userId,
+			text: submitData.message,
+		});
 		socket!.emit('message', submitData);
 
 		chatInput.setValue('');
@@ -153,9 +178,13 @@ const ChatRoom = () => {
 			<div className='messageBox'>
 				{messages.map((message, i) => {
 					return message.userId === currentUser.id ? (
-						<MyChat key={i}>{message.message}</MyChat>
+						<MyChat key={i} createTime={message.createTime}>
+							{message.message}
+						</MyChat>
 					) : (
-						<OppositeChat key={i}>{message.message}</OppositeChat>
+						<OppositeChat key={i} createTime={message.createTime}>
+							{message.message}
+						</OppositeChat>
 					);
 				})}
 			</div>

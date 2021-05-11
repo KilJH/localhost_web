@@ -6,15 +6,22 @@ import styled from 'styled-components';
 import { UserStateContext } from '../../../context/user';
 import SERVER from '../../../client/utils/url';
 import UserPhoto from '../../user/UserPhoto';
+import Router from 'next/router';
+import { User } from '../../../interfaces';
 
 // interface Props {}
 
 interface ItemProps {
 	item: {
-		id: number;
+		roomId: number;
 		nickname: string;
 		photo: string;
+		hostId: number;
+		userId: number;
 		// 최근대화?
+	};
+	currentUser: {
+		id: number;
 	};
 }
 
@@ -82,15 +89,20 @@ const ItemContainer = styled.li`
 	}
 `;
 
-const ChatRoomItem = (props: ItemProps) => {
-	const { id, nickname, photo } = props.item;
+const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
+	const { roomId, nickname, photo, hostId, userId } = item;
+	const opponentId = currentUser.id === userId ? hostId : userId;
+	const onClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
+		e.preventDefault();
+		Router.push('/messages/' + opponentId);
+	};
 	return (
-		<ItemContainer>
+		<ItemContainer onClick={onClickHandler}>
 			<UserPhoto src={photo} margin='0' width={4} />
 			<div className='message'>
 				{' '}
 				<div>
-					{nickname}#{id}
+					{nickname}#{roomId}
 				</div>
 				<div>
 					최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근
@@ -116,7 +128,6 @@ const ChatRoomList = () => {
 		},
 		userId: currentUser.id,
 	});
-
 	if (isLoading) return <CircularProgress />;
 	if (error)
 		return (
@@ -131,7 +142,7 @@ const ChatRoomList = () => {
 			<h2>채팅목록</h2>
 			<ul>
 				{(roomList as Array<any>)!.map(room => (
-					<ChatRoomItem item={room} />
+					<ChatRoomItem item={room} currentUser={currentUser} />
 				))}
 			</ul>
 		</ListContainer>
