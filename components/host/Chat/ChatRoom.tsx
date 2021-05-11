@@ -131,6 +131,7 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
+
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
@@ -164,6 +165,7 @@ const ChatRoom = (props: Props) => {
 		const submitData = {
 			userId: currentUser.id,
 			message: chatInput.value,
+			createTime: new Date(),
 		};
 		await axios.post(`/api/message/write`, {
 			messageRoomId: roomId,
@@ -175,6 +177,7 @@ const ChatRoom = (props: Props) => {
 		chatInput.setValue('');
 	};
 
+	// 시간 포맷: 오늘 = 날짜 / 오늘이 아닌 날 = 날짜 + 시간
 	const formatTime = (createTime: string) => {
 		const dt = new Date();
 		const nowMonth =
