@@ -20,6 +20,10 @@ interface Props {
 	host: Host;
 	reviews?: Review[];
 	initialFollowed?: boolean;
+	additionalData: {
+		hostingCount: number;
+		probability: number;
+	};
 }
 
 const HostDetailContainer = styled.section`
@@ -116,7 +120,7 @@ const Loading = () => (
 );
 
 const HostDetail = (props: Props) => {
-	const { host, reviews } = props;
+	const { host, reviews, additionalData } = props;
 	const [date, setDate] = useState(new Date());
 	const onChangeDate = newDate => {
 		if (newDate >= new Date()) setDate(newDate);
@@ -243,11 +247,11 @@ const HostDetail = (props: Props) => {
 						</tr>
 						<tr>
 							<td>매칭횟수</td>
-							<td>{0}</td>
+							<td>{additionalData.hostingCount}</td>
 						</tr>
 						<tr>
 							<td>승낙률</td>
-							<td>{0}%</td>
+							<td>{additionalData.probability || 0}%</td>
 						</tr>
 					</tbody>
 				</table>
