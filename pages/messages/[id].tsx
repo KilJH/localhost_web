@@ -9,12 +9,13 @@ type Props = {
 	pageProps: {
 		loadMessages: Array<Object>;
 		roomId: number;
+		opponent: string;
 	};
 };
 
 const StaticPropsDetail = ({ pageProps }: Props) => {
 	return (
-		<Layout title={`채팅 | localhost`}>
+		<Layout title={`${pageProps.opponent}님과의 채팅 | localhost`}>
 			<ChatRoom {...pageProps} />
 		</Layout>
 	);
@@ -22,7 +23,8 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async context => {
 	const opponentId = context.params?.id;
-
+	const opponent = await (await axios.get(`${SERVER}/api/user/${opponentId}`))
+		.data.user.nickname;
 	const cookie = context.req.headers.cookie || '';
 	const userId = await (
 		await axios.get(`${SERVER}/api/auth/check`, {
@@ -41,6 +43,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	).data;
 	const messages = res.messages;
 	const roomId = res.roomId;
-	return { props: { loadMessages: messages, roomId: roomId } };
+	return {
+		props: { loadMessages: messages, roomId: roomId, opponent: opponent },
+	};
 };
 export default StaticPropsDetail;
