@@ -66,52 +66,64 @@ module.exports.list = (req, res) => {
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
-	const hitSql = `UPDATE plan SET hit = hit+1 WHERE id = ?`;
+	const sql = `SELECT * FROM plan	WHERE id = ?`;
 
-	mysql.query(hitSql, id, err3 => {
-		if (err3) return console.log('조회수 증가 실패', err3);
-	});
-
-	const sql = `SELECT *, plan_day.description AS day_desc FROM plan LEFT JOIN plan_day ON plan.id = plan_day.plan_id LEFT JOIN plan_time
-    ON plan_day.id = plan_time.plan_day_id LEFT JOIN user ON plan.user_id = user.id WHERE plan.id = ${id}`;
-
-	mysql.query(sql, (err, plansRows) => {
+	mysql.query(sql, id, (err, plansRows) => {
 		if (err) return console.log('load err', err);
+
+		const hitSql = `UPDATE plan SET hit = hit+1 WHERE id = ?`;
+		mysql.query(hitSql, id, err3 => {
+			if (err3) return console.log('조회수 증가 실패', err3);
+		});
+
+		let planDays = [];
+		let dayArr = [];
+		let des;
+		const daySql = `SELECT d.date, d.description des, t.* FROM plan_day d LEFT JOIN plan_time t ON t.plan_day_id = d.id WHERE d.plan_id = ?`;
+
+		let i = 1;
+		mysql.query(daySql, id, (err3, days) => {
+			days.map((d, j) => {
+				if (d.date === i) {
+					dayArr.push({
+						description: d.description,
+						price: d.price,
+						time: d.time,
+						type: d.type,
+						placeInfo: d.place_info,
+						photo: d.photo,
+					});
+					des = d.des;
+				} else {
+					planDays.push({
+						day: i,
+						description: des,
+						planTimes: dayArr,
+					});
+					dayArr = [];
+					i++;
+					dayArr.push({
+						description: d.description,
+						price: d.price,
+						time: d.time,
+						type: d.type,
+						placeInfo: d.place_info,
+						photo: d.photo,
+					});
+				}
+				if (j === days.length - 1) {
+					planDays.push({
+						day: i,
+						description: d.des,
+						planTimes: dayArr,
+					});
+				}
+			});
+		});
 
 		const commentSql = `SELECT *, plan_comment.id As comment_id FROM plan_comment LEFT JOIN user ON plan_comment.user_id = user.id WHERE plan_comment.plan_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log('load err2', err2);
-
-			let arr = {};
-			let planDay = [];
-			const planTimes = plansRows.map(
-				plansRow =>
-					`${plansRow.time}, ${plansRow.type}, ${plansRow.price}, ${plansRow.place}, ${plansRow.placeInfo}, ${plansRow.description}, ${plansRow.photo}`,
-			);
-
-			let day = 1;
-			let temp = '';
-
-			for (let i = 0; i < plansRows.length; i++) {
-				if (plansRows[i].date == day) {
-					temp = temp + planTimes[i];
-					if (i === plansRows.length - 1) {
-						arr[day] = temp;
-						planDay.push(arr);
-					}
-				} else {
-					arr[day] = temp;
-					planDay.push(arr);
-					arr = {};
-					day++;
-					temp = '';
-					temp = planTimes[i];
-					if (i === plansRows.length - 1) {
-						arr[day] = temp;
-						planDay.push(arr);
-					}
-				}
-			}
 
 			const plan = {
 				id: plansRows[0].id,
@@ -128,7 +140,7 @@ module.exports.load = (req, res) => {
 					nickname: plansRows[0].nickname,
 					photo: plansRows[0].photo,
 				},
-				planDay,
+				planDays,
 			};
 
 			const comments = commentsRows.map(comment => {
@@ -152,7 +164,15 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.write = (req, res) => {
-	const { userId, title, description, sleepDays, travelDays, tags, planDays } = req.body;
+	const {
+		userId,
+		title,
+		description,
+		sleepDays,
+		travelDays,
+		tags,
+		planDays,
+	} = req.body;
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
 	mysql.query(sql, (err, rows) => {
@@ -185,8 +205,10 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
+						`(${planDayId + i}, "${planTime.description}", ${
+							planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${
+							planTime.placeInfo
 						}", "${planTime.photo}")`,
 					);
 				});
