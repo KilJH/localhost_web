@@ -3,7 +3,6 @@ import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import SERVER from '../../../client/utils/url';
 
 const SubTitle = styled.h6`
 	color: #5197d5;
@@ -55,7 +54,7 @@ const WriteButton = styled(Button)`
 const DetailsDiv = styled.div``;
 const writeNotice = (title: string, description: string) => {
 	axios
-		.post(`${SERVER}/api/notice/write`, {
+		.post(`/api/notice/write`, {
 			title: title,
 			description: description,
 		})

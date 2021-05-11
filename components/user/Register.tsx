@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../client/hooks/useInput';
 import axios, { AxiosResponse } from 'axios';
-import SERVER from '../../client/utils/url';
 import Router from 'next/router';
 import CpxBarometer from '../reuse/CpxBarometer';
 import { Place } from '../../interfaces';
@@ -157,7 +156,7 @@ export default function Register() {
 		const address = `${place.formatted_address}(${place.name})`;
 
 		axios
-			.post(`${SERVER}/api/user/register`, {
+			.post(`/api/user/register`, {
 				email: emailInput.value,
 				pw: passwordInput.value,
 				name: nameInput.value,

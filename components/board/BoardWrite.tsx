@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
-import SERVER from '../../client/utils/url';
 
 const WriteContainer = styled.div`
 	margin: 2rem auto;
@@ -62,7 +61,7 @@ const BoardWrite = () => {
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		// const parseContent = content.value.toString().replaceAll('\n', '\r\n');
-		const res = await axios.post(`${SERVER}/api/board/write`, {
+		const res = await axios.post(`/api/board/write`, {
 			userId: currentUser.id,
 			title: title.value,
 			description: content.value,

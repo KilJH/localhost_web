@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Search from '../../search/Search';
 import { Plan } from '../../../interfaces';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 import PlanList from './PlanList';
 
 type Props = {
@@ -15,7 +14,7 @@ export default function PlanPage(props: Props) {
 
 	const onSubmit = async (event: React.FormEvent, type, item) => {
 		event.preventDefault();
-		const res = await axios.post(`${SERVER}/api/plan/search`, {
+		const res = await axios.post(`/api/plan/search`, {
 			type: type,
 			item: item,
 		});

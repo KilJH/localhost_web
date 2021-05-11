@@ -22,7 +22,6 @@ import { Place } from '../../../interfaces';
 import Modal from '@material-ui/core/Modal';
 import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 
 interface Props {
 	host: Host;
@@ -275,7 +274,7 @@ export default function MyHosting(props: Props): ReactElement {
 	};
 	useEffect(() => {
 		axios
-			.post(`${SERVER}/api/host/status`, {
+			.post(`/api/host/status`, {
 				id: host.id,
 				on: isOn ? 1 : 0,
 			})
@@ -287,7 +286,7 @@ export default function MyHosting(props: Props): ReactElement {
 	const onSubmitHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/update`, {
+			const res = await axios.post(`/api/host/update`, {
 				id: host.id,
 				language1: language.language1 === ' ' ? null : language.language1,
 				language2: language.language2 === ' ' ? null : language.language2,

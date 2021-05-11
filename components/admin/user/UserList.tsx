@@ -7,7 +7,6 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
-import SERVER from '../../../client/utils/url';
 import Router from 'next/router';
 
 type Props = {
@@ -75,7 +74,7 @@ const BlockCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/user/block`, {
+				.post(`/api/user/block`, {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
@@ -94,7 +93,7 @@ const DeleteCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/user/delete`, {
+				.post(`/api/user/delete`, {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {

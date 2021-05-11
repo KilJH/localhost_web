@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
-import SERVER from '../../client/utils/url';
 import Button from '../reuse/Button';
 import Input from '../reuse/Input';
 import LanguageSelect from '../reuse/LanguageSelect';
@@ -62,7 +61,7 @@ const HostFilter = (props: FilterProps) => {
 	useEffect(() => {
 		// 거리가 변할 때마다 axios 요청 후 setNearbyHosts 해주기
 		axios
-			.post(`${SERVER}/api/host/nearbyList`, {
+			.post(`/api/host/nearbyList`, {
 				latitude: coord.lat,
 				longitude: coord.lng,
 				distance: distance,

@@ -7,7 +7,6 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
-import SERVER from '../../../../client/utils/url';
 import HostApprovalItem from './HostApprovalItem';
 
 type Props = {
@@ -74,7 +73,7 @@ const DenyCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/host/deny`, {
+				.post(`/api/host/deny`, {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
@@ -93,7 +92,7 @@ const ApproveCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/host/allow`, {
+				.post(`/api/host/allow`, {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {

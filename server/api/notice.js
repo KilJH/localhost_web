@@ -7,8 +7,9 @@ module.exports.parseDate = rows => {
 		const date = new Date(notice.create_time);
 		return {
 			...notice,
-			createTime: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-				}-${date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()}`,
+			createTime: `${date.getFullYear()}-${
+				date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+			}-${date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()}`,
 		};
 	});
 };
@@ -20,7 +21,6 @@ module.exports.list = (req, res) => {
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		console.log('검색된 공지수: ', rows.length);
 
 		// 날짜 정보 추가 후 id 최근 순으로 나열
 		const result = this.parseDate(rows).sort((a, b) => (a.id > b.id ? -1 : 1));
@@ -37,7 +37,6 @@ module.exports.find = (req, res) => {
 
 	mysql.query(sql, id, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		console.log('검색결과', rows);
 
 		const result = this.parseDate(rows);
 

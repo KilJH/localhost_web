@@ -6,7 +6,6 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
-import SERVER from '../../../client/utils/url';
 import axios, { AxiosResponse } from 'axios';
 import { Host } from '../../../interfaces';
 
@@ -61,7 +60,7 @@ const DisableHostCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/host/demote`, {
+				.post(`/api/host/demote`, {
 					userId: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {

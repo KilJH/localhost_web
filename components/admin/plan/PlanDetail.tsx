@@ -5,7 +5,6 @@ import UserPhoto from '../../user/UserPhoto';
 import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import Button from '@material-ui/core/Button';
-import SERVER from '../../../client/utils/url';
 
 type Props = {
 	item: Plan;
@@ -97,7 +96,7 @@ export default function PlanItem({ item }: Props) {
 	const ButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		axios
-			.post(`${SERVER}/api/plan/delete`, {
+			.post(`/api/plan/delete`, {
 				id: item.id,
 			})
 			.then((res: AxiosResponse<any>) => {

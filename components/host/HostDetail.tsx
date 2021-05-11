@@ -10,7 +10,6 @@ import Rating from '../reuse/Rating';
 import HostReviewItem from './HostReviewItem';
 import axios from 'axios';
 import { UserStateContext } from '../../context/user';
-import SERVER from '../../client/utils/url';
 import Router from 'next/router';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import FollowButton from '../user/FollowButton';
@@ -95,7 +94,7 @@ const HostDetailContainer = styled.section`
 `;
 
 const isFollowed = async ({ userId, followerId }) => {
-	const res = await axios.post(`${SERVER}/api/user/follow_check`, {
+	const res = await axios.post(`/api/user/follow_check`, {
 		userId,
 		followerId,
 	});
@@ -126,7 +125,7 @@ const HostDetail = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
 
 	const onApply = async () => {
-		const res = await axios.post(`${SERVER}/api/host/application`, {
+		const res = await axios.post(`/api/host/application`, {
 			id: currentUser.id,
 			hostUserId: host.id,
 			date: date,
@@ -137,7 +136,11 @@ const HostDetail = (props: Props) => {
 
 	const [on, setOn] = useState(false);
 
-	const { data: followed, error, isLoading } = useAsync({
+	const {
+		data: followed,
+		error,
+		isLoading,
+	} = useAsync({
 		_promiseFn: isFollowed,
 		get promiseFn() {
 			return this._promiseFn;

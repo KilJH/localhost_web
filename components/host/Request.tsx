@@ -10,7 +10,6 @@ import {
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../client/hooks/useInput';
-import SERVER from '../../client/utils/url';
 import Router from 'next/router';
 import { UserStateContext } from '../../context/user';
 import styled from 'styled-components';
@@ -139,7 +138,7 @@ const Request = () => {
 			travelStyle: selectedStyle,
 		};
 
-		const res = await axios.post(`${SERVER}/api/host/request`, {
+		const res = await axios.post(`/api/host/request`, {
 			userId: currentUser.id,
 			hostInfo,
 		});

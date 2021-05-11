@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Application, PreviousApplication } from '../../../interfaces';
-import SERVER from '../../../client/utils/url';
 import HostReviewWrite from '../../host/HostReviewWrite';
 import Button from '../../reuse/Button';
 import Rating from '../../reuse/Rating';
@@ -92,7 +91,7 @@ const Status = status => {
 const ApplicationItem = ({ application }: { application: Application }) => {
 	const onCancle = () => {
 		axios
-			.post(`${SERVER}/api/host/application/cancle`, { id: application.id })
+			.post(`/api/host/application/cancle`, { id: application.id })
 			.then(res => {
 				if (res.data.success) alert('취소가 완료되었습니다.');
 			});

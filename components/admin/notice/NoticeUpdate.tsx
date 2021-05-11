@@ -4,7 +4,6 @@ import Router from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Notice } from '../../../interfaces';
-import SERVER from '../../../client/utils/url';
 
 type Props = {
 	item?: Notice;
@@ -74,7 +73,7 @@ const DetailsDiv = styled.div`
 `;
 const modifyNotice = (id: number, title: string, description: string) => {
 	axios
-		.post(`${SERVER}/api/notice/update`, {
+		.post(`/api/notice/update`, {
 			id: id,
 			title: title,
 			description: description,
