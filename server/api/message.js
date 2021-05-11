@@ -19,12 +19,12 @@ module.exports.loadRoom = (req, res) => {
 		[hostUserId, userId, userId, hostUserId],
 		(err, messages) => {
 			if (err) return console.log('loadRoom err', err);
-			const message = messages.map((message, index) => {
+			const message = messages.map(message => {
 				return {
-					roomId: messages[index].messageroom_id,
-					userId: messages[index].user_id,
-					message: messages[index].text,
-					createTime: messages[index].create_time,
+					roomId: message.messageroom_id,
+					userId: message.user_id,
+					message: message.text,
+					createTime: new Date(message.create_time),
 				};
 			});
 

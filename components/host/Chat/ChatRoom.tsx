@@ -76,11 +76,6 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 		font-weight: 600;
 		color: #666;
 	}
-
-	& + &::after {
-		/* 시간이 같으면 '' 다르면 시간 */
-		content: '';
-	}
 `;
 
 const MyChatContainer = styled(ChatContainer)<TimeProps>`
@@ -95,10 +90,6 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 		font-size: 0.75em;
 		font-weight: 600;
 		color: #666;
-	}
-
-	& + &::before {
-		content: '';
 	}
 `;
 
@@ -177,36 +168,47 @@ const ChatRoom = (props: Props) => {
 		chatInput.setValue('');
 	};
 
-	// 시간 포맷: 오늘 = 날짜 / 오늘이 아닌 날 = 날짜 + 시간
-	const formatTime = (createTime: string) => {
-		const dt = new Date();
-		const nowMonth =
-			dt.getMonth() + 1 < 10 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1;
-		const nowDay = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+	// 시간 포맷
+	const formatTime = (createTime: Date) => {
+		const nowDate = new Date();
+		const createDate = new Date(createTime);
+		let isToday = nowDate.toDateString() === createDate.toDateString(); // 채팅 날짜가 오늘 날짜인지 체크
 
-		const nowDate = dt.getFullYear() + '-' + nowMonth + '-' + nowDay; // 현재 날짜
-		const createDate = createTime.slice(0, 10); // 채팅이 작성 된 날짜
-		let isToday = true; // 채팅 날짜가 오늘 날짜인지 체크
+		// 오늘 = 시각
+		if (isToday) return createDate.toLocaleTimeString().slice(0, -3);
+		// 오늘이 아닌 날 = 날짜 + 시각
+		else return createDate.toLocaleString().slice(0, -3);
+	};
 
-		createDate.split('-').map((value, index) => {
-			if (value !== nowDate.split('-')[index]) isToday = false;
-		});
-
-		if (isToday) return createTime.slice(11, 16);
-		else return createTime.replaceAll('-', '.').replaceAll(' ', '. ');
+	// 같은 시각은 미출력, 채팅 최하단에 출력
+	const compareTime = (current: Date, next: Date) => {
+		if (
+			next.toDateString() === current.toDateString() &&
+			next.getHours() === current.getHours() &&
+			next.getMinutes() === current.getMinutes()
+		) {
+			return '';
+		}
+		return formatTime(current);
 	};
 
 	return (
 		<ChatRoomContainer>
 			<header></header>
 			<div className='messageBox'>
+				{console.log(messages)}
 				{messages.map((message, i) => {
+					const currentTime = new Date(message.createTime);
+					const nextTime = new Date(messages[i + 1]?.createTime || null);
 					return message.userId === currentUser.id ? (
-						<MyChat key={i} createTime={formatTime(message.createTime)}>
+						<MyChat key={i} createTime={compareTime(currentTime, nextTime)}>
 							{message.message}
 						</MyChat>
 					) : (
-						<OppositeChat key={i} createTime={formatTime(message.createTime)}>
+						<OppositeChat
+							key={i}
+							createTime={compareTime(currentTime, nextTime)}
+						>
 							{message.message}
 						</OppositeChat>
 					);
