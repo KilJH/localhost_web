@@ -39,15 +39,14 @@ _app.getInitialProps = async (appContext: any) => {
 	const { ctx } = appContext;
 	const cookie = ctx.req?.headers.cookie || '';
 	let loginProps = {};
+	// let URL = ctx.req ? '' : SERVER;
 	// SSR
-	if (ctx.isServer) {
+	if (ctx.req) {
 		axios.defaults.headers.cookie = cookie;
 	}
+
 	const res = await axios.get(`${SERVER}/api/auth/check`, {
 		withCredentials: true,
-		headers: {
-			cookie,
-		},
 	});
 	const isLogined = res.data.success;
 	const user = res.data.user || {};
