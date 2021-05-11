@@ -10,6 +10,10 @@ interface Props {
 	pageProps: {
 		host: Host;
 		reviews: Review[];
+		additionalData: {
+			hostingCount: number;
+			probability: number;
+		};
 	};
 }
 
@@ -27,10 +31,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 	try {
 		const id = params?.id;
 		const res = await axios.post(`${SERVER}/api/host/load`, { id });
-		const host = res.data.host;
-		const reviews = res.data.reviews;
+		const { host, reviews, data: additionalData } = res.data;
 
-		return { props: { host, reviews } };
+		return { props: { host, reviews, additionalData } };
 	} catch (err) {
 		return { props: { errors: err.message } };
 	}
