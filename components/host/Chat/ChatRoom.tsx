@@ -1,4 +1,10 @@
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, {
+	ReactNode,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../../client/hooks/useInput';
 import Button from '../../reuse/Button';
@@ -6,7 +12,6 @@ import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
-
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -123,13 +128,6 @@ const ChatRoom = (props: Props) => {
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
 
-	const receiveMessage = (message: any) => {
-		setMessages([...messages, message]);
-	};
-	useEffect(() => {
-		setSocket(io(`/`, { transports: ['websocket'] }));
-	}, []);
-
 	useEffect(() => {
 		if (socket) {
 			socket.emit('join', roomId);
@@ -207,10 +205,20 @@ const ChatRoom = (props: Props) => {
 		return formatTime(current);
 	};
 
+	// 스크롤 다운
+	const scrollRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		const ref = scrollRef.current;
+		if (ref) {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
+	}, []);
+
 	return (
 		<ChatRoomContainer>
 			<header></header>
-			<div className='messageBox'>
+			<div ref={scrollRef} className='messageBox'>
 				{messages.map((message, i) => {
 					const currentTime = new Date(message.createTime);
 					const nextTime = new Date(messages[i + 1]?.createTime || null);
