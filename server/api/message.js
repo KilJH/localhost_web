@@ -24,7 +24,7 @@ module.exports.loadRoom = (req, res) => {
 					roomId: message.messageroom_id,
 					userId: message.user_id,
 					message: message.text,
-					createTime: new Date(message.create_time),
+					createTime: message.create_time,
 				};
 			});
 

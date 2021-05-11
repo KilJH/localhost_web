@@ -131,6 +131,15 @@ const ChatRoom = (props: Props) => {
 	}, []);
 
 	useEffect(() => {
+		if (socket) {
+			socket.emit('join', roomId);
+			socket.on('join', roomId => {
+				console.log('room id: ', roomId);
+			});
+		}
+	}, [roomId]);
+
+	useEffect(() => {
 		setMessages(loadMessages);
 	}, [loadMessages]);
 
@@ -196,7 +205,6 @@ const ChatRoom = (props: Props) => {
 		<ChatRoomContainer>
 			<header></header>
 			<div className='messageBox'>
-				{console.log(messages)}
 				{messages.map((message, i) => {
 					const currentTime = new Date(message.createTime);
 					const nextTime = new Date(messages[i + 1]?.createTime || null);

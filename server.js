@@ -62,6 +62,7 @@ app.prepare().then(() => {
 			console.log('join event', data);
 			roomName = data;
 			socket.join(data);
+			socket.set('room', data);
 		});
 
 		socket.on('disconnect', () => {
