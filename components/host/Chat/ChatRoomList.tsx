@@ -120,7 +120,11 @@ const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
 const ChatRoomList = () => {
 	const currentUser = useContext(UserStateContext);
 
-	const { data: roomList, error, isLoading } = useAsync({
+	const {
+		data: roomList,
+		error,
+		isLoading,
+	} = useAsync({
 		_promiseFn: getRoomList,
 		// 자동으로 뭐 해쓴ㄴ데...
 		get promiseFn() {
