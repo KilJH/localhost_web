@@ -140,6 +140,10 @@ const ChatRoom = (props: Props) => {
 		setSocket(io(`${CHATTINGSERVER}`, { transports: ['websocket'] }));
 	}, []);
 
+	useEffect(() => {
+		setMessages(loadMessages);
+	}, [loadMessages]);
+
 	useEffect(() => {}, [messages]);
 
 	useEffect(() => {

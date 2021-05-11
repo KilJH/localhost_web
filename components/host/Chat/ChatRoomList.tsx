@@ -8,6 +8,7 @@ import SERVER from '../../../client/utils/url';
 import UserPhoto from '../../user/UserPhoto';
 import Router from 'next/router';
 import { User } from '../../../interfaces';
+import Link from 'next/link';
 
 // interface Props {}
 
@@ -92,25 +93,27 @@ const ItemContainer = styled.li`
 const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
 	const { roomId, nickname, photo, hostId, userId } = item;
 	const opponentId = currentUser.id === userId ? hostId : userId;
-	const onClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
-		e.preventDefault();
-		Router.push('/messages/' + opponentId);
-	};
+	// const onClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
+	// 	e.preventDefault();
+	// 	Router.push('/messages/' + opponentId);
+	// };
 	return (
-		<ItemContainer onClick={onClickHandler}>
-			<UserPhoto src={photo} margin='0' width={4} />
-			<div className='message'>
-				{' '}
-				<div>
-					{nickname}#{roomId}
+		<Link href='/messages/[id]' as={`/messages/${opponentId}`}>
+			<ItemContainer>
+				<UserPhoto src={photo} margin='0' width={4} />
+				<div className='message'>
+					{' '}
+					<div>
+						{nickname}#{roomId}
+					</div>
+					<div>
+						최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근
+						대화최근 대화 최근 대화최근 대화최근 대화최근 대화최근 대화
+					</div>
 				</div>
-				<div>
-					최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근
-					대화최근 대화 최근 대화최근 대화최근 대화최근 대화최근 대화
-				</div>
-			</div>
-			<div className='time'>날짜</div>
-		</ItemContainer>
+				<div className='time'>날짜</div>
+			</ItemContainer>
+		</Link>
 	);
 };
 
