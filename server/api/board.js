@@ -38,7 +38,25 @@ module.exports.list = (req, res) => {
 	// ORDER BY로 create_time의 역순대로
 	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
 	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
-	const sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id LEFT JOIN board_comment ON board.id = board_comment.board_id GROUP BY board.id ORDER BY board.create_time DESC`;
+	const type = req.query.type || 'title';
+	const item = req.query.item || '';
+	let sql = ``;
+
+	switch (type) {
+		case 'title':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id 
+			LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE title LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC;`;
+			break;
+		case 'nickname':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id 
+			LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE nickname LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC;`;
+			break;
+		case 'description':
+			sql = `SELECT board.*, user.*, COUNT(board_comment.id) AS num_comment, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id 
+			LEFT JOIN board_comment ON board.id = board_comment.board_id WHERE board.description LIKE "%${item}%" GROUP BY board.id ORDER BY board.create_time DESC;`;
+			break;
+	}
+
 	const page = req.query.page || 1;
 
 	mysql.query(sql, (err, rows) => {
