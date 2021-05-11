@@ -62,6 +62,7 @@ app.prepare().then(() => {
 			console.log('join event', data);
 			roomName = data;
 			socket.join(data);
+			socket;
 		});
 
 		socket.on('disconnect', () => {
@@ -70,7 +71,7 @@ app.prepare().then(() => {
 
 		socket.on('message', data => {
 			console.log('데이터 수신: ', data);
-			io.emit('message', data);
+			io.to(roomName).emit('message', data);
 		});
 	});
 
