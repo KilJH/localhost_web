@@ -13,7 +13,7 @@ module.exports.createRoom = (req, res) => {
 
 module.exports.loadRoom = (req, res) => {
 	const { hostUserId, userId } = req.body;
-	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE host_user_id = ? && user_user_id = ? || host_user_id = ? && user_user_id;`;
+	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE (host_user_id = ? && user_user_id = ?) || (host_user_id = ? && user_user_id =?);`;
 	mysql.query(
 		sql,
 		[hostUserId, userId, userId, hostUserId],

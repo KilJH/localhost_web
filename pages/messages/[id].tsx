@@ -23,8 +23,9 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async context => {
 	const opponentId = context.params?.id;
-	const opponent = await (await axios.get(`${SERVER}/api/user/${opponentId}`))
-		.data.user.nickname;
+	const opponent = await (
+		await axios.get(`${SERVER}/api/user/${opponentId}`)
+	).data.user.nickname;
 	const cookie = context.req.headers.cookie || '';
 	const userId = await (
 		await axios.get(`${SERVER}/api/auth/check`, {
@@ -41,6 +42,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 			userId: userId,
 		})
 	).data;
+
 	const messages = res.messages;
 	const roomId = res.roomId;
 	return {
