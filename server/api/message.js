@@ -27,7 +27,18 @@ module.exports.loadRoom = (req, res) => {
 					createTime: messages[index].create_time,
 				};
 			});
-			res.json({ success: true, messages: message });
+
+			const roomIdSql = `SELECT id FROM message_room WHERE host_user_id = ? && user_user_id = ? || host_user_id = ? && user_user_id;`;
+			mysql.query(
+				roomIdSql,
+				[hostUserId, userId, userId, hostUserId],
+				(err, room) => {
+					if (err) return console.log('roomId find err', err);
+					const roomId = room[0].id;
+
+					res.json({ success: true, messages: message, roomId: roomId });
+				},
+			);
 		},
 	);
 };
