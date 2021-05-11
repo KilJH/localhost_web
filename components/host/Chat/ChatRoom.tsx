@@ -71,7 +71,7 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 		color: black;
 	}
 	&::after {
-		content: '${(props: TimeProps) => props.createTime.slice(11, 16)}';
+		content: '${(props: TimeProps) => props.createTime?.slice(11, 16) || ''}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -91,7 +91,7 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 		color: #eee;
 	}
 	&::before {
-		content: '${(props: TimeProps) => props.createTime.slice(11, 16)}';
+		content: '${(props: TimeProps) => props.createTime?.slice(11, 16) || ''}';
 		margin: 0 1em;
 		font-size: 0.75em;
 		font-weight: 600;
@@ -128,7 +128,6 @@ const MyChat = ({
 
 const ChatRoom = (props: Props) => {
 	const { loadMessages, roomId } = props;
-	const CHATTINGSERVER = 'http://localhost:4000';
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext);
 	const [socket, setSocket] = useState<Socket>();
@@ -137,7 +136,7 @@ const ChatRoom = (props: Props) => {
 		setMessages([...messages, message]);
 	};
 	useEffect(() => {
-		setSocket(io(`${CHATTINGSERVER}`, { transports: ['websocket'] }));
+		setSocket(io(`${SERVER}`, { transports: ['websocket'] }));
 	}, []);
 
 	useEffect(() => {
@@ -176,6 +175,7 @@ const ChatRoom = (props: Props) => {
 
 		chatInput.setValue('');
 	};
+
 	return (
 		<ChatRoomContainer>
 			<header></header>

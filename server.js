@@ -10,7 +10,6 @@ const handle = app.getRequestHandler();
 // const io = require('socket.io')();
 
 const PORT = 3000;
-const SOCKETPORT = 4000;
 const mysql = require('./server/db/mysql');
 const userRouter = require('./server/routes/user');
 const authRouter = require('./server/routes/auth');
@@ -51,12 +50,9 @@ app.prepare().then(() => {
 	server.get('*', (req, res) => {
 		return handle(req, res);
 	});
-
-	server.listen(PORT, err => {
-		if (err) throw err;
-		console.log(`listening to ${PORT}`);
+	httpServer.listen(PORT, () => {
+		console.log(`HTTP server is running on ${PORT}`);
 	});
-
 	// 소켓
 	io.on('connection', socket => {
 		var roomName = null;
@@ -76,9 +72,6 @@ app.prepare().then(() => {
 			console.log('데이터 수신: ', data);
 			io.emit('message', data);
 		});
-	});
-	httpServer.listen(SOCKETPORT, () => {
-		console.log(`HTTP server is running on ${SOCKETPORT}`);
 	});
 
 	// DB
