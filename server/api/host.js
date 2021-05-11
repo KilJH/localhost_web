@@ -262,6 +262,13 @@ module.exports.load = (req, res) => {
 	mysql.query(hostSql, (err, hostRows) => {
 		if (err) return console.log('hostSql err', err);
 
+		const request = hostRows[0].request_count;
+		const hosting = hostRows[0].hosting_count;
+
+		const data = {
+			hostingCount: hosting,
+			probability: Math.floor((hosting / request) * 100),
+		};
 		const reviewSql = `SELECT r.*,u.nickname, u.photo FROM host_review r LEFT JOIN host_user_apply a ON a.id = r.host_user_apply_id LEFT JOIN user u ON u.id = a.user_user_id WHERE a.host_user_id = ${hostRows[0].user_id};`;
 		mysql.query(reviewSql, (err2, reviewRows) => {
 			if (err2) return console.log('hostReviews err', err2);
@@ -269,7 +276,7 @@ module.exports.load = (req, res) => {
 			const host = this.hostMapping(hostRows[0]);
 			const reviews = reviewRows.map(review => this.reviewMapping(review));
 
-			res.json({ success: true, host, reviews });
+			res.json({ success: true, host, reviews, data });
 		});
 	});
 };
@@ -370,6 +377,11 @@ module.exports.applyHosting = (req, res) => {
 	mysql.query(sql, err => {
 		if (err) console.log('applyHosting err', err);
 
+		const updateSql = `UPDATE host SET request_count = request_count + 1  WHERE user_id = ?`;
+		mysql.query(updateSql, hostUserId, err => {
+			if (err) return console.log('request update err');
+		});
+
 		res.json({ success: true });
 	});
 };
@@ -405,6 +417,28 @@ module.exports.cancleHosting = (req, res) => {
 	const updateSql = `UPDATE host_user_apply SET status=${3} WHERE id = ${id};`;
 	mysql.query(updateSql, err => {
 		if (err) return console.log('updateSql err', err);
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.completeHosting = (req, res) => {
+	// user 가 호스팅을 취소하는 API
+	const id = req.body.id; // application ID
+
+	const updateSql = `UPDATE host_user_apply SET status=${4} WHERE id = ${id};`;
+	mysql.query(updateSql, err => {
+		if (err) return console.log('updateSql err', err);
+
+		const sql = `select a.host_user_id, h.hosting_count from host_user_apply a LEFT JOIN host h ON h.user_id = a.host_user_id WHERE a.id = ?;`;
+		mysql.query(sql, id, (err, rows) => {
+			if (err) return console.log('select err');
+
+			const update2Sql = `UPDATE host SET hosting_count = hosting_count + 1  WHERE user_id = ?`;
+			mysql.query(update2Sql, rows[0].host_user_id, err => {
+				if (err) return console.log('request update err');
+			});
+		});
 
 		res.json({ success: true });
 	});

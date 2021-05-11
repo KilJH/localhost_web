@@ -59,6 +59,9 @@ router.post('/application/deny', function (req, res, next) {
 router.post('/application/cancle', function (req, res, next) {
 	management.cancleHosting(req, res);
 });
+router.post('/application/complete', function (req, res, next) {
+	management.completeHosting(req, res);
+});
 router.post('/application', function (req, res, next) {
 	management.applyHosting(req, res);
 });
