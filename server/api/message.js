@@ -28,7 +28,7 @@ module.exports.loadRoom = (req, res) => {
 				};
 			});
 
-			const roomIdSql = `SELECT id FROM message_room WHERE host_user_id = ? && user_user_id = ? || host_user_id = ? && user_user_id;`;
+			const roomIdSql = `SELECT id FROM message_room WHERE (host_user_id = ? && user_user_id = ?) ||( host_user_id = ? && user_user_id=?);`;
 			mysql.query(
 				roomIdSql,
 				[hostUserId, userId, userId, hostUserId],
