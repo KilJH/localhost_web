@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Search from '../../search/Search';
 import { Host } from '../../../interfaces';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 import HostList from './HostList';
 
 type Props = {
@@ -15,7 +14,7 @@ export default function HostPage(props: Props) {
 
 	const onSubmit = async (event: React.FormEvent, type, item) => {
 		event.preventDefault();
-		const res = await axios.post(`${SERVER}/api/host/search`, {
+		const res = await axios.post(`/api/host/search`, {
 			type: type,
 			item: item,
 		});

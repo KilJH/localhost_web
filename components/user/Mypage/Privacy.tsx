@@ -5,7 +5,6 @@ import { Place, User } from '../../../interfaces';
 import styled from 'styled-components';
 import { UserSetterContext, UserStateContext } from '../../../context/user';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 import UserPhoto from '../UserPhoto';
 import Button from '../../reuse/Button';
 import CpxBarometer from '../../reuse/CpxBarometer';
@@ -135,7 +134,7 @@ const Privacy = (props: Props) => {
 			address: address,
 		};
 		// 유저정보 변경
-		const res = await axios.post(`${SERVER}/api/user/update`, { ...user });
+		const res = await axios.post(`/api/user/update`, { ...user });
 
 		if (res.data.success) {
 			setCurrentUser({ ...currentUser, ...user });
@@ -148,7 +147,7 @@ const Privacy = (props: Props) => {
 	const onClickPw = () => {
 		if (enabledPw) {
 			axios
-				.post(`${SERVER}/api/user/updatePW`, {
+				.post(`/api/user/updatePW`, {
 					email: currentUser.email,
 					pw: pwInput.value,
 				})
@@ -179,7 +178,7 @@ const Privacy = (props: Props) => {
 	const onClickReset = () => {
 		setPhotoUrl('');
 		axios
-			.post(`${SERVER}/api/user/update/photo`, {
+			.post(`/api/user/update/photo`, {
 				id: currentUser.id,
 				url: '',
 			})
@@ -197,14 +196,14 @@ const Privacy = (props: Props) => {
 			formData.append('file', img!);
 			formData.append('name', `user_profile_${currentUser.id}`);
 			axios
-				.post(`${SERVER}/api/s3/upload`, formData)
+				.post(`/api/s3/upload`, formData)
 				.then(res => {
 					// 뷰에 포토 수정
 					const time = new Date().getTime();
 					setPhotoUrl(`${res.data.url}?time=${time}`);
 					// 디비에 포토 수정
 					axios
-						.post(`${SERVER}/api/user/update/photo`, {
+						.post(`/api/user/update/photo`, {
 							id: currentUser.id,
 							url: res.data.url,
 						})

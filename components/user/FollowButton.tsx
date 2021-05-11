@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
-import SERVER from '../../client/utils/url';
 import { Button } from '@material-ui/core';
 import { UserStateContext } from '../../context/user';
 
@@ -36,7 +35,7 @@ const FollowButton = (props: Props) => {
 	const [followState, setFollowState] = useState(initialFollowed || false);
 	useEffect(() => {
 		axios
-			.post(`${SERVER}/api/user/follow_check`, {
+			.post(`/api/user/follow_check`, {
 				userId: userId,
 				followerId: currentUser.id,
 			})
@@ -45,7 +44,7 @@ const FollowButton = (props: Props) => {
 
 	const onClick = async () => {
 		try {
-			const res = await axios.post(`${SERVER}/api/user/follow`, {
+			const res = await axios.post(`/api/user/follow`, {
 				userId,
 				followerId: currentUser.id,
 			});

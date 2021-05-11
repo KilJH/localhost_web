@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 import Router from 'next/router';
 import { UserStateContext } from '../../../context/user';
 
@@ -40,18 +39,15 @@ export default function HostApplicantItem(props: Props) {
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/application/approve`, {
+			const res = await axios.post(`/api/host/application/approve`, {
 				id: list.user.id,
 				hostUserId: currentUser.id,
 			});
 			if (res.data.success) {
-				const createRoomRes = await axios.post(
-					`${SERVER}/api/message/room/create`,
-					{
-						hostUserId: currentUser.id,
-						userId: list.user.id,
-					},
-				);
+				const createRoomRes = await axios.post(`/api/message/room/create`, {
+					hostUserId: currentUser.id,
+					userId: list.user.id,
+				});
 				if (createRoomRes.data.success) {
 					alert('승인 처리되었습니다. 채팅을 통해 약속을 잡으세요');
 					Router.push('/hosts/myhosting');
@@ -64,7 +60,7 @@ export default function HostApplicantItem(props: Props) {
 	const onDenialHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
-			const res = await axios.post(`${SERVER}/api/host/application/deny`, {
+			const res = await axios.post(`/api/host/application/deny`, {
 				id: list.user.id,
 				hostUserId: currentUser.id,
 			});

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { User } from '../../interfaces/index';
 import styled from 'styled-components';
 import Link from 'next/link';
-// import SERVER from '../../client/utils/url';
 import axios from 'axios';
 import { UserStateContext } from '../../context/user';
 import UserPhoto from './UserPhoto';

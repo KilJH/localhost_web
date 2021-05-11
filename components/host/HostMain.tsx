@@ -4,7 +4,6 @@ import Maps from '../../components/reuse/Maps';
 import SearchPlace from '../../components/search/SearchPlace';
 import { Host, Place } from '../../interfaces';
 import styled from 'styled-components';
-import SERVER from '../../client/utils/url';
 import HostList from '../../components/host/HostList';
 
 const Container = styled.div`
@@ -57,7 +56,7 @@ const HostMain = () => {
 	// 위,경도 바뀌면 api요청 보내서 근처 호스트 목록 가져오기
 	useEffect(() => {
 		axios
-			.post(`${SERVER}/api/host/nearByList`, {
+			.post(`/api/host/nearByList`, {
 				latitude: coord.lat,
 				longitude: coord.lng,
 			})

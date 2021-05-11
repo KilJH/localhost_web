@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../reuse/Button';
 import axios from 'axios';
-import SERVER from '../../client/utils/url';
 import { useInput } from '../../client/hooks/useInput';
 import Textarea from '../reuse/Textarea';
 import Router from 'next/router';
@@ -51,7 +50,7 @@ const Request = (props: Props) => {
 		else if (desc.value === '') alert('후기를 작성해주세요!');
 		else {
 			try {
-				const res = await axios.post(`${SERVER}/api/host/review/write`, {
+				const res = await axios.post(`/api/host/review/write`, {
 					id: applicationId,
 					description: desc.value,
 					rating: rating,

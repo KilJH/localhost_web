@@ -16,7 +16,6 @@ import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
 import { Plan, PlanDay, PlanTime } from '../../interfaces';
-import SERVER from '../../client/utils/url';
 import Button from '../reuse/Button';
 import Input from '../reuse/Input';
 import Textarea from '../reuse/Textarea';
@@ -270,7 +269,7 @@ const WriteWrapper = (props: WrapperProps) => {
 	const onNextStep = () => {
 		if (step === 4) {
 			const userId = currentUser.id;
-			axios.post(`${SERVER}/api/plan/write`, { userId, plan }).then(res => {
+			axios.post(`/api/plan/write`, { userId, plan }).then(res => {
 				if (res.data.success) {
 					setStep(step + 1);
 				} else {

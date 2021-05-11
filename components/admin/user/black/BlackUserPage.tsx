@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Search from '../../../search/Search';
 import { BlackUser } from '../../../../interfaces';
 import axios from 'axios';
-import SERVER from '../../../../client/utils/url';
 import BlackUserList from './BlackUserList';
 
 type Props = {
@@ -14,7 +13,7 @@ export default function BlackUserPage(props: Props) {
 	const [foundItems, setFoundItems] = useState(items);
 	const onSubmit = async (event: React.FormEvent, type, item) => {
 		event.preventDefault();
-		const res = await axios.post(`${SERVER}/api/user/search`, {
+		const res = await axios.post(`/api/user/search`, {
 			type: type,
 			item: item,
 		});

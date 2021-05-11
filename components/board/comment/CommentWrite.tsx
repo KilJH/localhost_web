@@ -3,7 +3,6 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../../context/user';
 import { Comment } from '../../../interfaces';
-import SERVER from '../../../client/utils/url';
 
 interface Props {
 	boardId: number;
@@ -50,7 +49,7 @@ const CommentWrite = (props: Props) => {
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const res = await axios.post(`${SERVER}/api/board/comment`, {
+		const res = await axios.post(`/api/board/comment`, {
 			id: props.boardId,
 			userId: currentUser.id,
 			description: comment,

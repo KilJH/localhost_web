@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { Board } from '../../interfaces';
 import axios from 'axios';
-import SERVER from '../../client/utils/url';
 import Pagination from '../main/Pagination';
 
 interface Props {
@@ -59,7 +58,7 @@ const BoardList = (props: Props) => {
 				currentIdx={pageState}
 				lastIdx={lastIdx}
 				url='/board'
-				api={`${SERVER}/api/board/list`}
+				api={`/api/board/list`}
 				onClick={onClickPage}
 			/>
 		</BoardContainer>

@@ -4,10 +4,7 @@ import React, { useContext } from 'react';
 import { useAsync } from 'react-async';
 import styled from 'styled-components';
 import { UserStateContext } from '../../../context/user';
-import SERVER from '../../../client/utils/url';
 import UserPhoto from '../../user/UserPhoto';
-import Router from 'next/router';
-import { User } from '../../../interfaces';
 import Link from 'next/link';
 
 // interface Props {}
@@ -27,7 +24,7 @@ interface ItemProps {
 }
 
 const getRoomList = async ({ userId }: { userId: number }) => {
-	const res = await axios.post(`${SERVER}/api/message/room/list`, {
+	const res = await axios.post(`/api/message/room/list`, {
 		userId,
 	});
 	return res.data.roomList;
@@ -120,7 +117,11 @@ const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
 const ChatRoomList = () => {
 	const currentUser = useContext(UserStateContext);
 
-	const { data: roomList, error, isLoading } = useAsync({
+	const {
+		data: roomList,
+		error,
+		isLoading,
+	} = useAsync({
 		_promiseFn: getRoomList,
 		// 자동으로 뭐 해쓴ㄴ데...
 		get promiseFn() {

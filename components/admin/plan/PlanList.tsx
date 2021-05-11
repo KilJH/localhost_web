@@ -5,7 +5,6 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
-import SERVER from '../../../client/utils/url';
 import axios, { AxiosResponse } from 'axios';
 import { Plan } from '../../../interfaces';
 import PlanItem from './PlanItem';
@@ -67,7 +66,7 @@ const DeleteCheckedItems = state => {
 	for (let i = 0; i < values.length; i++) {
 		if (values[i] === true) {
 			axios
-				.post(`${SERVER}/api/plan/delete`, {
+				.post(`/api/plan/delete`, {
 					id: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
