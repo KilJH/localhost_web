@@ -6,7 +6,6 @@ import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
-import SERVER from '../../../client/utils/url';
 
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
@@ -166,7 +165,7 @@ const ChatRoom = (props: Props) => {
 			userId: currentUser.id,
 			message: chatInput.value,
 		};
-		await axios.post(`${SERVER}/api/message/write`, {
+		await axios.post(`/api/message/write`, {
 			messageRoomId: roomId,
 			userId: submitData.userId,
 			text: submitData.message,
