@@ -13,7 +13,8 @@ import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
 import { User } from '../../../interfaces';
-import UserPhoto from '../../user/UserPhoto';
+import MenuIcon from '@material-ui/icons/Menu';
+import { IconButton, Menu, MenuItem } from '@material-ui/core';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -39,32 +40,38 @@ const ChatRoomContainer = styled.div`
 	height: 80vh;
 	display: flex;
 	flex-direction: column;
+	border: 1px solid #ddd;
 	& header {
 		position: sticky;
-		background: #b6c6d7;
+		background: white;
+
 		& div {
-			display: inline-block;
-			padding: 0.75em 0 0.75em 1.75em;
+			display: flex;
+			& h4 {
+				margin: 0.75em auto 0.75em 2em;
+				color: rgba(33, 33, 33, 0.8);
+			}
+			& button {
+				margin-right: 0.5em;
+				padding: 0;
+			}
 		}
 	}
-	& h3 {
-		margin: 0.25em 0 0 0;
-		color: rgba(33, 33, 33, 0.9);
-	}
+
 	& .messageBox {
 		flex: 1;
 		background: #b6c6d7;
 		border-bottom: 1px solid #aaa;
 		overflow: auto;
 		padding: 1em;
-		opacity: 0.93;
 	}
 	& > form {
 		display: flex;
-		padding: 1em 0.5em;
+		padding: 1em 0.5em 3.5em 0.5em;
 		& input {
 			flex: 1;
 			font-size: 1em;
+			border-bottom: none;
 		}
 		& button {
 			margin-left: 1em;
@@ -140,7 +147,9 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext);
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
-
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const options = ['팔로우', '신고', '채팅 나가기'];
+	const open = Boolean(anchorEl);
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
@@ -245,12 +254,49 @@ const ChatRoom = (props: Props) => {
 		}
 	}, []);
 
+	// 햄버거 버튼
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = async (event: React.MouseEvent<HTMLLIElement>) => {
+		setAnchorEl(null);
+		event.preventDefault();
+		switch (event.currentTarget.value) {
+			case 0: // 팔로우
+				const res = await axios.post(`/api/user/follow`, {
+					userId: opponent.id,
+					followerId: currentUser.id,
+				});
+				alert(res.data.message);
+				return;
+			case 1: // 신고
+				return;
+			case 2: //채팅 나가기
+				return;
+		}
+	};
+
 	return (
 		<ChatRoomContainer>
 			<header>
 				<div>
-					<UserPhoto width={3.5} src={opponent.photo}></UserPhoto>
-					<h3>{opponent.nickname}</h3>
+					<h4>{opponent.nickname}님과의 채팅</h4>
+					<IconButton onClick={handleClick}>
+						<MenuIcon />
+					</IconButton>
+					<Menu
+						anchorEl={anchorEl}
+						keepMounted
+						open={open}
+						onClose={handleClose}
+					>
+						{options.map((option, index) => (
+							<MenuItem key={index} value={index} onClick={handleClose}>
+								{option}
+							</MenuItem>
+						))}
+					</Menu>
 				</div>
 			</header>
 			<div ref={scrollRef} className='messageBox'>
