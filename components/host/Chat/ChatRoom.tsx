@@ -12,9 +12,11 @@ import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
-import { User } from '../../../interfaces';
+import { Host, Place, User } from '../../../interfaces';
 import MenuIcon from '@material-ui/icons/Menu';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { Fade, IconButton, Menu, MenuItem, Modal } from '@material-ui/core';
+import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
+import SearchPlace from '../../search/SearchPlace';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -30,6 +32,10 @@ interface Props {
 	loadMessages: Array<Object>;
 	roomId: number;
 	opponent: User;
+}
+
+interface InputProps {
+	isVisible?: boolean;
 }
 
 interface TimeProps {
@@ -52,12 +58,15 @@ const ChatRoomContainer = styled.div`
 				color: rgba(33, 33, 33, 0.8);
 			}
 			& button {
-				margin-right: 0.5em;
-				padding: 0;
+				width: 1em;
+				height: 1em;
+				margin: auto 0.25em;
+				&.menu {
+					margin-right: 0.5em;
+				}
 			}
 		}
 	}
-
 	& .messageBox {
 		flex: 1;
 		background: #b6c6d7;
@@ -102,7 +111,6 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 		color: #666;
 	}
 `;
-
 const MyChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: right;
 	& .message {
@@ -117,7 +125,31 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 		color: #666;
 	}
 `;
+const PlaceInput = styled(Input)<InputProps>`
+	opacity: 0.7;
+	background: rgba(33, 33, 33, 0.1);
+	display: '${(props: InputProps) => (props.isVisible ? 'default' : 'none')}';
 
+	& :hover {
+		border-width: 1px;
+		border-color: rgba(33, 33, 33, 0.7);
+	}
+`;
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& .searchForm {
+		width: 80vw;
+		max-width: 800px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: 0;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+	}
+`;
 const OppositeChat = ({
 	children,
 	createTime,
@@ -144,16 +176,22 @@ const MyChat = ({
 const ChatRoom = (props: Props) => {
 	const { loadMessages, roomId, opponent } = props;
 	const chatInput = useInput('');
-	const currentUser = useContext(UserStateContext);
+	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
+	const [place, setPlace] = useState<Place>(
+		currentUser.isHost == 1
+			? ((currentUser as Host).place as Place)
+			: ((opponent as Host).place as Place),
+	);
+	const [placeInputOpen, setPlaceInputOpen] = useState(place ? true : false);
+	const [placeOpen, setPlaceOpen] = useState(false);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const options = ['팔로우', '신고', '채팅 나가기'];
 	const open = Boolean(anchorEl);
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
-
 	// 소켓 생성
 	useEffect(() => {
 		setSocket(io(`/`, { transports: ['websocket'] }));
@@ -254,8 +292,16 @@ const ChatRoom = (props: Props) => {
 		}
 	}, []);
 
+	// 장소 버튼
+	const handlePlaceOpen = () => {
+		setPlaceOpen(true);
+	};
+	const handlePlaceClose = () => {
+		setPlaceOpen(false);
+	};
+
 	// 햄버거 버튼
-	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+	const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -282,7 +328,14 @@ const ChatRoom = (props: Props) => {
 			<header>
 				<div>
 					<h4>{opponent.nickname}님과의 채팅</h4>
-					<IconButton onClick={handleClick}>
+					<IconButton
+						className='location'
+						onClick={handlePlaceOpen}
+						onChange={handlePlaceOpen}
+					>
+						<PersonPinCircleIcon />
+					</IconButton>
+					<IconButton className='menu' onClick={handleMenuClick}>
 						<MenuIcon />
 					</IconButton>
 					<Menu
@@ -299,6 +352,28 @@ const ChatRoom = (props: Props) => {
 					</Menu>
 				</div>
 			</header>
+			<PlaceInput
+				type='address'
+				width='100%'
+				border='1px solid #ccc'
+				textAlign='center'
+				onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+					e.preventDefault();
+					console.log(placeInputOpen);
+					setPlaceInputOpen(!placeInputOpen);
+					console.log(placeInputOpen);
+				}}
+				value={place?.formatted_address}
+				isVisible={placeInputOpen}
+				disabled
+			/>
+			<StyledModal open={placeOpen} onClose={handlePlaceClose}>
+				<Fade in={placeOpen}>
+					<div className='searchForm'>
+						<SearchPlace setPlace={setPlace} />
+					</div>
+				</Fade>
+			</StyledModal>
 			<div ref={scrollRef} className='messageBox'>
 				{messages.map((message, i) => {
 					const currentTime = new Date(message.createTime);
