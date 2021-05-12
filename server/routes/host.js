@@ -53,6 +53,9 @@ router.post('/application/list', function (req, res, next) {
 router.post('/application/approve', function (req, res, next) {
 	management.approveHosting(req, res);
 });
+router.post('/application/location', function (req, res, next) {
+	management.setLocationHosting(req, res);
+});
 router.post('/application/deny', function (req, res, next) {
 	management.denyHosting(req, res);
 });

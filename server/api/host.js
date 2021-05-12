@@ -398,6 +398,18 @@ module.exports.approveHosting = (req, res) => {
 	});
 };
 
+module.exports.setLocationHosting = (req, res) => {
+	// host 가 user의 신청을 승인하는 API
+	const { id, address } = req.body; // requestUserId
+
+	const updateSql = `UPDATE host_user_apply SET address= ? WHERE id = ?;`;
+	mysql.query(updateSql, [address, id], err => {
+		if (err) return console.log('setLocation err', err);
+
+		res.json({ success: true });
+	});
+};
+
 module.exports.denyHosting = (req, res) => {
 	// host 가 user의 신청을 취소하는 API
 	const id = req.body.id; // application ID
