@@ -189,7 +189,7 @@ const Privacy = (props: Props) => {
 
 	// 이미지가 바뀌었을 때
 	useEffect(() => {
-		if (img !== null) {
+		if (img) {
 			// formData generate
 			const formData = new FormData();
 			// formData에 key, value 추가
