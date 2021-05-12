@@ -67,9 +67,9 @@ module.exports.writeMessage = (req, res) => {
 
 module.exports.getRoomList = (req, res) => {
 	const { userId } = req.body;
-
-	const selectAsUser = `SELECT m.*, u.nickname, u.photo FROM message_room m JOIN user u ON m.host_user_id = u.id WHERE m.user_user_id = ?`;
-	const selectAsHost = `SELECT m.*, u.nickname, u.photo FROM message_room m JOIN user u ON m.user_user_id = u.id WHERE m.host_user_id = ?`;
+	// 정렬 후 GROUP BY를 위해 LIMIT(2^64-1) 걸어줌
+	const selectAsUser = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo FROM message_room m JOIN message msg ON m.id = msg.messageroom_id JOIN user u ON m.host_user_id = u.id WHERE m.user_user_id = ? ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
+	const selectAsHost = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo FROM message_room m JOIN message msg ON m.id = msg.messageroom_id JOIN user u ON m.user_user_id = u.id WHERE m.host_user_id = ? ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
 
 	mysql.query(selectAsUser, userId, (err, rows1) => {
 		if (err) {
@@ -89,26 +89,38 @@ module.exports.getRoomList = (req, res) => {
 				return console.log('selectAsHost err: ', err);
 			}
 
-			const row1 = rows1.map(row => {
-				return {
-					roomId: row.id,
-					hostId: row.host_user_id,
-					userId: row.user_user_id,
-					nickname: row.nickname,
-					photo: row.photo,
-				};
+			const sortedRows = [...rows1, ...rows2].sort(
+				(a, b) => new Date(b.create_time) - new Date(a.create_time),
+			);
+
+			const result = sortedRows.map(row => {
+				return mapRoomInfo(row);
 			});
-			const row2 = rows2.map(row => {
-				return {
-					roomId: row.id,
-					hostId: row.host_user_id,
-					userId: row.user_user_id,
-					nickname: row.nickname,
-					photo: row.photo,
-				};
-			});
-			const result = [...row1, ...row2];
+
 			res.json({ success: true, roomList: result });
 		});
 	});
 };
+
+function mapRoomInfo(item) {
+	return {
+		roomId: item.id,
+		hostId: item.host_user_id,
+		userId: item.user_user_id,
+		nickname: item.nickname,
+		photo: item.photo,
+		recentMessage: {
+			message: item.text,
+			createTime: formatDateTime(item.create_time),
+		},
+	};
+}
+
+function formatDateTime(dateTime) {
+	const now = new Date();
+	const input = new Date(dateTime);
+	if (now.toDateString() === input.toDateString()) {
+		return `${input.getHours()}:${input.getMinutes()}`;
+	}
+	return `${input.getMonth() + 1}월 ${input.getDate()}일`;
+}

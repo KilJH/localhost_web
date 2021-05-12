@@ -17,6 +17,7 @@ interface ItemProps {
 		hostId: number;
 		userId: number;
 		// 최근대화?
+		recentMessage: { message: string; createTime: string };
 	};
 	currentUser: {
 		id: number;
@@ -88,12 +89,30 @@ const ItemContainer = styled.li`
 `;
 
 const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
-	const { roomId, nickname, photo, hostId, userId } = item;
+	const { roomId, nickname, photo, hostId, userId, recentMessage } = item;
 	const opponentId = currentUser.id === userId ? hostId : userId;
-	// const onClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
-	// 	e.preventDefault();
-	// 	Router.push('/messages/' + opponentId);
-	// };
+
+	// 만약 열고 있는데 문자 오면 보여지게
+	// const [socket, setSocket] = useState<Socket>();
+	// const [recent, setRecent] = useState(recentMessage);
+	// useEffect(() => {
+	// 	setSocket(io(`/`, { transports: ['websocket'] }));
+	// }, []);
+	// // 방 입장 (소켓 생성 시)
+	// useEffect(() => {
+	// 	if (socket) {
+	// 		socket.emit('join', roomId);
+	// 	}
+	// 	return () => {
+	// 		if (socket) {
+	// 			socket.off('message');
+	// 			socket.on('message', data => {
+	// 				setRecent({ message: data.message, createTime: data.createTime });
+	// 			});
+	// 		}
+	// 	};
+	// }, [socket]);
+
 	return (
 		<Link href='/messages/[id]' as={`/messages/${opponentId}`}>
 			<ItemContainer>
@@ -103,12 +122,9 @@ const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
 					<div>
 						{nickname}#{roomId}
 					</div>
-					<div>
-						최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근 대화최근
-						대화최근 대화 최근 대화최근 대화최근 대화최근 대화최근 대화
-					</div>
+					<div>{recentMessage.message}</div>
 				</div>
-				<div className='time'>날짜</div>
+				<div className='time'>{recentMessage.createTime}</div>
 			</ItemContainer>
 		</Link>
 	);
