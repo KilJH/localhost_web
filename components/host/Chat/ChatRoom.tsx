@@ -194,8 +194,14 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
+	// 새로운 메세지
 	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
 	const [newMessage, setNewMessage] = useState('');
+	// 메뉴
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const options = ['팔로우', '신고', '채팅 나가기'];
+	const open = Boolean(anchorEl);
+	// 위치
 	const [place, setPlace] = useState<Place>(
 		currentUser.isHost == 1
 			? ((currentUser as Host).place as Place)
@@ -203,20 +209,28 @@ const ChatRoom = (props: Props) => {
 	);
 	const [placeInputOpen, setPlaceInputOpen] = useState(place ? true : false);
 	const [placeOpen, setPlaceOpen] = useState(false);
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const options = ['팔로우', '신고', '채팅 나가기'];
-	const open = Boolean(anchorEl);
-	const receiveMessage = (message: any) => {
-		setMessages([...messages, message]);
-	};
+	// 스크롤
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const ref = scrollRef.current;
 
-	// 소켓 생성
+	// 최초 접속 시
 	useEffect(() => {
+		// 소켓 생성
 		setSocket(io(`/`, { transports: ['websocket'] }));
+		// 스크롤 다운
+		if (ref) {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
 	}, []);
 
 	// 방 입장 (소켓 생성 시)
 	useEffect(() => {
+		// 스크롤 다운
+		if (ref) {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
 		if (socket) {
 			socket.emit('join', roomId);
 		}
@@ -253,6 +267,39 @@ const ChatRoom = (props: Props) => {
 			}
 		};
 	}, [socket, messages]);
+
+	// 채팅 내용 갱신 시
+	useEffect(() => {
+		if (ref) {
+			ref.scrollIntoView({
+				behavior: 'smooth',
+				block: 'end',
+				inline: 'nearest',
+			});
+			const { scrollHeight, clientHeight } = ref;
+
+			// 자신의 채팅일 경우
+			if (messages[messages.length - 1].userId == currentUser.id)
+				ref.scrollTop = scrollHeight - clientHeight;
+			// 상대방의 채팅일 경우
+			else {
+				setNewMessage(messages[messages.length - 1].message);
+				setNewMsgDisplay('block');
+			}
+		}
+	}, [messages]);
+
+	// 새로운 메세지 클릭 시
+	useEffect(() => {
+		if (ref && newMsgDisplay == 'none') {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
+	}, [newMsgDisplay]);
+
+	const receiveMessage = (message: any) => {
+		setMessages([...messages, message]);
+	};
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -299,47 +346,6 @@ const ChatRoom = (props: Props) => {
 		}
 		return formatTime(current);
 	};
-
-	// 스크롤 다운
-	const scrollRef = useRef<HTMLDivElement>(null);
-	const ref = scrollRef.current;
-
-	// 최초 접속 시
-	useEffect(() => {
-		if (ref) {
-			const { scrollHeight, clientHeight } = ref;
-			ref.scrollTop = scrollHeight - clientHeight;
-		}
-	}, []);
-
-	// 채팅 내용 갱신 시
-	useEffect(() => {
-		if (ref) {
-			ref.scrollIntoView({
-				behavior: 'smooth',
-				block: 'end',
-				inline: 'nearest',
-			});
-			const { scrollHeight, clientHeight } = ref;
-
-			// 자신의 채팅일 경우
-			if (messages[messages.length - 1].userId == currentUser.id)
-				ref.scrollTop = scrollHeight - clientHeight;
-			// 상대방의 채팅일 경우
-			else {
-				setNewMessage(messages[messages.length - 1].message);
-				setNewMsgDisplay('block');
-			}
-		}
-	}, [messages]);
-
-	// 새로운 메세지 클릭 시
-	useEffect(() => {
-		if (ref && newMsgDisplay == 'none') {
-			const { scrollHeight, clientHeight } = ref;
-			ref.scrollTop = scrollHeight - clientHeight;
-		}
-	}, [newMsgDisplay]);
 
 	// 스크롤이 마지막인 경우
 	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
