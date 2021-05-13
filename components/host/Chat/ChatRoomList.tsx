@@ -67,6 +67,7 @@ const ItemContainer = styled.li`
 			color: #666;
 			font-size: 0.8em;
 			line-height: 1.25em;
+			word-break: break-all;
 
 			overflow: hidden;
 			text-overflow: ellipsis;
