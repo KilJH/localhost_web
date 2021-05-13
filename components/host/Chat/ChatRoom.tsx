@@ -147,7 +147,7 @@ const PlaceInput = styled(Input)<InputProps>`
 
 	& :hover {
 		border-width: 1px;
-		border-color: rgba(33, 33, 33, 0.7);
+		border-color: #ddd;
 	}
 `;
 const StyledModal = styled(Modal)`
@@ -202,11 +202,7 @@ const ChatRoom = (props: Props) => {
 	const options = ['팔로우', '신고', '채팅 나가기'];
 	const open = Boolean(anchorEl);
 	// 위치
-	const [place, setPlace] = useState<Place>(
-		currentUser.isHost == 1
-			? ((currentUser as Host).place as Place)
-			: ((opponent as Host).place as Place),
-	);
+	const [place, setPlace] = useState<Place>();
 	const [placeInputOpen, setPlaceInputOpen] = useState(place ? true : false);
 	const [placeOpen, setPlaceOpen] = useState(false);
 	// 스크롤
@@ -423,15 +419,18 @@ const ChatRoom = (props: Props) => {
 				type='address'
 				width='100%'
 				border='1px solid #ccc'
-				textAlign='center'
+				textAlign={place ? 'center' : 'right'}
 				onClick={(e: React.MouseEvent<HTMLInputElement>) => {
 					e.preventDefault();
 					console.log(placeInputOpen);
 					setPlaceInputOpen(!placeInputOpen);
 					console.log(placeInputOpen);
 				}}
-				value={place?.formatted_address}
+				value={
+					place?.formatted_address || '만나고 싶은 장소를 정하려면 클릭! ☝'
+				}
 				isVisible={placeInputOpen}
+				style={{ paddingRight: `${place}` == 'undefined' ? '4.25em' : '1em' }}
 				disabled
 			/>
 			<StyledModal open={placeOpen} onClose={handlePlaceClose}>

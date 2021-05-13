@@ -8,7 +8,7 @@ import { Search } from '@material-ui/icons';
 import Input from '../reuse/Input';
 
 interface Props {
-	setPlace: React.Dispatch<React.SetStateAction<Place>>;
+	setPlace: React.Dispatch<React.SetStateAction<Place | undefined>>;
 }
 
 interface PlaceProps {
