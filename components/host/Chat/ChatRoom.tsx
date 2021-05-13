@@ -74,6 +74,21 @@ const ChatRoomContainer = styled.div`
 		overflow: auto;
 		padding: 1em;
 	}
+	& .newMessage {
+		height: 3em;
+		text-align: center;
+		border-radius: 12px;
+		margin: 0 0.5em;
+		position: sticky;
+		overflow: auto;
+		bottom: 0em;
+		background: rgba(33, 33, 33, 0.75);
+		color: rgba(255, 255, 255, 0.8);
+		cursor: pointer;
+		& p {
+			margin: 0.85em;
+		}
+	}
 	& > form {
 		display: flex;
 		padding: 1em 0.5em 3.5em 0.5em;
@@ -179,6 +194,8 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
+	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
+	const [newMessage, setNewMessage] = useState('');
 	const [place, setPlace] = useState<Place>(
 		currentUser.isHost == 1
 			? ((currentUser as Host).place as Place)
@@ -192,6 +209,7 @@ const ChatRoom = (props: Props) => {
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
+
 	// 소켓 생성
 	useEffect(() => {
 		setSocket(io(`/`, { transports: ['websocket'] }));
@@ -284,13 +302,50 @@ const ChatRoom = (props: Props) => {
 
 	// 스크롤 다운
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const ref = scrollRef.current;
+
+	// 최초 접속 시
 	useEffect(() => {
-		const ref = scrollRef.current;
 		if (ref) {
 			const { scrollHeight, clientHeight } = ref;
 			ref.scrollTop = scrollHeight - clientHeight;
 		}
 	}, []);
+
+	// 채팅 내용 갱신 시
+	useEffect(() => {
+		if (ref) {
+			ref.scrollIntoView({
+				behavior: 'smooth',
+				block: 'end',
+				inline: 'nearest',
+			});
+			const { scrollHeight, clientHeight } = ref;
+
+			// 자신의 채팅일 경우
+			if (messages[messages.length - 1].userId == currentUser.id)
+				ref.scrollTop = scrollHeight - clientHeight;
+			// 상대방의 채팅일 경우
+			else {
+				setNewMessage(messages[messages.length - 1].message);
+				setNewMsgDisplay('block');
+			}
+		}
+	}, [messages]);
+
+	// 새로운 메세지 클릭 시
+	useEffect(() => {
+		if (ref && newMsgDisplay == 'none') {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
+	}, [newMsgDisplay]);
+
+	// 스크롤이 마지막인 경우
+	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
+		const { scrollHeight, clientHeight, scrollTop } = event.currentTarget;
+		if (scrollTop == scrollHeight - clientHeight) setNewMsgDisplay('none');
+	};
 
 	// 장소 버튼
 	const handlePlaceOpen = () => {
@@ -321,6 +376,12 @@ const ChatRoom = (props: Props) => {
 			case 2: //채팅 나가기
 				return;
 		}
+	};
+
+	// 새로운 메세지
+	const handleNewMessageClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		setNewMsgDisplay('none');
 	};
 
 	return (
@@ -374,7 +435,7 @@ const ChatRoom = (props: Props) => {
 					</div>
 				</Fade>
 			</StyledModal>
-			<div ref={scrollRef} className='messageBox'>
+			<div ref={scrollRef} className='messageBox' onScroll={onScrollHandler}>
 				{messages.map((message, i) => {
 					const currentTime = new Date(message.createTime);
 					const nextTime = new Date(messages[i + 1]?.createTime || null);
@@ -391,6 +452,13 @@ const ChatRoom = (props: Props) => {
 						</OppositeChat>
 					);
 				})}
+				<div
+					className='newMessage'
+					onClick={handleNewMessageClick}
+					style={{ display: `${newMsgDisplay}` }}
+				>
+					<p>{newMessage}</p>
+				</div>
 			</div>
 			<form onSubmit={onSubmit}>
 				<Input textAlign='left' {...chatInput} />
