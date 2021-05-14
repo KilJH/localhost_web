@@ -43,7 +43,11 @@ interface TimeProps {
 	createTime?: string;
 }
 
-const ChatRoomContainer = styled.div`
+interface ScrollProps {
+	isScroll?: boolean;
+}
+
+const ChatRoomContainer = styled.div<ScrollProps>`
 	height: 80vh;
 	display: flex;
 	flex-direction: column;
@@ -74,6 +78,16 @@ const ChatRoomContainer = styled.div`
 		border-bottom: 1px solid #aaa;
 		overflow: auto;
 		padding: 1em;
+		&::-webkit-scrollbar {
+			width: 10px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background-color: gray;
+			border-radius: 3.5px;
+			&:hover {
+				background: rgba(33, 33, 33, 0.75);
+			}
+		}
 	}
 	& .popup {
 		position: sticky;
@@ -234,6 +248,7 @@ const ChatRoom = (props: Props) => {
 	// 스크롤
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const ref = scrollRef.current;
+	const [isScroll, setIsScroll] = useState(false);
 
 	// 최초 접속 시
 	useEffect(() => {
@@ -373,6 +388,7 @@ const ChatRoom = (props: Props) => {
 	// 채팅방 스크롤 이벤트
 	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
 		const { scrollHeight, clientHeight, scrollTop } = event.currentTarget;
+		setIsScroll(true);
 		// 스크롤이 마지막인 경우
 		if (scrollTop == scrollHeight - clientHeight) {
 			setNewMsgDisplay('none');
