@@ -76,22 +76,27 @@ const ChatRoomContainer = styled.div`
 		padding: 1em;
 	}
 	& .popup {
-		height: 3em;
 		position: sticky;
 		overflow: auto;
 		bottom: 0em;
 		display: flex;
 		text-align: center;
 		& .newMessage {
-			display: inline-block;
-			width: 90%;
+			display: flex;
+			align-items: center;
+			width: 100%;
 			height: 3em;
 			border-radius: 12px;
 			background: rgba(33, 33, 33, 0.75);
 			color: rgba(255, 255, 255, 0.8);
 			cursor: pointer;
 			& p {
-				margin: 0.85em;
+				display: inline-block;
+				width: 93%;
+				margin: 0;
+			}
+			& svg {
+				width: 7%;
 			}
 		}
 		& .toBottom {
@@ -301,14 +306,15 @@ const ChatRoom = (props: Props) => {
 			// 상대방의 채팅일 경우
 			else {
 				setNewMessage(messages[messages.length - 1].message);
-				setNewMsgDisplay('block');
+				setNewMsgDisplay('flex');
 			}
 		}
 	}, [messages]);
 
-	// 새로운 메세지 클릭 시
+	// 팝업 메세지
 	useEffect(() => {
-		if (ref && (newMsgDisplay === 'none' || toBottomDisplay === 'none')) {
+		if (newMsgDisplay === 'flex') setToBottomDisplay('none');
+		else if (ref && (newMsgDisplay === 'none' || toBottomDisplay === 'none')) {
 			const { scrollHeight, clientHeight } = ref;
 			ref.scrollTop = scrollHeight - clientHeight;
 		}
@@ -371,7 +377,7 @@ const ChatRoom = (props: Props) => {
 		if (scrollTop == scrollHeight - clientHeight) {
 			setNewMsgDisplay('none');
 			setToBottomDisplay('none');
-		} else setToBottomDisplay('block');
+		} else if (newMsgDisplay === 'none') setToBottomDisplay('block');
 	};
 
 	// 장소 버튼
@@ -495,6 +501,7 @@ const ChatRoom = (props: Props) => {
 						style={{ display: `${newMsgDisplay}` }}
 					>
 						<p>{newMessage}</p>
+						<VerticalAlignBottomIcon />
 					</div>
 					<div
 						className='toBottom'
