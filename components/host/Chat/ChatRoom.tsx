@@ -17,6 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { Fade, IconButton, Menu, MenuItem, Modal } from '@material-ui/core';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import SearchPlace from '../../search/SearchPlace';
+import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -74,19 +75,37 @@ const ChatRoomContainer = styled.div`
 		overflow: auto;
 		padding: 1em;
 	}
-	& .newMessage {
+	& .popup {
 		height: 3em;
-		text-align: center;
-		border-radius: 12px;
-		margin: 0 0.5em;
 		position: sticky;
 		overflow: auto;
 		bottom: 0em;
-		background: rgba(33, 33, 33, 0.75);
-		color: rgba(255, 255, 255, 0.8);
-		cursor: pointer;
-		& p {
-			margin: 0.85em;
+		display: flex;
+		text-align: center;
+		& .newMessage {
+			display: inline-block;
+			width: 90%;
+			height: 3em;
+			border-radius: 12px;
+			background: rgba(33, 33, 33, 0.75);
+			color: rgba(255, 255, 255, 0.8);
+			cursor: pointer;
+			& p {
+				margin: 0.85em;
+			}
+		}
+		& .toBottom {
+			display: inline-block;
+			width: 3em;
+			height: 3em;
+			border-radius: 100%;
+			margin-left: auto;
+			background: rgba(33, 33, 33, 0.75);
+			color: rgba(255, 255, 255, 0.8);
+			cursor: pointer;
+			& svg {
+				margin: 0.4em;
+			}
 		}
 	}
 	& > form {
@@ -197,6 +216,8 @@ const ChatRoom = (props: Props) => {
 	// 새로운 메세지
 	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
 	const [newMessage, setNewMessage] = useState('');
+	// 아래로 버튼
+	const [toBottomDisplay, setToBottomDisplay] = useState('none');
 	// 메뉴
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const options = ['팔로우', '신고', '채팅 나가기'];
@@ -287,11 +308,11 @@ const ChatRoom = (props: Props) => {
 
 	// 새로운 메세지 클릭 시
 	useEffect(() => {
-		if (ref && newMsgDisplay == 'none') {
+		if (ref && (newMsgDisplay === 'none' || toBottomDisplay === 'none')) {
 			const { scrollHeight, clientHeight } = ref;
 			ref.scrollTop = scrollHeight - clientHeight;
 		}
-	}, [newMsgDisplay]);
+	}, [newMsgDisplay, toBottomDisplay]);
 
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
@@ -343,10 +364,14 @@ const ChatRoom = (props: Props) => {
 		return formatTime(current);
 	};
 
-	// 스크롤이 마지막인 경우
+	// 채팅방 스크롤 이벤트
 	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
 		const { scrollHeight, clientHeight, scrollTop } = event.currentTarget;
-		if (scrollTop == scrollHeight - clientHeight) setNewMsgDisplay('none');
+		// 스크롤이 마지막인 경우
+		if (scrollTop == scrollHeight - clientHeight) {
+			setNewMsgDisplay('none');
+			setToBottomDisplay('none');
+		} else setToBottomDisplay('block');
 	};
 
 	// 장소 버튼
@@ -384,6 +409,12 @@ const ChatRoom = (props: Props) => {
 	const handleNewMessageClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		setNewMsgDisplay('none');
+	};
+
+	// 아래로 버튼
+	const handleToBottomClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		setToBottomDisplay('none');
 	};
 
 	return (
@@ -457,12 +488,21 @@ const ChatRoom = (props: Props) => {
 						</OppositeChat>
 					);
 				})}
-				<div
-					className='newMessage'
-					onClick={handleNewMessageClick}
-					style={{ display: `${newMsgDisplay}` }}
-				>
-					<p>{newMessage}</p>
+				<div className='popup'>
+					<div
+						className='newMessage'
+						onClick={handleNewMessageClick}
+						style={{ display: `${newMsgDisplay}` }}
+					>
+						<p>{newMessage}</p>
+					</div>
+					<div
+						className='toBottom'
+						onClick={handleToBottomClick}
+						style={{ display: `${toBottomDisplay}` }}
+					>
+						<VerticalAlignBottomIcon />
+					</div>
 				</div>
 			</div>
 			<form onSubmit={onSubmit}>
