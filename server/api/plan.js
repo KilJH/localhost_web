@@ -47,6 +47,10 @@ module.exports.list = (req, res) => {
 			return {
 				id: plan.plan_id,
 				title: plan.title,
+				description: plan.description,
+				sleepDays: plan.sleep_days,
+				travelDays: plan.travel_days,
+				price: plan.price,
 				createTime: formatDate(plan.create_time),
 				hit: plan.hit,
 				author: {
@@ -164,15 +168,8 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.write = (req, res) => {
-	const {
-		userId,
-		title,
-		description,
-		sleepDays,
-		travelDays,
-		tags,
-		planDays,
-	} = req.body;
+	const { userId, title, description, sleepDays, travelDays, tags, planDays } =
+		req.body;
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
 	mysql.query(sql, (err, rows) => {

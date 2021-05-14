@@ -38,13 +38,14 @@ export interface Plan {
 	title: string;
 	description: string;
 	price?: number;
-	sleepDays: number;
-	travelDays: number;
+	sleepDays?: number;
+	travelDays?: number;
 	tags?: string[];
-	planDays: PlanDay[];
+	planDays?: PlanDay[];
 	createTime?: string;
 	hit?: number;
 	author?: User;
+	numOfComment?: number;
 }
 
 export interface PlanDay {
