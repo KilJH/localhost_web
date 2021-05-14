@@ -12,7 +12,7 @@ import Input from '../../reuse/Input';
 import { io, Socket } from 'socket.io-client';
 import { UserStateContext } from '../../../context/user';
 import axios from 'axios';
-import { Host, Place, User } from '../../../interfaces';
+import { Place, User } from '../../../interfaces';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Fade, IconButton, Menu, MenuItem, Modal } from '@material-ui/core';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
@@ -42,9 +42,8 @@ interface InputProps {
 interface TimeProps {
 	createTime?: string;
 }
-
 interface ScrollProps {
-	isScroll?: boolean;
+	scrollDisplay?: string;
 }
 
 const ChatRoomContainer = styled.div<ScrollProps>`
@@ -78,7 +77,9 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		border-bottom: 1px solid #aaa;
 		overflow: auto;
 		padding: 1em;
+
 		&::-webkit-scrollbar {
+			display: ${(props: ScrollProps) => props.scrollDisplay};
 			width: 10px;
 		}
 		&::-webkit-scrollbar-thumb {
@@ -248,7 +249,7 @@ const ChatRoom = (props: Props) => {
 	// 스크롤
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const ref = scrollRef.current;
-	const [isScroll, setIsScroll] = useState(false);
+	const [scrollDisplay, setScrollDisplay] = useState('none');
 
 	// 최초 접속 시
 	useEffect(() => {
@@ -313,11 +314,15 @@ const ChatRoom = (props: Props) => {
 				block: 'end',
 				inline: 'nearest',
 			});
-			const { scrollHeight, clientHeight } = ref;
+			const { scrollHeight, clientHeight, scrollTop } = ref;
 
 			// 자신의 채팅일 경우
 			if (messages[messages.length - 1].userId == currentUser.id)
 				ref.scrollTop = scrollHeight - clientHeight;
+			// 팝업 버튼이 나오지 않을 만큼 애매한 경우
+			else if (scrollTop >= scrollHeight - clientHeight - 200) {
+				ref.scrollTop = scrollHeight - clientHeight;
+			}
 			// 상대방의 채팅일 경우
 			else {
 				setNewMessage(messages[messages.length - 1].message);
@@ -326,14 +331,10 @@ const ChatRoom = (props: Props) => {
 		}
 	}, [messages]);
 
-	// 팝업 메세지
+	// 새로운 메세지 수신 시 ToBottom 버튼 안보이기
 	useEffect(() => {
 		if (newMsgDisplay === 'flex') setToBottomDisplay('none');
-		else if (ref && (newMsgDisplay === 'none' || toBottomDisplay === 'none')) {
-			const { scrollHeight, clientHeight } = ref;
-			ref.scrollTop = scrollHeight - clientHeight;
-		}
-	}, [newMsgDisplay, toBottomDisplay]);
+	}, [newMsgDisplay]);
 
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
@@ -388,9 +389,8 @@ const ChatRoom = (props: Props) => {
 	// 채팅방 스크롤 이벤트
 	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
 		const { scrollHeight, clientHeight, scrollTop } = event.currentTarget;
-		setIsScroll(true);
 		// 스크롤이 마지막인 경우
-		if (scrollTop == scrollHeight - clientHeight) {
+		if (scrollTop >= scrollHeight - clientHeight - 200) {
 			setNewMsgDisplay('none');
 			setToBottomDisplay('none');
 		} else if (newMsgDisplay === 'none') setToBottomDisplay('block');
@@ -427,20 +427,30 @@ const ChatRoom = (props: Props) => {
 		}
 	};
 
+	// 아래로
+	const toBottom = () => {
+		if (ref) {
+			const { scrollHeight, clientHeight } = ref;
+			ref.scrollTop = scrollHeight - clientHeight;
+		}
+	};
+
 	// 새로운 메세지
 	const handleNewMessageClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		setNewMsgDisplay('none');
+		toBottom();
 	};
 
 	// 아래로 버튼
 	const handleToBottomClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		setToBottomDisplay('none');
+		toBottom();
 	};
 
 	return (
-		<ChatRoomContainer>
+		<ChatRoomContainer scrollDisplay={'scrollDisplay'}>
 			<header>
 				<div>
 					<h4>{opponent.nickname}님과의 채팅</h4>
