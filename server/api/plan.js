@@ -133,8 +133,8 @@ module.exports.load = (req, res) => {
 				id: plansRows[0].id,
 				title: plansRows[0].title,
 				description: plansRows[0].description,
-				sleepDays: plansRows[0].sleepDays,
-				travelDays: plansRows[0].travelDays,
+				sleepDays: plansRows[0].sleep_days,
+				travelDays: plansRows[0].travel_days,
 				createTime: formatDate(plansRows[0].create_time),
 				hit: plansRows[0].hit,
 				author: {

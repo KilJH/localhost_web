@@ -10,8 +10,8 @@ const PlanDayItem = (props: Props) => {
 	const { planDay } = props;
 	return (
 		<div>
-			{planDay.planTimes.map(time => {
-				return <PlanTimeItem plan={time} />;
+			{planDay.planTimes.map((time, i) => {
+				return <PlanTimeItem plan={time} key={i} />;
 			})}
 		</div>
 	);

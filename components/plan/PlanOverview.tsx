@@ -7,6 +7,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
+import TravelDaysTag from './TravelDaysTag';
 
 interface Props {
 	plan: Plan;
@@ -31,34 +32,10 @@ const PlanOverviewGrid = styled(Grid)`
 		border: 1px solid #2d3436;
 		padding: 0 0.25rem;
 	}
-	& .문화재 {
-		color: #e67e22;
-		border: 1px solid #e67e22;
-		padding: 0 0.25rem;
-	}
-	& .감성 {
-		color: #8e44ad;
-		border: 1px solid #8e44ad;
-		padding: 0 0.25rem;
-	}
-	& .대자연 {
-		color: #27ae60;
-		border: 1px solid #27ae60;
-		padding: 0 0.25rem;
-	}
-	& .힐링 {
-		color: #ff9ff3;
-		border: 1px solid #ff9ff3;
-		padding: 0 0.25rem;
-	}
-	& .먹부림 {
-		color: #e74c3c;
-		border: 1px solid #e74c3c;
-		padding: 0 0.25rem;
-	}
 `;
 
 const PlanOverviewImg = styled.div`
+	height: 512px;
 	& > img {
 		width: 100%;
 		height: 100%;
@@ -133,6 +110,7 @@ const PlanOverviewContent = styled.div`
 `;
 
 const PlanOverview: React.FC<Props> = props => {
+	const { plan } = props;
 	return (
 		<PlanOverviewGrid container spacing={2}>
 			<Grid item xs={12} md={6}>
@@ -145,32 +123,36 @@ const PlanOverview: React.FC<Props> = props => {
 							<ArrowForwardIosIcon />
 						</Button>
 					</div>
-					<img alt='여행사진' src={`/img/plan/plan${props.plan.id}.jpeg`}></img>
+					<img
+						alt='여행사진'
+						src={plan.thumbnail || '/img/logos/localhostLogoBlack.png'}
+					></img>
 				</PlanOverviewImg>
 			</Grid>
 			<Grid item xs={12} md={6}>
 				<PlanOverviewContent>
-					<h2>{props.plan.title}</h2>
+					<h2>{plan.title}</h2>
 					<div className='subTitle'>
-						<span className='howLong'>
-							{props.plan.sleepDays}박{props.plan.travelDays}일
-						</span>
-						{props.plan!.tags!.map(tag => (
+						<TravelDaysTag
+							sleepDays={plan.sleepDays as number}
+							travelDays={plan.travelDays as number}
+						/>
+						{/* {plan!.tags!.map(tag => (
 							<span className={tag}>{tag}</span>
-						))}
+						))} */}
 					</div>
 
-					<div className='content'>{props.plan.description}</div>
+					<div className='content'>{plan.description}</div>
 
 					<div className='price'>
 						<p>
 							₩{' '}
 							{Intl.NumberFormat().format(
-								Math.floor(props.plan!.price! / props.plan.travelDays),
+								Math.floor(plan!.price! / (plan?.travelDays ?? 1)),
 							)}{' '}
 							/ 일
 						</p>
-						<h2>₩ {Intl.NumberFormat().format(props.plan!.price!)}</h2>
+						<h2>₩ {Intl.NumberFormat().format(plan!.price!)}</h2>
 					</div>
 
 					<div className='buttons'>

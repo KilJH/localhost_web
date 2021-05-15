@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -53,11 +53,10 @@ const PlanWholeItem = (props: Props) => {
 	const { plans } = props;
 	const [value, setValue] = React.useState(0);
 
-	const handleChange = () => (newValue: number) => {
+	const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
 		setValue(newValue);
 	};
 
-	console.log(plans);
 	return (
 		<PlanWholeItemContainer>
 			<AppBar position='static'>
@@ -70,7 +69,7 @@ const PlanWholeItem = (props: Props) => {
 					indicatorColor='primary'
 				>
 					{plans.map((plan, i) => (
-						<Tab label={`${i + 1}일차`} {...a11yProps(i)} key={plan.day} />
+						<Tab label={`${plan.day}일차`} {...a11yProps(i)} key={plan.day} />
 					))}
 				</Tabs>
 			</AppBar>
