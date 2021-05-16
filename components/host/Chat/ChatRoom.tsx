@@ -57,7 +57,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 
 		& div {
 			display: flex;
-			& p {
+			& h4 {
 				margin: 0.75em auto 0.75em 2em;
 				color: rgba(33, 33, 33, 0.8);
 			}
@@ -78,9 +78,12 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		overflow: auto;
 		padding: 1em;
 
-		& h4 {
+		& p {
 			text-align: center;
-			margin: 0;
+			margin: 1.5em 1em;
+			font-size: 0.9em;
+			font-weight: 600;
+			color: rgba(33, 33, 33, 0.7);
 		}
 		&::-webkit-scrollbar {
 			display: ${(props: ScrollProps) => props.scrollDisplay};
@@ -159,6 +162,7 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: left;
 	& .message {
 		background: #aaa;
+		box-shadow: 1.5px 1.5px rgb(33 33 33 / 50%);
 		color: black;
 	}
 	&::after {
@@ -173,6 +177,7 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: right;
 	& .message {
 		background: #5197d5;
+		box-shadow: 1px 1px #aaa;
 		color: #eee;
 	}
 	&::before {
@@ -381,13 +386,39 @@ const ChatRoom = (props: Props) => {
 	// 날짜 포맷
 	const formatDate = (createTime: Date) => {
 		const date = new Date(createTime);
+		let day = '';
+		switch (date.getDay()) {
+			case 0:
+				day = '일';
+				break;
+			case 1:
+				day = '월';
+				break;
+			case 2:
+				day = '화';
+				break;
+			case 3:
+				day = '수';
+				break;
+			case 4:
+				day = '목';
+				break;
+			case 5:
+				day = '금';
+				break;
+			case 6:
+				day = '토';
+				break;
+		}
 		return (
 			date.getFullYear() +
 			'년 ' +
-			date.getMonth() +
+			(date.getMonth() + 1) +
 			'월 ' +
 			date.getDate() +
-			'일 '
+			'일 ' +
+			day +
+			'요일'
 		);
 	};
 
@@ -533,20 +564,24 @@ const ChatRoom = (props: Props) => {
 					const prevTime = new Date(messages[i - 1]?.createTime || null);
 					const currentTime = new Date(message.createTime);
 					const nextTime = new Date(messages[i + 1]?.createTime || null);
+					const date = compareDate(currentTime, prevTime);
 					return message.userId === currentUser.id ? (
 						<div>
-							<p>{compareDate(currentTime, prevTime)}</p>
+							{date != null ? <p>{date}</p> : ''}
 							<MyChat key={i} createTime={compareTime(currentTime, nextTime)}>
 								{message.message}
 							</MyChat>
 						</div>
 					) : (
-						<OppositeChat
-							key={i}
-							createTime={compareTime(currentTime, nextTime)}
-						>
-							{message.message}
-						</OppositeChat>
+						<div>
+							{date != null ? <p>{date}</p> : ''}
+							<OppositeChat
+								key={i}
+								createTime={compareTime(currentTime, nextTime)}
+							>
+								{message.message}
+							</OppositeChat>
+						</div>
 					);
 				})}
 				<div className='popup'>
