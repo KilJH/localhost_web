@@ -1,5 +1,6 @@
 import React, {
 	ReactNode,
+	useCallback,
 	useContext,
 	useEffect,
 	useRef,
@@ -86,7 +87,6 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 			color: rgba(33, 33, 33, 0.7);
 		}
 		&::-webkit-scrollbar {
-			display: ${(props: ScrollProps) => props.scrollDisplay};
 			width: 10px;
 		}
 		&::-webkit-scrollbar-thumb {
@@ -138,12 +138,34 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 	& > form {
 		display: flex;
 		padding: 1em 0.5em 3.5em 0.5em;
-		& input {
+		& textarea {
 			flex: 1;
 			font-size: 1em;
-			border-bottom: none;
+			border: none;
+			resize: none;
+			max-height: 15em;
+			cursor: auto;
+			&:focus {
+				outline: none;
+			}
+			&::-webkit-scrollbar {
+				display: ${(props: ScrollProps) => props.scrollDisplay};
+				width: 10px;
+			}
+			&::-webkit-scrollbar-thumb {
+				background-color: gray;
+				border-radius: 3.5px;
+				&:hover {
+					background: rgba(33, 33, 33, 0.75);
+				}
+			}
+			&::-webkit-scrollbar-track {
+				border-radius: 3.5px;
+				background-color: #eee;
+			}
 		}
 		& button {
+			height: 3em;
 			margin-left: 1em;
 		}
 	}
@@ -242,7 +264,9 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
-	const [inputValue, setInputValue] = useState('');
+
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
 	// 새로운 메세지
 	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
 	const [newMessage, setNewMessage] = useState('');
@@ -350,16 +374,7 @@ const ChatRoom = (props: Props) => {
 		setMessages([...messages, message]);
 	};
 
-	const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		e.preventDefault();
-		setInputValue(e.target.value);
-
-		document.addEventListener('keydown', function (e) {
-			if (e.key === 'Enter');
-		});
-	};
-
-	const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+	const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter') {
 			if (!e.shiftKey) {
 				e.preventDefault();
@@ -545,8 +560,26 @@ const ChatRoom = (props: Props) => {
 		toBottom();
 	};
 
+	// textarea 리사이즈
+	const handleResizeHeight = useCallback(() => {
+		const ref = textAreaRef.current;
+		if (textAreaRef === null || ref === null) return;
+		ref.style.height = '1em';
+		ref.style.height = ref.scrollHeight + 'px';
+		setScrollDisplay('default');
+	}, []);
+
+	useEffect(() => {
+		if (chatInput.value === '') {
+			const ref = textAreaRef.current;
+			if (textAreaRef === null || ref === null) return;
+			ref.style.height = '1em';
+			setScrollDisplay('none');
+		}
+	}, [chatInput.value]);
+
 	return (
-		<ChatRoomContainer scrollDisplay={'scrollDisplay'}>
+		<ChatRoomContainer scrollDisplay={scrollDisplay}>
 			<header>
 				<div>
 					<h4>{opponent.nickname}님과의 채팅</h4>
@@ -643,8 +676,12 @@ const ChatRoom = (props: Props) => {
 				</div>
 			</div>
 			<form onSubmit={onSubmit}>
-				<textarea textAlign='left' onKeyPress={onKeyDown} {...chatInput} />
-				{/* <textarea value={inputValue} onChange={onTextChange} /> */}
+				<textarea
+					ref={textAreaRef}
+					onKeyPress={onKeyPress}
+					onInput={handleResizeHeight}
+					{...chatInput}
+				/>
 				<Button type='submit'>전송</Button>
 			</form>
 		</ChatRoomContainer>
