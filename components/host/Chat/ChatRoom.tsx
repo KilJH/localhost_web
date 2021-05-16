@@ -57,7 +57,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 
 		& div {
 			display: flex;
-			& h4 {
+			& p {
 				margin: 0.75em auto 0.75em 2em;
 				color: rgba(33, 33, 33, 0.8);
 			}
@@ -78,6 +78,10 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		overflow: auto;
 		padding: 1em;
 
+		& h4 {
+			text-align: center;
+			margin: 0;
+		}
 		&::-webkit-scrollbar {
 			display: ${(props: ScrollProps) => props.scrollDisplay};
 			width: 10px;
@@ -374,6 +378,19 @@ const ChatRoom = (props: Props) => {
 		else return createDate.toLocaleString().slice(0, -3);
 	};
 
+	// 날짜 포맷
+	const formatDate = (createTime: Date) => {
+		const date = new Date(createTime);
+		return (
+			date.getFullYear() +
+			'년 ' +
+			date.getMonth() +
+			'월 ' +
+			date.getDate() +
+			'일 '
+		);
+	};
+
 	// 같은 시각은 미출력, 채팅 최하단에 출력
 	const compareTime = (current: Date, next: Date) => {
 		if (
@@ -384,6 +401,14 @@ const ChatRoom = (props: Props) => {
 			return '';
 		}
 		return formatTime(current);
+	};
+
+	// 같은 시각은 미출력, 채팅 최상단에 출력
+	const compareDate = (current: Date, prev: Date) => {
+		if (prev.toDateString() === current.toDateString()) {
+			return null;
+		}
+		return formatDate(current);
 	};
 
 	// 채팅방 스크롤 이벤트
@@ -505,12 +530,16 @@ const ChatRoom = (props: Props) => {
 			</StyledModal>
 			<div ref={scrollRef} className='messageBox' onScroll={onScrollHandler}>
 				{messages.map((message, i) => {
+					const prevTime = new Date(messages[i - 1]?.createTime || null);
 					const currentTime = new Date(message.createTime);
 					const nextTime = new Date(messages[i + 1]?.createTime || null);
 					return message.userId === currentUser.id ? (
-						<MyChat key={i} createTime={compareTime(currentTime, nextTime)}>
-							{message.message}
-						</MyChat>
+						<div>
+							<p>{compareDate(currentTime, prevTime)}</p>
+							<MyChat key={i} createTime={compareTime(currentTime, nextTime)}>
+								{message.message}
+							</MyChat>
+						</div>
 					) : (
 						<OppositeChat
 							key={i}
