@@ -242,6 +242,7 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
+	const [inputValue, setInputValue] = useState('');
 	// 새로운 메세지
 	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
 	const [newMessage, setNewMessage] = useState('');
@@ -347,6 +348,45 @@ const ChatRoom = (props: Props) => {
 
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
+	};
+
+	const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		e.preventDefault();
+		setInputValue(e.target.value);
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Enter');
+		});
+	};
+
+	const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter') {
+			if (!e.shiftKey) {
+				e.preventDefault();
+				console.log(chatInput.value);
+				onInputSubmit();
+				return;
+			}
+		}
+	};
+	const onInputSubmit = async () => {
+		if (chatInput.value === '') return;
+
+		// 소켓 데이터 생성
+		const submitData = {
+			userId: currentUser.id,
+			message: chatInput.value,
+			createTime: new Date(),
+		};
+
+		// 데이터 베이스 전달
+		await axios.post(`/api/message/write`, {
+			messageRoomId: roomId,
+			userId: submitData.userId,
+			text: submitData.message,
+		});
+		socket!.emit('message', submitData);
+		chatInput.setValue('');
 	};
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -603,7 +643,8 @@ const ChatRoom = (props: Props) => {
 				</div>
 			</div>
 			<form onSubmit={onSubmit}>
-				<Input textAlign='left' {...chatInput} />
+				<textarea textAlign='left' onKeyPress={onKeyDown} {...chatInput} />
+				{/* <textarea value={inputValue} onChange={onTextChange} /> */}
 				<Button type='submit'>전송</Button>
 			</form>
 		</ChatRoomContainer>
