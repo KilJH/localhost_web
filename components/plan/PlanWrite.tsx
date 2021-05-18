@@ -21,6 +21,7 @@ import Input from '../reuse/Input';
 import Textarea from '../reuse/Textarea';
 import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
+import { countries } from '../../client/utils/basicData';
 
 interface WrapperProps {
 	isFull: boolean;
@@ -30,53 +31,6 @@ interface WrapperProps {
 	children?: React.ReactNode;
 	plan?: Plan;
 }
-
-const countries = [
-	{
-		nation: '대한민국',
-		cities: ['서울', '부산', '인천', '대구', '강릉', '여수', '제주'],
-	},
-	{
-		nation: '일본',
-		cities: ['도쿄', '오사카', '후쿠오카', '삿포로', '교토', '고베'],
-	},
-	{
-		nation: '중국',
-		cities: ['베이징', '난징', '광저우', '홍커우', '상하이'],
-	},
-	{
-		nation: '베트남',
-		cities: ['하노이', '사이공', '호이안'],
-	},
-	{
-		nation: '태국',
-		cities: ['방콕', '치앙마이'],
-	},
-	{
-		nation: '프랑스',
-		cities: ['파리', '리옹', '마르세유', '보르도'],
-	},
-	{
-		nation: '영국',
-		cities: ['런던', '맨체스터', '리버풀', '버밍엄', '글래스고', '옥스퍼드'],
-	},
-	{
-		nation: '독일',
-		cities: ['베를린', '뮌헨', '볼프스부르크', '슈투트가르트'],
-	},
-	{
-		nation: '포르투갈',
-		cities: ['리스본'],
-	},
-	{
-		nation: '스페인',
-		cities: ['마드리드', '바르셀로나', '그라나다', '빌바오', '발렌시아'],
-	},
-	{
-		nation: '이탈리아',
-		cities: ['밀라노', '로마', '베니스', '나폴리', '피사'],
-	},
-];
 
 const types = ['이동', '식사', '관광'];
 
