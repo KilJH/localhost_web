@@ -20,6 +20,7 @@ import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import SearchPlace from '../../search/SearchPlace';
 import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 import Router from 'next/router';
+import { scrollPosition } from './../../../client/utils/checkScrollDirection';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -81,6 +82,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		padding: 1em;
 		overflow-x: hidden;
 		overflow-y: auto;
+
 		& p {
 			text-align: center;
 			margin: 1.5em 1em;
@@ -92,11 +94,9 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 			width: 10px;
 		}
 		&::-webkit-scrollbar-thumb {
-			background-color: gray;
+			background: gray;
+
 			border-radius: 3.5px;
-			&:hover {
-				background: rgba(33, 33, 33, 0.75);
-			}
 		}
 		& .popup {
 			position: sticky;
@@ -272,8 +272,11 @@ const ChatRoom = (props: Props) => {
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
 	const [messages, setMessages] = useState<any[]>(loadMessages);
-
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+	// 날짜
+	// const [date, setDate] = useState('');
+	// let dateFormat = [{ text: '', offsetTop: 0 }];
 
 	// 새로운 메세지
 	const [newMsgDisplay, setNewMsgDisplay] = useState('none');
@@ -376,6 +379,17 @@ const ChatRoom = (props: Props) => {
 		}
 	}, [messages]);
 
+	// 날짜 변수 저장
+	// useEffect(() => {
+	// 	dateFormat = [{}];
+	// 	ref?.childNodes.forEach(v => {
+	// 		const tmp = v.childNodes[0] as HTMLElement;
+	// 		if (tmp.innerHTML)
+	// 			dateFormat.push({ text: tmp.innerHTML, offsetTop: tmp.offsetTop });
+	// 	});
+	// 	dateFormat = dateFormat.splice(1, dateFormat.length - 2);
+	// }, [ref]);
+
 	// 새로운 메세지 수신 시 ToBottom 버튼 안보이기
 	useEffect(() => {
 		if (newMsgDisplay === 'flex') setToBottomDisplay('none');
@@ -448,7 +462,6 @@ const ChatRoom = (props: Props) => {
 		// 오늘이 아닌 날 = 날짜 + 시각
 		else return createDate.toLocaleString().slice(0, -3);
 	};
-
 	// 날짜 포맷
 	const formatDate = (createTime: Date) => {
 		const date = new Date(createTime);
@@ -511,6 +524,17 @@ const ChatRoom = (props: Props) => {
 	// 채팅방 스크롤 이벤트
 	const onScrollHandler = (event: React.UIEvent<HTMLDivElement>) => {
 		const { scrollHeight, clientHeight, scrollTop } = event.currentTarget;
+
+		// dateFormat.reverse().map(v => {
+		// 	if (scrollTop <= v.offsetTop) {
+		// 		setDate(v.text);
+		// 		console.log(v);
+		// 	} else if (scrollTop - scrollHeight >= v.offsetTop) {
+		// 		setDate(v.text);
+		// 		console.log(v);
+		// 	}
+		// });
+
 		// 스크롤이 마지막인 경우
 		if (scrollTop >= scrollHeight - clientHeight - 200) {
 			setNewMsgDisplay('none');
