@@ -73,11 +73,7 @@ const Privacy = (props: Props) => {
 	const pwInput = useInput('');
 	const nnInput = useInput(currentUser.nickname);
 	const phInput = useInput(currentUser.phone);
-	const [place, setPlace] = useState<Place>({
-		name: '',
-		formatted_address: currentUser.address,
-		geometry: { location: { lat: 0, lng: 0 } },
-	});
+	const [place, setPlace] = useState<Place>();
 
 	const [img, setImg] = useState<File>();
 	const [photoUrl, setPhotoUrl] = useState(currentUser.photo);
@@ -124,9 +120,9 @@ const Privacy = (props: Props) => {
 	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		const address =
-			place.name === '' || !place.name
-				? place.formatted_address
-				: `${place.formatted_address}(${place.name})`;
+			place!.name === '' || !place!.name
+				? place!.formatted_address
+				: `${place!.formatted_address}(${place!.name})`;
 		const user = {
 			email: currentUser.email,
 			nickname: nnInput.value,
@@ -320,8 +316,8 @@ const Privacy = (props: Props) => {
 								<Input
 									{...inputProps}
 									value={
-										place.name
-											? `${place.formatted_address}(${place.name})`
+										place!.name
+											? `${place!.formatted_address}(${place!.name})`
 											: currentUser.address
 									}
 									onClick={handleOpen}

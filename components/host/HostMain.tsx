@@ -26,11 +26,7 @@ const Container = styled.div`
 `;
 
 const HostMain = () => {
-	const [place, setPlace] = useState<Place>({
-		name: '',
-		formatted_address: '',
-		geometry: { location: { lat: 0, lng: 0 } },
-	});
+	const [place, setPlace] = useState<Place>();
 
 	const [coord, setCoord] = useState({ lat: 0, lng: 0 });
 	const [nearbyHosts, setNearbyHosts] = useState<Host[]>([]);

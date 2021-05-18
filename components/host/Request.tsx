@@ -96,11 +96,7 @@ const TravelStyleInput = ({
 
 const Request = () => {
 	// const country = useInput('대한민국');
-	const [place, setPlace] = useState<Place>({
-		name: '',
-		formatted_address: '',
-		geometry: { location: { lat: 0, lng: 0 } },
-	});
+	const [place, setPlace] = useState<Place>();
 	const [langs, setLangs] = useState<string[]>([]);
 	const [selectedStyle, setSelectedStyle] = useState('');
 	const description = useInput('');
@@ -180,7 +176,7 @@ const Request = () => {
 							border='1px solid rgba(0,0,0,0.41)'
 							textAlign='left'
 							value={
-								place.name ? `${place.formatted_address}(${place.name})` : ''
+								place!.name ? `${place!.formatted_address}(${place!.name})` : ''
 							}
 							onClick={handleOpen}
 							onChange={handleOpen}

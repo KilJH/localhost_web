@@ -13,7 +13,7 @@ interface Props {
 
 interface PlaceProps {
 	place: Place;
-	setPlace: React.Dispatch<React.SetStateAction<Place>>;
+	setPlace: React.Dispatch<React.SetStateAction<Place | undefined>>;
 	onClose: Function;
 }
 

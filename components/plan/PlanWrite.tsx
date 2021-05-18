@@ -21,7 +21,8 @@ import Input from '../reuse/Input';
 import Textarea from '../reuse/Textarea';
 import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
-import { countries } from '../../client/utils/basicData';
+import { countries, travelStyles } from '../../client/utils/basicData';
+import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface WrapperProps {
 	isFull: boolean;
@@ -90,17 +91,6 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		& button {
 			margin: 0 0.25rem;
 			flex: 1;
-		}
-	}
-
-	& .tags {
-		& span {
-			display: inline-block;
-			margin: 0.25rem 0.5rem;
-			padding: 0.125rem 0.25rem;
-			border: 1px solid #666;
-			color: #666;
-			cursor: pointer;
 		}
 	}
 
@@ -466,6 +456,9 @@ const PlanWrite = () => {
 						</div>
 						<div>
 							<label>여행테마를 선택해주세요(복수선택 가능)</label>
+							{travelStyles.map(style => (
+								<TravelStyleTag label={style} onClick={() => {}} />
+							))}
 							<div className='tags'>
 								<span>먹부림</span>
 								<span>감성</span>

@@ -128,11 +128,7 @@ export default function Register() {
 		'',
 		(value: string) => !numExceptReg.test(value) && value.length <= 12,
 	);
-	const [place, setPlace] = useState<Place>({
-		name: '',
-		formatted_address: '',
-		geometry: { location: { lat: 0, lng: 0 } },
-	});
+	const [place, setPlace] = useState<Place>();
 
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
@@ -153,7 +149,7 @@ export default function Register() {
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		const address = `${place.formatted_address}(${place.name})`;
+		const address = `${place!.formatted_address}(${place!.name})`;
 
 		axios
 			.post(`/api/user/register`, {
@@ -258,7 +254,9 @@ export default function Register() {
 					label='주소를 입력하세요.'
 					variant='outlined'
 					type='text'
-					value={place.name ? `${place.formatted_address}(${place.name})` : ''}
+					value={
+						place!.name ? `${place!.formatted_address}(${place!.name})` : ''
+					}
 					onClick={handleOpen}
 					onChange={handleOpen}
 				/>

@@ -142,7 +142,7 @@ export default function MyHosting(props: Props): ReactElement {
 	});
 
 	const description = useInput(host!.description as string);
-	const [place, setPlace] = useState<Place>(host.place as Place);
+	const [place, setPlace] = useState<Place | undefined>(host!.place as Place);
 	const [languageSave, setLanguageSave] = useState(language);
 	const [languageOpen, setLanguageOpen] = useState(false);
 	const [placeOpen, setPlaceOpen] = useState(false);
@@ -294,7 +294,7 @@ export default function MyHosting(props: Props): ReactElement {
 				description: description.value,
 				latitude: place!.geometry!.location.lat,
 				longitude: place!.geometry!.location.lng,
-				address: place.formatted_address,
+				address: place!.formatted_address,
 			});
 			if (res.data.success) {
 				alert('호스트 정보 수정이 완료되었습니다!');
@@ -406,7 +406,7 @@ export default function MyHosting(props: Props): ReactElement {
 				borderRadius='0.25rem'
 				border='1px solid rgba(0,0,0,0.41)'
 				textAlign='left'
-				value={place.formatted_address}
+				value={place!.formatted_address}
 				onClick={handlePlaceOpen}
 				onChange={handlePlaceOpen}
 				readOnly
