@@ -86,7 +86,7 @@ const Privacy = (props: Props) => {
 	const onOpenToast = () => {
 		setOnToase(true);
 	};
-	const onCloseToast = () => (reason?: string) => {
+	const onCloseToast = (_event?: React.SyntheticEvent, reason?: string) => {
 		if (reason === 'clickaway') {
 			return;
 		}
@@ -97,7 +97,7 @@ const Privacy = (props: Props) => {
 	const onOpenPwToast = () => {
 		setOnPwToase(true);
 	};
-	const onClosePwToast = () => (reason?: string) => {
+	const onClosePwToast = (_event?: React.SyntheticEvent, reason?: string) => {
 		if (reason === 'clickaway') {
 			return;
 		}

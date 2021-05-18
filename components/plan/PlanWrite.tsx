@@ -3,6 +3,7 @@ import {
 	LinearProgress,
 	MenuItem,
 	Select,
+	Snackbar,
 	useMediaQuery,
 } from '@material-ui/core';
 import { AddLocation, Image, PlaylistAdd } from '@material-ui/icons';
@@ -23,6 +24,7 @@ import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
 import { countries, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
+import Alert from '@material-ui/lab/Alert';
 
 interface WrapperProps {
 	isFull: boolean;
@@ -101,7 +103,7 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		display: flex;
 		justify-content: ${props => (props.isFull ? 'center' : 'space-between')};
 		width: 100%;
-		& button {
+		& .prevNext button {
 			margin: 0 0.25rem;
 			min-width: 6rem;
 		}
@@ -220,13 +222,42 @@ const PlanWriteContainer = styled.div`
 `;
 
 const SaveBtn = (props: SaveProps) => {
+	// 저장 알림
+	const [open, setOpen] = useState(false);
+
+	const handleClick = () => {
+		setOpen(true);
+	};
+
+	const handleClose = (_event?: React.SyntheticEvent, reason?: string) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpen(false);
+	};
+
 	const onSave = () => {
 		localStorage.setItem('tempPlan', JSON.stringify(props));
+		handleClick();
 	};
 	return (
-		<Button default padding='1rem' className='save' onClick={onSave}>
-			임시저장
-		</Button>
+		<>
+			<Button default padding='1rem' className='save' onClick={onSave}>
+				임시저장
+			</Button>
+
+			<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+				<Alert
+					onClose={handleClose}
+					severity='success'
+					elevation={6}
+					variant='filled'
+				>
+					임시저장을 완료하였습니다.
+				</Alert>
+			</Snackbar>
+		</>
 	);
 };
 
@@ -260,7 +291,7 @@ const WriteWrapper = (props: WrapperProps) => {
 			{children}
 			<div className='btnContainer'>
 				{step > 1 && step < 5 ? <SaveBtn {...saveProps} /> : ''}
-				<div>
+				<div className='prevNext'>
 					{step === 0 || step === 5 ? (
 						''
 					) : (
@@ -616,7 +647,7 @@ const PlanWrite = () => {
 					</PlanWriteContainer>
 					<div className='btnContainer'>
 						<SaveBtn {...saveProps} />
-						<div>
+						<div className='prevNext'>
 							{/* 이전 단계냐 이전 날 일정이냐 */}
 							{date === 1 ? (
 								<Button
