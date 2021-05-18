@@ -44,6 +44,9 @@ router.post('/update', function (req, res, next) {
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
+router.post('/application/id', function (req, res, next) {
+	management.getApplicationId(req, res);
+});
 router.post('/application/history', function (req, res, next) {
 	management.doneHosting(req, res);
 });

@@ -456,6 +456,18 @@ module.exports.completeHosting = (req, res) => {
 	});
 };
 
+module.exports.getApplicationId = (req, res) => {
+	const { hostUserId, userId } = req.body; // host_user_id, user_user_id
+
+	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id=${userId} `;
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log('select err');
+
+		const applicationId = rows[0];
+		res.json({ success: true, applicationId: applicationId });
+	});
+};
+
 // 수정중입니다*/
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
