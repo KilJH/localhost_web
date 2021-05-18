@@ -11,6 +11,7 @@ type Props = {
 		loadMessages: Array<Object>;
 		roomId: number;
 		opponent: User;
+		applicationId: number;
 	};
 };
 
@@ -44,10 +45,21 @@ export const getServerSideProps: GetServerSideProps = async context => {
 		})
 	).data;
 
+	const applicationId = await (
+		await axios.post(`${SERVER}/api/host/application/id`, {
+			hostUserId: userId,
+			userId: opponentId,
+		})
+	).data.applicationId;
 	const messages = res.messages;
 	const roomId = res.roomId;
 	return {
-		props: { loadMessages: messages, roomId: roomId, opponent: opponent },
+		props: {
+			loadMessages: messages,
+			roomId: roomId,
+			opponent: opponent,
+			applicationId: applicationId,
+		},
 	};
 };
 export default StaticPropsDetail;

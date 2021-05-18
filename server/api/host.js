@@ -446,7 +446,7 @@ module.exports.completeHosting = (req, res) => {
 		mysql.query(sql, id, (err, rows) => {
 			if (err) return console.log('select err');
 
-			const update2Sql = `UPDATE host SET hosting_count = hosting_count + 1  WHERE user_id = ?`;
+			const update2Sql = `UPDATE host SET hosting_count = hosting_count + 1  WHERE user_id = ?;`;
 			mysql.query(update2Sql, rows[0].host_user_id, err => {
 				if (err) return console.log('request update err');
 			});
@@ -459,11 +459,11 @@ module.exports.completeHosting = (req, res) => {
 module.exports.getApplicationId = (req, res) => {
 	const { hostUserId, userId } = req.body; // host_user_id, user_user_id
 
-	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id=${userId} `;
+	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
 
-		const applicationId = rows[0];
+		const applicationId = rows[0].id;
 		res.json({ success: true, applicationId: applicationId });
 	});
 };

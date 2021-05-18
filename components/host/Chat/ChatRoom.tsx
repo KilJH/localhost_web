@@ -34,6 +34,7 @@ interface Props {
 	loadMessages: Array<Object>;
 	roomId: number;
 	opponent: User;
+	applicationId: number;
 }
 
 interface InputProps {
@@ -262,7 +263,7 @@ const MyChat = ({
 );
 
 const ChatRoom = (props: Props) => {
-	const { loadMessages, roomId, opponent } = props;
+	const { loadMessages, roomId, opponent, applicationId } = props;
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
@@ -542,6 +543,14 @@ const ChatRoom = (props: Props) => {
 			case 2: //채팅 나가기
 				return;
 			case 3: // 호스팅 완료
+				const completeHosting = await axios.post(
+					`/api/host/application/complete`,
+					{
+						id: applicationId,
+					},
+				);
+				if (completeHosting.data.success) alert('호스팅이 완료되었습니다!');
+				else alert('오류가 발생했습니다.');
 				return;
 		}
 	};
