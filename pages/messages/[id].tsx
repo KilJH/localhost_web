@@ -45,12 +45,16 @@ export const getServerSideProps: GetServerSideProps = async context => {
 		})
 	).data;
 
-	const applicationId = await (
-		await axios.post(`${SERVER}/api/host/application/id`, {
-			hostUserId: userId,
-			userId: opponentId,
-		})
-	).data.applicationId;
+	let applicationId = null;
+	if (userId.isHost === 1) {
+		applicationId = await (
+			await axios.post(`${SERVER}/api/host/application/id`, {
+				hostUserId: userId,
+				userId: opponentId,
+			})
+		).data.applicationId;
+	}
+
 	const messages = res.messages;
 	const roomId = res.roomId;
 	return {

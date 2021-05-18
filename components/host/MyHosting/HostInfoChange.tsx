@@ -292,9 +292,9 @@ export default function MyHosting(props: Props): ReactElement {
 				language2: language.language2 === ' ' ? null : language.language2,
 				language3: language.language3 === ' ' ? null : language.language3,
 				description: description.value,
-				latitude: place!.geometry!.location.lat,
-				longitude: place!.geometry!.location.lng,
-				address: place!.formatted_address,
+				latitude: place?.geometry.location.lat,
+				longitude: place?.geometry.location.lng,
+				address: place?.formatted_address,
 			});
 			if (res.data.success) {
 				alert('호스트 정보 수정이 완료되었습니다!');

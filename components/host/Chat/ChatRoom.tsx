@@ -19,6 +19,7 @@ import { Fade, IconButton, Menu, MenuItem, Modal } from '@material-ui/core';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import SearchPlace from '../../search/SearchPlace';
 import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
+import Router from 'next/router';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -541,16 +542,33 @@ const ChatRoom = (props: Props) => {
 			case 1: // 신고
 				return;
 			case 2: //채팅 나가기
+				var result = confirm('채팅방을 나가시겠습니까?');
+				if (result) {
+					const exitRoom = await axios.post(
+						`/api/message/room/exit`,
+						currentUser.isHost === 1
+							? {
+									hostUserId: currentUser.id,
+									userId: opponent.id,
+							  }
+							: { hostUserId: opponent.id, userId: currentUser.id },
+					);
+					if (exitRoom.data.success) Router.push('/');
+					else alert('오류가 발생했습니다.');
+				}
 				return;
 			case 3: // 호스팅 완료
-				const completeHosting = await axios.post(
-					`/api/host/application/complete`,
-					{
-						id: applicationId,
-					},
-				);
-				if (completeHosting.data.success) alert('호스팅이 완료되었습니다!');
-				else alert('오류가 발생했습니다.');
+				var result = confirm('호스팅을 완료하겠습니까?');
+				if (result) {
+					const completeHosting = await axios.post(
+						`/api/host/application/complete`,
+						{
+							id: applicationId,
+						},
+					);
+					if (completeHosting.data.success) alert('호스팅이 완료되었습니다!');
+					else alert('오류가 발생했습니다.');
+				}
 				return;
 		}
 	};

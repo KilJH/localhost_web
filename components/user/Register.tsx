@@ -149,7 +149,7 @@ export default function Register() {
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		const address = `${place!.formatted_address}(${place!.name})`;
+		const address = `${place?.formatted_address}(${place?.name})`;
 
 		axios
 			.post(`/api/user/register`, {
@@ -255,7 +255,7 @@ export default function Register() {
 					variant='outlined'
 					type='text'
 					value={
-						place!.name ? `${place!.formatted_address}(${place!.name})` : ''
+						place?.name ? `${place?.formatted_address}(${place?.name})` : ''
 					}
 					onClick={handleOpen}
 					onChange={handleOpen}

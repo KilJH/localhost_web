@@ -120,9 +120,9 @@ const Privacy = (props: Props) => {
 	const onSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		const address =
-			place!.name === '' || !place!.name
-				? place!.formatted_address
-				: `${place!.formatted_address}(${place!.name})`;
+			place?.name === '' || !place?.name
+				? place?.formatted_address
+				: `${place?.formatted_address}(${place?.name})`;
 		const user = {
 			email: currentUser.email,
 			nickname: nnInput.value,
@@ -317,7 +317,7 @@ const Privacy = (props: Props) => {
 									{...inputProps}
 									value={
 										place?.name
-											? `${place!.formatted_address}(${place!.name})`
+											? `${place?.formatted_address}(${place?.name})`
 											: currentUser.address
 									}
 									onClick={handleOpen}

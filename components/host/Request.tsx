@@ -176,7 +176,7 @@ const Request = () => {
 							border='1px solid rgba(0,0,0,0.41)'
 							textAlign='left'
 							value={
-								place!.name ? `${place!.formatted_address}(${place!.name})` : ''
+								place?.name ? `${place?.formatted_address}(${place!.name})` : ''
 							}
 							onClick={handleOpen}
 							onChange={handleOpen}
