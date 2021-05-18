@@ -31,6 +31,19 @@ interface WrapperProps {
 	setStep: Function;
 	children?: React.ReactNode;
 	plan?: Plan;
+	saveProps: SaveProps;
+}
+
+interface SaveProps {
+	step: number;
+	sleepDate: number;
+	tripDate: number;
+	country: string;
+	city: string;
+	planName: string;
+	planDesc: string;
+
+	wholePlan: PlanDay[];
 }
 
 const types = ['이동', '식사', '관광'];
@@ -86,11 +99,11 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 	}
 	& .btnContainer {
 		display: flex;
-		justify-content: space-between;
+		justify-content: ${props => (props.isFull ? 'center' : 'space-between')};
 		width: 100%;
 		& button {
 			margin: 0 0.25rem;
-			flex: 1;
+			min-width: 6rem;
 		}
 	}
 
@@ -206,8 +219,19 @@ const PlanWriteContainer = styled.div`
 	}
 `;
 
+const SaveBtn = (props: SaveProps) => {
+	const onSave = () => {
+		localStorage.setItem('tempPlan', JSON.stringify(props));
+	};
+	return (
+		<Button default padding='1rem' className='save' onClick={onSave}>
+			임시저장
+		</Button>
+	);
+};
+
 const WriteWrapper = (props: WrapperProps) => {
-	const { isMobile, isFull, children, step, setStep, plan } = props;
+	const { isFull, children, plan, step, setStep, isMobile, saveProps } = props;
 	const currentUser = useContext(UserStateContext);
 
 	const onNextStep = () => {
@@ -235,20 +259,23 @@ const WriteWrapper = (props: WrapperProps) => {
 			</div>
 			{children}
 			<div className='btnContainer'>
-				{step === 0 || step === 5 ? (
-					''
-				) : (
-					<Button onClick={onPrevStep} default padding='1rem'>
-						이전
-					</Button>
-				)}
-				{step === 5 ? (
-					''
-				) : (
-					<Button onClick={onNextStep} padding='1rem'>
-						{step === 4 ? '완료' : '다음'}
-					</Button>
-				)}
+				{step > 1 && step < 5 ? <SaveBtn {...saveProps} /> : ''}
+				<div>
+					{step === 0 || step === 5 ? (
+						''
+					) : (
+						<Button onClick={onPrevStep} default padding='1rem'>
+							이전
+						</Button>
+					)}
+					{step === 5 ? (
+						''
+					) : (
+						<Button onClick={onNextStep} padding='1rem'>
+							{step === 4 ? '완료' : '다음'}
+						</Button>
+					)}
+				</div>
 			</div>
 		</WriteContainer>
 	);
@@ -326,6 +353,29 @@ const PlanWrite = () => {
 		});
 	}, [time]);
 
+	useEffect(() => {
+		const temp = JSON.parse(localStorage.getItem('tempPlan') || '{}');
+
+		if (Object.keys(temp).length > 0) {
+			const res = confirm('임시저장된 여행계획이 있습니다. 불러오시겠습니까?');
+			if (res) {
+				setStep(temp.step);
+				country.setValue(temp.country);
+				setCity(temp.city);
+				planName.setValue(temp.planName);
+				planDesc.setValue(temp.planDesc);
+				setSleepDate(temp.sleepDate);
+				setTripDate(temp.tripDate);
+				setWholePlan(temp.wholePlan);
+				if (temp.wholePlan[0]) setDayPlan(temp.wholePlan[0]);
+			}
+		}
+	}, []);
+
+	useEffect(() => {
+		saveDayPlan();
+	}, [dayPlan]);
+
 	// 일정 하나 추가
 	function onAddTimePlan(): void {
 		setDayPlan({
@@ -365,16 +415,29 @@ const PlanWrite = () => {
 		setDate(date + 1);
 	}
 
+	const saveProps = {
+		step,
+		sleepDate,
+		tripDate,
+		country: country.value as string,
+		city,
+		planName: planName.value as string,
+		planDesc: planDesc.value as string,
+		wholePlan,
+	};
+
+	const wrapperProps = {
+		isMobile,
+		step,
+		setStep,
+		saveProps,
+	};
+
 	switch (step) {
 		case 0:
 			// 나라, 도시 선택
 			return (
-				<WriteWrapper
-					isFull={true}
-					step={step}
-					setStep={setStep}
-					isMobile={isMobile}
-				>
+				<WriteWrapper isFull={true} {...wrapperProps}>
 					<label>나라를 선택해주세요</label>
 					<StyledSelect {...country}>
 						{countries.map(country => (
@@ -401,12 +464,7 @@ const PlanWrite = () => {
 		case 1:
 			// 여행일수 선택
 			return (
-				<WriteWrapper
-					isFull={true}
-					step={step}
-					setStep={setStep}
-					isMobile={isMobile}
-				>
+				<WriteWrapper isFull={true} {...wrapperProps}>
 					<label>여행일수를 선택해주세요</label>
 					<div className='dateContainer'>
 						<Input
@@ -433,12 +491,7 @@ const PlanWrite = () => {
 		case 2:
 			// 기본정보 입력
 			return (
-				<WriteWrapper
-					isFull={false}
-					step={step}
-					setStep={setStep}
-					isMobile={isMobile}
-				>
+				<WriteWrapper isFull={false} {...wrapperProps}>
 					<PlanWriteContainer>
 						<div>
 							<label>플랜의 이름을 정해주세요</label>
@@ -459,14 +512,6 @@ const PlanWrite = () => {
 							{travelStyles.map(style => (
 								<TravelStyleTag label={style} onClick={() => {}} />
 							))}
-							<div className='tags'>
-								<span>먹부림</span>
-								<span>감성</span>
-								<span>대자연</span>
-								<span>문화재</span>
-								<span>힐링</span>
-								<span>핫스팟</span>
-							</div>
 						</div>
 					</PlanWriteContainer>
 				</WriteWrapper>
@@ -570,37 +615,41 @@ const PlanWrite = () => {
 						</div>
 					</PlanWriteContainer>
 					<div className='btnContainer'>
-						{/* 이전 단계냐 이전 날 일정이냐 */}
-						{date === 1 ? (
-							<Button
-								onClick={() => {
-									setStep(step - 1);
-								}}
-								default
-							>
-								이전
-							</Button>
-						) : (
-							<Button padding='1rem' onClick={onPrevDate} default>
-								&lt; 이전 날 일정
-							</Button>
-						)}
-						{/* 완료냐 다음 날 일정이냐 */}
-						{date < tripDate ? (
-							<Button padding='1rem' onClick={onNextDate}>
-								다음 날 일정 &gt;
-							</Button>
-						) : (
-							<Button
-								padding='1rem'
-								onClick={() => {
-									saveDayPlan();
-									setStep(step + 1);
-								}}
-							>
-								완료
-							</Button>
-						)}
+						<SaveBtn {...saveProps} />
+						<div>
+							{/* 이전 단계냐 이전 날 일정이냐 */}
+							{date === 1 ? (
+								<Button
+									onClick={() => {
+										setStep(step - 1);
+									}}
+									default
+									padding='1rem'
+								>
+									이전
+								</Button>
+							) : (
+								<Button padding='1rem' onClick={onPrevDate} default>
+									&lt; 이전 날 일정
+								</Button>
+							)}
+							{/* 완료냐 다음 날 일정이냐 */}
+							{date < tripDate ? (
+								<Button padding='1rem' onClick={onNextDate}>
+									다음 날 일정 &gt;
+								</Button>
+							) : (
+								<Button
+									padding='1rem'
+									onClick={() => {
+										saveDayPlan();
+										setStep(step + 1);
+									}}
+								>
+									완료
+								</Button>
+							)}
+						</div>
 					</div>
 				</WriteContainer>
 				// 일정 삭제버튼
@@ -615,13 +664,7 @@ const PlanWrite = () => {
 				planDays: wholePlan,
 			};
 			return (
-				<WriteWrapper
-					isFull={false}
-					step={step}
-					setStep={setStep}
-					isMobile={isMobile}
-					plan={plan}
-				>
+				<WriteWrapper isFull={false} plan={plan} {...wrapperProps}>
 					{/* 전체 개요*/}
 					<div style={{ width: '100%' }}>
 						<PlanWholeItem plans={wholePlan} />
@@ -630,12 +673,7 @@ const PlanWrite = () => {
 			);
 		case 5:
 			return (
-				<WriteWrapper
-					isFull={true}
-					step={step}
-					setStep={setStep}
-					isMobile={isMobile}
-				>
+				<WriteWrapper isFull={true} {...wrapperProps}>
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
 					<Button width='16rem'>작성한 플랜 보러가기</Button>

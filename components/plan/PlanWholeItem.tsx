@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -68,8 +68,8 @@ const PlanWholeItem = (props: Props) => {
 					scrollButtons='on'
 					indicatorColor='primary'
 				>
-					{plans.map((plan, i) => (
-						<Tab label={`${plan.day}일차`} {...a11yProps(i)} key={plan.day} />
+					{plans.map((_plan, i) => (
+						<Tab label={`${i + 1}일차`} {...a11yProps(i)} key={i + 1} />
 					))}
 				</Tabs>
 			</AppBar>
