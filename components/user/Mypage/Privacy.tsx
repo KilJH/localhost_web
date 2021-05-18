@@ -316,7 +316,7 @@ const Privacy = (props: Props) => {
 								<Input
 									{...inputProps}
 									value={
-										place!.name
+										place?.name
 											? `${place!.formatted_address}(${place!.name})`
 											: currentUser.address
 									}
