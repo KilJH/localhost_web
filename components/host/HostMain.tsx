@@ -34,7 +34,9 @@ const HostMain = () => {
 
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
-		setCoord({ ...place!.geometry!.location });
+		if (place) {
+			setCoord({ ...place!.geometry!.location });
+		}
 	}, [place]);
 
 	// 첫 로딩 때 GPS 읽어서 현재위치로
