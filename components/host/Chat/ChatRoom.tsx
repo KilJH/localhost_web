@@ -98,49 +98,52 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 				background: rgba(33, 33, 33, 0.75);
 			}
 		}
-	}
-	& .popup {
-		position: sticky;
-		overflow: auto;
-		bottom: 0em;
-		display: flex;
-		text-align: center;
-		overflow-x: hidden;
-		& .newMessage {
+		& .popup {
+			position: sticky;
+			overflow: auto;
+			bottom: 0em;
 			display: flex;
-			align-items: center;
-			width: 100%;
-			height: 3em;
-			border-radius: 12px;
-			background: rgba(33, 33, 33, 0.75);
-			color: rgba(255, 255, 255, 0.8);
-			cursor: pointer;
-			& p {
+			text-align: center;
+			overflow-x: hidden;
+			& .newMessage {
+				display: flex;
+				align-items: center;
+				width: 100%;
+				height: 3em;
+				border-radius: 12px;
+				background: rgba(33, 33, 33, 0.75);
+				color: rgba(255, 255, 255, 0.8);
+				cursor: pointer;
+				& p {
+					display: inline-block;
+					width: 93%;
+					margin: 0;
+					color: rgba(255, 255, 255, 0.8);
+				}
+				& svg {
+					width: 7%;
+				}
+			}
+			& .toBottom {
 				display: inline-block;
-				width: 93%;
-				margin: 0;
-			}
-			& svg {
-				width: 7%;
-			}
-		}
-		& .toBottom {
-			display: inline-block;
-			width: 3em;
-			height: 3em;
-			border-radius: 100%;
-			margin-left: auto;
-			background: rgba(33, 33, 33, 0.75);
-			color: rgba(255, 255, 255, 0.8);
-			cursor: pointer;
-			& svg {
-				margin: 0.4em;
+				width: 3em;
+				height: 3em;
+				border-radius: 100%;
+				margin-left: auto;
+				background: rgba(33, 33, 33, 0.75);
+				color: rgba(255, 255, 255, 0.8);
+				cursor: pointer;
+				& svg {
+					margin: 0.4em;
+				}
 			}
 		}
 	}
+
 	& > form {
 		display: flex;
 		padding: 1em 0.5em;
+		align-items: center;
 		& textarea {
 			flex: 1;
 			font-size: 1em;
