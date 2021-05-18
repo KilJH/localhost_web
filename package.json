@@ -6,7 +6,7 @@
     "next": "next start",
     "start": "nodemon server",
     "start:client": "next",
-    "start:nwe" : "node server",
+    "start:nwe": "node server",
     "type-check": "tsc"
   },
   "dependencies": {
@@ -28,6 +28,7 @@
     "google-map-react": "^2.1.9",
     "http-proxy-middleware": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
     "mysql": "^2.18.1",
     "next": "latest",
     "next-cookies": "^2.0.3",
