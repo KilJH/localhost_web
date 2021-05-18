@@ -76,9 +76,9 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		flex: 1;
 		background: #b6c6d7;
 		border-bottom: 1px solid #aaa;
-		overflow: auto;
 		padding: 1em;
-
+		overflow-x: hidden;
+		overflow-y: auto;
 		& p {
 			text-align: center;
 			margin: 1.5em 1em;
@@ -103,6 +103,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 		bottom: 0em;
 		display: flex;
 		text-align: center;
+		overflow-x: hidden;
 		& .newMessage {
 			display: flex;
 			align-items: center;
@@ -137,7 +138,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 	}
 	& > form {
 		display: flex;
-		padding: 1em 0.5em 3.5em 0.5em;
+		padding: 1em 0.5em;
 		& textarea {
 			flex: 1;
 			font-size: 1em;
@@ -145,6 +146,7 @@ const ChatRoomContainer = styled.div<ScrollProps>`
 			resize: none;
 			max-height: 15em;
 			cursor: auto;
+			font-family: inherit;
 			&:focus {
 				outline: none;
 			}
@@ -177,6 +179,9 @@ const ChatContainer = styled.div`
 		padding: 0.5em 1em;
 		border-radius: 1rem;
 		opacity: 0.9;
+		white-space: pre;
+		display: inline-block;
+		text-align: left;
 	}
 `;
 
@@ -184,7 +189,6 @@ const OppositeChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: left;
 	& .message {
 		background: #aaa;
-		box-shadow: 1.5px 1.5px rgb(33 33 33 / 50%);
 		color: black;
 	}
 	&::after {
@@ -199,7 +203,6 @@ const MyChatContainer = styled(ChatContainer)<TimeProps>`
 	text-align: right;
 	& .message {
 		background: #5197d5;
-		box-shadow: 1px 1px #aaa;
 		color: #eee;
 	}
 	&::before {
@@ -274,7 +277,10 @@ const ChatRoom = (props: Props) => {
 	const [toBottomDisplay, setToBottomDisplay] = useState('none');
 	// 메뉴
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const options = ['팔로우', '신고', '채팅 나가기'];
+	const options =
+		currentUser.isHost === 1
+			? ['팔로우', '신고', '채팅 나가기', '호스팅 완료']
+			: ['팔로우', '신고', '채팅 나가기'];
 	const open = Boolean(anchorEl);
 	// 위치
 	const [place, setPlace] = useState<Place>();
@@ -534,6 +540,8 @@ const ChatRoom = (props: Props) => {
 			case 1: // 신고
 				return;
 			case 2: //채팅 나가기
+				return;
+			case 3: // 호스팅 완료
 				return;
 		}
 	};
