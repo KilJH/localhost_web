@@ -1,5 +1,6 @@
 var AWS = require('aws-sdk');
 var fs = require('fs');
+const multer = require('multer');
 const password = require('../db/password');
 AWS.config.region = 'ap-northeast-2';
 
@@ -19,6 +20,31 @@ module.exports.upload = (req, res) => {
 		console.log('uplaod', data);
 		res.json({ success: true, url: data.Location });
 	});
+};
+
+module.exports.multiUpload = (req, res) => {
+	const file = req.files;
+	let uploadArr = [];
+	const filesLen = Object.keys(file).length;
+
+	let i = 0;
+	for (let key in file) {
+		var params = {
+			Bucket: 'localhostphoto3',
+			Key: `test_${i}.${file[key].mimetype.split('/')[1]}`,
+			ACL: 'public-read',
+			Body: file[key].data,
+			ContentType: file[key].mimetype,
+		};
+		i++;
+		s3.upload(params, function (err, data) {
+			if (err) console.log('multi update err', err);
+			uploadArr.push(data);
+			if (uploadArr.length === filesLen) {
+				res.json({ success: true, data: uploadArr });
+			}
+		});
+	}
 };
 
 module.exports.load = (req, res) => {
