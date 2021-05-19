@@ -112,8 +112,11 @@ const HostFilter = (props: FilterProps) => {
 							marks={marks}
 							valueLabelDisplay='auto'
 							value={distance}
-							onChange={() => (value: number) => {
-								setDistance(value);
+							onChange={(
+								_event: React.ChangeEvent<{}>,
+								value: number | number[],
+							) => {
+								setDistance(value as number);
 							}}
 						/>
 					</div>
