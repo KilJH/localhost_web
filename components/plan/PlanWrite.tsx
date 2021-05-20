@@ -251,7 +251,7 @@ const SaveBtn = (props: SaveProps) => {
 				<Alert
 					onClose={handleClose}
 					severity='success'
-					elevation={6}
+					elevation={4}
 					variant='filled'
 				>
 					임시저장을 완료하였습니다.
@@ -363,7 +363,7 @@ const PlanWrite = () => {
 	const [timePlan, setTimePlan] = useState<PlanTime>({
 		// time: new Date(null, null, null, 10, 0),
 		time: '',
-		type: '',
+		type: '기타',
 		price: 0,
 		place: '',
 		placeInfo: '',
@@ -407,15 +407,33 @@ const PlanWrite = () => {
 		saveDayPlan();
 	}, [dayPlan]);
 
+	const [openErr, setOpenErr] = useState(false);
+
+	const handleOpenErr = () => {
+		setOpenErr(true);
+	};
+
+	const handleCloseErr = (_event?: React.SyntheticEvent, reason?: string) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+
+		setOpenErr(false);
+	};
+
 	// 일정 하나 추가
 	function onAddTimePlan(): void {
+		if (timePlan.place === '' && timePlan.description === '') {
+			handleOpenErr();
+			return;
+		}
 		setDayPlan({
 			description: '',
 			planTimes: dayPlan.planTimes.concat(timePlan),
 		});
 		setTimePlan({
 			time: new Date(0, 0, 0, 10, 0),
-			type: '',
+			type: '기타',
 			price: 0,
 			place: '',
 			placeInfo: '',
@@ -592,7 +610,9 @@ const PlanWrite = () => {
 									{types.map(type => (
 										<MenuItem value={type}>{type}</MenuItem>
 									))}
-									<MenuItem value='기타'>기타</MenuItem>
+									<MenuItem value='기타' selected={true}>
+										기타
+									</MenuItem>
 								</Select>
 							</div>
 							<div className='price'>
@@ -682,6 +702,20 @@ const PlanWrite = () => {
 							)}
 						</div>
 					</div>
+					<Snackbar
+						open={openErr}
+						autoHideDuration={4000}
+						onClose={handleCloseErr}
+					>
+						<Alert
+							onClose={handleCloseErr}
+							severity='warning'
+							elevation={4}
+							variant='filled'
+						>
+							내용을 입력해주세요
+						</Alert>
+					</Snackbar>
 				</WriteContainer>
 				// 일정 삭제버튼
 			);
