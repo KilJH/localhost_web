@@ -56,7 +56,8 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 	min-height: 2.5rem;
 	max-height: 4rem;
 	margin: 0 auto;
-	box-sizing: border-box;
+	/* box-sizing: border-box; */
+	padding: ${props => (props.isMobile ? '0.5rem 0' : '0')};
 
 	transition: top 0.5s ease;
 	background: white;
@@ -78,11 +79,13 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 	& > .white {
 		position: fixed;
 		top: inherit;
+		padding: inherit;
 		left: 0;
 		width: 100%;
 		height: inherit;
 		z-index: -2;
 		background-color: white;
+		box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
 	}
 `;
 
@@ -257,6 +260,7 @@ const Header = (props: Props) => {
 	if (isMobile) {
 		return (
 			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+				<div className='white'></div>
 				<FlexItemWrapper align='left'>
 					<IconButton>
 						<MenuIcon onClick={drawer.onOpen} />
