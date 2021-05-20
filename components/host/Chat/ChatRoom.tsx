@@ -455,12 +455,24 @@ const ChatRoom = (props: Props) => {
 	const formatTime = (createTime: Date) => {
 		const nowDate = new Date();
 		const createDate = new Date(createTime);
+		const year = createDate.getFullYear();
+		const month = createDate.getMonth() + 1;
+		const date = createDate.getDate();
+		const hour =
+			createDate.getHours() > 12
+				? createDate.getHours() - 12
+				: createDate.getHours();
+		const minute =
+			createDate.getMinutes() < 10
+				? `0${createDate.getMinutes()}`
+				: createDate.getMinutes();
+		const time = createDate.getHours() < 12 ? '오전' : '오후';
 		let isToday = nowDate.toDateString() === createDate.toDateString(); // 채팅 날짜가 오늘 날짜인지 체크
 
 		// 오늘 = 시각
-		if (isToday) return createDate.toLocaleTimeString().slice(0, -3);
+		if (isToday) return `${time} ${hour}:${minute}`;
 		// 오늘이 아닌 날 = 날짜 + 시각
-		else return createDate.toLocaleString().slice(0, -3);
+		else return `${year}. ${month}. ${date}. ${time} ${hour}:${minute}`;
 	};
 	// 날짜 포맷
 	const formatDate = (createTime: Date) => {
