@@ -44,6 +44,12 @@ router.post('/update', function (req, res, next) {
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
+router.post('/hostingAddress', function (req, res, next) {
+	management.gethostingAddress(req, res);
+});
+router.post('/update/hostingAddress', function (req, res, next) {
+	management.sethostingAddress(req, res);
+});
 router.post('/application/id', function (req, res, next) {
 	management.getApplicationId(req, res);
 });

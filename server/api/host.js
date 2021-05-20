@@ -469,6 +469,29 @@ module.exports.getApplicationId = (req, res) => {
 	});
 };
 
+module.exports.getHostingAddress = (req, res) => {
+	const { hostUserId, userId } = req.body; // host_user_id, user_user_id
+
+	const sql = `SELECT address FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log('select err');
+
+		const hostingAddress = rows[0].id;
+		res.json({ success: true, hostingAddress: hostingAddress });
+	});
+};
+
+module.exports.setHostingAddress = (req, res) => {
+	const { hostingAddress, hostUserId, userId } = req.body; // host_user_id, user_user_id
+
+	const sql = `UPDATE host_user_apply SET address = ${hostingAddress} WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
+	mysql.query(sql, (err, rows) => {
+		if (err) return console.log('select err');
+
+		res.json({ success: true });
+	});
+};
+
 // 수정중입니다*/
 module.exports.reviewWrite = (req, res) => {
 	// host review작성 API
