@@ -80,6 +80,16 @@ module.exports.load = (req, res) => {
 			if (err3) return console.log('조회수 증가 실패', err3);
 		});
 
+		let photos = [];
+		const photoSql = `SELECT * FROM plan_photo WHERE plan_id = ?`;
+		mysql.query(photoSql, id, (err3, photoRows) => {
+			if (err3) return console.log('조회수 증가 실패', err3);
+
+			photoRows.map(photoRow => {
+				photos.push(photoRow);
+			})
+		});
+
 		let planDays = [];
 		let dayArr = [];
 		let des;
@@ -88,6 +98,7 @@ module.exports.load = (req, res) => {
 		let i = 1;
 		mysql.query(daySql, id, (err3, days) => {
 			days.map((d, j) => {
+
 				if (d.date === i) {
 					dayArr.push({
 						description: d.description,
@@ -95,7 +106,6 @@ module.exports.load = (req, res) => {
 						time: d.time,
 						type: d.type,
 						placeInfo: d.place_info,
-						photo: d.photo,
 					});
 					des = d.des;
 				} else {
@@ -112,7 +122,6 @@ module.exports.load = (req, res) => {
 						time: d.time,
 						type: d.type,
 						placeInfo: d.place_info,
-						photo: d.photo,
 					});
 				}
 				if (j === days.length - 1) {
@@ -162,7 +171,7 @@ module.exports.load = (req, res) => {
 				};
 			});
 
-			res.status(200).json({ success: true, plan, comments });
+			res.status(200).json({ success: true, plan, comments, photos });
 		});
 	});
 };
@@ -202,10 +211,8 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${
-							planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${
-							planTime.placeInfo
+						`(${planDayId + i}, "${planTime.description}", ${planTime.price
+						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
 						}", "${planTime.photo}")`,
 					);
 				});
@@ -236,6 +243,18 @@ module.exports.delete = (req, res) => {
 
 	mysql.query(sql, err => {
 		if (err) return err;
+		res.json({ success: true });
+	});
+};
+
+module.exports.insertPhoto = (req, res) => {
+	const { url, planTimeId } = req.body;
+	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${planTimeId}"`;
+
+	// 임시 저장 및 플랜 작성시 업로드하는 사진을 바로 s3에 저장
+	mysql.query(sql, err => {
+		if (err) return console.log("InsertPhoto Err");
+
 		res.json({ success: true });
 	});
 };

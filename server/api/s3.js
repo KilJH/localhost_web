@@ -39,7 +39,7 @@ module.exports.multiUpload = (req, res) => {
 		i++;
 		s3.upload(params, function (err, data) {
 			if (err) console.log('multi update err', err);
-			uploadArr.push(data);
+			uploadArr.push(data.Location);
 			if (uploadArr.length === filesLen) {
 				res.json({ success: true, data: uploadArr });
 			}
