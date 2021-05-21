@@ -218,16 +218,21 @@ module.exports.write = (req, res) => {
 			const arr = [];
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
-					const place = planTime.place?.formatted_address ? `${planTime.place?.formatted_address}` : null;
+					const place = planTime.place?.formatted_address
+						? `${planTime.place?.formatted_address}`
+						: null;
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${planTime.time}", "${planTime.type}","${planTime.place?.name}", 
-						${place}, ${planTime.place?.geometry?.location?.lat || null}, ${planTime.place?.geometry?.location?.lng || null})`,
+						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${
+							planTime.time
+						}", "${planTime.type}","${planTime.place?.name}", 
+						${place}, ${planTime.place?.geometry?.location?.lat || null}, ${
+							planTime.place?.geometry?.location?.lng || null
+						})`,
 					);
 				});
 			}
 
 			const planTimesStr = arr.join(',');
-			console.log(planTimesStr);
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude) VALUES ${planTimesStr}`;
 
 			mysql.query(timeSql, err3 => {
@@ -270,12 +275,23 @@ module.exports.insertPhoto = (req, res) => {
 
 module.exports.timeUpdate = (req, res) => {
 	//시간 수정
-	const { id, description, price, time } = req.body; // plan_timeId
+	const {
+		id,
+		description,
+		price,
+		time,
+		type,
+		name,
+		formatted_address,
+		lat,
+		lng,
+	} = req.body; // plan_timeId
 
-	const sql = `UPDATE plan_time SET description = "${description}", price = "${price}", time = "${time}" WHERE id = "${id}";`;
+	const sql = `UPDATE plan_time SET description = "${description}", price = "${price}", time = "${time}", type="${tpye}"
+	, name="${name}", ddress="${formatted_address}", latitude = "${lat}", longitude = "${lng}" WHERE id = "${id}";`;
 
 	mysql.query(sql, err => {
-		if (err) return err;
+		if (err) return console.log('TimeUpdate Err', err);
 		res.json({ success: true });
 	});
 };
@@ -294,9 +310,9 @@ module.exports.dayUpdate = (req, res) => {
 
 module.exports.planUpdate = (req, res) => {
 	//플랜 수정
-	const { id, title } = req.body; // planId
+	const { id, title, description, price, sleepDays, travelDays } = req.body; // planId
 
-	const sql = `UPDATE plan SET title = "${title}" WHERE id = "${id}";`;
+	const sql = `UPDATE plan SET title = "${title}",description = "${description}",price = "${price}",sleepDays = "${sleepDays}",travelDays = "${travelDays}" WHERE id = "${id}";`;
 
 	mysql.query(sql, err => {
 		if (err) return err;
