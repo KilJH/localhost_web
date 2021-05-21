@@ -412,6 +412,10 @@ const PlanWrite = () => {
 	}, [time]);
 
 	useEffect(() => {
+		saveDayPlan();
+	}, [dayPlan]);
+
+	useEffect(() => {
 		const temp = JSON.parse(localStorage.getItem('tempPlan') || '{}');
 
 		if (Object.keys(temp).length > 0) {
@@ -424,15 +428,11 @@ const PlanWrite = () => {
 				planDesc.setValue(temp.planDesc);
 				setSleepDate(temp.sleepDate);
 				setTripDate(temp.tripDate);
-				setWholePlan(temp.wholePlan);
+				setWholePlan([...temp.wholePlan]);
 				if (temp.wholePlan[0]) setDayPlan(temp.wholePlan[0]);
 			}
 		}
 	}, []);
-
-	useEffect(() => {
-		saveDayPlan();
-	}, [dayPlan]);
 
 	// 장소 정보
 	const [placeDetail, setPlaceDetail] = useState<Place>();
@@ -761,7 +761,6 @@ const PlanWrite = () => {
 									padding='1rem'
 									onClick={() => {
 										saveDayPlan();
-										console.log(wholePlan);
 										setStep(step + 1);
 									}}
 								>
