@@ -305,7 +305,6 @@ module.exports.update = (req, res) => {
 };
 
 module.exports.nearbyList = (req, res) => {
-	console.log('ttt', req.body);
 	// 사용자와 호스트의 거리를 구하는 API
 	const { latitude, longitude } = req.body;
 	const distance = req.body.distance || 4;

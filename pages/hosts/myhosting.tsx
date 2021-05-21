@@ -5,6 +5,7 @@ import MyHostingPage from '../../components/host/MyHosting/MyHostingPage';
 import Layout from '../../components/main/Layout';
 import { Application, Host, PreviousApplication } from '../../interfaces';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -80,4 +81,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		},
 	};
 };
-export default myhosting;
+export default withAuth(1, 1)(myhosting);

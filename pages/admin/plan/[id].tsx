@@ -5,6 +5,7 @@ import SERVER from '../../../client/utils/url';
 import axios from 'axios';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import PlanDetail from '../../../components/admin/plan/PlanDetail';
+import withAuth from '../../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -28,4 +29,4 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	return { props: { item } };
 };
 
-export default list;
+export default withAuth(1, 2)(list);

@@ -6,6 +6,7 @@ import Layout from '../../components/main/Layout';
 import List from '../../components/user/List';
 import axios from 'axios';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -13,7 +14,7 @@ type Props = {
 	};
 };
 
-const WithStaticProps = ({ pageProps }: Props) => (
+const UserList = ({ pageProps }: Props) => (
 	<Layout title='Users List | localhost'>
 		<h1>Users List</h1>
 		<p>
@@ -33,9 +34,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	// Example for including static props in a Next.js function component page.
 	// Don't forget to include the respective types for any props passed into
 	// the component.
-	const items: User[] = await (await axios.get(`${SERVER}/api/user/list`)).data
-		.users;
+	const items: User[] = await (
+		await axios.get(`${SERVER}/api/user/list`)
+	).data.users;
 	return { props: { items } };
 };
 
-export default WithStaticProps;
+export default withAuth(1, 2)(UserList);

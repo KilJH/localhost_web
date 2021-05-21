@@ -5,6 +5,7 @@ import { User } from '../../../interfaces/index';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import SERVER from '../../../client/utils/url';
+import withAuth from '../../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -51,4 +52,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	return { props: { followingUsers, followers } };
 };
 
-export default mypage;
+export default withAuth(1, 0)(mypage);

@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import SERVER from '../../client/utils/url';
 import BoardDetail from '../../components/board/BoardDetail';
+import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
 import { Board, Comment } from '../../interfaces';
 
@@ -31,4 +32,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	};
 };
 
-export default BoardDetailPage;
+export default withAuth(1, 0)(BoardDetailPage);

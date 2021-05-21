@@ -5,6 +5,7 @@ import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import SERVER from '../../../client/utils/url';
 import MyHostLog from '../../../components/user/Mypage/MyHostLog';
+import withAuth from '../../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -49,4 +50,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	return { props: { applications, preApplications } };
 };
 
-export default mypage;
+export default withAuth(1, 0)(mypage);

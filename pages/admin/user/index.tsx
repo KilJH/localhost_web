@@ -5,6 +5,7 @@ import axios from 'axios';
 import SERVER from '../../../client/utils/url';
 import UserPage from '../../../components/admin/user/UserPage';
 import AdminLayout from '../../../components/admin/AdminLayout';
+import withAuth from '../../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -22,10 +23,11 @@ const list = ({ pageProps }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-	const items: User[] = await (await axios.get(`${SERVER}/api/user/list`)).data
-		.users;
+	const items: User[] = await (
+		await axios.get(`${SERVER}/api/user/list`)
+	).data.users;
 
 	return { props: { items } };
 };
 
-export default list;
+export default withAuth(1, 2)(list);

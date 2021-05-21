@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../../components/main/Layout';
 import Request from '../../components/host/Request';
+import withAuth from '../../components/main/hoc/withAuth';
 
 const apply = () => {
 	return (
@@ -10,4 +11,4 @@ const apply = () => {
 	);
 };
 
-export default apply;
+export default withAuth(1, 0)(apply);

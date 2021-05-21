@@ -5,6 +5,7 @@ import Layout from '../../components/main/Layout';
 import NoticeList from '../../components/notice/NoticeList';
 import { Notice } from '../../interfaces';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -23,9 +24,8 @@ const index = ({ pageProps }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const res = await axios.get(`${SERVER}/api/notice/list`);
-	console.log(res.data);
 
 	return { props: { notices: res.data.notices } };
 };
 
-export default index;
+export default withAuth(0, 0)(index);

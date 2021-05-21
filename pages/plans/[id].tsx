@@ -2,6 +2,7 @@ import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import React from 'react';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
 import PlanOverview from '../../components/plan/PlanOverview';
 import PlanWholeItem from '../../components/plan/PlanWholeItem';
@@ -22,7 +23,7 @@ const PlanDetailPage = ({ pageProps }: Props) => {
 	);
 };
 
-export default PlanDetailPage;
+export default withAuth(1, 0)(PlanDetailPage);
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	const id = ctx.params?.id;
