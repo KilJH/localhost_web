@@ -1,7 +1,9 @@
 import DateFnsUtils from '@date-io/date-fns';
 import {
+	Fade,
 	LinearProgress,
 	MenuItem,
+	Modal,
 	Select,
 	Snackbar,
 	useMediaQuery,
@@ -16,7 +18,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
-import { Plan, PlanDay, PlanTime } from '../../interfaces';
+import { Place, Plan, PlanDay, PlanTime } from '../../interfaces';
 import Button from '../reuse/Button';
 import Input from '../reuse/Input';
 import Textarea from '../reuse/Textarea';
@@ -25,9 +27,12 @@ import PlanWholeItem from './PlanWholeItem';
 import { countries, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import Alert from '@material-ui/lab/Alert';
+import { useToast } from '../../client/hooks/useToast';
+import { useModal } from '../../client/hooks/useModal';
+import SearchPlace from '../search/SearchPlace';
 
 interface WrapperProps {
-	isFull: boolean;
+	isFull?: boolean;
 	isMobile: boolean;
 	step: number;
 	setStep: Function;
@@ -64,7 +69,7 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		font-size: 1.2em;
 		display: block;
 	}
-	& > div,
+	/* & > div, */
 	& > input,
 	& > textarea {
 		margin: 0 0 2rem 0;
@@ -103,6 +108,7 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 		display: flex;
 		justify-content: ${props => (props.isFull ? 'center' : 'space-between')};
 		width: 100%;
+		margin: 1rem 0;
 		& .prevNext button {
 			margin: 0 0.25rem;
 			min-width: 6rem;
@@ -176,6 +182,11 @@ const PlanWriteContainer = styled.div`
 		min-width: 70px;
 	}
 
+	& .place {
+		& .place_address {
+			font-size: 0.8em;
+		}
+	}
 	& .place button,
 	& .description button {
 		position: absolute;
@@ -221,25 +232,29 @@ const PlanWriteContainer = styled.div`
 	}
 `;
 
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& .searchForm {
+		width: 80vw;
+		max-width: 800px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: 0;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+	}
+`;
+
 const SaveBtn = (props: SaveProps) => {
 	// 저장 알림
-	const [open, setOpen] = useState(false);
-
-	const handleClick = () => {
-		setOpen(true);
-	};
-
-	const handleClose = (_event?: React.SyntheticEvent, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-
-		setOpen(false);
-	};
+	const saveToast = useToast(false);
 
 	const onSave = () => {
 		localStorage.setItem('tempPlan', JSON.stringify(props));
-		handleClick();
+		saveToast.handleOpen();
 	};
 	return (
 		<>
@@ -247,9 +262,13 @@ const SaveBtn = (props: SaveProps) => {
 				임시저장
 			</Button>
 
-			<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+			<Snackbar
+				open={saveToast.open}
+				autoHideDuration={4000}
+				onClose={saveToast.handleClose}
+			>
 				<Alert
-					onClose={handleClose}
+					onClose={saveToast.handleClose}
 					severity='success'
 					elevation={4}
 					variant='filled'
@@ -262,7 +281,15 @@ const SaveBtn = (props: SaveProps) => {
 };
 
 const WriteWrapper = (props: WrapperProps) => {
-	const { isFull, children, plan, step, setStep, isMobile, saveProps } = props;
+	const {
+		isFull = false,
+		children,
+		plan,
+		step,
+		setStep,
+		isMobile,
+		saveProps,
+	} = props;
 	const currentUser = useContext(UserStateContext);
 
 	const onNextStep = () => {
@@ -407,24 +434,17 @@ const PlanWrite = () => {
 		saveDayPlan();
 	}, [dayPlan]);
 
-	const [openErr, setOpenErr] = useState(false);
+	// 장소 정보
+	const [placeDetail, setPlaceDetail] = useState<Place>();
+	const placeModal = useModal(false);
 
-	const handleOpenErr = () => {
-		setOpenErr(true);
-	};
-
-	const handleCloseErr = (_event?: React.SyntheticEvent, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-
-		setOpenErr(false);
-	};
+	// 에러메세지 처리
+	const noDataToast = useToast(false);
 
 	// 일정 하나 추가
 	function onAddTimePlan(): void {
 		if (timePlan.place === '' && timePlan.description === '') {
-			handleOpenErr();
+			noDataToast.handleOpen();
 			return;
 		}
 		setDayPlan({
@@ -441,6 +461,7 @@ const PlanWrite = () => {
 			photo: [],
 		});
 		setTime(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
+		setPlaceDetail(undefined);
 	}
 
 	// 하루 일정 추가
@@ -540,7 +561,7 @@ const PlanWrite = () => {
 		case 2:
 			// 기본정보 입력
 			return (
-				<WriteWrapper isFull={false} {...wrapperProps}>
+				<WriteWrapper isFull={true} {...wrapperProps}>
 					<PlanWriteContainer>
 						<div>
 							<label>플랜의 이름을 정해주세요</label>
@@ -643,9 +664,24 @@ const PlanWrite = () => {
 								}}
 							/>
 							{/* 구글 place, Map API 이용*/}
-							<button>
+							<button onClick={placeModal.handleOpen}>
 								<AddLocation fontSize={isMobile ? 'small' : 'default'} />
 							</button>
+							<div className='place_address'>
+								{placeDetail
+									? `세부주소: ${placeDetail.formatted_address}(${placeDetail.name})`
+									: ''}
+							</div>
+							<StyledModal
+								open={placeModal.open}
+								onClose={placeModal.handleClose}
+							>
+								<Fade in={placeModal.open}>
+									<div className='searchForm'>
+										<SearchPlace setPlace={setPlaceDetail} />
+									</div>
+								</Fade>
+							</StyledModal>
 						</div>
 						<div className='description'>
 							<label>부가설명</label>
@@ -664,6 +700,21 @@ const PlanWrite = () => {
 								<PlaylistAdd fontSize={isMobile ? 'default' : 'large'} />
 							</button>
 						</div>
+
+						<Snackbar
+							open={noDataToast.open}
+							autoHideDuration={4000}
+							onClose={noDataToast.handleClose}
+						>
+							<Alert
+								onClose={noDataToast.handleClose}
+								severity='warning'
+								elevation={4}
+								variant='filled'
+							>
+								내용을 입력해주세요
+							</Alert>
+						</Snackbar>
 					</PlanWriteContainer>
 					<div className='btnContainer'>
 						<SaveBtn {...saveProps} />
@@ -702,20 +753,6 @@ const PlanWrite = () => {
 							)}
 						</div>
 					</div>
-					<Snackbar
-						open={openErr}
-						autoHideDuration={4000}
-						onClose={handleCloseErr}
-					>
-						<Alert
-							onClose={handleCloseErr}
-							severity='warning'
-							elevation={4}
-							variant='filled'
-						>
-							내용을 입력해주세요
-						</Alert>
-					</Snackbar>
 				</WriteContainer>
 				// 일정 삭제버튼
 			);
@@ -729,7 +766,7 @@ const PlanWrite = () => {
 				planDays: wholePlan,
 			};
 			return (
-				<WriteWrapper isFull={false} plan={plan} {...wrapperProps}>
+				<WriteWrapper plan={plan} {...wrapperProps}>
 					{/* 전체 개요*/}
 					<div style={{ width: '100%' }}>
 						<PlanWholeItem plans={wholePlan} />

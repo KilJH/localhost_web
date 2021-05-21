@@ -62,7 +62,7 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 	transition: top 0.5s ease;
 	background: white;
 	position: sticky;
-	top: ${props => (props.fixed ? '0' : props.isMobile ? '-2.5rem' : '-4rem')};
+	top: ${props => (props.fixed ? '0' : props.isMobile ? '-3.5rem' : '-4rem')};
 
 	display: flex;
 	align-items: center;
