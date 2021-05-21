@@ -185,6 +185,7 @@ const PlanWriteContainer = styled.div`
 	& .place {
 		& .place_address {
 			font-size: 0.8em;
+			padding: 0.25rem;
 		}
 	}
 	& .place button,
@@ -392,8 +393,7 @@ const PlanWrite = () => {
 		time: '',
 		type: '기타',
 		price: 0,
-		place: '',
-		placeInfo: '',
+		place: { name: '' },
 		description: '',
 		photo: [],
 	});
@@ -438,12 +438,26 @@ const PlanWrite = () => {
 	const [placeDetail, setPlaceDetail] = useState<Place>();
 	const placeModal = useModal(false);
 
+	useEffect(() => {
+		if (placeDetail) {
+			placeModal.handleClose();
+			setTimePlan({
+				...timePlan,
+				place: {
+					formatted_address: `${placeDetail?.formatted_address}(${placeDetail?.name})`,
+					name: timePlan.place.name,
+					geometry: placeDetail?.geometry,
+				},
+			});
+		}
+	}, [placeDetail]);
+
 	// 에러메세지 처리
 	const noDataToast = useToast(false);
 
 	// 일정 하나 추가
 	function onAddTimePlan(): void {
-		if (timePlan.place === '' && timePlan.description === '') {
+		if (timePlan.place.name === '' && timePlan.description === '') {
 			noDataToast.handleOpen();
 			return;
 		}
@@ -455,8 +469,7 @@ const PlanWrite = () => {
 			time: new Date(0, 0, 0, 10, 0),
 			type: '기타',
 			price: 0,
-			place: '',
-			placeInfo: '',
+			place: { name: '' },
 			description: '',
 			photo: [],
 		});
@@ -658,9 +671,12 @@ const PlanWrite = () => {
 								borderRadius='0.25rem'
 								border='1px solid rgba(0,0,0,0.41)'
 								textAlign='left'
-								value={timePlan.place}
+								value={timePlan.place.name}
 								onChange={e => {
-									setTimePlan({ ...timePlan, place: e.target.value });
+									setTimePlan({
+										...timePlan,
+										place: { ...timePlan.place, name: e.target.value },
+									});
 								}}
 							/>
 							{/* 구글 place, Map API 이용*/}
@@ -668,8 +684,8 @@ const PlanWrite = () => {
 								<AddLocation fontSize={isMobile ? 'small' : 'default'} />
 							</button>
 							<div className='place_address'>
-								{placeDetail
-									? `세부주소: ${placeDetail.formatted_address}(${placeDetail.name})`
+								{timePlan.place.formatted_address
+									? `세부주소: ${timePlan.place.formatted_address}`
 									: ''}
 							</div>
 							<StyledModal
@@ -745,6 +761,7 @@ const PlanWrite = () => {
 									padding='1rem'
 									onClick={() => {
 										saveDayPlan();
+										console.log(wholePlan);
 										setStep(step + 1);
 									}}
 								>

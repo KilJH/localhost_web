@@ -59,8 +59,7 @@ export interface PlanTime {
 	time: string | Date;
 	type: string;
 	price: number;
-	place: string;
-	placeInfo?: string;
+	place: Place;
 	description: string;
 	photo?: string[];
 }
@@ -104,7 +103,7 @@ export interface Review {
 }
 
 export interface Place {
-	formatted_address: string;
+	formatted_address?: string;
 	geometry?: { location: { lat: number; lng: number }; distance?: number };
 	name?: string;
 }

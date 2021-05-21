@@ -24,8 +24,17 @@ const ItemContainer = styled.div`
 	}
 
 	& .placeItem {
-		& span {
-			text-align: 0.8em;
+		display: flex;
+		align-items: center;
+		& .placeDetail {
+			margin-left: 0.5rem;
+			display: flex;
+			align-items: center;
+			font-size: 0.8em;
+			color: #333;
+			& > svg {
+				font-size: 1.5em;
+			}
 		}
 	}
 	& .priceItem {
@@ -72,9 +81,9 @@ const PlanTimeItem = (props: Props) => {
 			</div>
 			<div>
 				<div className='placeItem'>
-					{plan.place}
-					{plan.placeInfo ? (
-						<span>
+					{plan.place.name}
+					{plan.place.geometry ? (
+						<span className='placeDetail'>
 							<LocationOn />
 							지도보기
 						</span>

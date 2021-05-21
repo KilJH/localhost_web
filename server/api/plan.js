@@ -87,7 +87,7 @@ module.exports.load = (req, res) => {
 
 			photoRows.map(photoRow => {
 				photos.push(photoRow);
-			})
+			});
 		});
 
 		let planDays = [];
@@ -98,11 +98,13 @@ module.exports.load = (req, res) => {
 		let i = 1;
 		mysql.query(daySql, id, (err3, days) => {
 			days.map((d, j) => {
-				const Place = [{
-					formatted_address: d.address, geometry: [
-						{ location: [{ lat: d.latitude, lng: d.longitude }] }
-					], name: d.name
-				}];
+				const Place = [
+					{
+						formatted_address: d.address,
+						geometry: [{ location: [{ lat: d.latitude, lng: d.longitude }] }],
+						name: d.name,
+					},
+				];
 
 				if (d.date === i) {
 					dayArr.push({
@@ -110,7 +112,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						place: Place
+						place: Place,
 					});
 					des = d.des;
 				} else {
@@ -126,7 +128,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						place: Place
+						place: Place,
 					});
 				}
 				if (j === days.length - 1) {
@@ -216,7 +218,8 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price
+						`(${planDayId + i}, "${planTime.description}", ${
+							planTime.price
 						}, "${planTime.time}", "${planTime.type}", "${planTime.name}", 
 						"${planTime.address}","${planTime.latitude}", "${planTime.longitude})`,
 					);
@@ -258,7 +261,7 @@ module.exports.insertPhoto = (req, res) => {
 
 	// 임시 저장 및 플랜 작성시 업로드하는 사진을 바로 s3에 저장
 	mysql.query(sql, err => {
-		if (err) return console.log("InsertPhoto Err");
+		if (err) return console.log('InsertPhoto Err');
 
 		res.json({ success: true });
 	});
