@@ -184,8 +184,9 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.write = (req, res) => {
-	const { userId, title, description, sleepDays, travelDays, tags, planDays } =
-		req.body;
+	const userId = req.body.userId;
+	const { title, description, sleepDays, travelDays, tags, planDays } =
+		req.body.plan;
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
 	mysql.query(sql, (err, rows) => {
@@ -193,7 +194,7 @@ module.exports.write = (req, res) => {
 			return err;
 		}
 		const planId = rows.insertId;
-		const tagsStr = tags.map(tag => `(${planId}, ${tag})`).join(',');
+		/*const tagsStr = tags.map(tag => `(${planId}, ${tag})`).join(',');
 		const tagsSql = `INSERT INTO plan_tag VALUES ${tagsStr}`;
 
 		mysql.query(tagsSql, err2 => {
@@ -203,7 +204,7 @@ module.exports.write = (req, res) => {
 		mysql.query(tagsSql, err2 => {
 			return err2;
 		});
-
+*/
 		const planDaysStr = planDays
 			.map((planDay, i) => `(${planId}, "${planDay.description}", ${i + 1})`)
 			.join(',');
@@ -217,15 +218,16 @@ module.exports.write = (req, res) => {
 			const arr = [];
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
+					console.log(planTime)
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${planTime.place.name}", 
-						"${planTime.place.formatted_address}","${planTime.place.geometry.location.lat}", "${planTime.place.geometry.location.lat})`,
+						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${planTime.time}", "${planTime.type}","${planTime.place?.name}", 
+						"${planTime.place?.formatted_address || null}", ${planTime.place?.geometry?.location?.lat || null}, ${planTime.place?.geometry?.location?.lng || null})`,
 					);
 				});
 			}
 
 			const planTimesStr = arr.join(',');
+			console.log(planTimesStr);
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude) VALUES ${planTimesStr}`;
 
 			mysql.query(timeSql, err3 => {
