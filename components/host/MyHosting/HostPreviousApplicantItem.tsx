@@ -12,7 +12,7 @@ export default function HostPreviousApplicantItem({ applicant }: Props) {
 				<td>{applicant.date}</td>
 				<td>{applicant!.place!.formatted_address}</td>
 				<td>{applicant.user.nickname}</td>
-				<td style={{ color: 'rgba(33,33,33,.6)' }}>
+				<td className='Rating' style={{ color: 'rgba(33,33,33,.6)' }}>
 					{applicant.review ? (
 						<Rating
 							rating={applicant?.review.rating as number}

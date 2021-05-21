@@ -45,7 +45,6 @@ const HostInfoChangeDialogue = styled(Dialog)`
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto 3em auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -60,9 +59,9 @@ const UserTable = styled.table`
 		padding: 1rem 0.5rem;
 		border-bottom: 1px solid #aaa;
 	}
-	/* & tbody > tr:nth-child(odd) {
-		background-color: #eee;
-	} */
+	& .Rating {
+		font-size: 0.8em;
+	}
 `;
 const CloseButtonDiv = styled(DialogActions)`
 	&.MuiDialogActions-root {
@@ -139,10 +138,10 @@ export default function MyHostingPage(props: Props): ReactElement {
 			<UserTable>
 				<thead>
 					<tr>
-						<th style={{ width: '20%' }}>날짜</th>
+						<th style={{ width: '15%' }}>날짜</th>
 						<th style={{ width: '40%' }}>장소</th>
 						<th style={{ width: '20%' }}>닉네임</th>
-						<th style={{ width: '20%', minWidth: '11em' }}>평점</th>
+						<th style={{ width: '25%' }}>평점</th>
 					</tr>
 				</thead>
 				<tbody>
