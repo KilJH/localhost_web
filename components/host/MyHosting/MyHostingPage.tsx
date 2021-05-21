@@ -96,7 +96,6 @@ export default function MyHostingPage(props: Props): ReactElement {
 	};
 	return (
 		<Layout>
-			{/* 현재 호스팅 목록 */}
 			<h3>현재 호스팅 목록</h3>
 			<UserTable>
 				<thead>
@@ -116,7 +115,6 @@ export default function MyHostingPage(props: Props): ReactElement {
 				</tbody>
 			</UserTable>
 
-			{/* 호스팅 신청자 목록 */}
 			<h3>호스팅 신청자 목록</h3>
 			<UserTable>
 				<thead>
@@ -137,7 +135,6 @@ export default function MyHostingPage(props: Props): ReactElement {
 				</tbody>
 			</UserTable>
 
-			{/* 이전 호스팅 목록 */}
 			<h3>이전 호스팅 목록</h3>
 			<UserTable>
 				<thead>
@@ -158,18 +155,13 @@ export default function MyHostingPage(props: Props): ReactElement {
 					)}
 				</tbody>
 			</UserTable>
-			{/* 호스트 정보 변경 */}
+
 			<h3>호스트 정보 변경</h3>
 			<ButtonLabel onClick={handleDialogueOpen} color='primary'>
 				정보 변경
 			</ButtonLabel>
-			{/* 다이알로그 창 */}
-			<HostInfoChangeDialogue
-				disableBackdropClick
-				disableEscapeKeyDown
-				open={dialogueOpen}
-				onClose={handleDialogueClose}
-			>
+			{/* 다이얼로그 창 */}
+			<HostInfoChangeDialogue open={dialogueOpen} onClose={handleDialogueClose}>
 				<CloseButtonDiv>
 					<Button onClick={handleDialogueClose}>
 						<CloseIcon />
