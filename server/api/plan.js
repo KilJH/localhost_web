@@ -217,15 +217,14 @@ module.exports.write = (req, res) => {
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					const place = planTime.place?.formatted_address
-						? `${planTime.place?.formatted_address}`
+						? `"${planTime.place?.formatted_address}"`
 						: null;
 					arr.push(
 						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${
 							planTime.time
-						}", "${planTime.type}","${planTime.place?.name}", 
-						${place}, ${planTime.place?.geometry?.location?.lat || null}, ${
-							planTime.place?.geometry?.location?.lng || null
-						})`,
+						}", "${planTime.type}","${planTime.place?.name}", ${place}, ${
+							planTime.place?.geometry?.location?.lat || null
+						}, ${planTime.place?.geometry?.location?.lng || null})`,
 					);
 				});
 			}
@@ -236,7 +235,7 @@ module.exports.write = (req, res) => {
 			mysql.query(timeSql, err3 => {
 				if (err3) {
 					res.json({ success: false });
-					return err3;
+					return console.log(err3);
 				}
 				res.json({ success: true });
 			});
