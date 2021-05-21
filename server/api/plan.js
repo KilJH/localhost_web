@@ -98,6 +98,11 @@ module.exports.load = (req, res) => {
 		let i = 1;
 		mysql.query(daySql, id, (err3, days) => {
 			days.map((d, j) => {
+				const Place = [{
+					formatted_address: d.address, geometry: [
+						{ location: [{ lat: d.latitude, lng: d.longitude }] }
+					], name: d.name
+				}];
 
 				if (d.date === i) {
 					dayArr.push({
@@ -105,7 +110,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						placeInfo: d.place_info,
+						place: Place
 					});
 					des = d.des;
 				} else {
@@ -121,7 +126,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						placeInfo: d.place_info,
+						place: Place
 					});
 				}
 				if (j === days.length - 1) {
@@ -212,14 +217,14 @@ module.exports.write = (req, res) => {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
 						`(${planDayId + i}, "${planTime.description}", ${planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${planTime.placeInfo
-						}", "${planTime.photo}")`,
+						}, "${planTime.time}", "${planTime.type}", "${planTime.name}", 
+						"${planTime.address}","${planTime.latitude}", "${planTime.longitude})`,
 					);
 				});
 			}
 
 			const planTimesStr = arr.join(',');
-			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, place_info, photo) VALUES ${planTimesStr}`;
+			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude) VALUES ${planTimesStr}`;
 
 			mysql.query(timeSql, err3 => {
 				if (err3) {
