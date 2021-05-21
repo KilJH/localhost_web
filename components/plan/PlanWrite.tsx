@@ -186,6 +186,9 @@ const PlanWriteContainer = styled.div`
 		& .place_address {
 			font-size: 0.8em;
 			padding: 0.25rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 	& .place button,
@@ -293,11 +296,14 @@ const WriteWrapper = (props: WrapperProps) => {
 	} = props;
 	const currentUser = useContext(UserStateContext);
 
+	// 두가지 일을 동시에 수행 이런식으로 짜면 안됨
+	// 나중에 수정할 것
 	const onNextStep = () => {
 		if (step === 4) {
 			const userId = currentUser.id;
 			axios.post(`/api/plan/write`, { userId, plan }).then(res => {
 				if (res.data.success) {
+					// localstorage.clear();
 					setStep(step + 1);
 				} else {
 					alert('플랜 작성에 실패했습니다.');

@@ -98,13 +98,11 @@ module.exports.load = (req, res) => {
 		let i = 1;
 		mysql.query(daySql, id, (err3, days) => {
 			days.map((d, j) => {
-				const Place = [
-					{
-						formatted_address: d.address,
-						geometry: [{ location: [{ lat: d.latitude, lng: d.longitude }] }],
-						name: d.name,
-					},
-				];
+				const place = {
+					formatted_address: d.address,
+					geometry: [{ location: [{ lat: d.latitude, lng: d.longitude }] }],
+					name: d.name,
+				};
 
 				if (d.date === i) {
 					dayArr.push({
@@ -112,7 +110,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						place: Place,
+						place: place,
 					});
 					des = d.des;
 				} else {
@@ -128,7 +126,7 @@ module.exports.load = (req, res) => {
 						price: d.price,
 						time: d.time,
 						type: d.type,
-						place: Place,
+						place: place,
 					});
 				}
 				if (j === days.length - 1) {
