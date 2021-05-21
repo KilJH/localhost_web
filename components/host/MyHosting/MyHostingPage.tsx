@@ -29,7 +29,7 @@ const ButtonLabel = styled(Button)`
 `;
 const HostInfoChangeDialogue = styled(Dialog)`
 	& .MuiDialog-paperWidthSm {
-		min-width: 40em;
+		min-width: 80%;
 	}
 	& > div > div > div {
 		margin: 0 2em;
