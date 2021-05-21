@@ -5,6 +5,7 @@ import HostDetail from '../../components/host/HostDetail';
 import Layout from '../../components/main/Layout';
 import { Host, Review } from '../../interfaces';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -25,7 +26,7 @@ const HostDetailPage = ({ pageProps }: Props) => {
 	);
 };
 
-export default HostDetailPage;
+export default withAuth(1, 0)(HostDetailPage);
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 	try {

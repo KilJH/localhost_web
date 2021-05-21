@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import SERVER from '../../client/utils/url';
 import BoardList from '../../components/board/BoardList';
+import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
 import { Board } from '../../interfaces';
 
@@ -22,7 +23,7 @@ const index = ({ pageProps }: Props) => {
 	);
 };
 
-export default index;
+export default withAuth(0, 0)(index);
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	const res = await axios.get(

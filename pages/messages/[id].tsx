@@ -5,6 +5,7 @@ import SERVER from '../../client/utils/url';
 import React from 'react';
 import ChatRoom from '../../components/host/Chat/ChatRoom';
 import { User } from '../../interfaces';
+import withAuth from '../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -66,4 +67,4 @@ export const getServerSideProps: GetServerSideProps = async context => {
 		},
 	};
 };
-export default StaticPropsDetail;
+export default withAuth(1, 0)(StaticPropsDetail);

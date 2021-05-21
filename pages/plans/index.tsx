@@ -2,6 +2,7 @@ import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import React from 'react';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
 import PlanList from '../../components/plan/PlanList';
 import { Plan } from '../../interfaces';
@@ -28,4 +29,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	return { props: { plans: res.data.list } };
 };
 
-export default index;
+export default withAuth(0, 0)(index);

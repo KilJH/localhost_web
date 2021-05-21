@@ -8,7 +8,7 @@ import Loading from '../../reuse/Loading';
 // 0: 아무나 볼 수 있음, 1: 로그인한 회원만 볼 수 있음, 2: 게스트만 볼 수 있음
 
 // grade
-// 0: 아무나 볼 수 있음, 2: 호스트회원만 볼 수 있음, 3: 관리자회원만 볼 수 있음
+// 0: 아무나 볼 수 있음, 1: 호스트회원만 볼 수 있음, 2: 관리자회원만 볼 수 있음
 
 const getAuth = async () => {
 	const res = await axios.get(`/api/auth/check`, {
@@ -21,7 +21,7 @@ const getAuth = async () => {
 const withAuth =
 	(isLogined: number, grade: number) =>
 	(Component: React.ComponentType<any>) => {
-		return () => {
+		return props => {
 			const { data, isLoading, error } = useAsync({
 				promiseFn: getAuth,
 			});
@@ -41,16 +41,16 @@ const withAuth =
 				switch (grade) {
 					// 아무나
 					case 0:
-						return <Component />;
+						return <Component {...props} />;
 					// 호스트
 					case 1:
-						if (user.isHost) return <Component />;
+						if (user.isHost) return <Component {...props} />;
 						alert('권한이 없습니다. 호스트 신청을 해주세요:D');
 						location.href = '/';
 						break;
 					// 관리자
 					case 2:
-						if (user.isAdmin) return <Component />;
+						if (user.isAdmin) return <Component {...props} />;
 						alert('접근할 수 없는 페이지 입니다.');
 						location.href = '/';
 						break;
@@ -63,7 +63,7 @@ const withAuth =
 					alert('로그인을 해주세요.');
 					location.href = '/login';
 				} else {
-					return <Component />;
+					return <Component {...props} />;
 				}
 			}
 

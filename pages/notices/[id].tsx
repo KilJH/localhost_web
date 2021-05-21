@@ -6,6 +6,7 @@ import NoticeDetail from '../../components/notice/NoticeDetail';
 import NoticeList from '../../components/notice/NoticeList';
 import { Notice } from '../../interfaces';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 interface Props {
 	pageProps: {
@@ -26,7 +27,7 @@ const NoticeDetailPage = ({ pageProps }: Props) => {
 	);
 };
 
-export default NoticeDetailPage;
+export default withAuth(0, 0)(NoticeDetailPage);
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 	try {

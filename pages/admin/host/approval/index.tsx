@@ -5,6 +5,7 @@ import SERVER from '../../../../client/utils/url';
 import axios from 'axios';
 import HostApprovalList from '../../../../components/admin/host/approval/HostApprovalList';
 import AdminLayout from '../../../../components/admin/AdminLayout';
+import withAuth from '../../../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -27,4 +28,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	return { props: { items } };
 };
 
-export default index;
+export default withAuth(1, 2)(index);

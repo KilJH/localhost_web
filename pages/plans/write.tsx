@@ -1,4 +1,5 @@
 import React from 'react';
+import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
 import PlanWrite from '../../components/plan/PlanWrite';
 
@@ -10,4 +11,4 @@ const write = () => {
 	);
 };
 
-export default write;
+export default withAuth(1, 0)(write);

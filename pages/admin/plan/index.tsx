@@ -5,6 +5,7 @@ import SERVER from '../../../client/utils/url';
 import axios from 'axios';
 import AdminLayout from '../../../components/admin/AdminLayout';
 import PlanPage from '../../../components/admin/plan/PlanPage';
+import withAuth from '../../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -23,9 +24,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	// Don't forget to include the respective types for any props passed into
 	// the component.
 
-	const items: Plan[] = await (await axios.get(`${SERVER}/api/plan/list`)).data
-		.list;
+	const items: Plan[] = await (
+		await axios.get(`${SERVER}/api/plan/list`)
+	).data.list;
 	return { props: { items } };
 };
 
-export default list;
+export default withAuth(1, 2)(list);

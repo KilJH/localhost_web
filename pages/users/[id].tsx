@@ -5,6 +5,7 @@ import Layout from '../../components/main/Layout';
 import ListDetail from '../../components/user/ListDetail';
 import axios from 'axios';
 import SERVER from '../../client/utils/url';
+import withAuth from '../../components/main/hoc/withAuth';
 
 type Props = {
 	pageProps: {
@@ -14,17 +15,7 @@ type Props = {
 	};
 };
 
-const StaticPropsDetail = ({ pageProps }: Props) => {
-	// if (pageProps.errors) {
-	// 	return (
-	// 		<Layout title='Error | PlanBee🐝'>
-	// 			<p>
-	// 				<span style={{ color: 'red' }}>Error:</span> {pageProps.errors}
-	// 			</p>
-	// 		</Layout>
-	// 	);
-	// }
-
+const UserDetail = ({ pageProps }: Props) => {
 	return (
 		<Layout
 			title={`${
@@ -38,24 +29,8 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 	);
 };
 
-export default StaticPropsDetail;
+export default withAuth(1, 2)(UserDetail);
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-// 	// Get the paths we want to pre-render based on users
-// 	const paths = await (
-// 		await axios.get(`${SERVER}/api/user/list`)
-// 	).data.users.map((user) => ({
-// 		params: { id: user.id.toString() },
-// 	}));
-
-// 	// We'll pre-render only these paths at build time.
-// 	// { fallback: false } means other routes should 404.
-// 	return { paths, fallback: false };
-// };
-
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries.
 export const getServerSideProps: GetServerSideProps = async context => {
 	try {
 		const id = context.params?.id;
