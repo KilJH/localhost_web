@@ -6,6 +6,28 @@ AWS.config.region = 'ap-northeast-2';
 
 var s3 = new AWS.S3(password.s3);
 
+function getCurrentDate() {
+	var date = new Date();
+	var year = date.getFullYear().toString();
+
+	var month = date.getMonth() + 1;
+	month = month < 10 ? '0' + month.toString() : month.toString();
+
+	var day = date.getDate();
+	day = day < 10 ? '0' + day.toString() : day.toString();
+
+	var hour = date.getHours();
+	hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+	var minites = date.getMinutes();
+	minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+
+	var seconds = date.getSeconds();
+	seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+	return year + month + day + hour + minites + seconds;
+}
+
 module.exports.upload = (req, res) => {
 	var param = {
 		Bucket: 'localhostphoto3',
@@ -23,15 +45,17 @@ module.exports.upload = (req, res) => {
 };
 
 module.exports.multiUpload = (req, res) => {
+	const userId = req.bodt.userId;
 	const file = req.files;
 	let uploadArr = [];
 	const filesLen = Object.keys(file).length;
 
 	let i = 0;
 	for (let key in file) {
+		const now = getCurrentDate();
 		var params = {
 			Bucket: 'localhostphoto3',
-			Key: `test_${i}.${file[key].mimetype.split('/')[1]}`,
+			Key: `test_${userId}_${now}_${i}.${file[key].mimetype.split('/')[1]}`,
 			ACL: 'public-read',
 			Body: file[key].data,
 			ContentType: file[key].mimetype,
