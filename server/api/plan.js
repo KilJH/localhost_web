@@ -217,7 +217,7 @@ module.exports.write = (req, res) => {
 				planDays[i].planTimes.map(planTime => {
 					arr.push(
 						`(${planDayId + i}, "${planTime.description}", ${planTime.price
-						}, "${planTime.time}", "${planTime.type}", "${planTime.name}", 
+						}, "${planTime.time}", "${planTime.type}", "${planTime.place.name}", 
 						"${planTime.address}","${planTime.latitude}", "${planTime.longitude})`,
 					);
 				});
