@@ -218,10 +218,10 @@ module.exports.write = (req, res) => {
 			const arr = [];
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
-					console.log(planTime)
+					const place = planTime.place?.formatted_address ? `${planTime.place?.formatted_address}` : null;
 					arr.push(
 						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${planTime.time}", "${planTime.type}","${planTime.place?.name}", 
-						"${planTime.place?.formatted_address || null}", ${planTime.place?.geometry?.location?.lat || null}, ${planTime.place?.geometry?.location?.lng || null})`,
+						${place}, ${planTime.place?.geometry?.location?.lat || null}, ${planTime.place?.geometry?.location?.lng || null})`,
 					);
 				});
 			}
