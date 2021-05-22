@@ -6,6 +6,7 @@ import {
 	Modal,
 	Radio,
 	RadioGroup,
+	Snackbar,
 } from '@material-ui/core';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
@@ -20,6 +21,8 @@ import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
 import { languages, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
+import { useToast } from '../../client/hooks/useToast';
+import { Alert } from '@material-ui/lab';
 
 const RequestContainer = styled.div`
 	margin: 2rem auto;
@@ -100,8 +103,10 @@ const Request = () => {
 	const [langs, setLangs] = useState<string[]>([]);
 	const [selectedStyle, setSelectedStyle] = useState('');
 	const description = useInput('');
+	const [reqCountry, setReqCountry] = useState(0);
 	const currentUser = useContext(UserStateContext);
-
+	const saveToast = useToast(false);
+	const [errMsg, setErrMsg] = useState('');
 	let newChecked: boolean[] = [];
 
 	for (let i = 0; i < languages.length; i++) {
@@ -126,20 +131,35 @@ const Request = () => {
 	const onSubmit = async () => {
 		// e.preventDefault();
 
-		const hostInfo = {
-			// country: country.value,
-			place: place,
-			languages: langs,
-			description: description.value,
-			travelStyle: selectedStyle,
-		};
+		if (place == null) {
+			saveToast.handleOpen();
+			setErrMsg('활동지역을 선택해주세요');
+		} else if (langs.length === 0) {
+			saveToast.handleOpen();
+			setErrMsg('언어를 선택해주세요');
+		} else if (selectedStyle === '') {
+			saveToast.handleOpen();
+			setErrMsg('여행스타일을 선택해주세요');
+		} else if (description.value === '') {
+			saveToast.handleOpen();
+			setErrMsg('자기소개를 작성해주세요');
+		} else {
+			const hostInfo = {
+				// country: country.value,
+				place: place,
+				languages: langs,
+				description: description.value,
+				reqCountry: reqCountry,
+				travelStyle: selectedStyle,
+			};
 
-		const res = await axios.post(`/api/host/request`, {
-			userId: currentUser.id,
-			hostInfo,
-		});
-		alert(res.data.message);
-		if (res.data.success) Router.push('/');
+			const res = await axios.post(`/api/host/request`, {
+				userId: currentUser.id,
+				hostInfo,
+			});
+			alert(res.data.message);
+			if (res.data.success) Router.push('/');
+		}
 	};
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +182,9 @@ const Request = () => {
 		}
 	};
 
+	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setReqCountry(Number(e.target.value));
+	};
 	return (
 		<RequestContainer>
 			<div>
@@ -212,19 +235,24 @@ const Request = () => {
 				</div>
 				<div>
 					<label>원하는 여행객의 국적을 선택해주세요</label>
-					<RadioGroup row {...travelerNation}>
+					<RadioGroup
+						row
+						{...travelerNation}
+						value={reqCountry}
+						onChange={onRadioChange}
+					>
 						<FormControlLabel
-							value='0'
+							value={0}
 							control={<Radio color='primary' />}
 							label='상관없음'
 						/>
 						<FormControlLabel
-							value='1'
+							value={1}
 							control={<Radio color='primary' />}
 							label='외국인'
 						/>
 						<FormControlLabel
-							value='2'
+							value={2}
 							control={<Radio color='primary' />}
 							label='자국민'
 						/>
@@ -250,6 +278,20 @@ const Request = () => {
 				<BtnRequest onClick={onSubmit} width='10em' padding='0.5rem 1rem'>
 					신청
 				</BtnRequest>
+				<Snackbar
+					open={saveToast.open}
+					autoHideDuration={4000}
+					onClose={saveToast.handleClose}
+				>
+					<Alert
+						onClose={saveToast.handleClose}
+						severity='warning'
+						elevation={4}
+						variant='filled'
+					>
+						{errMsg}
+					</Alert>
+				</Snackbar>
 			</div>
 		</RequestContainer>
 	);

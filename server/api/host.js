@@ -119,7 +119,7 @@ module.exports.requestHost = (req, res) => {
 	}
 
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host_request(user_id,language1,language2,language3,description,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host_request(user_id,language1,language2,language3,description,reqcountry,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?)`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
@@ -131,6 +131,7 @@ module.exports.requestHost = (req, res) => {
 				userId,
 				...languages,
 				hostInfo.description,
+				hostInfo.reqCountry,
 				hostInfo.place.geometry.location.lat,
 				hostInfo.place.geometry.location.lng,
 				`${hostInfo.place.formatted_address}(${hostInfo.place.name})`,
