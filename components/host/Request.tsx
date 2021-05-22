@@ -22,7 +22,7 @@ import SearchPlace from '../search/SearchPlace';
 import { languages, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import { useToast } from '../../client/hooks/useToast';
-import { Alert } from '@material-ui/lab';
+import { Alert, Color } from '@material-ui/lab';
 
 const RequestContainer = styled.div`
 	margin: 2rem auto;
@@ -105,8 +105,16 @@ const Request = () => {
 	const description = useInput('');
 	const [reqCountry, setReqCountry] = useState(0);
 	const currentUser = useContext(UserStateContext);
+
 	const saveToast = useToast(false);
 	const [errMsg, setErrMsg] = useState('');
+	const [severity, setSeverity] = useState<Color>('warning');
+	const setToast = (str, severity) => {
+		saveToast.handleOpen();
+		setSeverity(severity);
+		setErrMsg(str);
+	};
+
 	let newChecked: boolean[] = [];
 
 	for (let i = 0; i < languages.length; i++) {
@@ -132,17 +140,13 @@ const Request = () => {
 		// e.preventDefault();
 
 		if (place == null) {
-			saveToast.handleOpen();
-			setErrMsg('활동지역을 선택해주세요');
+			setToast('활동지역을 선택해주세요', 'warning');
 		} else if (langs.length === 0) {
-			saveToast.handleOpen();
-			setErrMsg('언어를 선택해주세요');
+			setToast('언어를 선택해주세요', 'warning');
 		} else if (selectedStyle === '') {
-			saveToast.handleOpen();
-			setErrMsg('여행스타일을 선택해주세요');
+			setToast('여행스타일을 선택해주세요', 'warning');
 		} else if (description.value === '') {
-			saveToast.handleOpen();
-			setErrMsg('자기소개를 작성해주세요');
+			setToast('자기소개를 작성해주세요', 'warning');
 		} else {
 			const hostInfo = {
 				// country: country.value,
@@ -157,8 +161,13 @@ const Request = () => {
 				userId: currentUser.id,
 				hostInfo,
 			});
-			alert(res.data.message);
-			if (res.data.success) Router.push('/');
+
+			if (res.data.success) {
+				setToast(res.data.message, 'success');
+				Router.push('/');
+			} else {
+				setToast(res.data.message, 'error');
+			}
 		}
 	};
 
@@ -285,7 +294,7 @@ const Request = () => {
 				>
 					<Alert
 						onClose={saveToast.handleClose}
-						severity='warning'
+						severity={severity}
 						elevation={4}
 						variant='filled'
 					>
