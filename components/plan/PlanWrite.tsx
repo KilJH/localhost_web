@@ -461,6 +461,25 @@ const PlanWrite = () => {
 	// 에러메세지 처리
 	const noDataToast = useToast(false);
 
+	// 이미지 업로드
+	const [images, setImages] = useState<File[]>([]);
+	const onUploadImage = () => {
+		const input: any = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'image/*';
+		input.multiple = true;
+		input.click();
+
+		input.onchange = function (e: React.ChangeEvent<HTMLInputElement>) {
+			const files = e.target!.files!;
+			let fileArray: File[] = [];
+			for (let i = 0; i < files!.length; i++) {
+				fileArray = fileArray.concat(files[i]);
+			}
+			setImages([...images, ...fileArray]);
+		};
+	};
+
 	// 일정 하나 추가
 	function onAddTimePlan(): void {
 		if (timePlan.place.name === '' && timePlan.description === '') {
@@ -715,7 +734,7 @@ const PlanWrite = () => {
 							/>
 
 							{/* input type="file" 동적으로 만들어서 하기 */}
-							<button className='image'>
+							<button className='image' onClick={onUploadImage}>
 								<Image fontSize={isMobile ? 'small' : 'default'} />
 							</button>
 							<button className='add' onClick={onAddTimePlan}>
