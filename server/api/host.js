@@ -123,8 +123,10 @@ module.exports.requestHost = (req, res) => {
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
-		if (rows[0])
+		if (rows[0]) {
 			res.json({ success: false, message: '이미 신청한 상태입니다.' });
+			return;
+		}
 		mysql.query(
 			insert,
 			[
