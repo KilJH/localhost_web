@@ -31,6 +31,8 @@ export interface Host {
 	on?: boolean;
 	place?: Place;
 	follower?: number;
+	requestCount?: number;
+	hostingCount?: number;
 }
 
 export interface Plan {

@@ -28,6 +28,8 @@ module.exports.hostMapping = host => {
 		languages: [host.language1, host.language2, host.language3],
 		rating: host.host_rating || host.rating,
 		on: Boolean(host.on),
+		requestCount: host.request_count,
+		hostingCount: host.hosting_count,
 		place: {
 			formatted_address:
 				host.formattedAddress || host.host_address || host.address,
