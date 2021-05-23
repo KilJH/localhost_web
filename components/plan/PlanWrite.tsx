@@ -40,6 +40,7 @@ interface WrapperProps {
 	children?: React.ReactNode;
 	plan?: Plan;
 	saveProps: SaveProps;
+	images?: File[];
 }
 
 interface SaveProps {
@@ -297,25 +298,27 @@ const WriteWrapper = (props: WrapperProps) => {
 	} = props;
 	const currentUser = useContext(UserStateContext);
 
-	// 두가지 일을 동시에 수행 이런식으로 짜면 안됨
-	// 나중에 수정할 것
 	const onNextStep = () => {
 		if (step === 4) {
-			const userId = currentUser.id;
-			axios.post(`/api/plan/write`, { userId, plan }).then(res => {
-				if (res.data.success) {
-					// localstorage.clear();
-					setStep(step + 1);
-				} else {
-					alert('플랜 작성에 실패했습니다.');
-				}
-			});
+			onSubmit();
 		} else {
 			setStep(step + 1);
 		}
 	};
 	const onPrevStep = () => {
 		setStep(step - 1);
+	};
+
+	const onSubmit = () => {
+		const userId = currentUser.id;
+		axios.post(`/api/plan/write`, { userId, plan }).then(res => {
+			if (res.data.success) {
+				// localstorage.clear();
+				setStep(step + 1);
+			} else {
+				alert('플랜 작성에 실패했습니다.');
+			}
+		});
 	};
 
 	return (
@@ -348,6 +351,7 @@ const WriteWrapper = (props: WrapperProps) => {
 };
 
 const PlanWrite = () => {
+	const currentUser = useContext(UserStateContext);
 	// 모바일인지
 	const isMobile = useMediaQuery('(max-width: 600px)');
 	// 단계
@@ -482,14 +486,29 @@ const PlanWrite = () => {
 	};
 
 	// 일정 하나 추가
-	function onAddTimePlan(): void {
+	async function onAddTimePlan() {
 		if (timePlan.place.name === '' && timePlan.description === '') {
 			noDataToast.handleOpen();
 			return;
 		}
+
+		// 1. 파일 먼저 업로드
+		const userId = currentUser.id;
+		const formData = new FormData();
+		let imageUrls: string[] = [];
+		if (images.length > 0) {
+			images.forEach(img => {
+				formData.append('file', img);
+			});
+			formData.append('userId', `${userId}`);
+
+			const imgRes = await axios.post('/api/s3/upload/multi', formData);
+			imageUrls = imgRes.data.urls;
+		}
+
 		setDayPlan({
 			description: '',
-			planTimes: dayPlan.planTimes.concat(timePlan),
+			planTimes: dayPlan.planTimes.concat({ ...timePlan, photo: imageUrls }),
 		});
 		setTimePlan({
 			time: new Date(0, 0, 0, 10, 0),
@@ -499,6 +518,7 @@ const PlanWrite = () => {
 			description: '',
 			photo: [],
 		});
+		setImages([]);
 		setTime(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
 		setPlaceDetail(undefined);
 	}
@@ -540,6 +560,7 @@ const PlanWrite = () => {
 		step,
 		setStep,
 		saveProps,
+		images,
 	};
 
 	switch (step) {

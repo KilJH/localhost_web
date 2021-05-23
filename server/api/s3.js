@@ -45,27 +45,25 @@ module.exports.upload = (req, res) => {
 };
 
 module.exports.multiUpload = (req, res) => {
-	const userId = req.bodt.userId;
-	const file = req.files;
+	const userId = req.body.userId;
+	const file = req.files.file;
 	let uploadArr = [];
-	const filesLen = Object.keys(file).length;
+	const filesLen = file.length;
 
-	let i = 0;
-	for (let key in file) {
-		const now = getCurrentDate();
+	const now = getCurrentDate();
+	for (let i = 0; i < filesLen; i++) {
 		var params = {
 			Bucket: 'localhostphoto3',
-			Key: `test_${userId}_${now}_${i}.${file[key].mimetype.split('/')[1]}`,
+			Key: `test_${userId}_${now}_${i}.${file[i].mimetype.split('/')[1]}`,
 			ACL: 'public-read',
-			Body: file[key].data,
-			ContentType: file[key].mimetype,
+			Body: file[i].data,
+			ContentType: file[i].mimetype,
 		};
-		i++;
 		s3.upload(params, function (err, data) {
 			if (err) console.log('multi update err', err);
 			uploadArr.push(data.Location);
 			if (uploadArr.length === filesLen) {
-				res.json({ success: true, data: uploadArr });
+				res.json({ success: true, urls: uploadArr });
 			}
 		});
 	}
