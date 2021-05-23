@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import UserItem from '../user/UserItem';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -8,6 +7,7 @@ import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import { Host } from '../../../interfaces';
+import HostItem from './HostItem';
 
 type Props = {
 	items: Host[];
@@ -159,9 +159,9 @@ export default function HostList(props: Props) {
 				</thead>
 				<tbody>
 					{items.map((item, i) => (
-						<UserItem
+						<HostItem
 							key={item.id}
-							user={item}
+							host={item}
 							state={state[i]}
 							handleChange={handleChange}
 						/>

@@ -1,10 +1,10 @@
-import { User } from '../../../interfaces';
+import { Host } from '../../../interfaces';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import UserDetail from './UserDetail';
+import HostDetail from './HostDetail';
 
 type Props = {
-	user: User;
+	host: Host;
 	state: boolean;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 };
@@ -20,7 +20,7 @@ const PushElement = styled.a`
 	cursor: pointer;
 `;
 export default function UserItem(props: Props) {
-	const { user, state, handleChange } = props;
+	const { host, state, handleChange } = props;
 	const [detailState, setDetailState] = useState(false);
 	const onClickHandler = () => {
 		setDetailState(!detailState);
@@ -36,24 +36,24 @@ export default function UserItem(props: Props) {
 					}
 				>
 					<Checkbox
-						id={user!.id!.toString()}
+						id={host!.id!.toString()}
 						checked={state}
 						onChange={handleChange}
 					></Checkbox>
 				</td>
 				<td>
-					<PushElement onClick={onClickHandler}>{user.email}</PushElement>
+					<PushElement onClick={onClickHandler}>{host.email}</PushElement>
 				</td>
 				<td>
-					<PushElement onClick={onClickHandler}>{user.nickname}</PushElement>
+					<PushElement onClick={onClickHandler}>{host.nickname}</PushElement>
 				</td>
 				<td>
-					<PushElement onClick={onClickHandler}>{user.name}</PushElement>
+					<PushElement onClick={onClickHandler}>{host.name}</PushElement>
 				</td>
 			</tr>
 			<tr>
 				<td style={{ padding: 0 }} colSpan={4}>
-					<UserDetail user={user as User} visibility={detailState} />
+					<HostDetail host={host} visibility={detailState} />
 				</td>
 			</tr>
 		</React.Fragment>

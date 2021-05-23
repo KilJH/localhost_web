@@ -199,16 +199,14 @@ export default function UserList(props: Props) {
 				</thead>
 				<tbody>
 					{items.map((item, i) => {
-						if (item.isHost === 0) {
-							return (
-								<UserItem
-									key={item.id}
-									user={item}
-									state={state[i]}
-									handleChange={handleChange}
-								/>
-							);
-						}
+						return (
+							<UserItem
+								key={item.id}
+								user={item}
+								state={state[i]}
+								handleChange={handleChange}
+							/>
+						);
 					})}
 				</tbody>
 			</UserTable>

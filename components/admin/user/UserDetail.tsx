@@ -61,7 +61,7 @@ export default function UserDetail(props: Props) {
 	if (visibility === true) {
 		return (
 			<DetailsDiv>
-				<MainTitle>{user!.isHost === 0 ? '유저' : '호스트'} 정보</MainTitle>
+				<MainTitle>유저 정보</MainTitle>
 				<UserPhoto src={user!.photo} width={5} />
 				<NameTag>
 					<Nickname>{user!.nickname}</Nickname>
