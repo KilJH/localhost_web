@@ -20,6 +20,7 @@ module.exports.hostMapping = host => {
 		nickname: host.nickname,
 		sex: host.sex,
 		phone: host.phone,
+		nationality: host.nationality,
 		address: host.user_address || host.address,
 		photo: host.photo || '',
 		description: host.host_description || host.description,

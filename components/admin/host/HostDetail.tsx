@@ -69,6 +69,7 @@ const DetailsDiv = styled.div`
 `;
 export default function HostApprovalDetail(props: Props) {
 	const { host, visibility } = props;
+	console.log(host);
 	if (visibility === true) {
 		return (
 			<DetailsDiv>
@@ -97,6 +98,8 @@ export default function HostApprovalDetail(props: Props) {
 						index == languages.length ? lang : lang ? lang + ' ' : '',
 					)}
 				</Details>
+				<SubTitle>호스트 국적</SubTitle>
+				<Details>{host!.nationality}</Details>
 				<SubTitle>선호하는 여행객 국적</SubTitle>
 				<Details>
 					{host!?.reqCountry === 0

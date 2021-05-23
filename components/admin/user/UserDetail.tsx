@@ -70,6 +70,8 @@ export default function UserDetail(props: Props) {
 				<Email>({user!.email})</Email>
 				<SubTitle>성별</SubTitle>
 				<Details>{user!.sex === 'male' ? '남성' : '여성'}</Details>
+				<SubTitle>국적</SubTitle>
+				<Details>{user!.nationality}</Details>
 				<SubTitle>주소</SubTitle>
 				<Details>{user!.address}</Details>
 				<SubTitle>휴대폰 번호</SubTitle>

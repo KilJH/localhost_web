@@ -22,6 +22,7 @@ export interface Host {
 	sex?: string;
 	password?: string;
 	phone?: string;
+	nationality?: string;
 	address?: string;
 	photo?: string;
 	description?: string;
