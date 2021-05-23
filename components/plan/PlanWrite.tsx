@@ -502,7 +502,7 @@ const PlanWrite = () => {
 			});
 			formData.append('userId', `${userId}`);
 
-			const imgRes = await axios.post('/api/s3/upload/multi', formData);
+			const imgRes = await axios.post('/api/s3/upload/plan/image', formData);
 			imageUrls = imgRes.data.urls;
 		}
 

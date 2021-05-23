@@ -44,17 +44,15 @@ module.exports.upload = (req, res) => {
 	});
 };
 
-module.exports.multiUpload = (req, res) => {
-	const userId = req.body.userId;
+module.exports.imageMultiUpload = (req, res, name) => {
 	const file = req.files.file;
 	let uploadArr = [];
 	const filesLen = file.length;
 
-	const now = getCurrentDate();
 	for (let i = 0; i < filesLen; i++) {
 		var params = {
 			Bucket: 'localhostphoto3',
-			Key: `test_${userId}_${now}_${i}.${file[i].mimetype.split('/')[1]}`,
+			Key: `${name}_${i}.${file[i].mimetype.split('/')[1]}`,
 			ACL: 'public-read',
 			Body: file[i].data,
 			ContentType: file[i].mimetype,
@@ -67,6 +65,14 @@ module.exports.multiUpload = (req, res) => {
 			}
 		});
 	}
+};
+
+module.exports.planImageUpload = (req, res) => {
+	const userId = req.body.userId;
+	const now = new Date().getTime();
+	const name = `temp_${userId}_${now}`;
+
+	this.imageMultiUpload(req, res, name);
 };
 
 module.exports.load = (req, res) => {
