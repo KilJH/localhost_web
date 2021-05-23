@@ -26,7 +26,8 @@ module.exports.userListMapping = userList => {
 
 module.exports.register = (req, res) => {
 	// 회원가입
-	const { email, pw, name, sex, nickname, phone, address } = req.body;
+	const { email, pw, name, sex, nickname, phone, nationality, address } =
+		req.body;
 	const sql = `SELECT * FROM user WHERE email = ?`;
 	const hashPW = crypto.createHash('sha512').update(pw).digest('hex');
 
@@ -37,7 +38,7 @@ module.exports.register = (req, res) => {
 
 		if (rows == '') {
 			// res.json({ message: '사용할 수 있는 이메일입니다.' });
-			const insert = `INSERT INTO user(email, pw, name, sex, nickname, phone, address) VALUES("${email}", "${hashPW}", "${name}", "${sex}", "${nickname}", "${phone}", "${address}");`;
+			const insert = `INSERT INTO user(email, pw, name, sex, nickname, phone, nationality, address) VALUES("${email}", "${hashPW}", "${name}", "${sex}", "${nickname}", "${phone}","${nationality}", "${address}");`;
 
 			mysql.query(insert, (err3, rows, fields) => {
 				if (err3) return console.log('err3: ', err3);

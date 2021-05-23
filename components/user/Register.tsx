@@ -1,4 +1,13 @@
-import { Container, Fade, Modal } from '@material-ui/core';
+import {
+	Container,
+	Dialog,
+	DialogActions,
+	Fade,
+	FormControlLabel,
+	Modal,
+	Radio,
+	RadioGroup,
+} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +19,8 @@ import CpxBarometer from '../reuse/CpxBarometer';
 import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
 import Button from '../reuse/Button';
-
+import MatButton from '@material-ui/core/Button';
+import CloseIcon from '@material-ui/icons/Close';
 const RegisterContainer = styled(Container)`
 	& > div {
 		margin: 1rem 0;
@@ -106,7 +116,36 @@ const StyledModal = styled(Modal)`
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
 	}
 `;
-
+const CloseButtonDiv = styled(DialogActions)`
+	&.MuiDialogActions-root {
+		padding: 0.5em 0 0 0;
+		margin: 0;
+	}
+`;
+const NationalityDialog = styled(Dialog)`
+	& .MuiDialog-paperWidthSm {
+		min-width: 80%;
+		padding-bottom: 2em;
+	}
+	& > div > div > div {
+		margin: 0 2em;
+		&.HostInfoChange__ComponentDiv-sc-4jyjzj-0 {
+			margin-bottom: 0;
+		}
+		&.MuiDialogActions-root {
+			margin-top: 0;
+		}
+	}
+	-ms-overflow-style: none;
+	& .NationalityLabel {
+		margin-left: 2em;
+	}
+`;
+const Label = styled.p`
+	margin: 0 0 1em 2em;
+	font-size: 1em;
+	font-weight: bold;
+`;
 export default function Register() {
 	const speCharReg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/i;
 	const numReg = /[0-9]/;
@@ -130,12 +169,33 @@ export default function Register() {
 	);
 	const [place, setPlace] = useState<Place>();
 
+	const nationalities = [
+		'대한민국',
+		'일본',
+		'중국',
+		'베트남',
+		'태국',
+		'프랑스',
+		'영국',
+		'독일',
+		'포르투갈',
+		'스페인',
+		'이탈리아',
+	];
+	const [nationality, setNationality] = useState('');
+	const [dialogueOpen, setDialogueOpen] = useState(false);
+	const handleDialogueOpen = () => {
+		setDialogueOpen(true);
+	};
+	const handleDialogueClose = () => {
+		setDialogueOpen(false);
+	};
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => {
 		setOpen(true);
 	};
-	const handleClose = () => {
+	const Dialogue = () => {
 		setOpen(false);
 	};
 	useEffect(() => {
@@ -145,7 +205,9 @@ export default function Register() {
 	const onClickHandler = (value: boolean) => {
 		setIsMan(value);
 	};
-
+	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setNationality(String(e.target.value));
+	};
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
@@ -159,6 +221,7 @@ export default function Register() {
 				sex: isMan ? 'male' : 'female',
 				nickname: nicknameInput.value,
 				phone: phoneNumInput.value,
+				nationality: nationality,
 				address: address,
 			})
 			.then((res: AxiosResponse<any>) => {
@@ -249,6 +312,33 @@ export default function Register() {
 					variant='outlined'
 				/>
 			</div>
+			<RadioGroup value={nationality} onChange={onRadioChange}>
+				<CssTextField
+					label='국적을 선택해주세요.'
+					variant='outlined'
+					type='text'
+					value={nationality}
+					onClick={handleDialogueOpen}
+				/>
+				{/* 다이얼로그 창 */}
+				<NationalityDialog open={dialogueOpen} onClose={handleDialogueClose}>
+					<CloseButtonDiv>
+						<MatButton onClick={handleDialogueClose}>
+							<CloseIcon />
+						</MatButton>
+					</CloseButtonDiv>
+					<Label>국적을 선택해주세요.</Label>
+					{nationalities.map(value => (
+						<FormControlLabel
+							className='NationalityLabel'
+							value={value}
+							control={<Radio color='primary' />}
+							label={value}
+							onClick={handleDialogueClose}
+						/>
+					))}
+				</NationalityDialog>
+			</RadioGroup>
 			<div>
 				<CssTextField
 					label='주소를 입력하세요.'
@@ -260,7 +350,8 @@ export default function Register() {
 					onClick={handleOpen}
 					onChange={handleOpen}
 				/>
-				<StyledModal open={open} onClose={handleClose}>
+
+				<StyledModal open={open} onClose={Dialogue}>
 					<Fade in={open}>
 						<div className='searchForm'>
 							<SearchPlace setPlace={setPlace} />
