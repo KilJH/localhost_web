@@ -1,10 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Maps from '../../components/reuse/Maps';
 import SearchPlace from '../../components/search/SearchPlace';
 import { Host, Place } from '../../interfaces';
 import styled from 'styled-components';
 import HostList from '../../components/host/HostList';
+import { UserStateContext } from '../../context/user';
 
 const Container = styled.div`
 	display: flex;
@@ -31,6 +32,34 @@ const HostMain = () => {
 	const [coord, setCoord] = useState({ lat: 0, lng: 0 });
 	const [nearbyHosts, setNearbyHosts] = useState<Host[]>([]);
 	const [filteredHosts, setFilteredHosts] = useState<Host[]>([]);
+
+	const currentUser = useContext(UserStateContext);
+
+	// 국적에 따른 필터링
+	const reqCountryFilter = items => {
+		let hosts = [] as Host[];
+		items.map(value => {
+			switch (value.reqCountry) {
+				case 0:
+					hosts.push(value);
+					break;
+				case 1:
+					axios.get(`/api/user/${value.id}`).then(res => {
+						if (currentUser.nationality !== res.data.nationality)
+							hosts.push(value);
+					});
+
+					break;
+				case 2:
+					axios.get(`/api/user/${value.id}`).then(res => {
+						if (currentUser.nationality === res.data.nationality)
+							hosts.push(value);
+					});
+					break;
+			}
+		});
+		setNearbyHosts(hosts);
+	};
 
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
@@ -59,7 +88,7 @@ const HostMain = () => {
 				longitude: coord.lng,
 			})
 			.then(res => {
-				setNearbyHosts(res.data.nearbyhosts);
+				reqCountryFilter(res.data.nearbyhosts);
 			});
 	}, [coord]);
 
