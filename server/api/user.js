@@ -58,8 +58,8 @@ module.exports.update = (req, res) => {
 	const nickname = req.body.nickname || '';
 	const phone = req.body.phone || '';
 	const address = req.body.address || '';
-
-	const update = `UPDATE user SET nickname = "${nickname}", phone = "${phone}", address = "${address}" WHERE email = "${email}";`;
+	const nationality = req.body.nationality || '';
+	const update = `UPDATE user SET nickname = "${nickname}", phone = "${phone}", address = "${address}", nationality = "${nationality}" WHERE email = "${email}";`;
 
 	mysql.query(update, (err, rows) => {
 		if (err) return console.log(err);

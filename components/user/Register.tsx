@@ -327,7 +327,7 @@ export default function Register() {
 							<CloseIcon />
 						</MatButton>
 					</CloseButtonDiv>
-					<Label>국적을 선택해주세요.</Label>
+					<Label>국적을 선택해주세요</Label>
 					{nationalities.map(value => (
 						<FormControlLabel
 							className='NationalityLabel'

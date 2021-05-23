@@ -1,4 +1,11 @@
-import { Modal, Fade, Snackbar } from '@material-ui/core';
+import {
+	Modal,
+	Fade,
+	Snackbar,
+	FormControlLabel,
+	Radio,
+	RadioGroup,
+} from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../client/hooks/useInput';
 import { Place, User } from '../../../interfaces';
@@ -51,6 +58,11 @@ const StyledModal = styled(Modal)`
 		border-radius: 0.25rem;
 		outline: 0;
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+		& > p {
+			margin: 0 0 1em 2em;
+			font-size: 1em;
+			font-weight: bold;
+		}
 	}
 `;
 
@@ -80,6 +92,32 @@ const Privacy = (props: Props) => {
 
 	// 패스워드 수정 on/off
 	const [enabledPw, setEnabledPw] = useState(false);
+
+	// 국적
+	const [nationality, setNationality] = useState(currentUser.nationality);
+	const nationalities = [
+		'대한민국',
+		'일본',
+		'중국',
+		'베트남',
+		'태국',
+		'프랑스',
+		'영국',
+		'독일',
+		'포르투갈',
+		'스페인',
+		'이탈리아',
+	];
+	const [dialogueOpen, setDialogueOpen] = useState(false);
+	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setNationality(String(e.target.value));
+	};
+	const handleDialogueOpen = () => {
+		setDialogueOpen(true);
+	};
+	const handleDialogueClose = () => {
+		setDialogueOpen(false);
+	};
 
 	// 정보변경 알림
 	const [onToast, setOnToase] = useState(false);
@@ -128,6 +166,7 @@ const Privacy = (props: Props) => {
 			nickname: nnInput.value,
 			phone: phInput.value,
 			address: address,
+			nationality: nationality,
 		};
 		// 유저정보 변경
 		const res = await axios.post(`/api/user/update`, { ...user });
@@ -331,6 +370,38 @@ const Privacy = (props: Props) => {
 										</div>
 									</Fade>
 								</StyledModal>
+							</div>
+						</div>
+						<div>
+							<div>국적: </div>
+							<div>
+								<RadioGroup value={nationality} onChange={onRadioChange}>
+									<Input
+										{...inputProps}
+										value={nationality}
+										onClick={handleDialogueOpen}
+										onChange={handleDialogueOpen}
+									/>
+									<StyledModal
+										open={dialogueOpen}
+										onClose={handleDialogueClose}
+									>
+										<Fade in={dialogueOpen}>
+											<div className='searchForm'>
+												<p>국적을 선택해주세요</p>
+												{nationalities.map(value => (
+													<FormControlLabel
+														className='NationalityLabel'
+														value={value}
+														control={<Radio color='primary' />}
+														label={value}
+														onClick={handleDialogueClose}
+													/>
+												))}
+											</div>
+										</Fade>
+									</StyledModal>
+								</RadioGroup>
 							</div>
 						</div>
 					</PrivacyContainer>
