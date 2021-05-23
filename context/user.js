@@ -8,6 +8,7 @@ export const UserStateContext = createContext({
 	nickname: '',
 	phone: '',
 	address: '',
+	nationality: '',
 	photo: '',
 });
 
@@ -26,6 +27,7 @@ export const UserContextProvider = ({ value, children }) => {
 		nickname: '',
 		phone: '',
 		address: '',
+		nationality: '',
 		photo: '',
 	});
 	return (
