@@ -38,7 +38,6 @@ const UserMenu = () => {
 	};
 
 	const currentUser: User = useContext(UserStateContext);
-	console.log(currentUser);
 	return (
 		<UserMenuContainer>
 			<UserPhoto src={currentUser.photo} />
