@@ -6,6 +6,7 @@ export interface User {
 	nickname?: string;
 	sex?: string;
 	phone?: string;
+	nationality?: string;
 	address?: string;
 	photo?: string;
 	isAdmin?: number;
