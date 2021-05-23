@@ -155,7 +155,7 @@ module.exports.allowHost = (req, res) => {
 	// 호스트 승인
 	const userId = req.body.userId;
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host(user_id,language1,language2,language3,description,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host(user_id,language1,language2,language3,description,reqcountry,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?)`;
 	const del = `DELETE FROM host_request WHERE user_id = ?`;
 	const update = `UPDATE user SET ishost=1 WHERE id = ?`;
 
@@ -172,6 +172,7 @@ module.exports.allowHost = (req, res) => {
 				rows[0].language2,
 				rows[0].language3,
 				rows[0].description,
+				rows[0].reqcountry,
 				rows[0].latitude,
 				rows[0].longitude,
 				rows[0].address,
