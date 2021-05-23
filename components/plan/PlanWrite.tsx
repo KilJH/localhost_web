@@ -30,6 +30,7 @@ import Alert from '@material-ui/lab/Alert';
 import { useToast } from '../../client/hooks/useToast';
 import { useModal } from '../../client/hooks/useModal';
 import SearchPlace from '../search/SearchPlace';
+import WritingImages from '../reuse/WritingImages';
 
 interface WrapperProps {
 	isFull?: boolean;
@@ -740,6 +741,7 @@ const PlanWrite = () => {
 							<button className='add' onClick={onAddTimePlan}>
 								<PlaylistAdd fontSize={isMobile ? 'default' : 'large'} />
 							</button>
+							<WritingImages images={images} setImages={setImages} />
 						</div>
 
 						<Snackbar
