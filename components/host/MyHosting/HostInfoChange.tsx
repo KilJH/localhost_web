@@ -292,8 +292,8 @@ export default function MyHosting(props: Props): ReactElement {
 				language2: language.language2 === ' ' ? null : language.language2,
 				language3: language.language3 === ' ' ? null : language.language3,
 				description: description.value,
-				latitude: place?.geometry.location.lat,
-				longitude: place?.geometry.location.lng,
+				latitude: place?.geometry!.location.lat,
+				longitude: place?.geometry!.location.lng,
 				address: place?.formatted_address,
 			});
 			if (res.data.success) {
@@ -332,12 +332,7 @@ export default function MyHosting(props: Props): ReactElement {
 
 			{/* 언어 선택 */}
 			<ButtonLabel onClick={handlelanguageOpen}>언어 선택</ButtonLabel>
-			<Dialog
-				disableBackdropClick
-				disableEscapeKeyDown
-				open={languageOpen}
-				onClose={handleLanguageClose}
-			>
+			<Dialog open={languageOpen} onClose={handleLanguageClose}>
 				<DialogueTitle>사용 가능한 언어를 선택해주세요</DialogueTitle>
 				<DialogueContent>
 					<form>
