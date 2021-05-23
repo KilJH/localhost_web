@@ -82,6 +82,14 @@ export default function HostApprovalDetail(props: Props) {
 				<Details>{user!.createTime}</Details>
 				<SubTitle>사용 가능한 언어</SubTitle>
 				<Details>{user!?.languages.map(lang => lang)}</Details>
+				<SubTitle>선호하는 여행객 국적</SubTitle>
+				<Details>
+					{user!?.reqCountry === 0
+						? '상관없음'
+						: user!?.reqCountry === 1
+						? '외국인'
+						: '자국민'}
+				</Details>
 				<SubTitle>성별</SubTitle>
 				<Details>{user!.sex === 'male' ? '남성' : '여성'}</Details>
 				<SubTitle>주소</SubTitle>
