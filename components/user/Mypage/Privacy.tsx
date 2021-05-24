@@ -1,11 +1,4 @@
-import {
-	Modal,
-	Fade,
-	Snackbar,
-	FormControlLabel,
-	Radio,
-	RadioGroup,
-} from '@material-ui/core';
+import { Modal, Fade, Snackbar, Select, MenuItem } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../client/hooks/useInput';
 import { Place, User } from '../../../interfaces';
@@ -42,6 +35,27 @@ const PrivacyContainer = styled.div`
 		}
 		& input {
 			width: 16em;
+		}
+		& .Nationality {
+			width: 100%;
+			height: 2.5rem;
+			font-size: 0.8em;
+			box-sizing: border-box;
+			transition: all 0.2s ease;
+			border: 1px solid rgba(0, 0, 0, 0.41);
+		}
+
+		& .MuiOutlinedInput-root {
+			&:hover {
+				border-width: 2px;
+				border-color: rgba(0, 0, 0, 0.87);
+			}
+			&.Mui-focused {
+				border: 2px solid rgb(81, 151, 213);
+			}
+		}
+		& .MuiOutlinedInput-notchedOutline {
+			border: none;
 		}
 	}
 `;
@@ -107,18 +121,8 @@ const Privacy = (props: Props) => {
 		'포르투갈',
 		'스페인',
 		'이탈리아',
+		'기타',
 	];
-	const [dialogueOpen, setDialogueOpen] = useState(false);
-	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNationality(String(e.target.value));
-	};
-	const handleDialogueOpen = () => {
-		setDialogueOpen(true);
-	};
-	const handleDialogueClose = () => {
-		setDialogueOpen(false);
-	};
-
 	// 정보변경 알림
 	const [onToast, setOnToase] = useState(false);
 	const onOpenToast = () => {
@@ -375,33 +379,20 @@ const Privacy = (props: Props) => {
 						<div>
 							<div>국적: </div>
 							<div>
-								<RadioGroup value={nationality} onChange={onRadioChange}>
-									<Input
-										{...inputProps}
-										value={nationality}
-										onClick={handleDialogueOpen}
-										onChange={handleDialogueOpen}
-									/>
-									<StyledModal
-										open={dialogueOpen}
-										onClose={handleDialogueClose}
-									>
-										<Fade in={dialogueOpen}>
-											<div className='searchForm'>
-												<p>국적을 선택해주세요</p>
-												{nationalities.map(value => (
-													<FormControlLabel
-														className='NationalityLabel'
-														value={value}
-														control={<Radio color='primary' />}
-														label={value}
-														onClick={handleDialogueClose}
-													/>
-												))}
-											</div>
-										</Fade>
-									</StyledModal>
-								</RadioGroup>
+								<Select
+									variant='outlined'
+									className='Nationality'
+									defaultValue={nationality}
+								>
+									{nationalities.map(value => (
+										<MenuItem
+											value={value}
+											onClick={() => setNationality(value)}
+										>
+											{value}
+										</MenuItem>
+									))}
+								</Select>
 							</div>
 						</div>
 					</PrivacyContainer>

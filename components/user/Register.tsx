@@ -1,15 +1,10 @@
 import {
 	Container,
-	Dialog,
-	DialogActions,
 	Fade,
 	FormControl,
-	FormControlLabel,
 	InputLabel,
 	MenuItem,
 	Modal,
-	Radio,
-	RadioGroup,
 	Select,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -23,8 +18,6 @@ import CpxBarometer from '../reuse/CpxBarometer';
 import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
 import Button from '../reuse/Button';
-import MatButton from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/icons/Close';
 const RegisterContainer = styled(Container)`
 	& > div {
 		margin: 1.25em 0;
@@ -32,7 +25,7 @@ const RegisterContainer = styled(Container)`
 	& > Button {
 		margin: 1em 0;
 	}
-	& .nationality {
+	& .Nationality {
 		display: flex;
 		&.MuiFormControl-root {
 			margin-top: 0.7rem;
@@ -134,36 +127,6 @@ const StyledModal = styled(Modal)`
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
 	}
 `;
-const CloseButtonDiv = styled(DialogActions)`
-	&.MuiDialogActions-root {
-		padding: 0.5em 0 0 0;
-		margin: 0;
-	}
-`;
-const NationalityDialog = styled(Dialog)`
-	& .MuiDialog-paperWidthSm {
-		min-width: 80%;
-		padding-bottom: 2em;
-	}
-	& > div > div > div {
-		margin: 0 2em;
-		&.HostInfoChange__ComponentDiv-sc-4jyjzj-0 {
-			margin-bottom: 0;
-		}
-		&.MuiDialogActions-root {
-			margin-top: 0;
-		}
-	}
-	-ms-overflow-style: none;
-	& .NationalityLabel {
-		margin-left: 2em;
-	}
-`;
-const Label = styled.p`
-	margin: 0 0 1em 2em;
-	font-size: 1em;
-	font-weight: bold;
-`;
 export default function Register() {
 	const speCharReg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/i;
 	const numReg = /[0-9]/;
@@ -216,9 +179,6 @@ export default function Register() {
 
 	const onClickHandler = (value: boolean) => {
 		setIsMan(value);
-	};
-	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setNationality(String(e.target.value));
 	};
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -324,7 +284,7 @@ export default function Register() {
 				/>
 			</div>
 			<div>
-				<FormControl variant='outlined' className='nationality'>
+				<FormControl variant='outlined' className='Nationality'>
 					<InputLabel id='select'>국적을 선택해주세요.</InputLabel>
 					<Select labelId='select' label='국적을 선택해주세요.'>
 						{nationalities.map(value => (
@@ -335,32 +295,6 @@ export default function Register() {
 					</Select>
 				</FormControl>
 			</div>
-			{/* <RadioGroup value={nationality} onChange={onRadioChange}>
-				<CssTextField
-					label='국적을 선택해주세요.'
-					variant='outlined'
-					type='text'
-					value={nationality}
-					onClick={handleDialogueOpen}
-				/>
-				<NationalityDialog open={dialogueOpen} onClose={handleDialogueClose}>
-					<CloseButtonDiv>
-						<MatButton onClick={handleDialogueClose}>
-							<CloseIcon />
-						</MatButton>
-					</CloseButtonDiv>
-					<Label>국적을 선택해주세요</Label>
-					{nationalities.map(value => (
-						<FormControlLabel
-							className='NationalityLabel'
-							value={value}
-							control={<Radio color='primary' />}
-							label={value}
-							onClick={handleDialogueClose}
-						/>
-					))}
-				</NationalityDialog>
-			</RadioGroup> */}
 			<div>
 				<CssTextField
 					label='주소를 입력하세요.'
