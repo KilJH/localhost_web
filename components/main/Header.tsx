@@ -49,43 +49,36 @@ const menuArray = [
 	{ name: '유저보기', path: '/users' },
 ];
 
-const HeaderDiv = styled.div<HeaderStyleProps>`
-	width: ${props => (props.isMobile ? '100%' : '80%')};
-	max-width: 1200px;
+const HeaderContainer = styled.header<HeaderStyleProps>`
+	width: 100%;
+	box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+	background-color: white;
+
 	height: ${props => (props.isMobile ? '2.5rem' : '4rem')};
 	min-height: 2.5rem;
 	max-height: 4rem;
-	margin: 0 auto;
-	/* box-sizing: border-box; */
-	padding: ${props => (props.isMobile ? '0.5rem 0' : '0')};
 
-	transition: top 0.5s ease;
-	background: white;
 	position: sticky;
 	top: ${props => (props.fixed ? '0' : props.isMobile ? '-3.5rem' : '-4rem')};
+	transition: top 0.5s ease;
+	z-index: 10;
+	padding: ${props => (props.isMobile ? '0.5rem 0' : '0')};
+`;
+
+const HeaderDiv = styled.div<HeaderStyleProps>`
+	width: ${props => (props.isMobile ? '100%' : '80%')};
+	max-width: 1200px;
+	height: inherit;
+	margin: 0 auto;
 
 	display: flex;
 	align-items: center;
-
-	z-index: 10;
-
-	/* transition: padding 0.3s ease; */
 
 	& > button {
 		width: 2.5rem;
 		height: 2.5rem;
 	}
 
-	& > .white {
-		position: fixed;
-		top: inherit;
-		padding: inherit;
-		left: 0;
-		width: 100%;
-		height: inherit;
-		z-index: -2;
-		background-color: white;
-		box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
 	}
 `;
 
@@ -259,59 +252,67 @@ const Header = (props: Props) => {
 
 	if (isMobile) {
 		return (
-			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
-				<div className='white'></div>
-				<FlexItemWrapper align='left'>
-					<IconButton>
-						<MenuIcon onClick={drawer.onOpen} />
-					</IconButton>
-					<Drawer
-						anchor={drawer.anchor}
-						open={drawer.open}
-						onClose={drawer.onClose}
-					>
-						<HamburgerMenu>
-							<div>
-								<EmptyFlexDiv />
-								<IconButton>
-									<CloseIcon onClick={drawer.onClose} />
-								</IconButton>
-							</div>
-							<Menu />
-						</HamburgerMenu>
-					</Drawer>
-				</FlexItemWrapper>
-				<Logo>
-					<Link href='/'>
-						<a>
-							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
-						</a>
-					</Link>
-				</Logo>
-				<FlexItemWrapper align='right'>
-					{isLogined ? <ChatMenu /> : ''}
-					<LoginMenu isLogined={isLogined} />
-				</FlexItemWrapper>
-			</HeaderDiv>
+			<HeaderContainer isMobile={isMobile} fixed={state.isUp}>
+				<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+					<FlexItemWrapper align='left'>
+						<IconButton>
+							<MenuIcon onClick={drawer.onOpen} />
+						</IconButton>
+						<Drawer
+							anchor={drawer.anchor}
+							open={drawer.open}
+							onClose={drawer.onClose}
+						>
+							<HamburgerMenu>
+								<div>
+									<EmptyFlexDiv />
+									<IconButton>
+										<CloseIcon onClick={drawer.onClose} />
+									</IconButton>
+								</div>
+								<Menu />
+							</HamburgerMenu>
+						</Drawer>
+					</FlexItemWrapper>
+					<Logo>
+						<Link href='/'>
+							<a>
+								<img
+									alt='mainlogo'
+									src='/img/logos/localhostLogoBlack.png'
+								></img>
+							</a>
+						</Link>
+					</Logo>
+					<FlexItemWrapper align='right'>
+						{isLogined ? <ChatMenu /> : ''}
+						<LoginMenu isLogined={isLogined} />
+					</FlexItemWrapper>
+				</HeaderDiv>
+			</HeaderContainer>
 		);
 	} else {
 		return (
-			<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
-				<div className='white'></div>
-				<Logo>
-					<Link href='/'>
-						<a>
-							<img alt='mainlogo' src='/img/logos/localhostLogoBlack.png'></img>
-						</a>
-					</Link>
-				</Logo>
+			<HeaderContainer isMobile={isMobile} fixed={state.isUp}>
+				<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
+					<Logo>
+						<Link href='/'>
+							<a>
+								<img
+									alt='mainlogo'
+									src='/img/logos/localhostLogoBlack.png'
+								></img>
+							</a>
+						</Link>
+					</Logo>
 
-				<MainMenu>
-					<Menu />
-				</MainMenu>
-				{isLogined ? <ChatMenu /> : ''}
-				<LoginMenu isLogined={isLogined} />
-			</HeaderDiv>
+					<MainMenu>
+						<Menu />
+					</MainMenu>
+					{isLogined ? <ChatMenu /> : ''}
+					<LoginMenu isLogined={isLogined} />
+				</HeaderDiv>
+			</HeaderContainer>
 		);
 	}
 };
