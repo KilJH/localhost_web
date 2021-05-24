@@ -3,10 +3,14 @@ import {
 	Dialog,
 	DialogActions,
 	Fade,
+	FormControl,
 	FormControlLabel,
+	InputLabel,
+	MenuItem,
 	Modal,
 	Radio,
 	RadioGroup,
+	Select,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -23,10 +27,25 @@ import MatButton from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 const RegisterContainer = styled(Container)`
 	& > div {
-		margin: 1rem 0;
+		margin: 1.25em 0;
 	}
 	& > Button {
-		margin: 1rem 0;
+		margin: 1em 0;
+	}
+	& .nationality {
+		display: flex;
+		&.MuiFormControl-root {
+			margin-top: 0.7rem;
+			margin-bottom: 0;
+		}
+		& .MuiOutlinedInput-root {
+			&.hover fieldset {
+				border-color: rgb(81, 151, 213);
+			}
+			&.Mui-focused fieldset {
+				border-color: rgb(81, 151, 213);
+			}
+		}
 	}
 `;
 
@@ -68,7 +87,6 @@ const CssTextField = styled(TextField)`
 	width: 100%;
 
 	&.MuiFormControl-root {
-		margin-top: 0.7rem;
 		margin-bottom: 0;
 	}
 	& .MuiOutlinedInput-root {
@@ -96,8 +114,8 @@ const FlexDiv = styled.div`
 `;
 
 const Caption = styled.p`
-	font-size: 0.5em;
-	font-weight: 600;
+	font-size: 0.9em;
+	font-weight: 500;
 	margin: 0.5rem 0 0 0;
 `;
 
@@ -181,15 +199,9 @@ export default function Register() {
 		'포르투갈',
 		'스페인',
 		'이탈리아',
+		'기타',
 	];
 	const [nationality, setNationality] = useState('');
-	const [dialogueOpen, setDialogueOpen] = useState(false);
-	const handleDialogueOpen = () => {
-		setDialogueOpen(true);
-	};
-	const handleDialogueClose = () => {
-		setDialogueOpen(false);
-	};
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => {
@@ -232,13 +244,12 @@ export default function Register() {
 				}
 			});
 	};
-
 	return (
 		<RegisterContainer maxWidth='sm'>
 			<div>
-				<h3 style={{ margin: '1rem 0 0 0' }}>
+				<h2 style={{ margin: '1rem 0 0 0' }}>
 					회원가입을 위해 개인정보를 입력해주세요.
-				</h3>
+				</h2>
 				<Caption>
 					LocalHost는 고객님의 소중한 정보를 안전하게 관리합니다.
 				</Caption>
@@ -312,7 +323,19 @@ export default function Register() {
 					variant='outlined'
 				/>
 			</div>
-			<RadioGroup value={nationality} onChange={onRadioChange}>
+			<div>
+				<FormControl variant='outlined' className='nationality'>
+					<InputLabel id='select'>국적을 선택해주세요.</InputLabel>
+					<Select labelId='select' label='국적을 선택해주세요.'>
+						{nationalities.map(value => (
+							<MenuItem value={value} onClick={() => setNationality(value)}>
+								{value}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			</div>
+			{/* <RadioGroup value={nationality} onChange={onRadioChange}>
 				<CssTextField
 					label='국적을 선택해주세요.'
 					variant='outlined'
@@ -320,7 +343,6 @@ export default function Register() {
 					value={nationality}
 					onClick={handleDialogueOpen}
 				/>
-				{/* 다이얼로그 창 */}
 				<NationalityDialog open={dialogueOpen} onClose={handleDialogueClose}>
 					<CloseButtonDiv>
 						<MatButton onClick={handleDialogueClose}>
@@ -338,7 +360,7 @@ export default function Register() {
 						/>
 					))}
 				</NationalityDialog>
-			</RadioGroup>
+			</RadioGroup> */}
 			<div>
 				<CssTextField
 					label='주소를 입력하세요.'
