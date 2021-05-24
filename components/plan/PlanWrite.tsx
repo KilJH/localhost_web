@@ -31,6 +31,7 @@ import { useToast } from '../../client/hooks/useToast';
 import { useModal } from '../../client/hooks/useModal';
 import SearchPlace from '../search/SearchPlace';
 import WritingImages from '../reuse/WritingImages';
+import Link from 'next/link';
 
 interface WrapperProps {
 	isFull?: boolean;
@@ -57,7 +58,11 @@ interface SaveProps {
 
 const types = ['이동', '식사', '관광'];
 
-const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
+const WriteContainer = styled.div<{
+	isFull?: boolean;
+	isMobile: boolean;
+	step: number;
+}>`
 	width: 80%;
 	margin: 0 auto;
 	display: flex;
@@ -108,7 +113,12 @@ const WriteContainer = styled.div<{ isFull?: boolean; isMobile: boolean }>`
 	}
 	& .btnContainer {
 		display: flex;
-		justify-content: ${props => (props.isFull ? 'center' : 'space-between')};
+		justify-content: ${props => {
+			const { step } = props;
+			if (step < 2) return 'center';
+			if (step < 4) return 'space-between';
+			return 'flex-end';
+		}};
 		width: 100%;
 		margin: 1rem 0;
 		& .prevNext button {
@@ -322,13 +332,13 @@ const WriteWrapper = (props: WrapperProps) => {
 	};
 
 	return (
-		<WriteContainer isFull={isFull} isMobile={isMobile}>
+		<WriteContainer isFull={isFull} isMobile={isMobile} step={step}>
 			<div className='progressWrapper'>
 				<LinearProgress variant='determinate' value={((step + 1) * 100) / 6} />
 			</div>
 			{children}
 			<div className='btnContainer'>
-				{step > 1 && step < 5 ? <SaveBtn {...saveProps} /> : ''}
+				{step > 1 && step < 4 ? <SaveBtn {...saveProps} /> : ''}
 				<div className='prevNext'>
 					{step === 0 || step === 5 ? (
 						''
@@ -464,7 +474,8 @@ const PlanWrite = () => {
 	}, [placeDetail]);
 
 	// 에러메세지 처리
-	const noDataToast = useToast(false);
+	const noDataErr = useToast(false);
+	const sameTimeErr = useToast(false);
 
 	// 이미지 업로드
 	const [images, setImages] = useState<File[]>([]);
@@ -488,8 +499,16 @@ const PlanWrite = () => {
 	// 일정 하나 추가
 	async function onAddTimePlan() {
 		if (timePlan.place.name === '' && timePlan.description === '') {
-			noDataToast.handleOpen();
+			noDataErr.handleOpen();
 			return;
+		}
+		const existingPlans = dayPlan.planTimes;
+		const plansLength = existingPlans.length;
+		for (let i = 0; i < plansLength; i++) {
+			if (timePlan.time === existingPlans[i].time) {
+				sameTimeErr.handleOpen();
+				return;
+			}
 		}
 
 		// 1. 파일 먼저 업로드
@@ -508,7 +527,9 @@ const PlanWrite = () => {
 
 		setDayPlan({
 			description: '',
-			planTimes: dayPlan.planTimes.concat({ ...timePlan, photo: imageUrls }),
+			planTimes: dayPlan.planTimes
+				.concat({ ...timePlan, photo: imageUrls })
+				.sort((a, b) => (a.time < b.time ? -1 : 1)),
 		});
 		setTimePlan({
 			time: new Date(0, 0, 0, 10, 0),
@@ -648,7 +669,7 @@ const PlanWrite = () => {
 			);
 		case 3:
 			return (
-				<WriteContainer isFull={false} isMobile={isMobile}>
+				<WriteContainer isFull={false} isMobile={isMobile} step={step}>
 					<div className='progressWrapper'>
 						<LinearProgress
 							variant='determinate'
@@ -766,17 +787,31 @@ const PlanWrite = () => {
 						</div>
 
 						<Snackbar
-							open={noDataToast.open}
+							open={noDataErr.open}
 							autoHideDuration={4000}
-							onClose={noDataToast.handleClose}
+							onClose={noDataErr.handleClose}
 						>
 							<Alert
-								onClose={noDataToast.handleClose}
+								onClose={noDataErr.handleClose}
 								severity='warning'
 								elevation={4}
 								variant='filled'
 							>
 								내용을 입력해주세요
+							</Alert>
+						</Snackbar>
+						<Snackbar
+							open={sameTimeErr.open}
+							autoHideDuration={4000}
+							onClose={sameTimeErr.handleClose}
+						>
+							<Alert
+								onClose={sameTimeErr.handleClose}
+								severity='warning'
+								elevation={4}
+								variant='filled'
+							>
+								같은 시간에 일정이 이미 존재합니다.
 							</Alert>
 						</Snackbar>
 					</PlanWriteContainer>
@@ -842,7 +877,9 @@ const PlanWrite = () => {
 				<WriteWrapper isFull={true} {...wrapperProps}>
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
-					<Button width='16rem'>작성한 플랜 보러가기</Button>
+					<Link href='' as=''>
+						<Button width='16rem'>작성한 플랜 보러가기</Button>
+					</Link>
 				</WriteWrapper>
 			);
 	}
