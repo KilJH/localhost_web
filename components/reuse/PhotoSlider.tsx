@@ -34,6 +34,7 @@ const Slide = styled.img`
 
 	/* props값이 없으면 기본으로 50vh */
 	height: ${(props: SlideProps) => props.height || '50vh'};
+	max-height: 80vh;
 `;
 
 const Container = styled.div`
@@ -54,6 +55,8 @@ const SliderBtnWrapper = styled.div`
 	& > button {
 		height: 100%;
 		padding: 0;
+		opacity: 0.8;
+		min-width: 4em;
 
 		/* border-radius 하나로 하려면 default 설정이 복잡해서 0으로 초기화 후 각모서리에 값 넣어줌 */
 		border-radius: 0;
@@ -62,8 +65,18 @@ const SliderBtnWrapper = styled.div`
 		border-top-left-radius: ${(props: SliderBtnProps) =>
 			props.borderRadius || '0'};
 
+		transition: all 0.1s ease;
+
+		& svg {
+			opacity: 0.6;
+			transition: all 0.1s ease;
+			font-size: 1.5em;
+		}
 		&.MuiButton-root:hover {
 			background: linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+			& svg {
+				opacity: 1;
+			}
 		}
 
 		& + button {
@@ -89,13 +102,18 @@ const SliderBtnWrapper = styled.div`
 const Page = styled.div`
 	position: absolute;
 	z-index: 1;
-	bottom: 1rem;
-	left: 1.5rem;
-	font-size: 0.8rem;
-	/* mix-blend-mode: screen; // 사진 배경색의 명암에 따라 그나마 잘 보일 수 있도록 */
-	color: #fdb927;
-	font-weight: 700;
-	text-shadow: #000 0 0 4px;
+	bottom: 0.5rem;
+	left: 0.75rem;
+	font-size: 0.8em;
+
+	color: #5197d5;
+	font-weight: 600;
+
+	background: rgba(0, 0, 0, 0.33);
+	padding: 0.5em 0.75rem;
+
+	height: 1rem;
+	border-radius: 1rem;
 `;
 
 const SliderContainer = styled.div`
@@ -146,9 +164,7 @@ const PhotoSlider = (props: Props) => {
 			</SliderContainer>
 
 			<Page>
-				<p>
-					{currentSlide + 1} / {props.imgSrcArray!.length}
-				</p>
+				{currentSlide + 1} / {props.imgSrcArray!.length}
 			</Page>
 		</Container>
 	);

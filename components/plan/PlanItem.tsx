@@ -86,7 +86,7 @@ const PlanItem = (props: Props) => {
 					<div className='title'>
 						<h2>{plan.title}</h2>
 						<span className='howLong'>
-							{plan.sleepDays === 0 && plan.travelDays === 1
+							{plan.sleepDays === 0 && plan.travelDays! <= 1
 								? '당일치기'
 								: plan.sleepDays === 0
 								? `무박${plan.travelDays}일`

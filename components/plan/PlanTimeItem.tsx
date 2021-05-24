@@ -92,7 +92,17 @@ const PlanTimeItem = (props: Props) => {
 					)}
 				</div>
 				<div className='descriptionItem'>{plan.description}</div>
-				<div>{plan.photo ? <PhotoSlider imgSrcArray={plan.photo} /> : ''}</div>
+				<div>
+					{plan.photo ? (
+						<PhotoSlider
+							imgSrcArray={plan.photo}
+							height='auto'
+							borderRadius='1rem'
+						/>
+					) : (
+						''
+					)}
+				</div>
 			</div>
 			{plan.price !== 0 ? (
 				<div className='priceItem'>{plan.price.toLocaleString()}</div>

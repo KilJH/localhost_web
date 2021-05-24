@@ -63,7 +63,7 @@ const WriteContainer = styled.div<{
 	isMobile: boolean;
 	step: number;
 }>`
-	width: 80%;
+	width: ${props => (props.isMobile ? '100%' : '80%')};
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
