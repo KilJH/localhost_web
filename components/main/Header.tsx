@@ -78,8 +78,6 @@ const HeaderDiv = styled.div<HeaderStyleProps>`
 		width: 2.5rem;
 		height: 2.5rem;
 	}
-
-	}
 `;
 
 const Logo = styled.div`
