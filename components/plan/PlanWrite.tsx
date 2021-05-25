@@ -42,6 +42,8 @@ interface WrapperProps {
 	plan?: Plan;
 	saveProps: SaveProps;
 	images?: File[];
+	titleState: string;
+	descState: string;
 }
 
 interface SaveProps {
@@ -203,6 +205,10 @@ const PlanWriteContainer = styled.div`
 			text-overflow: ellipsis;
 		}
 	}
+	& .place,
+	& .description {
+		position: relative;
+	}
 	& .place button,
 	& .description button {
 		position: absolute;
@@ -217,10 +223,11 @@ const PlanWriteContainer = styled.div`
 	}
 	& .place button,
 	& .description button.image {
-		transform: translateX(-3.5em);
+		right: 0;
 	}
 	& .description button.add {
-		transform: translate(-4em, 12em);
+		right: 0;
+		transform: translateY(12em);
 	}
 	& .MuiFormControl-marginNormal {
 		margin: 0;
@@ -245,6 +252,12 @@ const PlanWriteContainer = styled.div`
 	}
 	& .MuiSelect-select:focus {
 		background-color: rgba(0, 0, 0, 0);
+	}
+
+	& .imageBtnContainer {
+		position: relative;
+		right: 0;
+		top: 0;
 	}
 `;
 
@@ -305,10 +318,18 @@ const WriteWrapper = (props: WrapperProps) => {
 		setStep,
 		isMobile,
 		saveProps,
+		titleState,
+		descState,
 	} = props;
 	const currentUser = useContext(UserStateContext);
 
+	const noDataErr = useToast(false);
+
 	const onNextStep = () => {
+		if (step === 2 && (titleState === '' || descState === '')) {
+			noDataErr.handleOpen();
+			return;
+		}
 		if (step === 4) {
 			onSubmit();
 		} else {
@@ -356,6 +377,20 @@ const WriteWrapper = (props: WrapperProps) => {
 					)}
 				</div>
 			</div>
+			<Snackbar
+				open={noDataErr.open}
+				autoHideDuration={4000}
+				onClose={noDataErr.handleClose}
+			>
+				<Alert
+					onClose={noDataErr.handleClose}
+					severity='warning'
+					elevation={4}
+					variant='filled'
+				>
+					내용을 입력해주세요
+				</Alert>
+			</Snackbar>
 		</WriteContainer>
 	);
 };
@@ -476,6 +511,7 @@ const PlanWrite = () => {
 	// 에러메세지 처리
 	const noDataErr = useToast(false);
 	const sameTimeErr = useToast(false);
+	const noPlanErr = useToast(false);
 
 	// 이미지 업로드
 	const [images, setImages] = useState<File[]>([]);
@@ -595,6 +631,8 @@ const PlanWrite = () => {
 		setStep,
 		saveProps,
 		images,
+		titleState: planName.value as string,
+		descState: planDesc.value as string,
 	};
 
 	switch (step) {
@@ -789,7 +827,6 @@ const PlanWrite = () => {
 								}}
 							/>
 
-							{/* input type="file" 동적으로 만들어서 하기 */}
 							<button className='image' onClick={onUploadImage}>
 								<Image fontSize={isMobile ? 'small' : 'default'} />
 							</button>
@@ -828,6 +865,7 @@ const PlanWrite = () => {
 							</Alert>
 						</Snackbar>
 					</PlanWriteContainer>
+
 					<div className='btnContainer'>
 						<SaveBtn {...saveProps} />
 						<div className='prevNext'>
@@ -856,6 +894,12 @@ const PlanWrite = () => {
 								<Button
 									padding='1rem'
 									onClick={() => {
+										for (let i = 0; i < wholePlan.length; i++) {
+											if (wholePlan[i].planTimes.length < 1) {
+												noPlanErr.handleOpen();
+												return;
+											}
+										}
 										saveDayPlan();
 										setStep(step + 1);
 									}}
@@ -864,6 +908,21 @@ const PlanWrite = () => {
 								</Button>
 							)}
 						</div>
+
+						<Snackbar
+							open={noPlanErr.open}
+							autoHideDuration={4000}
+							onClose={noPlanErr.handleClose}
+						>
+							<Alert
+								onClose={noPlanErr.handleClose}
+								severity='warning'
+								elevation={4}
+								variant='filled'
+							>
+								일정이 존재하지않는 날짜가 있습니다.
+							</Alert>
+						</Snackbar>
 					</div>
 				</WriteContainer>
 				// 일정 삭제버튼
@@ -890,7 +949,7 @@ const PlanWrite = () => {
 				<WriteWrapper isFull={true} {...wrapperProps}>
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
-					<Link href='' as=''>
+					<Link href='plans/[id]' as={`plans/${30}`}>
 						<Button width='16rem'>작성한 플랜 보러가기</Button>
 					</Link>
 				</WriteWrapper>
