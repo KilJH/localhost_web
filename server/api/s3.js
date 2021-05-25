@@ -45,25 +45,13 @@ module.exports.upload = (req, res) => {
 };
 
 module.exports.imageMultiUpload = (req, res, name) => {
-	const file = req.files.file;
-	let uploadArr = [];
-	console.log(file);
-	const filesLen = file.length;
-	if (typeof filesLen === 'undefined') {
-		var param = {
-			Bucket: 'localhostphoto3',
-			Key: `${name}.${file.mimetype.split('/')[1]}`,
-			ACL: 'public-read',
-			Body: file.data,
-			ContentType: file.mimetype,
-		};
-
-		s3.upload(param, function (err, data) {
-			if (err) console.log(err);
-
-			res.json({ success: true, url: data.Location });
-		});
+	let file = req.files.file;
+	if (typeof file.length === 'undefined') {
+		file = [file];
 	}
+
+	let uploadArr = [];
+	const filesLen = file.length;
 
 	for (let i = 0; i < filesLen; i++) {
 		var params = {
