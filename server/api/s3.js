@@ -22,10 +22,21 @@ module.exports.upload = (req, res) => {
 	});
 };
 
+<<<<<<< HEAD
 module.exports.multiUpload = (req, res) => {
 	const file = req.files;
 	let uploadArr = [];
 	const filesLen = Object.keys(file).length;
+=======
+module.exports.imageMultiUpload = (req, res, name) => {
+	let file = req.files.file;
+	if (typeof file.length === 'undefined') {
+		file = [file];
+	}
+
+	let uploadArr = [];
+	const filesLen = file.length;
+>>>>>>> fb90cdc7fba1c0761dcdb65e63ce0c1f349c393e
 
 	let i = 0;
 	for (let key in file) {
