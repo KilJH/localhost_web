@@ -80,6 +80,8 @@ export default function HostApprovalDetail(props: Props) {
 				<Description>"{user!.description}"</Description>
 				<SubTitle>호스트 신청 날짜</SubTitle>
 				<Details>{user!.createTime}</Details>
+				<SubTitle>여행 스타일</SubTitle>
+				<Details>{user!.tag}</Details>
 				<SubTitle>사용 가능한 언어</SubTitle>
 				<Details>{user!?.languages.map(lang => lang)}</Details>
 				<SubTitle>국적</SubTitle>

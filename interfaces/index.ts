@@ -27,6 +27,7 @@ export interface Host {
 	photo?: string;
 	description?: string;
 	reqCountry?: number;
+	tag?: string;
 	createTime?: string;
 	languages: string[];
 	rating?: number;

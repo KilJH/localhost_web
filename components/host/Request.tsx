@@ -154,7 +154,7 @@ const Request = () => {
 				languages: langs,
 				description: description.value,
 				reqCountry: reqCountry,
-				travelStyle: selectedStyle,
+				tag: selectedStyle,
 			};
 
 			const res = await axios.post(`/api/host/request`, {

@@ -91,6 +91,8 @@ export default function HostApprovalDetail(props: Props) {
 				<Details>{host!?.hostingCount}</Details>
 				<SubTitle>호스팅 완료 횟수</SubTitle>
 				<Details>{host!?.hostingCount}</Details>
+				<SubTitle>여행 스타일</SubTitle>
+				<Details>{host!.tag}</Details>
 				<SubTitle>사용 가능한 언어</SubTitle>
 				<Details>
 					{host!?.languages.map((lang, index) =>

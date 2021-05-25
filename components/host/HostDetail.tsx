@@ -218,7 +218,11 @@ const HostDetail = (props: Props) => {
 							<td>사용언어</td>
 							<td>
 								{host.languages.map(lang =>
-									lang ? <LanguageTag language={lang} key={lang} /> : '',
+									lang && lang !== ' ' ? (
+										<LanguageTag language={lang} key={lang} />
+									) : (
+										''
+									),
 								)}
 							</td>
 						</tr>
@@ -235,15 +239,13 @@ const HostDetail = (props: Props) => {
 					<tbody>
 						<tr>
 							<td>여행스타일</td>
-							<td>
-								<TravelStyleTag
-									label='문화재'
-									onClick={() => {
-										setOn(!on);
-									}}
-									checked={on}
-								/>
-							</td>
+							{host.tag ? (
+								<td>
+									<TravelStyleTag label={host.tag} checked={on} />
+								</td>
+							) : (
+								''
+							)}
 						</tr>
 						<tr>
 							<td>매칭횟수</td>

@@ -28,6 +28,7 @@ module.exports.hostMapping = host => {
 		createTime: formatDate(host.create_time) || '',
 		languages: [host.language1, host.language2, host.language3],
 		rating: host.host_rating || host.rating,
+		tag: host.tag,
 		on: Boolean(host.on),
 		requestCount: host.request_count,
 		hostingCount: host.hosting_count,
@@ -122,7 +123,7 @@ module.exports.requestHost = (req, res) => {
 	}
 
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host_request(user_id,language1,language2,language3,description,reqcountry,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host_request(user_id,language1,language2,language3,description,reqcountry,tag,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?,?)`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
@@ -137,6 +138,7 @@ module.exports.requestHost = (req, res) => {
 				...languages,
 				hostInfo.description,
 				hostInfo.reqCountry,
+				hostInfo.tag,
 				hostInfo.place.geometry.location.lat,
 				hostInfo.place.geometry.location.lng,
 				`${hostInfo.place.formatted_address}(${hostInfo.place.name})`,
@@ -158,7 +160,7 @@ module.exports.allowHost = (req, res) => {
 	// 호스트 승인
 	const userId = req.body.userId;
 	const sql = `SELECT * FROM host_request WHERE user_id = ?`;
-	const insert = `INSERT INTO host(user_id,language1,language2,language3,description,reqcountry,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?)`;
+	const insert = `INSERT INTO host(user_id,language1,language2,language3,description,reqcountry,tag,latitude,longitude,address) VALUES(?,?,?,?,?,?,?,?,?,?)`;
 	const del = `DELETE FROM host_request WHERE user_id = ?`;
 	const update = `UPDATE user SET ishost=1 WHERE id = ?`;
 
@@ -176,6 +178,7 @@ module.exports.allowHost = (req, res) => {
 				rows[0].language3,
 				rows[0].description,
 				rows[0].reqcountry,
+				rows[0].tag,
 				rows[0].latitude,
 				rows[0].longitude,
 				rows[0].address,
@@ -297,13 +300,14 @@ module.exports.update = (req, res) => {
 		language3,
 		description,
 		reqCountry,
+		tag,
 		latitude,
 		longitude,
 		address,
 	} = req.body;
 
 	const sql = `UPDATE host SET language1 = "${language1}", language2 = "${language2}", language3 = "${language3}", description = "${description}"
-  , reqcountry = "${reqCountry}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
+  , reqcountry = "${reqCountry}", tag = "${tag}", latitude="${latitude}", longitude="${longitude}", address="${address}" WHERE user_id = "${id}";`;
 
 	mysql.query(sql, err => {
 		if (err) return console.log('host update err', err);

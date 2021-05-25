@@ -22,6 +22,8 @@ import { Place } from '../../../interfaces';
 import Modal from '@material-ui/core/Modal';
 import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
+import { travelStyles } from '../../../client/utils/basicData';
+import TravelStyleTag from '../../reuse/TravelStyleTag';
 
 interface Props {
 	host: Host;
@@ -132,6 +134,30 @@ const PlaceInput = styled(Input)`
 	cursor: pointer;
 `;
 
+const TravelStyleInput = ({
+	value: selectedStyle,
+	setValue: setSelectedStyle,
+}) => {
+	const onClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+		if (selectedStyle === e.currentTarget.innerText) {
+			setSelectedStyle('');
+			return;
+		}
+		setSelectedStyle(e.currentTarget.innerText);
+	};
+	return (
+		<>
+			{travelStyles.map(style => (
+				<TravelStyleTag
+					label={style}
+					checked={style === selectedStyle}
+					onClick={onClick}
+				/>
+			))}
+		</>
+	);
+};
+
 export default function MyHosting(props: Props): ReactElement {
 	const { host } = props;
 	const [isOn, setIsOn] = useState(host.on);
@@ -146,6 +172,7 @@ export default function MyHosting(props: Props): ReactElement {
 	const [languageSave, setLanguageSave] = useState(language);
 	const [languageOpen, setLanguageOpen] = useState(false);
 	const [placeOpen, setPlaceOpen] = useState(false);
+	const [selectedStyle, setSelectedStyle] = useState('');
 
 	let languages = [
 		'한국어',
@@ -178,96 +205,28 @@ export default function MyHosting(props: Props): ReactElement {
 		setPlaceOpen(false);
 	};
 
-	// const language1HandleChange = (
-	// 	event: React.ChangeEvent<HTMLSelectElement>,
-	// ) => {
-	// 	if (event.target.value === ' ') {
-	// 		if (
-	// 			event.target.value === ' ' &&
-	// 			language.language2 === ' ' &&
-	// 			language.language3 === ' '
-	// 		)
-	// 			alert('최소 언어 하나를 선택해주시기 바랍니다.');
-	// 		else {
-	// 			setLanguage({
-	// 				language1: event.target.value,
-	// 				language2: language.language2,
-	// 				language3: language.language3,
-	// 			});
-	// 		}
-	// 	} else if (
-	// 		event.target.value === language.language2 ||
-	// 		event.target.value === language.language3
-	// 	)
-	// 		alert('중복된 언어를 선택하셨습니다.');
-	// 	else {
-	// 		setLanguage({
-	// 			language1: event.target.value,
-	// 			language2: language.language2,
-	// 			language3: language.language3,
-	// 		});
-	// 	}
-	// };
-	// const language2HandleChange = (
-	// 	event: React.ChangeEvent<HTMLSelectElement>,
-	// ) => {
-	// 	if (event.target.value === ' ') {
-	// 		if (
-	// 			event.target.value === ' ' &&
-	// 			language.language1 === ' ' &&
-	// 			language.language3 === ' '
-	// 		)
-	// 			alert('최소 언어 하나를 선택해주시기 바랍니다.');
-	// 		else {
-	// 			setLanguage({
-	// 				language1: language.language1,
-	// 				language2: event.target.value,
-	// 				language3: language.language3,
-	// 			});
-	// 		}
-	// 	} else if (
-	// 		event.target.value === language.language1 ||
-	// 		event.target.value === language.language3
-	// 	)
-	// 		alert('중복된 언어를 선택하셨습니다.');
-	// 	else {
-	// 		setLanguage({
-	// 			language1: language.language1,
-	// 			language2: event.target.value,
-	// 			language3: language.language3,
-	// 		});
-	// 	}
-	// };
-	// const language3HandleChange = (
-	// 	event: React.ChangeEvent<HTMLSelectElement>,
-	// ) => {
-	// 	if (event.target.value === ' ') {
-	// 		if (
-	// 			event.target.value === ' ' &&
-	// 			language.language1 === ' ' &&
-	// 			language.language2 === ' '
-	// 		)
-	// 			alert('최소 언어 하나를 선택해주시기 바랍니다.');
-	// 		else {
-	// 			setLanguage({
-	// 				language1: language.language1,
-	// 				language2: language.language2,
-	// 				language3: event.target.value,
-	// 			});
-	// 		}
-	// 	} else if (
-	// 		event.target.value === language.language1 ||
-	// 		event.target.value === language.language2
-	// 	)
-	// 		alert('중복된 언어를 선택하셨습니다.');
-	// 	else {
-	// 		setLanguage({
-	// 			language1: language.language1,
-	// 			language2: language.language2,
-	// 			language3: event.target.value,
-	// 		});
-	// 	}
-	// };
+	const languageHandleChange = (lang1, lang2, lang3, target) => {
+		if (target === ' ') {
+			if (lang1 === ' ' && lang2 === ' ' && lang3 === ' ')
+				alert('최소 언어 하나를 선택해주시기 바랍니다.');
+			else {
+				setLanguage({
+					language1: lang1,
+					language2: lang2,
+					language3: lang3,
+				});
+			}
+		} else if (lang1 === lang2 || lang1 === lang3)
+			alert('중복된 언어를 선택하셨습니다.');
+		else {
+			setLanguage({
+				language1: lang1,
+				language2: lang2,
+				language3: lang3,
+			});
+		}
+	};
+
 	const isOnHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		setIsOn(!isOn);
@@ -288,9 +247,10 @@ export default function MyHosting(props: Props): ReactElement {
 		try {
 			const res = await axios.post(`/api/host/update`, {
 				id: host.id,
-				language1: language.language1 === ' ' ? null : language.language1,
-				language2: language.language2 === ' ' ? null : language.language2,
-				language3: language.language3 === ' ' ? null : language.language3,
+				language1: language.language1 === null ? ' ' : language.language1,
+				language2: language.language2 === null ? ' ' : language.language2,
+				language3: language.language3 === null ? ' ' : language.language3,
+				tag: selectedStyle,
 				description: description.value,
 				latitude: place?.geometry!.location.lat,
 				longitude: place?.geometry!.location.lng,
@@ -326,7 +286,9 @@ export default function MyHosting(props: Props): ReactElement {
 				variant='outlined'
 				multiline
 			/>
-
+			{/* 여행스타일 수정 */}
+			<Label>여행스타일 수정</Label>
+			<TravelStyleInput value={selectedStyle} setValue={setSelectedStyle} />
 			{/* 언어 설정 */}
 			<Label>사용 가능한 언어 설정</Label>
 
@@ -340,7 +302,14 @@ export default function MyHosting(props: Props): ReactElement {
 							<InputLabel>언어1</InputLabel>
 							<Select
 								value={language.language1}
-								// onChange={language1HandleChange}
+								onChange={e =>
+									languageHandleChange(
+										e.target.value,
+										language.language2,
+										language.language3,
+										e.target.value,
+									)
+								}
 								input={<SelectInput />}
 							>
 								<MenuItem value=' '>
@@ -355,7 +324,14 @@ export default function MyHosting(props: Props): ReactElement {
 							<InputLabel>언어2</InputLabel>
 							<Select
 								value={language.language2}
-								// onChange={language2HandleChange}
+								onChange={e =>
+									languageHandleChange(
+										language.language1,
+										e.target.value,
+										language.language3,
+										e.target.value,
+									)
+								}
 								input={<SelectInput />}
 							>
 								<MenuItem value=' '>
@@ -370,7 +346,14 @@ export default function MyHosting(props: Props): ReactElement {
 							<InputLabel>언어3</InputLabel>
 							<Select
 								value={language.language3}
-								// onChange={language3HandleChange}
+								onChange={e =>
+									languageHandleChange(
+										language.language1,
+										language.language2,
+										e.target.value,
+										e.target.value,
+									)
+								}
 								input={<SelectInput />}
 							>
 								<MenuItem value=' '>

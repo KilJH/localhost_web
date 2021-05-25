@@ -6,6 +6,7 @@ import Button from '../reuse/Button';
 import Link from 'next/link';
 import Rating from '../reuse/Rating';
 import LanguageTag from '../reuse/LanguageTag';
+import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface Props {
 	host: Host;
@@ -136,7 +137,11 @@ const HostListItem = (props: Props) => {
 				<div className='flex'>
 					<div className='language'>
 						{host?.languages.map(lang =>
-							lang ? <LanguageTag language={lang} key={lang} /> : '',
+							lang && lang !== ' ' ? (
+								<LanguageTag language={lang} key={lang} />
+							) : (
+								''
+							),
 						)}
 					</div>
 
