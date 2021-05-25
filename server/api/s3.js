@@ -6,28 +6,6 @@ AWS.config.region = 'ap-northeast-2';
 
 var s3 = new AWS.S3(password.s3);
 
-function getCurrentDate() {
-	var date = new Date();
-	var year = date.getFullYear().toString();
-
-	var month = date.getMonth() + 1;
-	month = month < 10 ? '0' + month.toString() : month.toString();
-
-	var day = date.getDate();
-	day = day < 10 ? '0' + day.toString() : day.toString();
-
-	var hour = date.getHours();
-	hour = hour < 10 ? '0' + hour.toString() : hour.toString();
-
-	var minites = date.getMinutes();
-	minites = minites < 10 ? '0' + minites.toString() : minites.toString();
-
-	var seconds = date.getSeconds();
-	seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
-
-	return year + month + day + hour + minites + seconds;
-}
-
 module.exports.upload = (req, res) => {
 	var param = {
 		Bucket: 'localhostphoto3',
@@ -44,51 +22,29 @@ module.exports.upload = (req, res) => {
 	});
 };
 
-module.exports.imageMultiUpload = (req, res, name) => {
-	const file = req.files.file;
+module.exports.multiUpload = (req, res) => {
+	const file = req.files;
 	let uploadArr = [];
-	console.log(file);
-	const filesLen = file.length;
-	if (typeof filesLen === 'undefined') {
-		var param = {
-			Bucket: 'localhostphoto3',
-			Key: `${name}.${file.mimetype.split('/')[1]}`,
-			ACL: 'public-read',
-			Body: file.data,
-			ContentType: file.mimetype,
-		};
+	const filesLen = Object.keys(file).length;
 
-		s3.upload(param, function (err, data) {
-			if (err) console.log(err);
-
-			res.json({ success: true, url: data.Location });
-		});
-	}
-
-	for (let i = 0; i < filesLen; i++) {
+	let i = 0;
+	for (let key in file) {
 		var params = {
 			Bucket: 'localhostphoto3',
-			Key: `${name}_${i}.${file[i].mimetype.split('/')[1]}`,
+			Key: `test_${i}.${file[key].mimetype.split('/')[1]}`,
 			ACL: 'public-read',
-			Body: file[i].data,
-			ContentType: file[i].mimetype,
+			Body: file[key].data,
+			ContentType: file[key].mimetype,
 		};
+		i++;
 		s3.upload(params, function (err, data) {
 			if (err) console.log('multi update err', err);
-			uploadArr.push(data.Location);
+			uploadArr.push(data);
 			if (uploadArr.length === filesLen) {
-				res.json({ success: true, urls: uploadArr });
+				res.json({ success: true, data: uploadArr });
 			}
 		});
 	}
-};
-
-module.exports.planImageUpload = (req, res) => {
-	const userId = req.body.userId;
-	const now = new Date().getTime();
-	const name = `temp_${userId}_${now}`;
-
-	this.imageMultiUpload(req, res, name);
 };
 
 module.exports.load = (req, res) => {
