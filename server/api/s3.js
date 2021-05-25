@@ -31,35 +31,70 @@ module.exports.imageMultiUpload = (req, res, name) => {
 	let uploadArr = [];
 	const filesLen = file.length;
 
-	let i = 0;
-	for (let key in file) {
+	for (let i = 0; i < filesLen; i++) {
 		var params = {
 			Bucket: 'localhostphoto3',
-			Key: `test_${i}.${file[key].mimetype.split('/')[1]}`,
+			Key: `${name}_${i}.${file[i].mimetype.split('/')[1]}`,
 			ACL: 'public-read',
-			Body: file[key].data,
-			ContentType: file[key].mimetype,
+			Body: file[i].data,
+			ContentType: file[i].mimetype,
 		};
-		i++;
 		s3.upload(params, function (err, data) {
 			if (err) console.log('multi update err', err);
-			uploadArr.push(data);
+			uploadArr.push(data.Location);
 			if (uploadArr.length === filesLen) {
-				res.json({ success: true, data: uploadArr });
+				res.json({ success: true, urls: uploadArr });
 			}
 		});
 	}
 };
 
+module.exports.planImageUpload = (req, res) => {
+	const userId = req.body.userId;
+	const now = new Date().getTime();
+	const name = `temp_${userId}_${now}`;
+	this.imageMultiUpload(req, res, name);
+};
+
 module.exports.load = (req, res) => {
 	s3.listObjects({ Bucket: 'localhostphoto3' })
 		.on('success', function handlePage(response) {
+			const id = req.body.id;
+
 			for (var name in response.data.Contents) {
-				console.log(response.data.Contents[name].Key);
+				const file = response.data.Contents[name].Key;
+				if (file.includes(`temp_${id}`)) {
+					console.log(file);
+				}
 			}
+
 			if (response.hasNextPage()) {
 				response.nextPage().on('success', handlePage).send();
 			}
 		})
 		.send();
+};
+
+module.exports.copy = (req, res) => {
+	const id = req.body.id;
+	s3.listObjectsV2(
+		{ Bucket: `localhostphoto3`, MaxKeys: 1000 },
+		async (err, data) => {
+			const { Contents } = data;
+			const keys = Contents.map(info => info.Key);
+			const files = keys.filter(file => {
+				return file.includes(`temp_${id}`);
+			});
+			console.log(files[0]);
+			const info = {
+				Bucket: 'localhostphoto3',
+				CopySource: `${files[0]}`,
+				Key: `hi+$${files[0]}`,
+			};
+
+			s3.copyObject(info, async (err, data) => {
+				res.json({ success: true, data });
+			});
+		},
+	);
 };

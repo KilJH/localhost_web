@@ -14,5 +14,8 @@ router.post('/upload/plan/image', function (req, res, next) {
 router.post('/load', function (req, res, next) {
 	management.load(req, res);
 });
+router.post('/copy', function (req, res, next) {
+	management.copy(req, res);
+});
 
 module.exports = router;
