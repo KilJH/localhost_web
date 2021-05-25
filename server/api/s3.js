@@ -52,7 +52,7 @@ module.exports.imageMultiUpload = (req, res, name) => {
 module.exports.planImageUpload = (req, res) => {
 	const userId = req.body.userId;
 	const now = new Date().getTime();
-	const name = `temp_${userId}_${now}`;
+	const name = `plan_${userId}_${now}`;
 	this.imageMultiUpload(req, res, name);
 };
 
@@ -77,6 +77,10 @@ module.exports.load = (req, res) => {
 
 module.exports.copy = (req, res) => {
 	const id = req.body.id;
+	const planId = req.body.planId;
+	const date = req.body.date;
+	const time = req.body.time;
+
 	s3.listObjectsV2(
 		{ Bucket: `localhostphoto3`, MaxKeys: 1000 },
 		async (err, data) => {
@@ -85,16 +89,32 @@ module.exports.copy = (req, res) => {
 			const files = keys.filter(file => {
 				return file.includes(`temp_${id}`);
 			});
-			console.log(files[0]);
-			const info = {
-				Bucket: 'localhostphoto3',
-				CopySource: `${files[0]}`,
-				Key: `hi+$${files[0]}`,
-			};
 
-			s3.copyObject(info, async (err, data) => {
-				res.json({ success: true, data });
-			});
+			let filesLen = files.length;
+			let copyArr = [];
+
+			console.log(files);
+			for (let i = 0; i < filesLen; i++) {
+				const info = {
+					Bucket: 'localhostphoto3',
+					CopySource: `/localhostphoto3/${files[i]}`,
+					Key: `plan_${planId}_${date}_${time}_${i}`,
+				};
+
+				s3.copyObject(info, async (err, data) => {
+					//if (err) console.log(err, err.stack);
+
+					const params = {
+						Bucket: 'localhostphoto3',
+						Key: `${files[i]}`,
+					};
+
+					copyArr.push(data);
+					if (copyArr.length === filesLen) {
+						res.json({ success: true });
+					}
+				});
+			}
 		},
 	);
 };

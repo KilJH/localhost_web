@@ -187,6 +187,20 @@ module.exports.write = (req, res) => {
 		req.body.plan;
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
+	if (title === '' || description === '') {
+		console.log('와이라노fff');
+		res.json({ success: false });
+		return;
+	}
+
+	for (let i = 0; i < planDays.length; i++) {
+		if (planDays[i].planTimes.length < 1) {
+			console.log('와이라노', planDays[i]);
+			res.json({ success: false });
+			return;
+		}
+	}
+
 	mysql.query(sql, (err, rows) => {
 		if (err) {
 			return err;
@@ -224,13 +238,15 @@ module.exports.write = (req, res) => {
 							planTime.time
 						}", "${planTime.type}","${planTime.place?.name}", ${place}, ${
 							planTime.place?.geometry?.location?.lat || null
-						}, ${planTime.place?.geometry?.location?.lng || null})`,
+						}, ${
+							planTime.place?.geometry?.location?.lng || null
+						}, "${planTime.photo.join(';')}")`,
 					);
 				});
 			}
 
 			const planTimesStr = arr.join(',');
-			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude) VALUES ${planTimesStr}`;
+			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude, photo) VALUES ${planTimesStr}`;
 
 			mysql.query(timeSql, err3 => {
 				if (err3) {
