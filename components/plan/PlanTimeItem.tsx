@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { PlanTime } from '../../interfaces';
 import PhotoSlider from '../reuse/PhotoSlider';
 import CloseIcon from '@material-ui/icons/Close';
-import { Button, Fade } from '@material-ui/core';
+import { Button, Fade, Modal } from '@material-ui/core';
+import { useModal } from '../../client/hooks/useModal';
+import PlanMap from './planMap';
 
 interface Props {
 	plan: PlanTime;
@@ -34,8 +36,16 @@ const ItemContainer = styled.div`
 			align-items: center;
 			font-size: 0.8em;
 			color: #333;
+			cursor: pointer;
+
+			transition: font-weight color 0.1s ease;
 			& > svg {
 				font-size: 1.5em;
+			}
+
+			&:hover {
+				color: black;
+				font-weight: 500;
 			}
 		}
 	}
@@ -59,7 +69,7 @@ const ItemContainer = styled.div`
 		}
 	}
 
-	& div.place {
+	& div.placeWrapper {
 		flex: 1;
 	}
 
@@ -88,6 +98,23 @@ const DeleteContainer = styled.div`
 	}
 `;
 
+const StyledModal = styled(Modal)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	& > .map_container {
+		width: 80vw;
+		height: 50vh;
+		max-width: 800px;
+		background: rgba(255, 255, 255, 0.9);
+		padding: 1rem;
+		border-radius: 0.25rem;
+		outline: 0;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
+	}
+`;
+
 const PlanTimeItem = (props: Props) => {
 	const { plan, onDelete } = props;
 	const [isShow, setIsShow] = useState(false);
@@ -97,6 +124,8 @@ const PlanTimeItem = (props: Props) => {
 	const handleClose = () => {
 		setIsShow(false);
 	};
+
+	const map = useModal(false);
 
 	return (
 		<ItemContainer onMouseEnter={handleOpen} onMouseLeave={handleClose}>
@@ -117,14 +146,21 @@ const PlanTimeItem = (props: Props) => {
 					{plan.type === '이동' ? '이동' : ''}
 				</div>
 			</div>
-			<div className='place'>
+			<div className='placeWrapper'>
 				<div className='placeItem'>
 					{plan.place.name}
 					{plan.place.geometry ? (
-						<span className='placeDetail'>
-							<LocationOn />
-							지도보기
-						</span>
+						<>
+							<span className='placeDetail' onClick={map.handleOpen}>
+								<LocationOn />
+								지도보기
+							</span>
+							<StyledModal open={map.open} onClose={map.handleClose}>
+								<div className='map_container'>
+									<PlanMap place={plan.place} />
+								</div>
+							</StyledModal>
+						</>
 					) : (
 						''
 					)}
