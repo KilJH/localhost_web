@@ -88,7 +88,7 @@ const WriteContainer = styled.div<{
 		top: ${props => (props.isFull ? (props.isMobile ? '2.5rem' : '4rem') : 0)};
 		padding: 2rem 0;
 		background: white;
-		z-index: 1;
+		z-index: 2;
 	}
 	& div[role='progressbar'] {
 		height: ${props => (props.isMobile ? '4px' : '8px')};
@@ -544,6 +544,19 @@ const PlanWrite = () => {
 		setPlaceDetail(undefined);
 	}
 
+	const onDeleteTimePlan = (i: number) => {
+		const existingPlans = dayPlan.planTimes;
+		const newPlans = [
+			...existingPlans.slice(0, i),
+			...existingPlans.slice(i + 1, existingPlans.length),
+		];
+
+		setDayPlan({
+			...dayPlan,
+			planTimes: newPlans,
+		});
+	};
+
 	// 하루 일정 추가
 	function saveDayPlan(): void {
 		setWholePlan(
@@ -678,7 +691,7 @@ const PlanWrite = () => {
 					</div>
 					{/* 일별 일정 작성*/}
 					<PlanWriteContainer>
-						<PlanDayItem planDay={dayPlan} />
+						<PlanDayItem planDay={dayPlan} onDelete={onDeleteTimePlan} />
 						<h2>{date}일차 일정</h2>
 						<div className='flex'>
 							<MuiPickersUtilsProvider utils={DateFnsUtils}>

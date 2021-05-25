@@ -1,12 +1,14 @@
 import { LocationOn } from '@material-ui/icons';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { PlanTime } from '../../interfaces';
 import PhotoSlider from '../reuse/PhotoSlider';
+import CloseIcon from '@material-ui/icons/Close';
+import { Button, Fade } from '@material-ui/core';
 
 interface Props {
 	plan: PlanTime;
-	removable?: boolean;
+	onDelete?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const ItemContainer = styled.div`
@@ -51,12 +53,13 @@ const ItemContainer = styled.div`
 
 	& > div {
 		margin: 0.5rem 1em;
+		z-index: 1;
 		& > * {
 			margin: 0.5rem 0;
 		}
 	}
 
-	& div:nth-child(2) {
+	& div.place {
 		flex: 1;
 	}
 
@@ -69,17 +72,52 @@ const ItemContainer = styled.div`
 	}
 `;
 
+const DeleteContainer = styled.div`
+	padding: 0;
+	max-width: 2em;
+	margin: 0.25rem !important;
+	& button {
+		padding: 0;
+		max-width: 1em;
+		max-height: 1em;
+		min-width: 2em;
+		min-height: 2em;
+		width: 4em;
+		height: 4em;
+		border-radius: 50%;
+	}
+`;
+
 const PlanTimeItem = (props: Props) => {
-	const { plan } = props;
+	const { plan, onDelete } = props;
+	const [isShow, setIsShow] = useState(false);
+	const handleOpen = () => {
+		setIsShow(true);
+	};
+	const handleClose = () => {
+		setIsShow(false);
+	};
+
 	return (
-		<ItemContainer>
+		<ItemContainer onMouseEnter={handleOpen} onMouseLeave={handleClose}>
+			{onDelete ? (
+				<Fade in={isShow}>
+					<DeleteContainer>
+						<Button onClick={onDelete}>
+							<CloseIcon fontSize='small' />
+						</Button>
+					</DeleteContainer>
+				</Fade>
+			) : (
+				''
+			)}
 			<div>
 				<div className='timeItem'>{plan.time.toString()}</div>
 				<div style={{ textAlign: 'center', fontSize: '0.8em' }}>
 					{plan.type === '이동' ? '이동' : ''}
 				</div>
 			</div>
-			<div>
+			<div className='place'>
 				<div className='placeItem'>
 					{plan.place.name}
 					{plan.place.geometry ? (
