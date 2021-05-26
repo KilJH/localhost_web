@@ -20,8 +20,8 @@ import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import SearchPlace from '../../search/SearchPlace';
 import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 import Router from 'next/router';
-import { scrollPosition } from './../../../client/utils/checkScrollDirection';
 import Toast from '../../reuse/Toast';
+import { Color } from '@material-ui/lab';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -317,9 +317,9 @@ const ChatRoom = (props: Props) => {
 	// toast
 	const [toastOpen, setToastOpen] = useState(false);
 	const [toastMsg, setToastMsg] = useState('');
-	const [toastType, setToastType] = useState('success');
+	const [toastType, setToastType] = useState<Color>('success');
 
-	const toast = (type, msg, open) => {
+	const toast = (msg: string, type: Color, open: boolean) => {
 		setToastMsg(msg);
 		setToastType(type);
 		setToastOpen(open);
