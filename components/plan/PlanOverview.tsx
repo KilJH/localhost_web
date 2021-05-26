@@ -125,7 +125,7 @@ const PlanOverview: React.FC<Props> = props => {
 					</div>
 					<img
 						alt='여행사진'
-						src={plan.thumbnail || '/img/logos/localhostLogoBlack.png'}
+						src={plan.thumb || '/img/logos/localhostLogoBlack.png'}
 					></img>
 				</PlanOverviewImg>
 			</Grid>

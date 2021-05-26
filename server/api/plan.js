@@ -51,6 +51,7 @@ module.exports.list = (req, res) => {
 				sleepDays: plan.sleep_days,
 				travelDays: plan.travel_days,
 				price: plan.price,
+				thumb: plan.thumb,
 				createTime: formatDate(plan.create_time),
 				hit: plan.hit,
 				author: {
@@ -150,6 +151,7 @@ module.exports.load = (req, res) => {
 				description: plansRows[0].description,
 				sleepDays: plansRows[0].sleep_days,
 				travelDays: plansRows[0].travel_days,
+				thumb: plansRows[0].thumb,
 				createTime: formatDate(plansRows[0].create_time),
 				hit: plansRows[0].hit,
 				author: {

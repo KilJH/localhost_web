@@ -79,7 +79,7 @@ const PlanItem = (props: Props) => {
 			<img
 				className='thumb'
 				alt='thumbnail'
-				src={plan.thumbnail ?? 'https://via.placeholder.com/128'}
+				src={plan.thumb || 'https://via.placeholder.com/128'}
 			></img>
 			<StyledListBody>
 				<div>

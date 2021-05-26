@@ -5,7 +5,6 @@ import {
 	MenuItem,
 	Modal,
 	Select,
-	Snackbar,
 	useMediaQuery,
 } from '@material-ui/core';
 import { AddLocation, Image, PlaylistAdd } from '@material-ui/icons';
@@ -26,12 +25,13 @@ import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
 import { countries, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
-import Alert from '@material-ui/lab/Alert';
 import { useToast } from '../../client/hooks/useToast';
 import { useModal } from '../../client/hooks/useModal';
 import SearchPlace from '../search/SearchPlace';
 import WritingImages from '../reuse/WritingImages';
 import Link from 'next/link';
+import Toast from '../reuse/Toast';
+import ThumbnailPicker from './ThumbnailPicker';
 
 interface WrapperProps {
 	isFull?: boolean;
@@ -291,20 +291,9 @@ const SaveBtn = (props: SaveProps) => {
 				임시저장
 			</Button>
 
-			<Snackbar
-				open={saveToast.open}
-				autoHideDuration={4000}
-				onClose={saveToast.handleClose}
-			>
-				<Alert
-					onClose={saveToast.handleClose}
-					severity='success'
-					elevation={4}
-					variant='filled'
-				>
-					임시저장을 완료하였습니다.
-				</Alert>
-			</Snackbar>
+			<Toast {...saveToast} type='success'>
+				임시저장을 완료하였습니다.
+			</Toast>
 		</>
 	);
 };
@@ -377,20 +366,10 @@ const WriteWrapper = (props: WrapperProps) => {
 					)}
 				</div>
 			</div>
-			<Snackbar
-				open={noDataErr.open}
-				autoHideDuration={4000}
-				onClose={noDataErr.handleClose}
-			>
-				<Alert
-					onClose={noDataErr.handleClose}
-					severity='warning'
-					elevation={4}
-					variant='filled'
-				>
-					내용을 입력해주세요
-				</Alert>
-			</Snackbar>
+
+			<Toast {...noDataErr} type='warning'>
+				내용을 입력해주세요
+			</Toast>
 		</WriteContainer>
 	);
 };
@@ -512,6 +491,8 @@ const PlanWrite = () => {
 	const noDataErr = useToast(false);
 	const sameTimeErr = useToast(false);
 	const noPlanErr = useToast(false);
+
+	const [thumb, setThumb] = useState('');
 
 	// 이미지 업로드
 	const [images, setImages] = useState<File[]>([]);
@@ -836,34 +817,12 @@ const PlanWrite = () => {
 							<WritingImages images={images} setImages={setImages} />
 						</div>
 
-						<Snackbar
-							open={noDataErr.open}
-							autoHideDuration={4000}
-							onClose={noDataErr.handleClose}
-						>
-							<Alert
-								onClose={noDataErr.handleClose}
-								severity='warning'
-								elevation={4}
-								variant='filled'
-							>
-								내용을 입력해주세요
-							</Alert>
-						</Snackbar>
-						<Snackbar
-							open={sameTimeErr.open}
-							autoHideDuration={4000}
-							onClose={sameTimeErr.handleClose}
-						>
-							<Alert
-								onClose={sameTimeErr.handleClose}
-								severity='warning'
-								elevation={4}
-								variant='filled'
-							>
-								같은 시간에 일정이 이미 존재합니다.
-							</Alert>
-						</Snackbar>
+						<Toast {...noDataErr} type='warning'>
+							내용을 입력해주세요
+						</Toast>
+						<Toast {...sameTimeErr} type='warning'>
+							같은 시간에 일정이 이미 존재합니다.
+						</Toast>
 					</PlanWriteContainer>
 
 					<div className='btnContainer'>
@@ -909,20 +868,9 @@ const PlanWrite = () => {
 							)}
 						</div>
 
-						<Snackbar
-							open={noPlanErr.open}
-							autoHideDuration={4000}
-							onClose={noPlanErr.handleClose}
-						>
-							<Alert
-								onClose={noPlanErr.handleClose}
-								severity='warning'
-								elevation={4}
-								variant='filled'
-							>
-								일정이 존재하지않는 날짜가 있습니다.
-							</Alert>
-						</Snackbar>
+						<Toast {...noPlanErr} type='warning'>
+							일정이 존재하지않는 날짜가 있습니다.
+						</Toast>
 					</div>
 				</WriteContainer>
 				// 일정 삭제버튼
@@ -934,12 +882,31 @@ const PlanWrite = () => {
 				sleepDays: sleepDate,
 				travelDays: tripDate,
 				tags: [],
+				thumb: thumb,
 				planDays: wholePlan,
 			};
+
+			// 썸네일을 고르기 위해 업로드한 모든 사진 배열화
+			let wholeImage: string[] = [];
+			wholePlan.forEach(planDay => {
+				planDay.planTimes.forEach(planTime => {
+					if (planTime.photo!.length > 0) {
+						wholeImage = [...wholeImage, ...(planTime.photo as string[])];
+					}
+				});
+			});
+
 			return (
 				<WriteWrapper plan={plan} {...wrapperProps}>
+					{/* 썸네일 사진 고르기 */}
+					{wholeImage.length > 0 ? (
+						<ThumbnailPicker images={wholeImage} setThumb={setThumb} />
+					) : (
+						''
+					)}
 					{/* 전체 개요*/}
 					<div style={{ width: '100%' }}>
+						<h2 style={{ margin: '0.5rem 0' }}>작성한 플랜을 확인하세요</h2>
 						<PlanWholeItem plans={wholePlan} />
 					</div>
 				</WriteWrapper>

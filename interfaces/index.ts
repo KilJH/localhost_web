@@ -51,7 +51,7 @@ export interface Plan {
 	hit?: number;
 	author?: User;
 	numOfComment?: number;
-	thumbnail?: string;
+	thumb?: string;
 }
 
 export interface PlanDay {
