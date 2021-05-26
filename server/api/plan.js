@@ -186,7 +186,8 @@ module.exports.write = (req, res) => {
 	const userId = req.body.userId;
 	const { title, description, sleepDays, travelDays, tags, planDays } =
 		req.body.plan;
-	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
+	const thumb = req.body.plan.thumb || '';
+	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days, thumb) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}", "${thumb}");`;
 
 	if (title === '' || description === '') {
 		res.json({ success: false });
