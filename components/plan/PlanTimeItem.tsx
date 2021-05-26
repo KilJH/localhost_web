@@ -149,7 +149,7 @@ const PlanTimeItem = (props: Props) => {
 			<div className='placeWrapper'>
 				<div className='placeItem'>
 					{plan.place.name}
-					{plan.place.geometry ? (
+					{plan.place.geometry?.location.lat ? (
 						<>
 							<span className='placeDetail' onClick={map.handleOpen}>
 								<LocationOn />
