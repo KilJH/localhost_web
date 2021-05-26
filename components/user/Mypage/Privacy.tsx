@@ -1,4 +1,4 @@
-import { Modal, Fade, Snackbar, Select, MenuItem } from '@material-ui/core';
+import { Modal, Fade, Select, MenuItem } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../client/hooks/useInput';
 import { Place, User } from '../../../interfaces';
@@ -10,7 +10,9 @@ import Button from '../../reuse/Button';
 import CpxBarometer from '../../reuse/CpxBarometer';
 import Input from '../../reuse/Input';
 import SearchPlace from '../../search/SearchPlace';
-import Alert from '@material-ui/lab/Alert';
+import { useModal } from '../../../client/hooks/useModal';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 interface Props {
 	id: string;
@@ -123,28 +125,11 @@ const Privacy = (props: Props) => {
 		'이탈리아',
 		'기타',
 	];
+
 	// 정보변경 알림
-	const [onToast, setOnToase] = useState(false);
-	const onOpenToast = () => {
-		setOnToase(true);
-	};
-	const onCloseToast = (_event?: React.SyntheticEvent, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-		setOnToase(false);
-	};
+	const submitToast = useToast(false);
 	// 패스워드 변경 알림
-	const [onPwToast, setOnPwToase] = useState(false);
-	const onOpenPwToast = () => {
-		setOnPwToase(true);
-	};
-	const onClosePwToast = (_event?: React.SyntheticEvent, reason?: string) => {
-		if (reason === 'clickaway') {
-			return;
-		}
-		setOnPwToase(false);
-	};
+	const pwToast = useToast(false);
 
 	// 취소버튼
 	const onReset = () => {
@@ -169,7 +154,7 @@ const Privacy = (props: Props) => {
 			email: currentUser.email,
 			nickname: nnInput.value,
 			phone: phInput.value,
-			address: address,
+			address: address || currentUser.address,
 			nationality: nationality,
 		};
 		// 유저정보 변경
@@ -177,7 +162,7 @@ const Privacy = (props: Props) => {
 
 		if (res.data.success) {
 			setCurrentUser({ ...currentUser, ...user });
-			onOpenToast();
+			submitToast.handleOpen();
 			// Router.push('/users/mypage');
 		}
 	};
@@ -191,7 +176,7 @@ const Privacy = (props: Props) => {
 					pw: pwInput.value,
 				})
 				.then(res => {
-					res.data.success ? onOpenPwToast() : '';
+					res.data.success ? pwToast.handleOpen() : '';
 				});
 		}
 		pwInput.setValue('');
@@ -257,15 +242,10 @@ const Privacy = (props: Props) => {
 	}, [img]);
 
 	// 모달을 위한 State
-	const [open, setOpen] = useState(false);
-	const handleOpen = () => {
-		setOpen(true);
-	};
-	const handleClose = () => {
-		setOpen(false);
-	};
+	const placeModal = useModal(false);
+
 	useEffect(() => {
-		setOpen(false);
+		placeModal.handleClose();
 	}, [place]);
 
 	return (
@@ -363,12 +343,12 @@ const Privacy = (props: Props) => {
 											? `${place?.formatted_address}(${place?.name})`
 											: currentUser.address
 									}
-									onClick={handleOpen}
-									onChange={handleOpen}
+									onClick={placeModal.handleOpen}
+									onChange={placeModal.handleOpen}
 								/>
 
-								<StyledModal open={open} onClose={handleClose}>
-									<Fade in={open}>
+								<StyledModal {...placeModal}>
+									<Fade in={placeModal.open}>
 										<div className='searchForm'>
 											<SearchPlace setPlace={setPlace} />
 										</div>
@@ -412,31 +392,13 @@ const Privacy = (props: Props) => {
 					</Button>
 				</div>
 			</div>
-			<Snackbar open={onToast} autoHideDuration={4000} onClose={onCloseToast}>
-				<Alert
-					onClose={onCloseToast}
-					severity='success'
-					elevation={6}
-					variant='filled'
-				>
-					정보 수정에 성공했습니다.
-				</Alert>
-			</Snackbar>
 
-			<Snackbar
-				open={onPwToast}
-				autoHideDuration={4000}
-				onClose={onClosePwToast}
-			>
-				<Alert
-					onClose={onClosePwToast}
-					severity='success'
-					elevation={6}
-					variant='filled'
-				>
-					패스워드 변경에 성공했습니다.
-				</Alert>
-			</Snackbar>
+			<Toast {...submitToast} type='success'>
+				정보 수정에 성공했습니다.
+			</Toast>
+			<Toast {...pwToast} type='success'>
+				패스워드 변경에 성공했습니다.
+			</Toast>
 		</section>
 	);
 };
