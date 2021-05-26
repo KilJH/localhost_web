@@ -71,6 +71,7 @@ module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
 	const sql = `SELECT * FROM plan	WHERE id = ?`;
+	let total = 0;
 
 	mysql.query(sql, id, (err, plansRows) => {
 		if (err) return console.log('load err', err);
@@ -80,22 +81,13 @@ module.exports.load = (req, res) => {
 			if (err3) return console.log('조회수 증가 실패', err3);
 		});
 
-		let photos = [];
-		const photoSql = `SELECT * FROM plan_photo WHERE plan_id = ?`;
-		mysql.query(photoSql, id, (err3, photoRows) => {
-			if (err3) return console.log('조회수 증가 실패', err3);
-
-			photoRows.map(photoRow => {
-				photos.push(photoRow);
-			});
-		});
-
 		let planDays = [];
 		let dayArr = [];
 		let des;
 		const daySql = `SELECT d.date, d.description des, t.* FROM plan_day d LEFT JOIN plan_time t ON t.plan_day_id = d.id WHERE d.plan_id = ?`;
 
 		let i = 1;
+
 		mysql.query(daySql, id, (err3, days) => {
 			days.map((d, j) => {
 				const place = {
@@ -103,7 +95,14 @@ module.exports.load = (req, res) => {
 					geometry: [{ location: [{ lat: d.latitude, lng: d.longitude }] }],
 					name: d.name,
 				};
+				let photos = [];
+				if (d.photo !== null) {
+					photos = d.photo.split(';');
+				} else {
+					photos.push('');
+				}
 
+				total += d.price;
 				if (d.date === i) {
 					dayArr.push({
 						description: d.description,
@@ -111,6 +110,7 @@ module.exports.load = (req, res) => {
 						time: d.time,
 						type: d.type,
 						place: place,
+						photo: photos,
 					});
 					des = d.des;
 				} else {
@@ -127,6 +127,7 @@ module.exports.load = (req, res) => {
 						time: d.time,
 						type: d.type,
 						place: place,
+						photo: photos,
 					});
 				}
 				if (j === days.length - 1) {
@@ -176,7 +177,7 @@ module.exports.load = (req, res) => {
 				};
 			});
 
-			res.status(200).json({ success: true, plan, comments, photos });
+			res.status(200).json({ success: true, plan, comments, price: total });
 		});
 	});
 };
@@ -188,14 +189,12 @@ module.exports.write = (req, res) => {
 	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}");`;
 
 	if (title === '' || description === '') {
-		console.log('와이라노fff');
 		res.json({ success: false });
 		return;
 	}
 
 	for (let i = 0; i < planDays.length; i++) {
 		if (planDays[i].planTimes.length < 1) {
-			console.log('와이라노', planDays[i]);
 			res.json({ success: false });
 			return;
 		}
@@ -228,17 +227,18 @@ module.exports.write = (req, res) => {
 			}
 			const planDayId = rows2.insertId;
 			const arr = [];
+
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					const place = planTime.place?.formatted_address
 						? `"${planTime.place?.formatted_address}"`
 						: null;
 					arr.push(
-						`(${planDayId + i}, "${planTime.description}", ${planTime.price},"${
-							planTime.time
-						}", "${planTime.type}","${planTime.place?.name}", ${place}, ${
-							planTime.place?.geometry?.location?.lat || null
-						}, ${
+						`(${planDayId + i}, "${planTime.description}", ${
+							planTime.price || 0
+						},"${planTime.time}", "${planTime.type}","${
+							planTime.place?.name
+						}", ${place}, ${planTime.place?.geometry?.location?.lat || null}, ${
 							planTime.place?.geometry?.location?.lng || null
 						}, "${planTime.photo.join(';')}")`,
 					);
@@ -253,7 +253,7 @@ module.exports.write = (req, res) => {
 					res.json({ success: false });
 					return console.log(err3);
 				}
-				res.json({ success: true });
+				res.json({ success: true, planId });
 			});
 		});
 	});
