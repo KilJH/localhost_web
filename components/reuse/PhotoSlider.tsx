@@ -34,7 +34,7 @@ const Slide = styled.img`
 
 	/* props값이 없으면 기본으로 50vh */
 	height: ${(props: SlideProps) => props.height || '50vh'};
-	max-height: 80vh;
+	max-height: 66.7vh;
 `;
 
 const Container = styled.div`
