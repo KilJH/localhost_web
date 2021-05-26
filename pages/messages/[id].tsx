@@ -12,6 +12,8 @@ type Props = {
 		loadMessages: Array<Object>;
 		roomId: number;
 		opponent: User;
+		hostUserId: number;
+		userUserId: number;
 		applicationId: number;
 	};
 };
@@ -58,10 +60,14 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
 	const messages = res.messages;
 	const roomId = res.roomId;
+	const hostUserId = res.hostId;
+	const userUserId = res.userId;
 	return {
 		props: {
 			loadMessages: messages,
 			roomId: roomId,
+			hostUserId: hostUserId,
+			userUserId: userUserId,
 			opponent: opponent,
 			applicationId: applicationId,
 		},

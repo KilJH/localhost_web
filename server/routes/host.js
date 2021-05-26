@@ -45,10 +45,10 @@ router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
 router.post('/hostingAddress', function (req, res, next) {
-	management.gethostingAddress(req, res);
+	management.getHostingAddress(req, res);
 });
 router.post('/update/hostingAddress', function (req, res, next) {
-	management.sethostingAddress(req, res);
+	management.setHostingAddress(req, res);
 });
 router.post('/application/id', function (req, res, next) {
 	management.getApplicationId(req, res);

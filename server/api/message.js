@@ -27,16 +27,23 @@ module.exports.loadRoom = (req, res) => {
 					createTime: message.create_time,
 				};
 			});
-
-			const roomIdSql = `SELECT id FROM message_room WHERE (host_user_id = ? && user_user_id = ?) ||( host_user_id = ? && user_user_id=?);`;
+			const innerSql = `SELECT id, host_user_id, user_user_id FROM message_room WHERE (host_user_id = ? && user_user_id = ?) ||( host_user_id = ? && user_user_id=?);`;
 			mysql.query(
-				roomIdSql,
+				innerSql,
 				[hostUserId, userId, userId, hostUserId],
 				(err, room) => {
 					if (err) return console.log('roomId find err', err);
 					const roomId = room[0].id;
+					const hostId = room[0].host_user_id;
+					const userId = room[0].user_user_id;
 
-					res.json({ success: true, messages: message, roomId: roomId });
+					res.json({
+						success: true,
+						messages: message,
+						roomId: roomId,
+						hostId: hostId,
+						userId: userId,
+					});
 				},
 			);
 		},

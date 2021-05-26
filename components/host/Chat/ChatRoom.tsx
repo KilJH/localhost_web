@@ -21,6 +21,7 @@ import SearchPlace from '../../search/SearchPlace';
 import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 import Router from 'next/router';
 import { scrollPosition } from './../../../client/utils/checkScrollDirection';
+import Toast from '../../reuse/Toast';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -36,6 +37,8 @@ interface Props {
 	loadMessages: Array<Object>;
 	roomId: number;
 	opponent: User;
+	hostUserId: number;
+	userUserId: number;
 	applicationId: number;
 }
 
@@ -267,7 +270,14 @@ const MyChat = ({
 );
 
 const ChatRoom = (props: Props) => {
-	const { loadMessages, roomId, opponent, applicationId } = props;
+	const {
+		loadMessages,
+		roomId,
+		opponent,
+		applicationId,
+		hostUserId,
+		userUserId,
+	} = props;
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
@@ -299,6 +309,22 @@ const ChatRoom = (props: Props) => {
 	const ref = scrollRef.current;
 	const [scrollDisplay, setScrollDisplay] = useState('none');
 
+	// 호스팅 주소
+	const addressNotice = '만나고 싶은 장소를 정하려면 클릭! ☝';
+	const [hostingAddress, setHostingAddress] = useState<string>(addressNotice);
+	const [hostingId, setHostingId] = useState();
+
+	// toast
+	const [toastOpen, setToastOpen] = useState(false);
+	const [toastMsg, setToastMsg] = useState('');
+	const [toastType, setToastType] = useState('success');
+
+	const toast = (type, msg, open) => {
+		setToastMsg(msg);
+		setToastType(type);
+		setToastOpen(open);
+	};
+
 	// 최초 접속 시
 	useEffect(() => {
 		// 소켓 생성
@@ -308,7 +334,34 @@ const ChatRoom = (props: Props) => {
 			const { scrollHeight, clientHeight } = ref;
 			ref.scrollTop = scrollHeight - clientHeight;
 		}
+		if (currentUser.id == hostUserId) {
+			const hostingAddress = async () => {
+				const address = await axios.post(`/api/host/hostingAddress`, {
+					hostUserId: hostUserId,
+					userId: userUserId,
+				});
+				setHostingAddress(address.data.hostingAddress);
+				setHostingId(address.data.hostingId);
+			};
+			hostingAddress();
+		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
 	}, []);
+
+	// place 변경 시 호스팅 주소 업데이트
+	useEffect(() => {
+		if (place) {
+			const setHostingAddress = async () => {
+				const address = await axios.post(`/api/host/update/hostingAddress`, {
+					hostingAddress: String(place.formatted_address),
+					id: Number(hostingId),
+				});
+				if (address.data.success) {
+					toast('호스팅 주소를 등록했습니다!', 'success', true);
+				}
+			};
+			setHostingAddress();
+		}
+	}, [place]);
 
 	// 방 입장 (소켓 생성 시)
 	useEffect(() => {
@@ -398,12 +451,10 @@ const ChatRoom = (props: Props) => {
 	const receiveMessage = (message: any) => {
 		setMessages([...messages, message]);
 	};
-
 	const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter') {
 			if (!e.shiftKey) {
 				e.preventDefault();
-				console.log(chatInput.value);
 				onInputSubmit();
 				return;
 			}
@@ -661,6 +712,10 @@ const ChatRoom = (props: Props) => {
 						className='location'
 						onClick={handlePlaceOpen}
 						onChange={handlePlaceOpen}
+						disabled={
+							hostingAddress === '완료된 호스팅입니다' ||
+							hostUserId !== currentUser.id
+						}
 					>
 						<PersonPinCircleIcon />
 					</IconButton>
@@ -685,18 +740,21 @@ const ChatRoom = (props: Props) => {
 				type='address'
 				width='100%'
 				border='1px solid #ccc'
-				textAlign={place ? 'center' : 'right'}
+				textAlign={
+					place || hostingAddress !== addressNotice ? 'center' : 'right'
+				}
 				onClick={(e: React.MouseEvent<HTMLInputElement>) => {
 					e.preventDefault();
-					console.log(placeInputOpen);
 					setPlaceInputOpen(!placeInputOpen);
-					console.log(placeInputOpen);
 				}}
-				value={
-					place?.formatted_address || '만나고 싶은 장소를 정하려면 클릭! ☝'
-				}
+				value={place?.formatted_address || hostingAddress}
 				isVisible={placeInputOpen}
-				style={{ paddingRight: `${place}` == 'undefined' ? '4.25em' : '1em' }}
+				style={{
+					paddingRight:
+						`${place}` == 'undefined' && hostingAddress === addressNotice
+							? '4.25em'
+							: '1em',
+				}}
 				disabled
 			/>
 			<StyledModal open={placeOpen} onClose={handlePlaceClose}>
@@ -758,6 +816,12 @@ const ChatRoom = (props: Props) => {
 				/>
 				<Button type='submit'>전송</Button>
 			</form>
+			<Toast
+				open={toastOpen}
+				type={toastType}
+				children={toastMsg}
+				handleClose={() => setToastOpen(false)}
+			></Toast>
 		</ChatRoomContainer>
 	);
 };

@@ -481,23 +481,34 @@ module.exports.getApplicationId = (req, res) => {
 
 module.exports.getHostingAddress = (req, res) => {
 	const { hostUserId, userId } = req.body; // host_user_id, user_user_id
-
-	const sql = `SELECT address FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
+	const sql = `SELECT address, create_time, status, id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
 
-		const hostingAddress = rows[0].id;
-		res.json({ success: true, hostingAddress: hostingAddress });
+		let hostingAddress = '';
+		let hostingId = 0;
+		rows.map((value, index) => {
+			if (value.status === 1) {
+				hostingAddress = value.address;
+				hostingId = value.id;
+			}
+		});
+		if (hostingAddress === '') hostingAddress = '완료된 호스팅입니다';
+		else if (hostingAddress === null)
+			hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
+		res.json({
+			success: true,
+			hostingAddress: hostingAddress,
+			hostingId: hostingId,
+		});
 	});
 };
 
 module.exports.setHostingAddress = (req, res) => {
-	const { hostingAddress, hostUserId, userId } = req.body; // host_user_id, user_user_id
-
-	const sql = `UPDATE host_user_apply SET address = ${hostingAddress} WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
+	const { hostingAddress, id } = req.body;
+	const sql = `UPDATE host_user_apply SET address = "${hostingAddress}" WHERE id = "${id}";`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
-
 		res.json({ success: true });
 	});
 };
