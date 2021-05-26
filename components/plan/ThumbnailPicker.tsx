@@ -8,10 +8,32 @@ interface Props {
 
 const Container = styled.div`
 	width: 100%;
-	height: 8rem;
+	height: calc(8rem + 8px);
+	overflow: auto;
 	overflow-x: auto;
 	overflow-y: hidden;
 	margin-bottom: 1rem;
+	white-space: nowrap;
+
+	&::-webkit-scrollbar {
+		/* display: none; */
+		height: 8px;
+		opacity: 0;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: gray;
+		border-radius: 1rem;
+		/* height: 2px; */
+		&:hover {
+			background: rgba(33, 33, 33, 0.75);
+		}
+	}
+	&::-webkit-scrollbar-track {
+		border-radius: 3.5px;
+		background-color: #eee;
+		display: none;
+		opacity: 0;
+	}
 
 	& > img {
 		cursor: pointer;
@@ -48,7 +70,7 @@ const ThumbnailPicker = (props: Props) => {
 		setThumb(images[0] ?? '');
 	}, []);
 	return (
-		<div>
+		<div style={{ width: '100%' }}>
 			<h2 style={{ margin: '0.5rem 0' }}>썸네일 사진을 골라주세요</h2>
 			<Container>
 				{images?.map((image, i) => {
