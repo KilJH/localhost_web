@@ -93,7 +93,7 @@ module.exports.load = (req, res) => {
 			days.map((d, j) => {
 				const place = {
 					formatted_address: d.address,
-					geometry: [{ location: [{ lat: d.latitude, lng: d.longitude }] }],
+					geometry: { location: { lat: d.latitude, lng: d.longitude } },
 					name: d.name,
 				};
 				let photos = [];
@@ -149,6 +149,7 @@ module.exports.load = (req, res) => {
 				id: plansRows[0].id,
 				title: plansRows[0].title,
 				description: plansRows[0].description,
+				price: plansRows[0].price,
 				sleepDays: plansRows[0].sleep_days,
 				travelDays: plansRows[0].travel_days,
 				thumb: plansRows[0].thumb,
@@ -189,7 +190,7 @@ module.exports.write = (req, res) => {
 	const { title, description, sleepDays, travelDays, tags, planDays } =
 		req.body.plan;
 	const thumb = req.body.plan.thumb || '';
-	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days, thumb) VALUES("${userId}", "${title}", "${description}", "${sleepDays}", "${travelDays}", "${thumb}");`;
+	const sql = `INSERT INTO plan(user_id, title, description, sleep_days, travel_days, thumb) VALUES("${userId}", "${title}", "${description}" , "${sleepDays}", "${travelDays}", "${thumb}");`;
 
 	if (title === '' || description === '') {
 		res.json({ success: false });
@@ -231,11 +232,14 @@ module.exports.write = (req, res) => {
 			const planDayId = rows2.insertId;
 			const arr = [];
 
+			let total = 0;
 			for (let i = 0; i < planDays.length; i++) {
 				planDays[i].planTimes.map(planTime => {
 					const place = planTime.place?.formatted_address
 						? `"${planTime.place?.formatted_address}"`
 						: null;
+					const price = planTime.price || 0;
+					total += price;
 					arr.push(
 						`(${planDayId + i}, "${planTime.description}", ${
 							planTime.price || 0
@@ -247,10 +251,13 @@ module.exports.write = (req, res) => {
 					);
 				});
 			}
+			const updateSql = `update plan set price = ${total} WHERE id = ${planId}`;
+			mysql.query(updateSql, err => {
+				if (err) return console.log('updateSql Err', err);
+			});
 
 			const planTimesStr = arr.join(',');
 			const timeSql = `INSERT INTO plan_time(plan_day_id, description, price, time, type, name, address, latitude, longitude, photo) VALUES ${planTimesStr}`;
-
 			mysql.query(timeSql, err3 => {
 				if (err3) {
 					res.json({ success: false });
