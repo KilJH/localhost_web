@@ -13,7 +13,7 @@ import {
 	MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { SetStateAction, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
@@ -44,6 +44,7 @@ interface WrapperProps {
 	images?: File[];
 	titleState: string;
 	descState: string;
+	setPlanId: React.Dispatch<SetStateAction<number>>;
 }
 
 interface SaveProps {
@@ -309,6 +310,7 @@ const WriteWrapper = (props: WrapperProps) => {
 		saveProps,
 		titleState,
 		descState,
+		setPlanId,
 	} = props;
 	const currentUser = useContext(UserStateContext);
 
@@ -334,6 +336,7 @@ const WriteWrapper = (props: WrapperProps) => {
 		axios.post(`/api/plan/write`, { userId, plan }).then(res => {
 			if (res.data.success) {
 				// localstorage.clear();
+				setPlanId(res.data.planId);
 				setStep(step + 1);
 			} else {
 				alert('플랜 작성에 실패했습니다.');
@@ -376,6 +379,7 @@ const WriteWrapper = (props: WrapperProps) => {
 
 const PlanWrite = () => {
 	const currentUser = useContext(UserStateContext);
+	const [planId, setPlanId] = useState(0);
 	// 모바일인지
 	const isMobile = useMediaQuery('(max-width: 600px)');
 	// 단계
@@ -614,6 +618,7 @@ const PlanWrite = () => {
 		images,
 		titleState: planName.value as string,
 		descState: planDesc.value as string,
+		setPlanId,
 	};
 
 	switch (step) {
@@ -916,7 +921,7 @@ const PlanWrite = () => {
 				<WriteWrapper isFull={true} {...wrapperProps}>
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
-					<Link href='plans/[id]' as={`plans/${30}`}>
+					<Link href='/plans/[id]' as={`/plans/${planId}`}>
 						<Button width='16rem'>작성한 플랜 보러가기</Button>
 					</Link>
 				</WriteWrapper>
