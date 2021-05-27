@@ -2,7 +2,6 @@ import Link from 'next/link';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Plan } from '../../../interfaces';
-import { myPlanList } from '../../../server/api/plan';
 import MypageLayout from './MypageHeader';
 
 interface Props {
@@ -82,8 +81,7 @@ const MyPlan = (props: Props) => {
 									<td>{plan.author?.nickname}</td>
 									<td>버튼</td>
 								</tr>
-							))}
-							<NoItem col={3}>여행플랜이 없습니다.</NoItem>
+							)) || <NoItem col={3}>여행플랜이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
 				</section>
@@ -118,8 +116,7 @@ const MyPlan = (props: Props) => {
 									<td>수정버튼</td>
 									<td>삭제버튼</td>
 								</tr>
-							))}
-							<NoItem col={5}>여행플랜이 없습니다.</NoItem>
+							)) || <NoItem col={5}>여행플랜이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
 					<div className='more'>

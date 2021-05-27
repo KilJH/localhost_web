@@ -57,7 +57,7 @@ const BoardList = (props: Props) => {
 			<Pagination
 				currentIdx={pageState}
 				lastIdx={lastIdx}
-				url='/board'
+				url='/board?'
 				api={`/api/board/list`}
 				onClick={onClickPage}
 			/>

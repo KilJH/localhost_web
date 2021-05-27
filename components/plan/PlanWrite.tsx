@@ -492,9 +492,7 @@ const PlanWrite = () => {
 	}, [placeDetail]);
 
 	// 에러메세지 처리
-	const noDataErr = useToast(false);
-	const sameTimeErr = useToast(false);
-	const noPlanErr = useToast(false);
+	const toast = useToast(false);
 
 	const [thumb, setThumb] = useState('');
 
@@ -520,14 +518,14 @@ const PlanWrite = () => {
 	// 일정 하나 추가
 	async function onAddTimePlan() {
 		if (timePlan.place.name === '' && timePlan.description === '') {
-			noDataErr.handleOpen();
+			toast.handleOpen('warning', '내용을 입력해주세요');
 			return;
 		}
 		const existingPlans = dayPlan.planTimes;
 		const plansLength = existingPlans.length;
 		for (let i = 0; i < plansLength; i++) {
 			if (timePlan.time === existingPlans[i].time) {
-				sameTimeErr.handleOpen();
+				toast.handleOpen('warning', '같은 시간에 일정이 이미 존재합니다.');
 				return;
 			}
 		}
@@ -821,13 +819,6 @@ const PlanWrite = () => {
 							</button>
 							<WritingImages images={images} setImages={setImages} />
 						</div>
-
-						<Toast {...noDataErr} type='warning'>
-							내용을 입력해주세요
-						</Toast>
-						<Toast {...sameTimeErr} type='warning'>
-							같은 시간에 일정이 이미 존재합니다.
-						</Toast>
 					</PlanWriteContainer>
 
 					<div className='btnContainer'>
@@ -860,7 +851,10 @@ const PlanWrite = () => {
 									onClick={() => {
 										for (let i = 0; i < wholePlan.length; i++) {
 											if (wholePlan[i].planTimes.length < 1) {
-												noPlanErr.handleOpen();
+												toast.handleOpen(
+													'warning',
+													'일정이 존재하지않는 날짜가 있습니다.',
+												);
 												return;
 											}
 										}
@@ -873,9 +867,7 @@ const PlanWrite = () => {
 							)}
 						</div>
 
-						<Toast {...noPlanErr} type='warning'>
-							일정이 존재하지않는 날짜가 있습니다.
-						</Toast>
+						<Toast {...toast}>{toast.message}</Toast>
 					</div>
 				</WriteContainer>
 				// 일정 삭제버튼

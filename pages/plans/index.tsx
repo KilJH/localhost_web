@@ -9,7 +9,9 @@ import { Plan } from '../../interfaces';
 
 interface Props {
 	pageProps: {
-		plans?: Plan[];
+		plans: Plan[];
+		lastIdx: number;
+		page: number;
 	};
 }
 
@@ -17,17 +19,18 @@ const index = (props: Props) => {
 	const { pageProps } = props;
 	return (
 		<Layout title='플랜보기 | localhost'>
-			<PlanList plans={pageProps.plans || []} />
+			<PlanList {...pageProps} />
 		</Layout>
 	);
 };
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-	const res = await axios.get(
+	const url = encodeURI(
 		`${SERVER}/api/plan/list?page=${ctx.query.page || 1}&type=${
 			ctx.query.type ?? 'title'
 		}&item=${ctx.query.item ?? ''}`,
 	);
+	const res = await axios.get(url);
 
 	return { props: { ...res.data } };
 };

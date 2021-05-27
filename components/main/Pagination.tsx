@@ -81,7 +81,7 @@ const Pagination = (props: Props) => {
 		<Container>
 			<ul>
 				<PageButton>
-					<Link href={`${url}?page=${1}`}>
+					<Link href={`${url}page=${1}`}>
 						<button
 							onClick={() => {
 								onClick!(1);
@@ -98,7 +98,7 @@ const Pagination = (props: Props) => {
 						</PageButton>
 					) : (
 						<PageButton key={idx}>
-							<Link href={`${url}?page=${idx}`}>
+							<Link href={`${url}page=${idx}`}>
 								<button
 									onClick={() => {
 										onClick!(idx);
@@ -112,7 +112,7 @@ const Pagination = (props: Props) => {
 				)}
 
 				<PageButton>
-					<Link href={`${url}?page=${lastIdx}`}>
+					<Link href={`${url}page=${lastIdx}`}>
 						<button
 							onClick={() => {
 								onClick!(lastIdx);
