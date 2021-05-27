@@ -2,8 +2,6 @@ import { Grid, Button } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 // import FavoriteIcon from '@material-ui/icons/Favorite';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React, { useContext, useState } from 'react';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
@@ -15,6 +13,7 @@ import axios from 'axios';
 import { useToast } from '../../client/hooks/useToast';
 import Toast from '../reuse/Toast';
 import { Color } from '@material-ui/lab';
+import PhotoSlider from '../reuse/PhotoSlider';
 
 interface Props {
 	plan: Plan;
@@ -38,48 +37,6 @@ const PlanOverviewGrid = styled(Grid)`
 		color: #2d3436;
 		border: 1px solid #2d3436;
 		padding: 0 0.25rem;
-	}
-`;
-
-const PlanOverviewImg = styled.div`
-	height: 512px;
-	& > img {
-		width: 100%;
-		height: 100%;
-		max-height: 42rem;
-		object-fit: cover;
-		border-radius: 1rem;
-	}
-	& .imgBtnWrapper {
-		position: absolute;
-		width: calc(100% - 1rem);
-		height: calc(100% - 1rem);
-		max-height: 42rem;
-		& > button {
-			height: 100%;
-			padding: 0;
-			border-radius: 1rem 0 0 1rem;
-			&.MuiButton-root:hover {
-				background: linear-gradient(
-					90deg,
-					rgba(0, 0, 0, 0.4),
-					rgba(0, 0, 0, 0)
-				);
-			}
-
-			& + button {
-				float: right;
-				border-radius: 0 1rem 1rem 0;
-
-				&.MuiButton-root:hover {
-					background: linear-gradient(
-						90deg,
-						rgba(0, 0, 0, 0),
-						rgba(0, 0, 0, 0.4)
-					);
-				}
-			}
-		}
 	}
 `;
 
@@ -153,20 +110,11 @@ const PlanOverview: React.FC<Props> = props => {
 		<>
 			<PlanOverviewGrid container spacing={2}>
 				<Grid item xs={12} md={6}>
-					<PlanOverviewImg>
-						<div className='imgBtnWrapper'>
-							<Button>
-								<ArrowBackIosIcon />
-							</Button>
-							<Button>
-								<ArrowForwardIosIcon />
-							</Button>
-						</div>
-						<img
-							alt='여행사진'
-							src={plan.thumb || '/img/logos/localhostLogoBlack.png'}
-						></img>
-					</PlanOverviewImg>
+					<PhotoSlider
+						imgSrcArray={getWholeImage(plan)}
+						borderRadius='1rem'
+						height='24rem'
+					/>
 				</Grid>
 				<Grid item xs={12} md={6}>
 					<PlanOverviewContent>
@@ -227,6 +175,22 @@ const PlanOverview: React.FC<Props> = props => {
 			</Toast>
 		</>
 	);
+};
+
+const getWholeImage = (plan: Plan) => {
+	let wholeImage: string[] = [];
+	plan.planDays!.forEach(planDay => {
+		planDay.planTimes.forEach(planTime => {
+			console.log(planTime);
+			if (planTime.photo!.length > 0 && !(planTime.photo![0] === '')) {
+				wholeImage = [...wholeImage, ...(planTime.photo as string[])];
+			}
+		});
+	});
+
+	console.log(wholeImage);
+
+	return wholeImage;
 };
 
 export default PlanOverview;
