@@ -49,4 +49,11 @@ router.post('/wishList/add', function (req, res, next) {
 router.post('/wishList/delete', function (req, res, next) {
 	management.deleteWishList(req, res);
 });
+
+router.post('/like', function (req, res, next) {
+	management.like(req, res);
+});
+router.post('/like/check', function (req, res, next) {
+	management.isLiked(req, res);
+});
 module.exports = router;

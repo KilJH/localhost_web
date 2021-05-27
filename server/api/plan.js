@@ -500,3 +500,41 @@ module.exports.deleteComment = (req, res) => {
 		res.json({ success: true });
 	});
 };
+
+module.exports.like = (req, res) => {
+	const { userId, planId } = req.body;
+	const sql = `SELECT * FROM plan_like WHERE user_id = ? AND plan_id = ?`;
+
+	mysql.query(sql, [userId, planId], (err, rows, fields) => {
+		if (err) return console.log('select err: ', err);
+
+		if (rows == '') {
+			const insert = `INSERT INTO plan_like(user_id, plan_id) VALUES("${userId}", "${planId}");`;
+			mysql.query(insert, (err, rows, fields) => {
+				if (err) return console.log('insert err: ', err);
+
+				res.status(200).json({ success: true, message: ' 좋아요 성공' });
+			});
+		} else {
+			const deleteSql = `DELETE FROM plan_like WHERE user_id = ? AND plan_id = ?`;
+			mysql.query(deleteSql, [userId, planId], (err, rows, fields) => {
+				if (err) return console.log('delete err: ', err);
+				res.status(200).json({ success: true, message: ' 좋아요 취소' });
+			});
+		}
+	});
+};
+
+module.exports.isLiked = (req, res) => {
+	const { userId, planId } = req.body;
+	const sql = `SELECT * FROM plan_like WHERE user_id = ? AND plan_id = ?`;
+
+	mysql.query(sql, [userId, planId], (err, rows) => {
+		if (err) return console.log(err);
+		if (rows == '') {
+			res.json({ isLiked: false });
+		} else {
+			res.json({ isLiked: true });
+		}
+	});
+};
