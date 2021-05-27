@@ -24,7 +24,7 @@ const index = (props: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
 	const res = await axios.get(
-		`${SERVER}/api/plan/list?page=${ctx.query.page}&type=${
+		`${SERVER}/api/plan/list?page=${ctx.query.page || 1}&type=${
 			ctx.query.type ?? 'title'
 		}&item=${ctx.query.item ?? ''}`,
 	);
