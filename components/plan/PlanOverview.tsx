@@ -4,12 +4,17 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
 import TravelDaysTag from './TravelDaysTag';
 import Link from 'next/link';
 import UserPhoto from '../user/UserPhoto';
+import { UserStateContext } from '../../context/user';
+import axios from 'axios';
+import { useToast } from '../../client/hooks/useToast';
+import Toast from '../reuse/Toast';
+import { Color } from '@material-ui/lab';
 
 interface Props {
 	plan: Plan;
@@ -126,78 +131,101 @@ const PlanOverviewContent = styled.div`
 
 const PlanOverview: React.FC<Props> = props => {
 	const { plan } = props;
+	const currentUser = useContext(UserStateContext);
+	const wishListToast = useToast(false);
+	const [toast, setToast] = useState({ type: 'success', message: '' });
+
+	const onWish = async () => {
+		const res = await axios.post(`/api/plan/wishList/add`, {
+			userId: currentUser.id,
+			planId: plan.id,
+		});
+		if (res.data.success) {
+			setToast({ type: 'success', message: '나의 여행에 담았습니다.' });
+			wishListToast.handleOpen();
+		} else {
+			setToast({ type: 'error', message: res.data.message });
+			wishListToast.handleOpen();
+		}
+	};
+
 	return (
-		<PlanOverviewGrid container spacing={2}>
-			<Grid item xs={12} md={6}>
-				<PlanOverviewImg>
-					<div className='imgBtnWrapper'>
-						<Button>
-							<ArrowBackIosIcon />
-						</Button>
-						<Button>
-							<ArrowForwardIosIcon />
-						</Button>
-					</div>
-					<img
-						alt='여행사진'
-						src={plan.thumb || '/img/logos/localhostLogoBlack.png'}
-					></img>
-				</PlanOverviewImg>
-			</Grid>
-			<Grid item xs={12} md={6}>
-				<PlanOverviewContent>
-					<h2>{plan.title}</h2>
-					<div className='subTitle'>
-						<TravelDaysTag
-							sleepDays={plan.sleepDays as number}
-							travelDays={plan.travelDays as number}
-						/>
-						{/* {plan!.tags!.map(tag => (
+		<>
+			<PlanOverviewGrid container spacing={2}>
+				<Grid item xs={12} md={6}>
+					<PlanOverviewImg>
+						<div className='imgBtnWrapper'>
+							<Button>
+								<ArrowBackIosIcon />
+							</Button>
+							<Button>
+								<ArrowForwardIosIcon />
+							</Button>
+						</div>
+						<img
+							alt='여행사진'
+							src={plan.thumb || '/img/logos/localhostLogoBlack.png'}
+						></img>
+					</PlanOverviewImg>
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<PlanOverviewContent>
+						<h2>{plan.title}</h2>
+						<div className='subTitle'>
+							<TravelDaysTag
+								sleepDays={plan.sleepDays as number}
+								travelDays={plan.travelDays as number}
+							/>
+							{/* {plan!.tags!.map(tag => (
 							<span className={tag}>{tag}</span>
 						))} */}
-					</div>
-
-					<div className='content'>{plan.description}</div>
-
-					<div className='plan_flex'>
-						<div className='plan_author'>
-							<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
-								<a>
-									<UserPhoto
-										width={2}
-										src={plan.author?.photo}
-										margin='0 0.25em'
-									/>
-									{plan.author?.nickname || '닉네임'}
-								</a>
-							</Link>
 						</div>
-						<div className='price'>
-							<p>
-								₩{' '}
-								{Intl.NumberFormat().format(
-									Math.floor(plan!.price! / (plan?.travelDays ?? 1)),
-								)}{' '}
-								/ 일
-							</p>
-							<h2>₩ {Intl.NumberFormat().format(plan!.price!)}</h2>
-						</div>
-					</div>
 
-					<div className='buttons'>
-						<Button variant='outlined'>
-							<FavoriteBorderIcon />
-						</Button>
-						<Button variant='outlined'>
-							<ThumbUpAltIcon />0
-						</Button>
-						<Button variant='contained' color='primary'>
-							나의 일정으로 담기
-						</Button>
-					</div>
-				</PlanOverviewContent>
-			</Grid>
-		</PlanOverviewGrid>
+						<div className='content'>{plan.description}</div>
+
+						<div className='plan_flex'>
+							<div className='plan_author'>
+								<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
+									<a>
+										<UserPhoto
+											width={2}
+											src={plan.author?.photo}
+											margin='0 0.25em'
+										/>
+										{plan.author?.nickname || '닉네임'}
+									</a>
+								</Link>
+							</div>
+							<div className='price'>
+								<p>
+									₩{' '}
+									{Intl.NumberFormat().format(
+										Math.floor(plan!.price! / (plan?.travelDays ?? 1)),
+									)}{' '}
+									/ 일
+								</p>
+								<h2>₩ {Intl.NumberFormat().format(plan!.price!)}</h2>
+							</div>
+						</div>
+
+						<div className='buttons'>
+							<Button variant='outlined'>
+								<FavoriteBorderIcon />
+							</Button>
+							<Button variant='outlined'>
+								<ThumbUpAltIcon />0
+							</Button>
+							<Button variant='contained' color='primary' onClick={onWish}>
+								나의 일정으로 담기
+							</Button>
+						</div>
+					</PlanOverviewContent>
+				</Grid>
+			</PlanOverviewGrid>
+			<Toast {...wishListToast} type={toast.type as Color}>
+				{toast.message}
+			</Toast>
+		</>
 	);
 };
 
