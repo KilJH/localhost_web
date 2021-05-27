@@ -18,6 +18,7 @@ import CpxBarometer from '../reuse/CpxBarometer';
 import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
 import Button from '../reuse/Button';
+import { countries } from '../../client/utils/basicData';
 const RegisterContainer = styled(Container)`
 	& > div {
 		margin: 1.25em 0;
@@ -150,20 +151,6 @@ export default function Register() {
 	);
 	const [place, setPlace] = useState<Place>();
 
-	const nationalities = [
-		'대한민국',
-		'일본',
-		'중국',
-		'베트남',
-		'태국',
-		'프랑스',
-		'영국',
-		'독일',
-		'포르투갈',
-		'스페인',
-		'이탈리아',
-		'기타',
-	];
 	const [nationality, setNationality] = useState('');
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
@@ -287,11 +274,17 @@ export default function Register() {
 				<FormControl variant='outlined' className='Nationality'>
 					<InputLabel id='select'>국적을 선택해주세요.</InputLabel>
 					<Select labelId='select' label='국적을 선택해주세요.'>
-						{nationalities.map(value => (
-							<MenuItem value={value} onClick={() => setNationality(value)}>
-								{value}
+						{countries.map(value => (
+							<MenuItem
+								value={value.nation}
+								onClick={() => setNationality(value.nation)}
+							>
+								{value.nation}
 							</MenuItem>
 						))}
+						<MenuItem value='기타' onClick={() => setNationality('기타')}>
+							기타
+						</MenuItem>
 					</Select>
 				</FormControl>
 			</div>

@@ -13,6 +13,7 @@ import SearchPlace from '../../search/SearchPlace';
 import { useModal } from '../../../client/hooks/useModal';
 import { useToast } from '../../../client/hooks/useToast';
 import Toast from '../../reuse/Toast';
+import { countries } from '../../../client/utils/basicData';
 
 interface Props {
 	id: string;
@@ -111,25 +112,8 @@ const Privacy = (props: Props) => {
 
 	// 국적
 	const [nationality, setNationality] = useState(currentUser.nationality);
-	const nationalities = [
-		'대한민국',
-		'일본',
-		'중국',
-		'베트남',
-		'태국',
-		'프랑스',
-		'영국',
-		'독일',
-		'포르투갈',
-		'스페인',
-		'이탈리아',
-		'기타',
-	];
 
-	// 정보변경 알림
-	const submitToast = useToast(false);
-	// 패스워드 변경 알림
-	const pwToast = useToast(false);
+	const toast = useToast(false);
 
 	// 취소버튼
 	const onReset = () => {
@@ -162,8 +146,9 @@ const Privacy = (props: Props) => {
 
 		if (res.data.success) {
 			setCurrentUser({ ...currentUser, ...user });
-			submitToast.handleOpen();
-			// Router.push('/users/mypage');
+			toast.handleOpen('success', '회원정보 변경을 완료했습니다.');
+		} else {
+			toast.handleOpen('error', '회원정보 변경을 실패했습니다.');
 		}
 	};
 
@@ -176,7 +161,9 @@ const Privacy = (props: Props) => {
 					pw: pwInput.value,
 				})
 				.then(res => {
-					res.data.success ? pwToast.handleOpen() : '';
+					res.data.success
+						? toast.handleOpen('success', '패스워드 변경에 성공했습니다.')
+						: toast.handleOpen('error', '패스워드 변경에 실패했습니다.');
 				});
 		}
 		pwInput.setValue('');
@@ -364,14 +351,17 @@ const Privacy = (props: Props) => {
 									className='Nationality'
 									defaultValue={nationality}
 								>
-									{nationalities.map(value => (
+									{countries.map(value => (
 										<MenuItem
-											value={value}
-											onClick={() => setNationality(value)}
+											value={value.nation}
+											onClick={() => setNationality(value.nation)}
 										>
-											{value}
+											{value.nation}
 										</MenuItem>
 									))}
+									<MenuItem value='기타' onClick={() => setNationality('기타')}>
+										기타
+									</MenuItem>
 								</Select>
 							</div>
 						</div>
@@ -393,12 +383,7 @@ const Privacy = (props: Props) => {
 				</div>
 			</div>
 
-			<Toast {...submitToast} type='success'>
-				정보 수정에 성공했습니다.
-			</Toast>
-			<Toast {...pwToast} type='success'>
-				패스워드 변경에 성공했습니다.
-			</Toast>
+			<Toast {...toast}>{toast.message}</Toast>
 		</section>
 	);
 };
