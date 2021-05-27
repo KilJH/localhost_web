@@ -3,9 +3,10 @@ import { useAsync } from 'react-async';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 
-import { User } from '../../interfaces';
+import { Plan, User } from '../../interfaces';
 import FollowButton from './FollowButton';
 import UserPhoto from './UserPhoto';
+import Router from 'next/router';
 
 type ListDetailProps = {
 	item: User;
@@ -21,6 +22,17 @@ const HostDetailContainer = styled.section`
 		&:last-child {
 			border-bottom: none;
 		}
+	}
+	& table {
+		width: 100%;
+		min-width: 32em;
+		margin: 0 auto 3em auto;
+		text-align: center;
+		border-collapse: collapse;
+		font-size: 1em;
+	}
+	& th {
+		padding: 0.75em 0;
 	}
 	& thead {
 		background-color: #eee;
@@ -115,7 +127,13 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 		userId: user.id,
 		followerId: currentUser.id,
 	});
-	const handleTrClickHandler = () => {};
+	const handleTrClickHandler = (
+		e: React.MouseEvent<HTMLTableRowElement>,
+		planId: number,
+	) => {
+		e.preventDefault();
+		Router.push(`/plans/${planId}`);
+	};
 	return (
 		// <div>
 		// 	<h1>Detail for {user.name}</h1>
@@ -155,14 +173,19 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 					<p>작성한 플랜이 없습니다.</p>
 				) : (
 					<table>
-						<tbody>
+						<thead>
 							<tr>
 								<td>작성일</td>
 								<td>제목</td>
 								<td>조회수</td>
 							</tr>
+						</thead>
+						<tbody>
 							{plan.map(item => (
-								<tr className='planRow' onClick={handleTrClickHandler}>
+								<tr
+									className='planRow'
+									onClick={e => handleTrClickHandler(e, item.id)}
+								>
 									<td style={{ width: '30%' }}>{item.createTime}</td>
 									<td style={{ width: '60%' }}>{item.title}</td>
 									<td style={{ width: '10%' }}>{item.hit}</td>
