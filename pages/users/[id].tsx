@@ -29,7 +29,7 @@ const UserDetail = ({ pageProps }: Props) => {
 	);
 };
 
-export default withAuth(1, 2)(UserDetail);
+export default withAuth(1, 0)(UserDetail);
 
 export const getServerSideProps: GetServerSideProps = async context => {
 	try {

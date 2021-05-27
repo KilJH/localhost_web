@@ -4,13 +4,15 @@ import React from 'react';
 import SERVER from '../../client/utils/url';
 import withAuth from '../../components/main/hoc/withAuth';
 import Layout from '../../components/main/Layout';
+import PlanCommentList from '../../components/plan/PlanCommentList';
 import PlanOverview from '../../components/plan/PlanOverview';
 import PlanWholeItem from '../../components/plan/PlanWholeItem';
-import { Plan } from '../../interfaces';
+import { Plan, Comment } from '../../interfaces';
 
 interface Props {
 	pageProps: {
 		plan: Plan;
+		comments: Comment[];
 	};
 }
 
@@ -19,6 +21,7 @@ const PlanDetailPage = ({ pageProps }: Props) => {
 		<Layout title={`플랜보기 | localhost`}>
 			<PlanOverview {...pageProps} />
 			<PlanWholeItem plans={pageProps.plan.planDays!} />
+			<PlanCommentList comments={pageProps.comments} />
 		</Layout>
 	);
 };
