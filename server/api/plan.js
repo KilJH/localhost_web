@@ -430,17 +430,6 @@ module.exports.getWishList = (req, res) => {
 	mysql.query(sql, userId, (err, wishes) => {
 		if (err) return res.json({ success: false, err });
 
-		const plans = wishes.map(plan => {
-			return {
-				title: plan.title,
-				description: plan.description,
-				price: plan.price,
-				hit: plan.hit,
-				author: plan.author,
-				thumb: plan.thumb,
-			};
-		});
-
 		res.json({ success: true, list: wishes });
 	});
 };
@@ -448,12 +437,20 @@ module.exports.getWishList = (req, res) => {
 module.exports.addWishList = (req, res) => {
 	const { userId, planId } = req.body;
 
-	const sql = `INSERT INTO wishlist(user_id, plan_id) VALUES(?, ?);`;
-
-	mysql.query(sql, [userId, planId], err => {
+	const selectSql = `SELECT * FROM wishlist WHERE user_id = ? && plan_id = ?`;
+	mysql.query(selectSql, [userId, planId], (err, plans) => {
 		if (err) return res.json({ success: false, err });
+		if (plans.length !== 0) {
+			return res.json({ success: false, message: '이미 추가 된 플랜입니다.' });
+		}
 
-		res.json({ success: true });
+		const insertSql = `INSERT INTO wishlist(user_id, plan_id) VALUES(?, ?);`;
+
+		mysql.query(insertSql, [userId, planId], err => {
+			if (err) return res.json({ success: false, err });
+
+			res.json({ success: true });
+		});
 	});
 };
 
