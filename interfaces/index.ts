@@ -93,7 +93,7 @@ export interface Board {
 }
 
 export interface Comment {
-	id: number;
+	id?: number;
 	user: User;
 	description: string;
 	createTime: string;

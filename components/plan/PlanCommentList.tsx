@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../client/hooks/useInput';
+import { useToast } from '../../client/hooks/useToast';
+import { UserStateContext } from '../../context/user';
 import { Comment } from '../../interfaces/index';
 import Button from '../reuse/Button';
 import Textarea from '../reuse/Textarea';
+import Toast from '../reuse/Toast';
 import UserPhoto from '../user/UserPhoto';
 
 interface Props {
 	comments: Comment[];
+	planId: number;
 }
 interface ItemProps {
 	comment: Comment;
@@ -53,6 +58,10 @@ const ItemContainer = styled.section`
 		font-size: 0.9em;
 		white-space: pre;
 	}
+
+	&:last-of-type {
+		border-bottom: none !important;
+	}
 `;
 
 const PlanCommentItem = ({ comment }: ItemProps) => {
@@ -75,26 +84,39 @@ const PlanCommentItem = ({ comment }: ItemProps) => {
 };
 
 const PlanCommentList = (props: Props) => {
-	const { comments: originComments } = props;
+	const { comments: originComments, planId } = props;
 	const [comments, setComments] = useState(originComments);
 	const comment = useInput('');
+	const currentUser = useContext(UserStateContext);
 
-	const onSubmit = e => {
+	const toast = useToast(false);
+
+	const onSubmit = async e => {
 		// api 완성되면 연결
 		e.preventDefault();
 
-		// if (res.data.success) {
-		// 	props.setComments([
-		// 		...props.comments,
-		// 		{
-		// 			user: currentUser,
-		// 			description: comment,
-		// 			createTime: '방금 전',
-		// 		},
-		// 	]);
+		const res = await axios.post(`/api/plan/comment/write`, {
+			planId,
+			userId: currentUser.id,
+			description: comment.value,
+		});
 
-		// 	comment.setValue('');
-		// } else alert(res.data.message);
+		if (res.data.success) {
+			setComments([
+				...comments,
+				{
+					user: currentUser,
+					description: comment.value as string,
+					createTime: '방금 전',
+				},
+			]);
+
+			comment.setValue('');
+		} else
+			toast.handleOpen(
+				'error',
+				res.data.message || '댓글 작성에 실패했습니다.',
+			);
 	};
 	return (
 		<Container>
@@ -111,6 +133,7 @@ const PlanCommentList = (props: Props) => {
 					</Button>
 				</div>
 			</form>
+			<Toast {...toast}>{toast.message}</Toast>
 		</Container>
 	);
 };

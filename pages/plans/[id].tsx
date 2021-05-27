@@ -21,7 +21,10 @@ const PlanDetailPage = ({ pageProps }: Props) => {
 		<Layout title={`플랜보기 | localhost`}>
 			<PlanOverview {...pageProps} />
 			<PlanWholeItem plans={pageProps.plan.planDays!} />
-			<PlanCommentList comments={pageProps.comments} />
+			<PlanCommentList
+				comments={pageProps.comments}
+				planId={pageProps.plan.id!}
+			/>
 		</Layout>
 	);
 };
