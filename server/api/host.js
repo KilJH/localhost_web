@@ -44,7 +44,7 @@ module.exports.hostMapping = host => {
 			},
 			name: host.formattedAddress || host.host_address || host.address,
 		},
-		follower: host.followerNum || host.follower,
+		follower: host.followerNum || host.follower || 0,
 	};
 };
 
