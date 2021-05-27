@@ -69,7 +69,6 @@ const DetailsDiv = styled.div`
 `;
 export default function HostApprovalDetail(props: Props) {
 	const { host, visibility } = props;
-	console.log(host);
 	if (visibility === true) {
 		return (
 			<DetailsDiv>

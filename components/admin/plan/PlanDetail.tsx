@@ -1,5 +1,5 @@
 import { Plan } from '../../../interfaces';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import UserPhoto from '../../user/UserPhoto';
 import axios, { AxiosResponse } from 'axios';
@@ -27,6 +27,11 @@ const Table = styled.table`
 	& td {
 		padding: 1rem 0.5rem;
 		border-bottom: 1px solid #aaa;
+	}
+	& img {
+		max-width: 90%;
+		max-height: 25em;
+		object-fit: cover;
 	}
 	/* & tbody > tr:nth-child(odd) {
 		background-color: #eee;
@@ -125,21 +130,40 @@ export default function PlanItem({ item }: Props) {
 			<Table>
 				<thead>
 					<tr>
-						<th style={{ width: '15%' }}>일차</th>
+						<th style={{ width: '10%' }}>일차</th>
 						<th style={{ width: '10%' }}>시각</th>
 						<th style={{ width: '20%' }}>장소</th>
-						<th style={{ width: '55%' }}>세부 내용</th>
+						<th style={{ width: '35%' }}>세부 내용</th>
+						<th style={{ width: '10%' }}>종류</th>
+						<th style={{ width: '15%' }}>가격</th>
 					</tr>
 				</thead>
 				<tbody>
-					{/* {item.planDays.map(day => (
-						<tr>
-							<td>1일차</td>
-							<td>10:00</td>
-							<td>오류동</td>
-							<td>피자먹기</td>
-						</tr>
-					))} */}
+					{item.planDays?.map(planDay => {
+						return (
+							<>
+								{planDay.planTimes.map(planTime => (
+									<>
+										{planTime.photo?.map(src => (
+											<tr>
+												<td colSpan={6}>
+													<img src={src} style={{ width: '100%' }} />
+												</td>
+											</tr>
+										))}
+										<tr>
+											<td>{planDay.day}</td>
+											<td>{planTime.time}</td>
+											<td>{planTime.place.formatted_address}</td>
+											<td>{planTime.description}</td>
+											<td>{planTime.type}</td>
+											<td>{planTime.price}원</td>
+										</tr>
+									</>
+								))}
+							</>
+						);
+					})}
 				</tbody>
 			</Table>
 			<MainTitle>작성자</MainTitle>
