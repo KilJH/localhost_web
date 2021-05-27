@@ -65,7 +65,7 @@ module.exports.applicationMapping = app => {
 	return {
 		id: app.appId || app.app_id || app.id,
 		user: userApi.userMapping(app),
-		date: formatDate(app.create_time),
+		date: formatDate(app.date),
 		status: app.status,
 	};
 };
@@ -84,7 +84,7 @@ module.exports.preApplicationMapping = preApp => {
 			},
 			name: preApp.formattedAddress || preApp.preApp_address || preApp.address,
 		},
-		date: formatDate(preApp.create_time),
+		date: formatDate(preApp.date),
 		status: preApp.status,
 		review: this.reviewMapping(preApp),
 	};
@@ -373,7 +373,11 @@ module.exports.showHosting = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
-		const applicant = rows.map(row => this.applicationMapping(row));
+		const applicant = rows
+			.map(row => this.applicationMapping(row))
+			.sort((a, b) => {
+				return a.date > b.date ? -1 : 1;
+			});
 
 		res.json({ success: true, applicant });
 	});

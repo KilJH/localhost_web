@@ -83,6 +83,10 @@ const Status = status => {
 			return <StatusSpan color='#e74c3c'>취소</StatusSpan>;
 		case 4:
 			return <StatusSpan>완료</StatusSpan>;
+		case 5:
+			return <StatusSpan color='#e74c3c'>장소 미설정</StatusSpan>;
+		case 6:
+			return <StatusSpan color='#e74c3c'>시간초과</StatusSpan>;
 		default:
 			return <StatusSpan>대기 중</StatusSpan>;
 	}
