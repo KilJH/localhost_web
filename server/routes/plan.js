@@ -8,6 +8,9 @@ router.use(cors());
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });
+router.post('/list/myPlan', function (req, res, next) {
+	management.myPlanList(req, res);
+});
 router.post('/load', function (req, res, next) {
 	management.load(req, res);
 });

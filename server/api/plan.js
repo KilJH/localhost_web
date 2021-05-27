@@ -95,6 +95,17 @@ module.exports.list = (req, res) => {
 	});
 };
 
+module.exports.myPlanList = (req, res) => {
+	const userId = req.body.userId;
+	const sql = `SELECT * FROM plan WHERE user_id = ?`;
+
+	mysql.query(sql, userId, (err, plans) => {
+		if (err) return res.json({ success: false, err });
+
+		res.json({ success: true, plans });
+	});
+};
+
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
@@ -414,10 +425,21 @@ module.exports.search = (req, res) => {
 module.exports.getWishList = (req, res) => {
 	const userId = req.body.userId;
 
-	const sql = `SELECT * FROM wishlist WHERE user_id = ?`;
+	const sql = `SELECT * FROM wishlist w LEFT JOIN plan p ON p.id = w.plan_id WHERE w.user_id = ?`;
 
 	mysql.query(sql, userId, (err, wishes) => {
 		if (err) return res.json({ success: false, err });
+
+		const plans = wishes.map(plan => {
+			return {
+				title: plan.title,
+				description: plan.description,
+				price: plan.price,
+				hit: plan.hit,
+				author: plan.author,
+				thumb: plan.thumb,
+			};
+		});
 
 		res.json({ success: true, list: wishes });
 	});
@@ -429,7 +451,7 @@ module.exports.addWishList = (req, res) => {
 	const sql = `INSERT INTO wishlist(user_id, plan_id) VALUES(?, ?);`;
 
 	mysql.query(sql, [userId, planId], err => {
-		if (err) res.json({ success: false, err });
+		if (err) return res.json({ success: false, err });
 
 		res.json({ success: true });
 	});
@@ -452,7 +474,7 @@ module.exports.writeComment = (req, res) => {
 	const sql = `INSERT INTO plan_comment(plan_id, user_Id, description) VALUES(? , ? , ?);`;
 
 	mysql.query(sql, [planId, userId, description], err => {
-		if (err) res.json({ success: false, err });
+		if (err) return res.json({ success: false, err });
 
 		res.json({ success: true });
 	});
@@ -463,7 +485,7 @@ module.exports.deleteComment = (req, res) => {
 	const sql = `DELETE FROM plan_comment WHERE id = ?;`;
 
 	mysql.query(sql, id, err => {
-		if (err) res.json({ success: false, err });
+		if (err) return res.json({ success: false, err });
 
 		res.json({ success: true });
 	});
