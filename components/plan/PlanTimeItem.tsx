@@ -6,7 +6,7 @@ import PhotoSlider from '../reuse/PhotoSlider';
 import CloseIcon from '@material-ui/icons/Close';
 import { Button, Fade, Modal } from '@material-ui/core';
 import { useModal } from '../../client/hooks/useModal';
-import PlanMap from './planMap';
+import PlanMap from './PlanMap';
 
 interface Props {
 	plan: PlanTime;
@@ -58,7 +58,7 @@ const ItemContainer = styled.div`
 	& .descriptionItem {
 		color: #666;
 		font-size: 0.8em;
-		white-space: pre;
+		white-space: break-spaces;
 	}
 
 	& > div {
