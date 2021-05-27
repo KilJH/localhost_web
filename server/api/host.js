@@ -317,10 +317,14 @@ module.exports.update = (req, res) => {
 
 module.exports.nearbyList = (req, res) => {
 	// 사용자와 호스트의 거리를 구하는 API
-	const { latitude, longitude } = req.body;
-	const distance = req.body.distance || 4;
+	const { latitude, longitude, country } = req.body;
+	const distance = req.body.distance || 100000;
 
-	const sql = `SELECT user.*, host.*, COUNT(follow.follower_id) AS followerNum, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, (6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) AS distance FROM host LEFT JOIN user ON user.id = host.user_id LEFT JOIN follow ON follow.user_id = user.id WHERE host.on = 1 GROUP BY host.id HAVING distance <= ${distance} ORDER BY distance`;
+	const sql = `SELECT user.*, host.*, COUNT(follow.follower_id) AS followerNum, host.address AS formattedAddress,host.latitude AS host_latitude, host.longitude AS host_longitude, 
+	(6371*acos(cos(radians(${latitude}))*cos(radians(host.latitude))*cos(radians(host.longitude)-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(host.latitude)))) 
+	AS distance FROM host LEFT JOIN user ON user.id = host.user_id LEFT JOIN follow ON follow.user_id = user.id WHERE host.on = 1 AND (reqcountry = 0 
+		OR (reqcountry = 1 AND nationality="${country}") OR (reqcountry = 2 AND nationality != "${country}")) GROUP BY host.id HAVING distance <= ${distance} ORDER BY distance`;
+
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('nearby err', err);
 
