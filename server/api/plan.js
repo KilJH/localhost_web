@@ -446,3 +446,25 @@ module.exports.deleteWishList = (req, res) => {
 		res.json({ success: true });
 	});
 };
+
+module.exports.writeComment = (req, res) => {
+	const { planId, userId, description } = req.body;
+	const sql = `INSERT INTO plan_comment(plan_id, user_Id, description) VALUES(? , ? , ?);`;
+
+	mysql.query(sql, [planId, userId, description], err => {
+		if (err) res.json({ success: false, err });
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.deleteComment = (req, res) => {
+	const { id } = req.body;
+	const sql = `DELETE FROM plan_comment WHERE id = ?;`;
+
+	mysql.query(sql, id, err => {
+		if (err) res.json({ success: false, err });
+
+		res.json({ success: true });
+	});
+};
