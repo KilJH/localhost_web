@@ -8,6 +8,8 @@ import React from 'react';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
 import TravelDaysTag from './TravelDaysTag';
+import Link from 'next/link';
+import UserPhoto from '../user/UserPhoto';
 
 interface Props {
 	plan: Plan;
@@ -107,6 +109,19 @@ const PlanOverviewContent = styled.div`
 			font-weight: 700;
 		}
 	}
+	& .plan_flex {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+	}
+	& .plan_author a {
+		font-size: 0.8em;
+		display: flex;
+		align-items: center;
+		&:hover {
+			opacity: 0.9;
+		}
+	}
 `;
 
 const PlanOverview: React.FC<Props> = props => {
@@ -144,15 +159,29 @@ const PlanOverview: React.FC<Props> = props => {
 
 					<div className='content'>{plan.description}</div>
 
-					<div className='price'>
-						<p>
-							₩{' '}
-							{Intl.NumberFormat().format(
-								Math.floor(plan!.price! / (plan?.travelDays ?? 1)),
-							)}{' '}
-							/ 일
-						</p>
-						<h2>₩ {Intl.NumberFormat().format(plan!.price!)}</h2>
+					<div className='plan_flex'>
+						<div className='plan_author'>
+							<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
+								<a>
+									<UserPhoto
+										width={2}
+										src={plan.author?.photo}
+										margin='0 0.25em'
+									/>
+									{plan.author?.nickname || '닉네임'}
+								</a>
+							</Link>
+						</div>
+						<div className='price'>
+							<p>
+								₩{' '}
+								{Intl.NumberFormat().format(
+									Math.floor(plan!.price! / (plan?.travelDays ?? 1)),
+								)}{' '}
+								/ 일
+							</p>
+							<h2>₩ {Intl.NumberFormat().format(plan!.price!)}</h2>
+						</div>
 					</div>
 
 					<div className='buttons'>
