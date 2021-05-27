@@ -188,13 +188,19 @@ const Privacy = (props: Props) => {
 
 	const onClickReset = () => {
 		setPhotoUrl('');
+		console.log('현재유저', currentUser.id);
 		axios
 			.post(`/api/user/update/photo`, {
-				id: currentUser.id,
+				userId: currentUser.id,
 				url: '',
 			})
 			.then(res => {
-				console.log(res);
+				res.data.success
+					? toast.handleOpen(
+							'success',
+							'프로필사진을 기본이미지로 변경했습니다.',
+					  )
+					: toast.handleOpen('error', '프로필사진 변경에 실패했습니다.');
 			});
 	};
 
@@ -215,11 +221,15 @@ const Privacy = (props: Props) => {
 					// 디비에 포토 수정
 					axios
 						.post(`/api/user/update/photo`, {
-							id: currentUser.id,
+							userId: currentUser.id,
 							url: res.data.url,
 						})
-						.then(() => {
-							location.href = '/users/mypage';
+						.then(res2 => {
+							res2.data.success
+								? toast.handleOpen('success', '프로필사진을 변경했습니다.')
+								: toast.handleOpen('error', '프로필사진 변경에 실패했습니다.');
+
+							setCurrentUser({ ...currentUser, photo: res.data.url });
 						});
 				})
 				.catch(err => {
