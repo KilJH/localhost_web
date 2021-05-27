@@ -12,6 +12,7 @@ interface Props {
 		// 내가 담은 플랜들
 		wishPlans: Plan[];
 		// 내가 작성한 플랜들
+		myPlans: Plan[];
 	};
 }
 
@@ -38,7 +39,13 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 
 	const wishRes = await axios.post(`${SERVER}/api/plan/wishlist`, { userId });
 
-	return { props: { wishPlans: wishRes.data.list } };
+	const myPlanRes = await axios.post(`${SERVER}/api/plan/list/myPlan`, {
+		userId,
+	});
+
+	return {
+		props: { wishPlans: wishRes.data.list, myPlans: myPlanRes.data.plans },
+	};
 };
 
 export default withAuth(1, 0)(mypage);
