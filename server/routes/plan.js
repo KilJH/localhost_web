@@ -29,5 +29,13 @@ router.post('/planUpdate', function (req, res, next) {
 router.post('/search', function (req, res, next) {
 	management.search(req, res);
 });
-
+router.post('/wishList', function (req, res, next) {
+	management.getWishList(req, res);
+});
+router.post('/wishList/add', function (req, res, next) {
+	management.addWishList(req, res);
+});
+router.post('/wishList/delete', function (req, res, next) {
+	management.deleteWishList(req, res);
+});
 module.exports = router;

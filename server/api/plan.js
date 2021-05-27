@@ -1,7 +1,7 @@
 const {
 	default: formatDistanceStrictWithOptions,
 } = require('date-fns/fp/formatDistanceStrictWithOptions');
-const { isUnionTypeNode } = require('typescript');
+const { isUnionTypeNode, ModuleKind } = require('typescript');
 const mysql = require('../db/mysql');
 
 // DATE formatting function
@@ -71,7 +71,7 @@ module.exports.list = (req, res) => {
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
-	const sql = `SELECT * FROM plan	WHERE id = ?`;
+	const sql = `SELECT * FROM plan p LEFT JOIN user u ON u.id = p.user_id; `;
 	let total = 0;
 
 	mysql.query(sql, id, (err, plansRows) => {
@@ -381,5 +381,41 @@ module.exports.search = (req, res) => {
 		});
 
 		res.status(200).json({ success: true, list: plans });
+	});
+};
+
+module.exports.getWishList = (req, res) => {
+	const userId = req.body.userId;
+
+	const sql = `SELECT * FROM wishlist WHERE user_id = ?`;
+
+	mysql.query(sql, userId, (err, wishes) => {
+		if (err) return res.json({ success: false, err });
+
+		res.json({ success: true, list: wishes });
+	});
+};
+
+module.exports.addWishList = (req, res) => {
+	const { userId, planId } = req.body;
+
+	const sql = `INSERT INTO wishlist(user_id, plan_id) VALUES(?, ?);`;
+
+	mysql.query(sql, [userId, planId], err => {
+		if (err) res.json({ success: false, err });
+
+		res.json({ success: true });
+	});
+};
+
+module.exports.deleteWishList = (req, res) => {
+	const { userId, planId } = req.body;
+
+	const sql = `DELETE FROM wishlist WHERE user_id = ? && plan_id = ?`;
+
+	mysql.query(sql, [userId, planId], err => {
+		if (err) return res.json({ success: false, err });
+
+		res.json({ success: true });
 	});
 };
