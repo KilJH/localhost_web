@@ -37,11 +37,30 @@ module.exports.list = (req, res) => {
 	// description중첩이기 때문에 별칭을 지어준다 _desc
 	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
 	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
-	const sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) AS num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
-    LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id GROUP BY plan.id ORDER BY create_time DESC;`;
+	const type = req.query.type || 'title';
+	const item = req.query.item || '';
+
+	let sql = ``;
+
+	switch (type) {
+		case 'title':
+			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) AS num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
+			LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE title LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
+			break;
+		case 'description':
+			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) AS num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
+			LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE description LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
+			break;
+		case 'both':
+			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) num_comment, plan.id plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
+			LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE title LIKE "%${item}%" || plan.description LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
+			break;
+	}
+
+	const page = req.query.page || 1;
 
 	mysql.query(sql, (err, rows) => {
-		if (err) return console.log('list err: ', err);
+		if (err) return res.json({ success: false, err });
 
 		const plans = rows.map(plan => {
 			return {
@@ -64,14 +83,22 @@ module.exports.list = (req, res) => {
 				numOfComment: plan.num_comment,
 			};
 		});
-		res.status(200).json({ success: true, list: plans });
+		const start = (page - 1) * 10;
+		const results = plans.slice(start, start + 10);
+
+		res.status(200).json({
+			success: true,
+			pagedPlans: results,
+			lastIndex: Math.ceil(plans.length / 10),
+			page,
+		});
 	});
 };
 
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
-	const sql = `SELECT * FROM plan p LEFT JOIN user u ON u.id = p.user_id; `;
+	const sql = `SELECT * FROM plan p LEFT JOIN user u ON u.id = p.user_id WHERE p.id = ?`;
 	let total = 0;
 
 	mysql.query(sql, id, (err, plansRows) => {
