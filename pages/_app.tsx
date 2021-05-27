@@ -49,7 +49,11 @@ _app.getInitialProps = async (appContext: any) => {
 		withCredentials: true,
 	});
 	const isLogined = res.data.success;
-	const user = res.data.user || {};
+	let user = res.data.user || {};
+	if (user.photo !== '') {
+		const time = new Date().getTime();
+		user = { ...user, photo: `${user.photo}?time=${time}` };
+	}
 	// const isLogined = false;
 	// const user = {};
 	loginProps = { isLogined, user };

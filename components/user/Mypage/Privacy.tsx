@@ -105,7 +105,9 @@ const Privacy = (props: Props) => {
 	const [place, setPlace] = useState<Place>();
 
 	const [img, setImg] = useState<File>();
-	const [photoUrl, setPhotoUrl] = useState(currentUser.photo);
+
+	const time = new Date().getTime();
+	const [photoUrl, setPhotoUrl] = useState(`${currentUser.photo}?time=${time}`);
 
 	// 패스워드 수정 on/off
 	const [enabledPw, setEnabledPw] = useState(false);
@@ -229,7 +231,10 @@ const Privacy = (props: Props) => {
 								? toast.handleOpen('success', '프로필사진을 변경했습니다.')
 								: toast.handleOpen('error', '프로필사진 변경에 실패했습니다.');
 
-							setCurrentUser({ ...currentUser, photo: res.data.url });
+							setCurrentUser({
+								...currentUser,
+								photo: `${res.data.url}?time=${time}`,
+							});
 						});
 				})
 				.catch(err => {
