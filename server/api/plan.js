@@ -428,12 +428,22 @@ module.exports.search = (req, res) => {
 module.exports.getWishList = (req, res) => {
 	const userId = req.body.userId;
 
-	const sql = `SELECT * FROM wishlist w LEFT JOIN plan p ON p.id = w.plan_id WHERE w.user_id = ?`;
+	const sql = `SELECT p.*, user.nickname, user.photo FROM wishlist w LEFT JOIN plan p ON p.id = w.plan_id LEFT JOIN user ON p.user_id = user.id WHERE w.user_id = ?`;
 
 	mysql.query(sql, userId, (err, wishes) => {
 		if (err) return res.json({ success: false, err });
 
-		res.json({ success: true, list: wishes });
+		const result = wishes.map(wish => {
+			return {
+				...wish,
+				author: {
+					nickname: wish.nickname,
+					photo: wish.nickname,
+				},
+			};
+		});
+
+		res.json({ success: true, list: result });
 	});
 };
 

@@ -59,7 +59,7 @@ const MypageLayout = (props: Props) => {
 			<Tabs fixed={state.isUp} isMobile={isMobile} tabNum={tabNum}>
 				<a href='/users/mypage'>회원정보</a>
 				<a href='/users/mypage/host'>호스트</a>
-				<a href='#board'>내가 쓴 글</a>
+				<a href='/users/mypage/plan'>플랜</a>
 				<a href='#wishlist'>위시리스트</a>
 			</Tabs>
 
