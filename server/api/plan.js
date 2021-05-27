@@ -109,7 +109,7 @@ module.exports.myPlanList = (req, res) => {
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
-	const sql = `SELECT * FROM plan p LEFT JOIN user u ON u.id = p.user_id WHERE p.id = ?`;
+	const sql = `SELECT *, p.id plan_id FROM plan p LEFT JOIN user u ON u.id = p.user_id WHERE p.id = ?`;
 	let total = 0;
 
 	mysql.query(sql, id, (err, plansRows) => {
@@ -184,7 +184,7 @@ module.exports.load = (req, res) => {
 			if (err2) return console.log('load err2', err2);
 
 			const plan = {
-				id: plansRows[0].id,
+				id: plansRows[0].plan_id,
 				title: plansRows[0].title,
 				description: plansRows[0].description,
 				price: plansRows[0].price,

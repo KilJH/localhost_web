@@ -220,7 +220,7 @@ module.exports.followerList = (req, res) => {
 		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
 		const followers = this.userListMapping(rows);
 
-		res.json({ success: true, followers });
+		res.json({ success: true, followers, followersNum: rows.length });
 	});
 };
 
