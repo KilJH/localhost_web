@@ -1,6 +1,5 @@
 import { Grow, Slider } from '@material-ui/core';
-import axios from 'axios';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
 import Button from '../reuse/Button';
@@ -9,11 +8,12 @@ import LanguageSelect from '../reuse/LanguageSelect';
 
 interface FilterProps {
 	origin: Host[];
-	setOrigin: Dispatch<SetStateAction<Host[]>>;
 	setNearbyHosts: Dispatch<SetStateAction<Host[]>>;
 	onShow?: boolean;
 	onClose?: Function;
 	coord: { lat: number; lng: number };
+	distance: number;
+	setDistance: Dispatch<SetStateAction<number>>;
 }
 
 const FilterContainer = styled.div`
@@ -50,26 +50,12 @@ const StyledSlider = styled(Slider)`
 const HostFilter = (props: FilterProps) => {
 	const {
 		origin,
-		setOrigin,
 		setNearbyHosts,
 		onShow = true,
 		onClose,
-		coord,
+		distance,
+		setDistance,
 	} = props;
-	const [distance, setDistance] = useState(4);
-
-	useEffect(() => {
-		// 거리가 변할 때마다 axios 요청 후 setNearbyHosts 해주기
-		axios
-			.post(`/api/host/nearbyList`, {
-				latitude: coord.lat,
-				longitude: coord.lng,
-				distance: distance,
-			})
-			.then(res => {
-				setOrigin(res.data.nearbyhosts);
-			});
-	}, [distance]);
 
 	const marks = [
 		{ value: 1, label: '1km' },

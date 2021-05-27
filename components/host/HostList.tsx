@@ -7,10 +7,11 @@ import HostFilter from './HostFilter';
 
 interface Props {
 	origin: Host[];
-	setOrigin: Dispatch<SetStateAction<Host[]>>;
 	nearbyHosts: Host[];
 	setNearbyHosts: Dispatch<SetStateAction<Host[]>>;
 	coord: { lat: number; lng: number };
+	distance: number;
+	setDistance: Dispatch<SetStateAction<number>>;
 }
 const HostListContainer = styled.section`
 	overflow-y: auto;
@@ -51,16 +52,16 @@ const SortContainer = styled.div`
 `;
 
 const HostList = (props: Props) => {
-	const { origin, setOrigin, nearbyHosts, setNearbyHosts, coord } = props;
+	const { nearbyHosts } = props;
 	const [sortOpt, setSortOpt] = useState({ property: 'distance', asc: true });
 	const [filterOn, setFilterOn] = useState(false);
 
 	const onOpenFilter = () => {
 		setFilterOn(!filterOn);
 	};
-	const onCloseFilter = () => {
-		setFilterOn(false);
-	};
+	// const onCloseFilter = () => {
+	// 	setFilterOn(false);
+	// };
 
 	const compareValue = (a, b) => {
 		return sortOpt.asc ? a - b : b - a;
@@ -125,14 +126,7 @@ const HostList = (props: Props) => {
 					<TuneIcon />
 					<span>필터</span>
 				</button>
-				<HostFilter
-					onShow={filterOn}
-					origin={origin}
-					setOrigin={setOrigin}
-					setNearbyHosts={setNearbyHosts}
-					onClose={onCloseFilter}
-					coord={coord}
-				/>
+				<HostFilter onShow={filterOn} {...props} />
 			</SortContainer>
 			{sortedHosts?.map(host => (
 				<HostListItem host={host} key={host.id} />

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Maps from '../../components/reuse/Maps';
 import SearchPlace from '../../components/search/SearchPlace';
 import { Host, Place } from '../../interfaces';
 import styled from 'styled-components';
 import HostList from '../../components/host/HostList';
+import { UserStateContext } from '../../context/user';
 
 const Container = styled.div`
 	display: flex;
@@ -32,6 +33,10 @@ const HostMain = () => {
 	const [nearbyHosts, setNearbyHosts] = useState<Host[]>([]);
 	const [filteredHosts, setFilteredHosts] = useState<Host[]>([]);
 
+	const [distance, setDistance] = useState(4);
+
+	const currentUser = useContext(UserStateContext);
+
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
 		if (place) {
@@ -57,11 +62,27 @@ const HostMain = () => {
 			.post(`/api/host/nearByList`, {
 				latitude: coord.lat,
 				longitude: coord.lng,
+				country: currentUser.nationality,
+				distance: distance,
 			})
 			.then(res => {
 				setNearbyHosts(res.data.nearbyhosts);
 			});
 	}, [coord]);
+
+	useEffect(() => {
+		// 거리가 변할 때마다 axios 요청 후 setNearbyHosts 해주기
+		axios
+			.post(`/api/host/nearbyList`, {
+				latitude: coord.lat,
+				longitude: coord.lng,
+				distance: distance,
+				country: currentUser.nationality,
+			})
+			.then(res => {
+				setNearbyHosts(res.data.nearbyhosts);
+			});
+	}, [distance]);
 
 	useEffect(() => {
 		setFilteredHosts(nearbyHosts);
@@ -73,10 +94,11 @@ const HostMain = () => {
 				<SearchPlace setPlace={setPlace} />
 				<HostList
 					origin={nearbyHosts}
-					setOrigin={setNearbyHosts}
 					nearbyHosts={filteredHosts}
 					setNearbyHosts={setFilteredHosts}
 					coord={coord}
+					distance={distance}
+					setDistance={setDistance}
 				/>
 			</div>
 			<div>
