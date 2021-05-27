@@ -1,10 +1,13 @@
+import Link from 'next/link';
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Plan } from '../../../interfaces';
+import { myPlanList } from '../../../server/api/plan';
 import MypageLayout from './MypageHeader';
 
 interface Props {
 	wishPlans: Plan[];
+	myPlans: Plan[];
 }
 
 const Container = styled.div`
@@ -50,7 +53,7 @@ const NoItem = ({ children, col }: { children: ReactNode; col: number }) => (
 );
 
 const MyPlan = (props: Props) => {
-	const { wishPlans } = props;
+	const { wishPlans, myPlans } = props;
 	return (
 		<MypageLayout tabNum={3}>
 			<Container>
@@ -71,7 +74,11 @@ const MyPlan = (props: Props) => {
 							{/* 없으면 없습니다, */}
 							{wishPlans.map(plan => (
 								<tr>
-									<td>{plan.title}</td>
+									<td>
+										<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
+											<a>{plan.title}</a>
+										</Link>
+									</td>
 									<td>{plan.author?.nickname}</td>
 									<td>버튼</td>
 								</tr>
@@ -96,8 +103,22 @@ const MyPlan = (props: Props) => {
 								<th>삭제</th>
 							</tr>
 						</thead>
+
 						<tbody>
 							{/* 없으면 없습니다, */}
+							{myPlans.map(plan => (
+								<tr>
+									<td>
+										<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
+											<a>{plan.title}</a>
+										</Link>
+									</td>
+									<td>{plan.hit}</td>
+									<td>{0}</td>
+									<td>수정버튼</td>
+									<td>삭제버튼</td>
+								</tr>
+							))}
 							<NoItem col={5}>여행플랜이 없습니다.</NoItem>
 						</tbody>
 					</Table>
