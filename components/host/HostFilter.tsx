@@ -3,7 +3,6 @@ import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
 import Button from '../reuse/Button';
-import Input from '../reuse/Input';
 import LanguageSelect from '../reuse/LanguageSelect';
 
 interface FilterProps {
@@ -80,10 +79,10 @@ const HostFilter = (props: FilterProps) => {
 		<Grow in={onShow} timeout={200}>
 			<div style={{ position: 'relative', top: '2.5rem', left: '-240px' }}>
 				<FilterContainer>
-					<div>
+					{/* <div>
 						<label>여행스타일</label>
 						<Input />
-					</div>
+					</div> */}
 					<div>
 						<label>언어</label>
 						<LanguageSelect onChange={onLangChange} />
