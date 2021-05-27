@@ -477,7 +477,6 @@ module.exports.getApplicationId = (req, res) => {
 	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
-
 		const applicationId = rows[0].id;
 		res.json({ success: true, applicationId: applicationId });
 	});

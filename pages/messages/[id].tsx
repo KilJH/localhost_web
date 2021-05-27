@@ -32,27 +32,27 @@ export const getServerSideProps: GetServerSideProps = async context => {
 		await axios.get(`${SERVER}/api/user/${opponentId}`)
 	).data.user;
 	const cookie = context.req.headers.cookie || '';
-	const userId = await (
+	const user = await (
 		await axios.get(`${SERVER}/api/auth/check`, {
 			withCredentials: true,
 			headers: {
 				cookie,
 			},
 		})
-	).data.user.id;
+	).data.user;
 
 	const res = await (
 		await axios.post(`${SERVER}/api/message/room/load`, {
 			hostUserId: opponentId,
-			userId: userId,
+			userId: user.id,
 		})
 	).data;
 
 	let applicationId = null;
-	if (userId.isHost === 1) {
+	if (user.isHost) {
 		applicationId = await (
 			await axios.post(`${SERVER}/api/host/application/id`, {
-				hostUserId: userId,
+				hostUserId: user.id,
 				userId: opponentId,
 			})
 		).data.applicationId;
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	const messages = res.messages;
 	const roomId = res.roomId;
 	const hostUserId = res.hostId;
-	const userUserId = res.userId;
+	const userUserId = user.id;
 	return {
 		props: {
 			loadMessages: messages,

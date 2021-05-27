@@ -18,15 +18,17 @@ const list = ({ pageProps }: Props) => (
 		<PlanDetail {...pageProps} />
 	</AdminLayout>
 );
-
-export const getServerSideProps: GetServerSideProps = async context => {
-	const id = context.params?.id;
-	const item: Plan[] = await (
-		await axios.post(`${SERVER}/api/plan/load`, {
-			id: id,
-		})
-	).data.plan;
-	return { props: { item } };
-};
-
 export default withAuth(1, 2)(list);
+export const getServerSideProps: GetServerSideProps = async context => {
+	try {
+		const id = context.params?.id;
+		const item: Plan[] = await (
+			await axios.post(`${SERVER}/api/plan/load`, {
+				id: id,
+			})
+		).data.plan;
+		return { props: { item } };
+	} catch (err) {
+		return { props: { errors: err.message } };
+	}
+};

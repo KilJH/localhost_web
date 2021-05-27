@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 
-import { User } from '../../interfaces';
+import { Plan, User } from '../../interfaces';
 import Layout from '../../components/main/Layout';
 import ListDetail from '../../components/user/ListDetail';
 import axios from 'axios';
@@ -11,6 +11,7 @@ type Props = {
 	pageProps: {
 		item?: User;
 		isFollowed: boolean;
+		plan: Plan;
 		errors?: string;
 	};
 };
@@ -23,7 +24,11 @@ const UserDetail = ({ pageProps }: Props) => {
 			} | localhost`}
 		>
 			{pageProps.item && (
-				<ListDetail item={pageProps.item} isFollowed={pageProps.isFollowed} />
+				<ListDetail
+					item={pageProps.item}
+					isFollowed={pageProps.isFollowed}
+					plan={pageProps.plan}
+				/>
 			)}
 		</Layout>
 	);
@@ -52,8 +57,13 @@ export const getServerSideProps: GetServerSideProps = async context => {
 				followerId: userId,
 			})
 		).data.isFollowed;
-
-		return { props: { item, isFollowed } };
+		const plan = await (
+			await axios.post(`${SERVER}/api/plan/search`, {
+				type: 'id',
+				item: id,
+			})
+		).data.list;
+		return { props: { item, isFollowed, plan } };
 	} catch (err) {
 		return { props: { errors: err.message } };
 	}

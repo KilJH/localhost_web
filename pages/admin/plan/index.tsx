@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
 	const items: Plan[] = await (
 		await axios.get(`${SERVER}/api/plan/list`)
-	).data.list;
+	).data.plans;
 	return { props: { items } };
 };
 
