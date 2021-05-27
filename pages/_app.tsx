@@ -50,15 +50,15 @@ _app.getInitialProps = async (appContext: any) => {
 	});
 	const isLogined = res.data.success;
 	let user = res.data.user || {};
-	if (user.photo !== '') {
+
+	// 프로필사진 캐싱을 방지
+	if (user.photo !== '' && user.photo) {
 		const time = new Date().getTime();
 		user = { ...user, photo: `${user.photo}?time=${time}` };
 	}
-	// const isLogined = false;
-	// const user = {};
+
 	loginProps = { isLogined, user };
 	return { ...appProps, loginProps };
-	// return {};
 };
 
 export default _app;
