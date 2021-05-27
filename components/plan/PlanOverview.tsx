@@ -181,14 +181,11 @@ const getWholeImage = (plan: Plan) => {
 	let wholeImage: string[] = [];
 	plan.planDays!.forEach(planDay => {
 		planDay.planTimes.forEach(planTime => {
-			console.log(planTime);
 			if (planTime.photo!.length > 0 && !(planTime.photo![0] === '')) {
 				wholeImage = [...wholeImage, ...(planTime.photo as string[])];
 			}
 		});
 	});
-
-	console.log(wholeImage);
 
 	return wholeImage;
 };

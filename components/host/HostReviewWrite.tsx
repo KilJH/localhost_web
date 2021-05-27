@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useInput } from '../../client/hooks/useInput';
 import Textarea from '../reuse/Textarea';
 import Router from 'next/router';
+import { useToast } from '../../client/hooks/useToast';
+import Toast from '../reuse/Toast';
 
 interface Props {
 	applicationId: number;
@@ -42,13 +44,16 @@ const HostRating = styled(Rating)`
 
 const Request = (props: Props) => {
 	const { applicationId, onClose } = props;
-	const [rating, setRating] = useState(null);
+	const [rating, setRating] = useState<number | null>(null);
 	const [hover, setHover] = useState(-1);
 	const desc = useInput('');
+	const toast = useToast(false);
 	const onSubmit = async () => {
-		if (rating === 0 || rating === null) alert('별점을 등록해주세요!');
-		else if (desc.value === '') alert('후기를 작성해주세요!');
-		else {
+		if (rating === 0 || rating === null) {
+			toast.handleOpen('warning', '별점을 등록해주세요!');
+		} else if (desc.value === '') {
+			toast.handleOpen('warning', '내용을 작성해주세요!');
+		} else {
 			try {
 				const res = await axios.post(`/api/host/review/write`, {
 					id: applicationId,
@@ -72,10 +77,10 @@ const Request = (props: Props) => {
 				<HostRating
 					value={rating}
 					precision={0.5}
-					onChange={() => newValue => {
+					onChange={(_event, newValue) => {
 						setRating(newValue);
 					}}
-					onChangeActive={() => newHover => {
+					onChangeActive={(_event, newHover) => {
 						setHover(newHover);
 					}}
 				/>
@@ -92,6 +97,7 @@ const Request = (props: Props) => {
 				placeholder='따뜻한 후기는 호스트에게 큰 힘이 됩니다:)'
 			></Textarea>
 			<SubmitButton onClick={onSubmit}>리뷰작성</SubmitButton>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 };
