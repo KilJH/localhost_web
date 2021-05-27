@@ -15,7 +15,6 @@ interface Props {
 
 const index = (props: Props) => {
 	const { pageProps } = props;
-
 	return (
 		<Layout title='플랜보기 | localhost'>
 			<PlanList plans={pageProps.plans || []} />
@@ -23,10 +22,14 @@ const index = (props: Props) => {
 	);
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-	const res = await axios.get(`${SERVER}/api/plan/list`);
+export const getServerSideProps: GetServerSideProps = async ctx => {
+	const res = await axios.get(
+		`${SERVER}/api/plan/list?page=${ctx.query.page}&type=${
+			ctx.query.type ?? 'title'
+		}&item=${ctx.query.item ?? ''}`,
+	);
 
-	return { props: { plans: res.data.list } };
+	return { props: { ...res.data } };
 };
 
 export default withAuth(0, 0)(index);

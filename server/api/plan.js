@@ -88,7 +88,7 @@ module.exports.list = (req, res) => {
 
 		res.status(200).json({
 			success: true,
-			pagedPlans: results,
+			plans: results,
 			lastIndex: Math.ceil(plans.length / 10),
 			page,
 		});
