@@ -172,7 +172,7 @@ export default function MyHosting(props: Props): ReactElement {
 	const [languageSave, setLanguageSave] = useState(language);
 	const [languageOpen, setLanguageOpen] = useState(false);
 	const [placeOpen, setPlaceOpen] = useState(false);
-	const [selectedStyle, setSelectedStyle] = useState('');
+	const [selectedStyle, setSelectedStyle] = useState(host.tag || '');
 
 	let languages = [
 		'한국어',
