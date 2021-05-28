@@ -359,7 +359,9 @@ module.exports.doneHosting = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('doneHosting err', err);
-		const previousApplicant = rows.map(row => this.preApplicationMapping(row));
+		const previousApplicant = rows
+			.map(row => this.preApplicationMapping(row))
+			.sort((a, b) => (a.date > b.date ? -1 : 1));
 		res.json({ success: true, previousApplicant });
 	});
 };

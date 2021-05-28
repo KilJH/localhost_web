@@ -11,8 +11,8 @@ interface Props {
 	pageProps: {
 		// 호스트에 관한 기록들
 		// 현재 요청한 호스트
-		applications?: Application[];
-		preApplications?: PreviousApplication[];
+		applications: Application[];
+		preApplications: PreviousApplication[];
 	};
 }
 
@@ -44,8 +44,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		userId,
 	});
 
-	const applications = resApp.data.applicant;
-	const preApplications = resPreApp.data.previousApplicant;
+	const applications = resApp.data.applicant || [];
+	const preApplications = resPreApp.data.previousApplicant || [];
 
 	return { props: { applications, preApplications } };
 };

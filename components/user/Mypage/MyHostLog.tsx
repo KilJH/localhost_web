@@ -9,8 +9,8 @@ import Rating from '../../reuse/Rating';
 import MypageLayout from './MypageHeader';
 
 interface Props {
-	applications?: Application[];
-	preApplications?: PreviousApplication[];
+	applications: Application[];
+	preApplications: PreviousApplication[];
 }
 
 const Container = styled.div`
@@ -28,6 +28,7 @@ const Container = styled.div`
 		padding: 0.25rem;
 		font-size: 0.9em;
 		text-align: right;
+		cursor: pointer;
 	}
 `;
 
@@ -159,12 +160,24 @@ const NoItem = ({ children }: { children: ReactNode }) => (
 
 const MyHostLog = (props: Props) => {
 	const { applications, preApplications } = props;
+
+	// 단순 on/off를 활용하기 위함
+	const [morePresent, setMorePresent] = useState(false);
+	const [morePast, setMorePast] = useState(false);
+
+	const onChangeMorePresent = () => {
+		setMorePresent(!morePresent);
+	};
+	const onChangeMorePast = () => {
+		setMorePast(!morePast);
+	};
+
 	return (
 		<MypageLayout tabNum={2}>
 			<Container>
 				<section>
 					<header>
-						<h3>현재 진행중인 호스트</h3>
+						<h3>현재 진행중인 호스트({applications.length})</h3>
 					</header>
 
 					<Table>
@@ -178,21 +191,23 @@ const MyHostLog = (props: Props) => {
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{applications!.length ? (
-								applications!.map(app => (
-									<ApplicationItem application={app} key={app.id} />
-								))
-							) : (
-								<NoItem>현재 신청내역이 없습니다.</NoItem>
-							)}
+							{(morePresent ? applications! : applications!.slice(0, 5)).map(
+								app => <ApplicationItem application={app} key={app.id} />,
+							) || <NoItem>현재 신청내역이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
+					{applications!.length > 5 ? (
+						<div className='more' onClick={onChangeMorePresent}>
+							<a className='more'>더보기</a>
+						</div>
+					) : (
+						''
+					)}
 				</section>
 				<section>
 					<header>
-						<h3>지나온 호스트</h3>
+						<h3>지나온 호스트({preApplications.length})</h3>
 					</header>
-					{/* 5개만큼 잘라서 mapping */}
 
 					<Table>
 						<thead>
@@ -205,18 +220,18 @@ const MyHostLog = (props: Props) => {
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{preApplications!.length ? (
-								preApplications!
-									.slice(0, 5)
-									.map(app => <HistoryItem history={app} />)
-							) : (
-								<NoItem>현재 신청내역이 없습니다.</NoItem>
-							)}
+							{(morePast ? preApplications! : preApplications!.slice(0, 5)).map(
+								app => <HistoryItem history={app} />,
+							) || <NoItem>현재 신청내역이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
-					<div className='more'>
-						<a className='more'>더보기</a>
-					</div>
+					{preApplications!.length > 5 ? (
+						<div className='more' onClick={onChangeMorePast}>
+							<a className='more'>더보기</a>
+						</div>
+					) : (
+						''
+					)}
 				</section>
 			</Container>
 		</MypageLayout>

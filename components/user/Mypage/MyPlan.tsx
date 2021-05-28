@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Plan } from '../../../interfaces';
 import MypageLayout from './MypageHeader';
@@ -53,12 +53,24 @@ const NoItem = ({ children, col }: { children: ReactNode; col: number }) => (
 
 const MyPlan = (props: Props) => {
 	const { wishPlans, myPlans } = props;
+
+	// 단순 on/off를 활용하기 위함
+	const [moreWish, setMoreWish] = useState(false);
+	const [moreMine, setMoreMine] = useState(false);
+
+	const onChangeMoreWish = () => {
+		setMoreWish(!moreWish);
+	};
+	const onChangeMoreMine = () => {
+		setMoreMine(!moreMine);
+	};
+
 	return (
 		<MypageLayout tabNum={3}>
 			<Container>
 				<section>
 					<header>
-						<h3>내가 담은 플랜</h3>
+						<h3>내가 담은 플랜({wishPlans.length})</h3>
 					</header>
 
 					<Table>
@@ -70,8 +82,7 @@ const MyPlan = (props: Props) => {
 							</tr>
 						</thead>
 						<tbody>
-							{/* 없으면 없습니다, */}
-							{wishPlans.map(plan => (
+							{(moreWish ? wishPlans : wishPlans.slice(0, 5)).map(plan => (
 								<tr>
 									<td>
 										<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
@@ -84,12 +95,18 @@ const MyPlan = (props: Props) => {
 							)) || <NoItem col={3}>여행플랜이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
+					{wishPlans.length > 5 ? (
+						<div className='more' onClick={onChangeMoreWish}>
+							<a className='more'>더보기</a>
+						</div>
+					) : (
+						''
+					)}
 				</section>
 				<section>
 					<header>
-						<h3>내가 작성한 플랜</h3>
+						<h3>내가 작성한 플랜({myPlans.length})</h3>
 					</header>
-					{/* 5개만큼 잘라서 mapping */}
 
 					<Table>
 						<thead>
@@ -104,7 +121,7 @@ const MyPlan = (props: Props) => {
 
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{myPlans.map(plan => (
+							{(moreMine ? myPlans : myPlans.slice(0, 5)).map(plan => (
 								<tr>
 									<td>
 										<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
@@ -119,9 +136,13 @@ const MyPlan = (props: Props) => {
 							)) || <NoItem col={5}>여행플랜이 없습니다.</NoItem>}
 						</tbody>
 					</Table>
-					<div className='more'>
-						<a className='more'>더보기</a>
-					</div>
+					{myPlans.length > 5 ? (
+						<div className='more' onClick={onChangeMoreMine}>
+							<a className='more'>더보기</a>
+						</div>
+					) : (
+						''
+					)}
 				</section>
 			</Container>
 		</MypageLayout>
