@@ -1,26 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import PlanItem from './PlanItem';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
 import Button from '../reuse/Button';
 import Pagination from '../main/Pagination';
-import axios from 'axios';
+import Search from '../search/Search';
+import { ParsedUrlQuery } from 'node:querystring';
 
 interface Props {
 	plans: Array<Plan>;
 	lastIdx: number;
 	page: number;
+	query: ParsedUrlQuery;
 }
 
 const PlanListContainer = styled.section`
 	margin: 2rem 0;
+	& > * {
+		margin: 1rem 0;
+	}
 `;
 
 const PlanList = (props: Props) => {
-	const { lastIdx, page } = props;
-	const [plans, setPlans] = useState(props.plans);
-	const [query, setQuery] = useState({ type: 'title', item: '' });
+	const { plans, lastIdx, page, query } = props;
 
 	// 브라우저 상 주소를 위한 url
 	const url = query.item
@@ -28,15 +31,24 @@ const PlanList = (props: Props) => {
 		: `/plans/?`;
 
 	const onPageClick = async idx => {
-		const apiUrl = query.item
-			? `/api/plan/list?type=${query.type}&item=${query.item}&page=${idx}`
-			: `/api/plan/list?page=${idx}`;
-		const res = await axios.get(apiUrl);
-		setPlans(res.data.plans);
+		location.href = query.item
+			? `/plans?type=${query.type}&item=${query.item}&page=${idx}`
+			: `/plans?page=${idx}`;
+	};
+
+	const searchProps = {
+		options: ['title', 'description', 'both'],
+		label: ['제목', '내용', '제목/내용'],
+		onSubmit: (e, type, input) => {
+			e.preventDefault();
+
+			location.href = `/plans?type=${type}&item=${input}`;
+		},
 	};
 
 	return (
 		<PlanListContainer>
+			<Search {...searchProps} />
 			{plans.map(plan => (
 				<Link
 					as={`/plans/${plan.id}`}

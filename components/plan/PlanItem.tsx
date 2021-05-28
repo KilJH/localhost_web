@@ -28,6 +28,9 @@ const StyledListRoot = styled.div`
 		border-radius: 1em;
 		margin-right: 1em;
 	}
+
+	&:last-of-type {
+	}
 `;
 
 const StyledListBody = styled.div`

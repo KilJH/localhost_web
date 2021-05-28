@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -46,7 +45,7 @@ const Container = styled.nav`
 `;
 
 const Pagination = (props: Props) => {
-	const { currentIdx, lastIdx, url, onClick } = props;
+	const { currentIdx, lastIdx, onClick } = props;
 	// index = 1 ~ m
 
 	// const onClick = async (idx: number) => {
@@ -81,15 +80,15 @@ const Pagination = (props: Props) => {
 		<Container>
 			<ul>
 				<PageButton>
-					<Link href={`${url}page=${1}`}>
-						<button
-							onClick={() => {
-								onClick!(1);
-							}}
-						>
-							&lt;
-						</button>
-					</Link>
+					{/* <Link href={`${url}page=${1}`}> */}
+					<button
+						onClick={() => {
+							onClick!(1);
+						}}
+					>
+						&lt;
+					</button>
+					{/* </Link> */}
 				</PageButton>
 				{idxs.map(idx =>
 					idx == currentIdx ? (
@@ -98,29 +97,29 @@ const Pagination = (props: Props) => {
 						</PageButton>
 					) : (
 						<PageButton key={idx}>
-							<Link href={`${url}page=${idx}`}>
-								<button
-									onClick={() => {
-										onClick!(idx);
-									}}
-								>
-									{idx}
-								</button>
-							</Link>
+							{/* <Link href={`${url}page=${idx}`}> */}
+							<button
+								onClick={() => {
+									onClick!(idx);
+								}}
+							>
+								{idx}
+							</button>
+							{/* </Link> */}
 						</PageButton>
 					),
 				)}
 
 				<PageButton>
-					<Link href={`${url}page=${lastIdx}`}>
-						<button
-							onClick={() => {
-								onClick!(lastIdx);
-							}}
-						>
-							&gt;
-						</button>
-					</Link>
+					{/* <Link href={`${url}page=${lastIdx}`}> */}
+					<button
+						onClick={() => {
+							onClick!(lastIdx);
+						}}
+					>
+						&gt;
+					</button>
+					{/* </Link> */}
 				</PageButton>
 			</ul>
 		</Container>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
 	return (
-		<div style={{ textAlign: 'center', fontSize: '0.8rem' }}>
+		<div style={{ textAlign: 'center', fontSize: '0.8em' }}>
 			Copyright © localhost
 			<br />
 			길진혁 <a href='https://github.com/KilJH'>https://github.com/KilJH</a>

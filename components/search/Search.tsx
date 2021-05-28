@@ -71,6 +71,7 @@ const SelectControl = styled(FormControl)<SelectProps>`
 	}
 	& .MuiOutlinedInput-root {
 		height: -webkit-fill-available;
+		font-size: 1em;
 		&.hover fieldset {
 			border-color: rgb(81, 151, 213);
 		}
@@ -91,8 +92,9 @@ const CssSelect = styled(Select)`
 	}
 `;
 const CssInputBase = styled(InputBase)`
+	font-size: 1em !important;
 	width: 90%;
-	margin-left: 1rem;
+	margin-left: 0.75em;
 	& .MuiOutlinedInput-root {
 		height: -webkit-fill-available;
 		&.hover fieldset {

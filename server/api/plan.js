@@ -48,8 +48,7 @@ module.exports.list = (req, res) => {
 			LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE title LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
 			break;
 		case 'description':
-			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) AS num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
-			LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE description LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
+			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) AS num_comment, plan.id AS plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id LEFT JOIN plan_comment ON plan.id = plan_comment.plan_id WHERE plan.description LIKE "%${item}%" GROUP BY plan.id ORDER BY create_time DESC;`;
 			break;
 		case 'both':
 			sql = `SELECT plan.*, user.*, COUNT(plan_comment.id) num_comment, plan.id plan_id FROM plan LEFT JOIN user ON plan.user_id = user.id 
@@ -88,8 +87,8 @@ module.exports.list = (req, res) => {
 
 		res.status(200).json({
 			success: true,
-			plans: results,
-			lastIndex: Math.ceil(plans.length / 10),
+			plans: results || [],
+			lastIdx: Math.ceil(plans.length / 10),
 			page,
 		});
 	});

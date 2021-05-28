@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
+import { ParsedUrlQuery } from 'node:querystring';
 import React from 'react';
 import SERVER from '../../client/utils/url';
 import withAuth from '../../components/main/hoc/withAuth';
@@ -12,6 +13,7 @@ interface Props {
 		plans: Plan[];
 		lastIdx: number;
 		page: number;
+		query: ParsedUrlQuery;
 	};
 }
 
@@ -32,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	);
 	const res = await axios.get(url);
 
-	return { props: { ...res.data } };
+	return { props: { ...res.data, query: ctx.query } };
 };
 
 export default withAuth(0, 0)(index);
