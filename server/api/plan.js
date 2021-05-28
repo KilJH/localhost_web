@@ -309,10 +309,10 @@ module.exports.write = (req, res) => {
 
 module.exports.delete = (req, res) => {
 	// 삭제
-	const { id, planDayId, planTimeId } = req.body; // 플랜 id
+	const { planId, planDayId, planTimeId } = req.body; // 플랜 id
 
 	let sql = '';
-	if (id) sql = `DELETE FROM plan WHERE id = "${id}";`;
+	if (planId) sql = `DELETE FROM plan WHERE id = "${planId}";`;
 	if (planDayId) sql = `DELETE FROM plan_day WHERE id = "${planDayId}";`;
 	if (planTimeId) sql = `DELETE FROM plan_time WHERE id = "${planTimeId}";`;
 
@@ -428,7 +428,7 @@ module.exports.search = (req, res) => {
 module.exports.getWishList = (req, res) => {
 	const userId = req.body.userId;
 
-	const sql = `SELECT p.*, user.nickname, user.photo FROM wishlist w LEFT JOIN plan p ON p.id = w.plan_id LEFT JOIN user ON p.user_id = user.id WHERE w.user_id = ?`;
+	const sql = `SELECT p.*, user.nickname, user.photo, user.id user_id FROM wishlist w LEFT JOIN plan p ON p.id = w.plan_id LEFT JOIN user ON p.user_id = user.id WHERE w.user_id = ?`;
 
 	mysql.query(sql, userId, (err, wishes) => {
 		if (err) return res.json({ success: false, err });
@@ -437,6 +437,7 @@ module.exports.getWishList = (req, res) => {
 			return {
 				...wish,
 				author: {
+					id: wish.user_id,
 					nickname: wish.nickname,
 					photo: wish.nickname,
 				},
