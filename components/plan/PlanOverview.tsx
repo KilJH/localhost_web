@@ -2,7 +2,7 @@ import { Grid, Button } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 // import FavoriteIcon from '@material-ui/icons/Favorite';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Plan } from '../../interfaces/index';
 import styled from 'styled-components';
 import TravelDaysTag from './TravelDaysTag';
@@ -12,7 +12,6 @@ import { UserStateContext } from '../../context/user';
 import axios from 'axios';
 import { useToast } from '../../client/hooks/useToast';
 import Toast from '../reuse/Toast';
-import { Color } from '@material-ui/lab';
 import PhotoSlider from '../reuse/PhotoSlider';
 
 interface Props {
@@ -89,8 +88,7 @@ const PlanOverviewContent = styled.div`
 const PlanOverview: React.FC<Props> = props => {
 	const { plan } = props;
 	const currentUser = useContext(UserStateContext);
-	const wishListToast = useToast(false);
-	const [toast, setToast] = useState({ type: 'success', message: '' });
+	const toast = useToast(false);
 
 	const onWish = async () => {
 		const res = await axios.post(`/api/plan/wishList/add`, {
@@ -98,11 +96,9 @@ const PlanOverview: React.FC<Props> = props => {
 			planId: plan.id,
 		});
 		if (res.data.success) {
-			setToast({ type: 'success', message: '나의 여행에 담았습니다.' });
-			wishListToast.handleOpen();
+			toast.handleOpen('success', '나의 여행에 담았습니다.');
 		} else {
-			setToast({ type: 'error', message: res.data.message });
-			wishListToast.handleOpen();
+			toast.handleOpen('error', res.data.message);
 		}
 	};
 
@@ -170,9 +166,7 @@ const PlanOverview: React.FC<Props> = props => {
 					</PlanOverviewContent>
 				</Grid>
 			</PlanOverviewGrid>
-			<Toast {...wishListToast} type={toast.type as Color}>
-				{toast.message}
-			</Toast>
+			<Toast {...toast}>{toast.message}</Toast>
 		</>
 	);
 };
