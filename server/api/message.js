@@ -7,13 +7,10 @@ module.exports.createRoom = (req, res) => {
 	mysql.query(sql, [hostUserId, userId], (err, rows) => {
 		if (err) return console.log('createRoom err', err);
 
-		const innerSql = `UPDATE host_user_apply SET room_id = (SELECT id FROM message_room WHERE host_user_id = "${hostUserId}" AND user_user_id = "${userId}" AND status = 1) WHERE host_user_id = "${hostUserId}" AND user_user_id = "${userId}";`;
-		mysql.query(innerSql, err => {
-			if (err) return console.log('roomId update err', err);
-			res.json({ success: true, roomId: rows.insertId });
-		});
+		res.json({ success: true, roomId: rows.insertId });
 	});
 };
+
 module.exports.loadRoom = (req, res) => {
 	const { hostUserId, userId } = req.body;
 	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE (host_user_id = ? && user_user_id = ?) || (host_user_id = ? && user_user_id =?);`;
