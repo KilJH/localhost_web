@@ -52,6 +52,7 @@ export interface Plan {
 	author?: User;
 	numOfComment?: number;
 	thumb?: string;
+	likes?: number;
 }
 
 export interface PlanDay {
