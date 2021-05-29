@@ -7,6 +7,7 @@ import { UserStateContext } from '../../context/user';
 interface Props {
 	userId: number;
 	initialFollowed?: boolean;
+	onClickHandler?: Function;
 }
 
 const Btn = styled(Button)<{ isFollowed? }>`
@@ -30,7 +31,7 @@ const Btn = styled(Button)<{ isFollowed? }>`
 `;
 
 const FollowButton = (props: Props) => {
-	const { userId, initialFollowed } = props;
+	const { userId, initialFollowed, onClickHandler } = props;
 	const currentUser = useContext(UserStateContext);
 	const [followState, setFollowState] = useState(initialFollowed || false);
 	useEffect(() => {
@@ -52,6 +53,7 @@ const FollowButton = (props: Props) => {
 		} catch (err) {
 			return console.log(err);
 		}
+		if (onClickHandler) onClickHandler();
 	};
 
 	return (

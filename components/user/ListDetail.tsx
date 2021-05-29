@@ -7,11 +7,13 @@ import { Plan, User } from '../../interfaces';
 import FollowButton from './FollowButton';
 import UserPhoto from './UserPhoto';
 import Router from 'next/router';
+import axios, { AxiosResponse } from 'axios';
+import { useContext, useEffect, useState } from 'react';
 
 type ListDetailProps = {
 	item: User;
 	isFollowed: boolean;
-	plan: Plan;
+	plan: Plan[];
 };
 
 const HostDetailContainer = styled.section`
@@ -43,10 +45,32 @@ const HostDetailContainer = styled.section`
 		padding: 1rem 0.5rem;
 		border-bottom: 1px solid #aaa;
 	}
-	& .planRow {
-		cursor: pointer;
+	& .followDiv {
+		margin: 0 0 0 auto;
 	}
 
+	& .planDiv,
+	& .followersDiv,
+	& .followingDiv {
+		display: inline-block;
+		text-align: center;
+	}
+	& .planDiv {
+		margin: 0 1em;
+	}
+	& .followersDiv,
+	& .followingDiv {
+		margin: 0 1em 0 0;
+	}
+
+	& .plans,
+	& .followers,
+	& .following {
+		margin: 0 0 0.25em 0;
+	}
+	& .plans {
+		margin-left: auto;
+	}
 	& .profile {
 		display: flex;
 		align-items: flex-end;
@@ -56,28 +80,16 @@ const HostDetailContainer = styled.section`
 			margin: 0;
 			flex: 1;
 			& h2 {
-				margin: 0;
-				margin-right: 1rem;
+				margin: 1em 0 1em 0.25em;
 			}
-		}
-		& > .apply {
-			flex: 1;
-			display: flex;
-			min-width: 300px;
-			max-width: 360px;
-			justify-content: flex-end;
-			margin-top: 1rem;
-
-			& > div {
-				flex: 1;
-			}
-			& > * {
-				margin: 0 1em;
+			& > div > div > button {
+				margin: 0.25em 0 0 auto;
+				width: 100%;
+				display: block;
 			}
 		}
 	}
-	& .basicInfo,
-	& .additionalInfo {
+	& .basicInfo {
 		& > table {
 			width: 100%;
 			& tr.introduction {
@@ -92,17 +104,6 @@ const HostDetailContainer = styled.section`
 			}
 		}
 	}
-	& .reviews {
-		& > div:first-child {
-			display: flex;
-			align-items: center;
-			margin: 1em 0;
-			& > h3 {
-				margin: 0 0.5em 0 0;
-			}
-		}
-	}
-
 	& .flex {
 		display: flex;
 		align-items: center;
@@ -110,8 +111,11 @@ const HostDetailContainer = styled.section`
 `;
 
 const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
-	console.log(plan);
-	const currentUser = React.useContext(UserStateContext);
+	const currentUser = useContext(UserStateContext);
+	const [followers, setFollowers] = useState<Number>(0);
+	const [following, setFollowing] = useState<Number>(0);
+	const [isFollowButtonClicked, setIsFollowButtonClicked] =
+		useState<boolean>(false);
 	const {
 		data: followed,
 		error,
@@ -129,44 +133,72 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 	});
 	const handleTrClickHandler = (
 		e: React.MouseEvent<HTMLTableRowElement>,
-		planId: number,
+		planId: number | undefined,
 	) => {
 		e.preventDefault();
 		Router.push(`/plans/${planId}`);
 	};
+
+	useEffect(() => {
+		axios
+			.post(`/api/user/followingList`, {
+				userId: user.id,
+			})
+			.then((res: AxiosResponse<any>) => {
+				if (res.data.success) {
+					setFollowing(res.data.followingUsers.length);
+				}
+			});
+	}, []);
+
+	useEffect(() => {
+		axios
+			.post(`/api/user/followerList`, {
+				userId: user.id,
+			})
+			.then((res: AxiosResponse<any>) => {
+				if (res.data.success) {
+					setFollowers(res.data.followersNum);
+				}
+			});
+	}, [isFollowButtonClicked]);
+
 	return (
-		// <div>
-		// 	<h1>Detail for {user.name}</h1>
-		// 	<p>ID: {user.id}</p>
-		// 	<FollowButton userId={user.id!} initialFollowed={isFollowed} />
-		// </div>
 		<HostDetailContainer>
 			<div className='profile'>
 				<UserPhoto src={user.photo} width={8} margin='0 1rem 0 0' />
 				<div className='name'>
 					<div className='flex'>
 						<h2>{user.nickname}</h2>
-						<h4>{user.follower}</h4>
-						{user.id !== undefined ? (
-							<FollowButton
-								userId={user.id}
-								initialFollowed={(followed as boolean) ?? false}
-							/>
-						) : (
-							''
-						)}
+						<div className='followDiv'>
+							<div className='planDiv'>
+								<h4 className='plans'>Plans </h4>
+								<h4 className='plans'>{plan.length}</h4>
+							</div>
+							<div className='followersDiv'>
+								<h4 className='followers'>Followers </h4>
+								<h4 className='followers'>{followers}</h4>
+							</div>
+							<div className='followingDiv'>
+								<h4 className='following'>Following </h4>
+								<h4 className='following'>{following}</h4>
+							</div>
+							{user.id !== undefined ? (
+								<FollowButton
+									userId={user.id}
+									initialFollowed={(followed as boolean) ?? false}
+									onClickHandler={() =>
+										setIsFollowButtonClicked(!isFollowButtonClicked)
+									}
+								/>
+							) : (
+								''
+							)}
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className='basicInfo'>
-				<h3>유저정보</h3>
-				<table>
-					<tbody>
-						<tr></tr>
-					</tbody>
-				</table>
-			</div>
 			<div className='basicInfo'>
 				<h3>{user.nickname}님이 작성한 플랜</h3>
 				{plan.length === 0 ? (

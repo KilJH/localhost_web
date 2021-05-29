@@ -11,7 +11,7 @@ type Props = {
 	pageProps: {
 		item?: User;
 		isFollowed: boolean;
-		plan: Plan;
+		plan: Plan[];
 		errors?: string;
 	};
 };
