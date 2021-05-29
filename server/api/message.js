@@ -1,10 +1,10 @@
 const mysql = require('../db/mysql');
 
 module.exports.createRoom = (req, res) => {
-	const { hostUserId, userId } = req.body;
+	const { hostUserId, userId, hostUserApplyId } = req.body;
 
-	const sql = `INSERT INTO message_room(host_user_id, user_user_id) VALUES(?, ?);`;
-	mysql.query(sql, [hostUserId, userId], (err, rows) => {
+	const sql = `INSERT INTO message_room(host_user_id, user_user_id, host_user_apply_id) VALUES(?, ?, ?);`;
+	mysql.query(sql, [hostUserId, userId, hostUserApplyId], (err, rows) => {
 		if (err) return console.log('createRoom err', err);
 
 		res.json({ success: true, roomId: rows.insertId });
@@ -12,49 +12,41 @@ module.exports.createRoom = (req, res) => {
 };
 
 module.exports.loadRoom = (req, res) => {
-	const { hostUserId, userId } = req.body;
-	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE (host_user_id = ? && user_user_id = ?) || (host_user_id = ? && user_user_id =?);`;
-	mysql.query(
-		sql,
-		[hostUserId, userId, userId, hostUserId],
-		(err, messages) => {
-			if (err) return console.log('loadRoom err', err);
-			const message = messages.map(message => {
-				return {
-					roomId: message.messageroom_id,
-					userId: message.user_id,
-					message: message.text,
-					createTime: message.create_time,
-				};
-			});
-			const innerSql = `SELECT id, host_user_id, user_user_id FROM message_room WHERE (host_user_id = ? && user_user_id = ?) ||( host_user_id = ? && user_user_id=?);`;
-			mysql.query(
-				innerSql,
-				[hostUserId, userId, userId, hostUserId],
-				(err, room) => {
-					if (err) return console.log('roomId find err', err);
-					const roomId = room[0].id;
-					const hostId = room[0].host_user_id;
-					const userId = room[0].user_user_id;
+	const { hostUserApplyId } = req.body;
+	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE r.host_user_apply_id = ?;`;
+	mysql.query(sql, hostUserApplyId, (err, messages) => {
+		if (err) return console.log('loadRoom err', err);
+		const message = messages.map(message => {
+			return {
+				roomId: message.messageroom_id,
+				userId: message.user_id,
+				message: message.text,
+				createTime: message.create_time,
+			};
+		});
+		const innerSql = `SELECT id, host_user_id, user_user_id FROM message_room WHERE host_user_apply_id = ?;`;
+		mysql.query(innerSql, hostUserApplyId, (err, room) => {
+			if (err) return console.log('roomId find err', err);
+			const roomId = room[0].id;
+			const hostId = room[0].host_user_id;
+			const userId = room[0].user_user_id;
 
-					res.json({
-						success: true,
-						messages: message,
-						roomId: roomId,
-						hostId: hostId,
-						userId: userId,
-					});
-				},
-			);
-		},
-	);
+			res.json({
+				success: true,
+				messages: message,
+				roomId: roomId,
+				hostId: hostId,
+				userId: userId,
+			});
+		});
+	});
 };
 
 module.exports.exitRoom = (req, res) => {
-	const { hostUserId, userId } = req.body;
+	const { hostUserApplyId } = req.body;
 
-	const sql = `UPDATE message_room SET message_room.on=${0} WHERE host_user_id = ${hostUserId} && user_user_id = ${userId};`;
-	mysql.query(sql, [hostUserId, userId], err => {
+	const sql = `UPDATE message_room SET message_room.on=${0} WHERE host_user_id = ?;`;
+	mysql.query(sql, hostUserApplyId, err => {
 		if (err) return console.log('exitRoom err', err);
 
 		res.json({ success: true });
