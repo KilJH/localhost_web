@@ -7,13 +7,14 @@ import styled from 'styled-components';
 interface Props {
 	rating: number;
 	isFilled?: boolean;
+	fontSize?: string;
 }
 
-const StarDiv = styled.div`
+const StarDiv = styled.div<{ fontSize?: string }>`
 	display: inline-block;
 	& > svg {
 		color: #5197d5;
-		font-size: 1.8em !important;
+		font-size: ${props => props.fontSize || '1.8em'} !important;
 	}
 `;
 
@@ -43,10 +44,10 @@ const drawRestStar = (rating: number) => {
 };
 
 const Rating = (props: Props) => {
-	const { rating, isFilled } = props;
+	const { rating, isFilled, fontSize } = props;
 
 	return (
-		<StarDiv>
+		<StarDiv fontSize={fontSize}>
 			{rating <= 5 ? drawFullStar(rating) : 'excessed the boundary'}
 			{rating <= 5 ? drawRestStar(rating) : ''}
 			{rating <= 5 ? !isFilled || fillTheSpace(rating) : ''}

@@ -45,7 +45,7 @@ const Table = styled.table`
 		padding: 1em 0.5em;
 	}
 	& .plan_title {
-		width: 50%;
+		width: 40%;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -128,7 +128,7 @@ const MyPlan = (props: Props) => {
 							<tr>
 								<th className='plan_title'>제목</th>
 								<th>작성자</th>
-								<th>삭제</th>
+								<th style={{ width: '10em' }}>삭제</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -181,8 +181,8 @@ const MyPlan = (props: Props) => {
 								<th className='plan_title'>제목</th>
 								<th>조회수</th>
 								<th>좋아요</th>
-								<th>수정</th>
-								<th>삭제</th>
+								<th style={{ width: '5em' }}>수정</th>
+								<th style={{ width: '5em' }}>삭제</th>
 							</tr>
 						</thead>
 

@@ -1,6 +1,6 @@
-import { Modal } from '@material-ui/core';
+import { Modal, useMediaQuery } from '@material-ui/core';
 import axios from 'axios';
-import React, { ReactNode, useState } from 'react';
+import React, { MouseEventHandler, ReactNode, useState } from 'react';
 import styled from 'styled-components';
 import { Application, PreviousApplication } from '../../../interfaces';
 import HostReviewWrite from '../../host/HostReviewWrite';
@@ -39,7 +39,7 @@ const Table = styled.table`
 	& th,
 	& td {
 		border-bottom: 1px solid #aaa;
-		width: 25%;
+		/* width: 25%; */
 		overflow: hidden;
 	}
 	& td {
@@ -93,14 +93,13 @@ const Status = status => {
 	}
 };
 
-const ApplicationItem = ({ application }: { application: Application }) => {
-	const onCancle = () => {
-		axios
-			.post(`/api/host/application/cancle`, { id: application.id })
-			.then(res => {
-				if (res.data.success) alert('취소가 완료되었습니다.');
-			});
-	};
+const ApplicationItem = ({
+	application,
+	onCancle,
+}: {
+	application: Application;
+	onCancle: MouseEventHandler<HTMLButtonElement>;
+}) => {
 	return (
 		<tr>
 			<td>{application.date}</td>
@@ -119,6 +118,20 @@ const ApplicationItem = ({ application }: { application: Application }) => {
 	);
 };
 
+const CancledApplicationItem = ({
+	application,
+}: {
+	application: Application;
+}) => {
+	return (
+		<tr>
+			<td>{application.date}</td>
+			<td>{application.user.nickname}</td>
+			<td>{Status(application.status || 0)}</td>
+		</tr>
+	);
+};
+
 const HistoryItem = ({ history }: { history: PreviousApplication }) => {
 	// 모달을 위한 State
 	const [open, setOpen] = useState(false);
@@ -129,6 +142,8 @@ const HistoryItem = ({ history }: { history: PreviousApplication }) => {
 		setOpen(false);
 	};
 
+	const isMobile = useMediaQuery('(max-width: 600px)');
+
 	return (
 		<tr>
 			<td>{history.date}</td>
@@ -136,7 +151,11 @@ const HistoryItem = ({ history }: { history: PreviousApplication }) => {
 			<td>{history.place!.formatted_address}</td>
 			<td>
 				{history.review!.description ? (
-					<Rating rating={history.review!.rating as number} isFilled />
+					<Rating
+						rating={history.review!.rating as number}
+						isFilled
+						fontSize={isMobile ? '1.2em' : '1.6em'}
+					/>
 				) : (
 					<Button onClick={handleOpen}>리뷰작성</Button>
 				)}
@@ -161,9 +180,39 @@ const NoItem = ({ children }: { children: ReactNode }) => (
 const MyHostLog = (props: Props) => {
 	const { applications, preApplications } = props;
 
+	// 실시간 표시를 위한 상태화
+	const [cancledApp, setCanceldApp] = useState(
+		applications.filter(app => {
+			const { status } = app;
+			return status === 2 || status === 3 || status === 5 || status === 6;
+		}),
+	);
+
+	const [presentApp, setPresentApp] = useState(
+		applications.filter(app => {
+			const { status } = app;
+			return status < 2;
+		}),
+	);
+
+	const onCancle = app => {
+		axios.post(`/api/host/application/cancle`, { id: app.id }).then(res => {
+			if (res.data.success) {
+				alert('취소가 완료되었습니다.');
+				setCanceldApp(
+					[...cancledApp, { ...app, status: 2 }].sort((a, b) =>
+						a.date > b.date ? -1 : 1,
+					),
+				);
+				setPresentApp(presentApp.filter(origin => origin.id !== app.id));
+			}
+		});
+	};
+
 	// 단순 on/off를 활용하기 위함
 	const [morePresent, setMorePresent] = useState(false);
 	const [morePast, setMorePast] = useState(false);
+	const [moreCancle, setMoreCancle] = useState(false);
 
 	const onChangeMorePresent = () => {
 		setMorePresent(!morePresent);
@@ -171,13 +220,16 @@ const MyHostLog = (props: Props) => {
 	const onChangeMorePast = () => {
 		setMorePast(!morePast);
 	};
+	const onChangeMoreCancle = () => {
+		setMoreCancle(!moreCancle);
+	};
 
 	return (
 		<MypageLayout tabNum={2}>
 			<Container>
 				<section>
 					<header>
-						<h3>현재 진행중인 호스트({applications.length})</h3>
+						<h3>현재 진행중인 호스트({presentApp.length})</h3>
 					</header>
 
 					<Table>
@@ -191,12 +243,22 @@ const MyHostLog = (props: Props) => {
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{(morePresent ? applications! : applications!.slice(0, 5)).map(
-								app => <ApplicationItem application={app} key={app.id} />,
-							) || <NoItem>현재 신청내역이 없습니다.</NoItem>}
+							{presentApp.length ? (
+								(morePresent ? presentApp! : presentApp!.slice(0, 5)).map(
+									app => (
+										<ApplicationItem
+											application={app}
+											onCancle={() => onCancle(app)}
+											key={app.id}
+										/>
+									),
+								)
+							) : (
+								<NoItem>현재 신청내역이 없습니다.</NoItem>
+							)}
 						</tbody>
 					</Table>
-					{applications!.length > 5 ? (
+					{presentApp!.length > 5 ? (
 						<div className='more' onClick={onChangeMorePresent}>
 							<a className='more'>더보기</a>
 						</div>
@@ -212,21 +274,61 @@ const MyHostLog = (props: Props) => {
 					<Table>
 						<thead>
 							<tr>
-								<th>날짜</th>
+								<th style={{ width: '25%' }}>날짜</th>
 								<th>호스트</th>
-								<th>장소</th>
-								<th>후기</th>
+								<th style={{ width: '30%' }}>장소</th>
+								<th style={{ width: '25%' }}>후기</th>
 							</tr>
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{(morePast ? preApplications! : preApplications!.slice(0, 5)).map(
-								app => <HistoryItem history={app} />,
-							) || <NoItem>현재 신청내역이 없습니다.</NoItem>}
+							{preApplications.length ? (
+								(morePast
+									? preApplications!
+									: preApplications!.slice(0, 5)
+								).map(app => <HistoryItem history={app} />)
+							) : (
+								<NoItem>현재 신청내역이 없습니다.</NoItem>
+							)}
 						</tbody>
 					</Table>
 					{preApplications!.length > 5 ? (
 						<div className='more' onClick={onChangeMorePast}>
+							<a className='more'>더보기</a>
+						</div>
+					) : (
+						''
+					)}
+				</section>
+
+				<section>
+					<header>
+						<h3>취소된 호스트({cancledApp.length})</h3>
+					</header>
+
+					<Table>
+						<thead>
+							<tr>
+								<th>날짜</th>
+								<th>호스트</th>
+								<th>상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							{/* 없으면 없습니다, */}
+							{cancledApp.length ? (
+								(morePresent ? cancledApp! : cancledApp!.slice(0, 5)).map(
+									app => (
+										<CancledApplicationItem application={app} key={app.id} />
+									),
+								)
+							) : (
+								<NoItem>현재 신청내역이 없습니다.</NoItem>
+							)}
+						</tbody>
+					</Table>
+					{cancledApp!.length > 5 ? (
+						<div className='more' onClick={onChangeMoreCancle}>
 							<a className='more'>더보기</a>
 						</div>
 					) : (
