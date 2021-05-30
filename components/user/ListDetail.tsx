@@ -28,6 +28,7 @@ const UserDetailContainer = styled.section`
 		text-align: center;
 		border-collapse: collapse;
 		font-size: 1em;
+		display: inline;
 	}
 	& th {
 		padding: 0.75em 0;
