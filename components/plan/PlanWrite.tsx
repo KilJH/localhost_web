@@ -261,6 +261,14 @@ const PlanWriteContainer = styled.div`
 		right: 0;
 		top: 0;
 	}
+	& .description #plan_image {
+		width: 0;
+		height: 0;
+		opacity: 0;
+		padding: 0;
+		margin: 0;
+		border: none;
+	}
 `;
 
 const StyledModal = styled(Modal)`
@@ -508,17 +516,14 @@ const PlanWrite = () => {
 	// 이미지 업로드
 	const [images, setImages] = useState<File[]>([]);
 	const onUploadImage = () => {
-		const input: any = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'image/*';
-		input.multiple = true;
-		input.click();
+		const input = document.getElementById('plan_image');
+		input!.click();
+	};
+	const onChangeFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target!.files!;
+		const fileArray: File[] = Array.from(files);
 
-		input.onchange = function (e: React.ChangeEvent<HTMLInputElement>) {
-			const files = e.target!.files!;
-			const fileArray: File[] = Array.from(files);
-			setImages([...images, ...fileArray]);
-		};
+		setImages([...images, ...fileArray]);
 	};
 
 	// 일정 하나 추가
@@ -823,6 +828,14 @@ const PlanWrite = () => {
 							<button className='add' onClick={onAddTimePlan}>
 								<PlaylistAdd fontSize={isMobile ? 'default' : 'large'} />
 							</button>
+							<input
+								id='plan_image'
+								type='file'
+								multiple
+								accept='image/*'
+								onChange={onChangeFileInput}
+							/>
+
 							<WritingImages images={images} setImages={setImages} />
 						</div>
 					</PlanWriteContainer>
