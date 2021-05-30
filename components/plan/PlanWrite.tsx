@@ -32,6 +32,7 @@ import WritingImages from '../reuse/WritingImages';
 import Link from 'next/link';
 import Toast from '../reuse/Toast';
 import ThumbnailPicker from './ThumbnailPicker';
+import { usePreventLeave } from '../../client/hooks/usePreventLeave';
 
 interface WrapperProps {
 	isFull?: boolean;
@@ -281,6 +282,14 @@ const StyledModal = styled(Modal)`
 const SaveBtn = (props: SaveProps) => {
 	// 저장 알림
 	const saveToast = useToast(false);
+
+	// 작성 중에 창을 닫거나 새로고침할 경우 한 번 물어보기
+	// 현재 대부분의 브라우저에서 사용자 지정 대화상자를 출력할 수 없음
+	useEffect(() => {
+		const prevent = usePreventLeave();
+		prevent.enablePrevent();
+		return prevent.disablePrevent;
+	}, []);
 
 	const onSave = () => {
 		localStorage.setItem('tempPlan', JSON.stringify(props));
