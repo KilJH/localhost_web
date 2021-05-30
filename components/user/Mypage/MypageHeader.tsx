@@ -3,6 +3,7 @@ import React, { ReactNode, useContext } from 'react';
 import styled from 'styled-components';
 import ScrollContext from '../../../context/scroll';
 import { useMediaQuery } from '@material-ui/core';
+import Link from 'next/link';
 
 interface Props {
 	children?: ReactNode;
@@ -57,10 +58,18 @@ const MypageLayout = (props: Props) => {
 	return (
 		<>
 			<Tabs fixed={state.isUp} isMobile={isMobile} tabNum={tabNum}>
-				<a href='/users/mypage'>회원정보</a>
-				<a href='/users/mypage/host'>호스트</a>
-				<a href='/users/mypage/plan'>플랜</a>
-				<a href='#wishlist'>위시리스트</a>
+				<Link href='/users/mypage'>
+					<a>회원정보</a>
+				</Link>
+				<Link href='/users/mypage/host'>
+					<a>호스트</a>
+				</Link>
+				<Link href='/users/mypage/plan'>
+					<a>플랜</a>
+				</Link>
+				<Link href='#wishlist'>
+					<a>위시리스트</a>
+				</Link>
 			</Tabs>
 
 			<MyPageContainer>{children}</MyPageContainer>
