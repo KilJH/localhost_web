@@ -4,6 +4,9 @@ import PersonIcon from '@material-ui/icons/Person';
 import styled from 'styled-components';
 import UserPhoto from '../user/UserPhoto';
 import { Fade } from '@material-ui/core';
+import Rating from '../reuse/Rating';
+import LanguageTag from '../reuse/LanguageTag';
+import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface Props {
 	host?: Host;
@@ -24,8 +27,8 @@ const HostIconContainer = styled.div`
 `;
 
 const HostInfo = styled.section`
-	width: 16rem;
-	height: 24rem;
+	width: 12rem;
+	height: 18rem;
 	background: rgba(255, 255, 255, 0.8);
 	border-radius: 0.5rem;
 	padding: 1rem;
@@ -33,10 +36,14 @@ const HostInfo = styled.section`
 	z-index: 15;
 	font-size: 1.2em;
 
+	display: flex;
+	flex-direction: column;
+
 	animation: fadeIn 0.3s ease;
 
 	& .distance,
-	& .nickname {
+	& .nickname,
+	& .rating {
 		text-align: center;
 	}
 
@@ -48,7 +55,14 @@ const HostInfo = styled.section`
 	}
 
 	& .description {
-		white-space: pre-line;
+		white-space: break-spaces;
+		flex: 1;
+	}
+
+	& .flex {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	@keyframes fadeIn {
@@ -85,8 +99,25 @@ const HostIcon = (props: Props) => {
 						<div className='distance'>
 							{host!.place!.geometry!.distance!.toFixed(2)}km
 						</div>
-						<div className='languages'></div>
+						<div className='rating'>
+							<Rating rating={host?.rating || 0} isFilled />
+						</div>
 						<p className='description'>{host!.description}</p>
+
+						<div className='flex'>
+							<div className='languages'>
+								{host?.languages.map(lang =>
+									lang && lang !== ' ' ? (
+										<LanguageTag language={lang} key={lang} />
+									) : (
+										''
+									),
+								)}
+							</div>
+							<div className='travelStyle'>
+								{host?.tag ? <TravelStyleTag label={host!.tag} /> : ''}
+							</div>
+						</div>
 					</HostInfo>
 				) : (
 					''

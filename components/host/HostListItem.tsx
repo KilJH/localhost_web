@@ -6,7 +6,6 @@ import Button from '../reuse/Button';
 import Link from 'next/link';
 import Rating from '../reuse/Rating';
 import LanguageTag from '../reuse/LanguageTag';
-import TravelStyleTag from '../reuse/TravelStyleTag';
 
 interface Props {
 	host: Host;
