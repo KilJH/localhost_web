@@ -353,9 +353,9 @@ module.exports.doneHosting = (req, res) => {
 
 	let sql = ``;
 	if (userId)
-		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.host_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.user_user_id = ${userId} && a.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,r.*,a.id appId, a.host_user_id user_id, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.host_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.user_user_id = ${userId} && a.status = ${4} ;`;
 	else if (hostUserId)
-		sql = `SELECT a.*,u.*,r.*,a.id appId, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.user_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.host_user_id = ${hostUserId} && a.status = ${4} ;`;
+		sql = `SELECT a.*,u.*,r.*,a.id appId, a.host_user_id user_id, h.address app_address, h.latitude app_latitude, h.longitude app_longitude FROM host_user_apply a LEFT JOIN user u ON u.id = a.user_user_id LEFT JOIN host h ON h.user_id = a.host_user_id LEFT JOIN host_review r ON r.host_user_apply_id = a.id WHERE a.host_user_id = ${hostUserId} && a.status = ${4} ;`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('doneHosting err', err);
@@ -373,9 +373,9 @@ module.exports.showHosting = (req, res) => {
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 	let sql = ``;
 	if (userId)
-		sql = `select *,h.date day, h.id appId from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && NOT status = 4`;
+		sql = `select *,h.date day, h.id appId, h.host_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && NOT status = 4`;
 	else if (hostUserId)
-		sql = `select *, h.date day, h.id appId from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && NOT status = 4`;
+		sql = `select *, h.date day, h.id appId, h.host_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && NOT status = 4`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);

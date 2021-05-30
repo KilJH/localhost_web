@@ -3,10 +3,20 @@ const crypto = require('crypto');
 const mysql = require('../db/mysql');
 
 module.exports.userMapping = user => {
-	const { id, name, email, nickname, sex, phone, nationality, address, photo } =
-		user;
-	return {
+	const {
 		id,
+		name,
+		email,
+		nickname,
+		sex,
+		phone,
+		nationality,
+		address,
+		photo,
+		user_id,
+	} = user;
+	return {
+		id: user_id || id,
 		name,
 		email,
 		nickname,

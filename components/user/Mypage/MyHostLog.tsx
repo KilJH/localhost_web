@@ -1,11 +1,14 @@
 import { Modal, useMediaQuery } from '@material-ui/core';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { MouseEventHandler, ReactNode, useState } from 'react';
 import styled from 'styled-components';
+import { useToast } from '../../../client/hooks/useToast';
 import { Application, PreviousApplication } from '../../../interfaces';
 import HostReviewWrite from '../../host/HostReviewWrite';
 import Button from '../../reuse/Button';
 import Rating from '../../reuse/Rating';
+import Toast from '../../reuse/Toast';
 import MypageLayout from './MypageHeader';
 
 interface Props {
@@ -103,7 +106,11 @@ const ApplicationItem = ({
 	return (
 		<tr>
 			<td>{application.date}</td>
-			<td>{application.user.nickname}</td>
+			<td>
+				<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
+					<a>{application.user.nickname}</a>
+				</Link>
+			</td>
 			<td>{Status(application.status || 0)}</td>
 			<td>
 				{application.status < 2 ? (
@@ -126,7 +133,11 @@ const CancledApplicationItem = ({
 	return (
 		<tr>
 			<td>{application.date}</td>
-			<td>{application.user.nickname}</td>
+			<td>
+				<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
+					<a>{application.user.nickname}</a>
+				</Link>
+			</td>
 			<td>{Status(application.status || 0)}</td>
 		</tr>
 	);
@@ -147,7 +158,11 @@ const HistoryItem = ({ history }: { history: PreviousApplication }) => {
 	return (
 		<tr>
 			<td>{history.date}</td>
-			<td>{history.user.nickname}</td>
+			<td>
+				<Link href='/hosts/[id]' as={`/hosts/${history.user.id}`}>
+					<a>{history.user.nickname}</a>
+				</Link>
+			</td>
 			<td>{history.place!.formatted_address}</td>
 			<td>
 				{history.review!.description ? (
@@ -180,6 +195,8 @@ const NoItem = ({ children }: { children: ReactNode }) => (
 const MyHostLog = (props: Props) => {
 	const { applications, preApplications } = props;
 
+	const toast = useToast(false);
+
 	// 실시간 표시를 위한 상태화
 	const [cancledApp, setCanceldApp] = useState(
 		applications.filter(app => {
@@ -196,17 +213,21 @@ const MyHostLog = (props: Props) => {
 	);
 
 	const onCancle = app => {
-		axios.post(`/api/host/application/cancle`, { id: app.id }).then(res => {
-			if (res.data.success) {
-				alert('취소가 완료되었습니다.');
-				setCanceldApp(
-					[...cancledApp, { ...app, status: 2 }].sort((a, b) =>
-						a.date > b.date ? -1 : 1,
-					),
-				);
-				setPresentApp(presentApp.filter(origin => origin.id !== app.id));
-			}
-		});
+		const yes = confirm('정말 취소하시겠습니까?');
+		if (yes) {
+			axios.post(`/api/host/application/cancle`, { id: app.id }).then(res => {
+				if (res.data.success) {
+					setCanceldApp(
+						[...cancledApp, { ...app, status: 2 }].sort((a, b) =>
+							a.date > b.date ? -1 : 1,
+						),
+					);
+					setPresentApp(presentApp.filter(origin => origin.id !== app.id));
+
+					toast.handleOpen('success', '취소가 완료되었습니다.');
+				}
+			});
+		}
 	};
 
 	// 단순 on/off를 활용하기 위함
@@ -336,6 +357,7 @@ const MyHostLog = (props: Props) => {
 					)}
 				</section>
 			</Container>
+			<Toast {...toast}>{toast.message}</Toast>
 		</MypageLayout>
 	);
 };
