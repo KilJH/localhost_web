@@ -56,4 +56,8 @@ router.post('/like', function (req, res, next) {
 router.post('/like/check', function (req, res, next) {
 	management.isLiked(req, res);
 });
+router.get('/like/quantity/', function (req, res, next) {
+	management.howManyLiked(req, res);
+});
+
 module.exports = router;

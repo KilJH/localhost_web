@@ -514,13 +514,17 @@ module.exports.like = (req, res) => {
 			mysql.query(insert, (err, rows, fields) => {
 				if (err) return console.log('insert err: ', err);
 
-				res.status(200).json({ success: true, message: ' 좋아요 성공' });
+				res
+					.status(200)
+					.json({ success: true, message: ' 좋아요 성공', isLiked: true });
 			});
 		} else {
 			const deleteSql = `DELETE FROM plan_like WHERE user_id = ? AND plan_id = ?`;
 			mysql.query(deleteSql, [userId, planId], (err, rows, fields) => {
 				if (err) return console.log('delete err: ', err);
-				res.status(200).json({ success: true, message: ' 좋아요 취소' });
+				res
+					.status(200)
+					.json({ success: true, message: ' 좋아요 취소', isLiked: false });
 			});
 		}
 	});
@@ -537,5 +541,15 @@ module.exports.isLiked = (req, res) => {
 		} else {
 			res.json({ isLiked: true });
 		}
+	});
+};
+
+module.exports.howManyLiked = (req, res) => {
+	const { planId } = req.query;
+	const sql = `SELECT * FROM plan_like WHERE plan_id = ?`;
+
+	mysql.query(sql, planId, (err, rows) => {
+		if (err) return console.log(err);
+		res.json({ success: true, likes: rows.length });
 	});
 };
