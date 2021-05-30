@@ -5,11 +5,20 @@ const Footer = () => {
 		<div style={{ textAlign: 'center', fontSize: '0.8em' }}>
 			Copyright © localhost
 			<br />
-			길진혁 <a href='https://github.com/KilJH'>https://github.com/KilJH</a>
+			길진혁{' '}
+			<a href='https://github.com/KilJH' target='_blank'>
+				https://github.com/KilJH
+			</a>
 			<br />
-			이찬빈 <a href='https://github.com/KilJH'>https://github.com/SiaXia</a>
+			이찬빈{' '}
+			<a href='https://github.com/SiaXia' target='_blank'>
+				https://github.com/SiaXia
+			</a>
 			<br />
-			황인종 <a href='https://github.com/KilJH'>https://github.com/Injong_</a>
+			황인종{' '}
+			<a href='https://github.com/Injong8461' target='_blank'>
+				https://github.com/Injong8461
+			</a>
 		</div>
 	);
 };
