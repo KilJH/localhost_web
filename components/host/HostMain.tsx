@@ -6,18 +6,21 @@ import { Host, Place } from '../../interfaces';
 import styled from 'styled-components';
 import HostList from '../../components/host/HostList';
 import { UserStateContext } from '../../context/user';
+import { useMediaQuery } from '@material-ui/core';
 
-const Container = styled.div`
+const Container = styled.div<{ isMobile: boolean }>`
 	display: flex;
 	width: 100%;
-	height: 85vh;
+	height: ${props => (props.isMobile ? 'calc(100vh - 4rem)' : '85vh')};
+	flex-direction: ${props => (props.isMobile ? 'column' : 'row')};
 	& > div {
 		padding: 0.5rem;
 	}
 
 	& > div:first-child {
 		flex: 1;
-		min-width: 350px;
+		min-width: ${props => (props.isMobile ? '320px' : '360px')};
+		height: ${props => (props.isMobile ? '35%' : '100%')};
 		display: flex;
 		flex-direction: column;
 	}
@@ -36,6 +39,8 @@ const HostMain = () => {
 	const [distance, setDistance] = useState(4);
 
 	const currentUser = useContext(UserStateContext);
+
+	const isMobile = useMediaQuery('(max-width: 800px)');
 
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
@@ -89,7 +94,7 @@ const HostMain = () => {
 	}, [nearbyHosts]);
 
 	return (
-		<Container>
+		<Container isMobile={isMobile}>
 			<div>
 				<SearchPlace setPlace={setPlace} />
 				<HostList
