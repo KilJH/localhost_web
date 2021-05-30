@@ -516,10 +516,7 @@ const PlanWrite = () => {
 
 		input.onchange = function (e: React.ChangeEvent<HTMLInputElement>) {
 			const files = e.target!.files!;
-			let fileArray: File[] = [];
-			for (let i = 0; i < files!.length; i++) {
-				fileArray = fileArray.concat(files[i]);
-			}
+			const fileArray: File[] = Array.from(files);
 			setImages([...images, ...fileArray]);
 		};
 	};
