@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Board, Comment } from '../../interfaces';
@@ -36,7 +37,22 @@ const BoardContainer = styled.div`
 	& .content {
 		white-space: pre;
 	}
+	& .clickEvent {
+		display: contents;
+		margin: 0;
+		cursor: pointer;
+		& > img {
+			cursor: pointer;
+		}
+	}
 `;
+const handleAuthorClickHandler = (
+	e: React.MouseEvent<Element, MouseEvent>,
+	authorid: number | undefined,
+) => {
+	e.preventDefault();
+	Router.push(`/users/${authorid}`);
+};
 
 const BoardDetail = (props: Props) => {
 	const { board, comments } = props;
@@ -50,9 +66,14 @@ const BoardDetail = (props: Props) => {
 			</div>
 			{/* 작성자와 작성일, 조회수, 댓글 수 */}
 			<div className='meta'>
-				<UserPhoto src={board.author.photo} width={2} margin='0 0.5rem 0 0' />
-				{board.author.nickname}, 조회 {board.hit || 0}, 댓글{' '}
-				{board.numOfComment || 0}
+				<div
+					className='clickEvent'
+					onClick={e => handleAuthorClickHandler(e, board.author.id)}
+				>
+					<UserPhoto src={board.author.photo} width={2} margin='0 0.5rem 0 0' />
+					{board.author.nickname}
+				</div>
+				, 조회 {board.hit || 0}, 댓글 {board.numOfComment || 0}
 			</div>
 
 			{/* 버튼들 */}
