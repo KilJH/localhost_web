@@ -3,7 +3,7 @@ import { useAsync } from 'react-async';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 
-import { Plan, User } from '../../interfaces';
+import { Board, Plan, User } from '../../interfaces';
 import FollowButton from './FollowButton';
 import UserPhoto from './UserPhoto';
 import Router from 'next/router';
@@ -16,14 +16,10 @@ type ListDetailProps = {
 	plan: Plan[];
 };
 
-const HostDetailContainer = styled.section`
+const UserDetailContainer = styled.section`
 	width: 100%;
 	& > * {
 		padding: 1rem 0;
-		border-bottom: 1px solid #aaa;
-		&:last-child {
-			border-bottom: none;
-		}
 	}
 	& table {
 		width: 100%;
@@ -44,38 +40,38 @@ const HostDetailContainer = styled.section`
 	& td {
 		padding: 1rem 0.5rem;
 		border-bottom: 1px solid #aaa;
+		min-width: 5em;
 	}
-	& .followDiv {
+	& .infoDiv {
 		margin: 0 0 0 auto;
+		width: 20em;
 	}
 
-	& .planDiv,
+	& .postsDiv,
+	& .plansDiv,
 	& .followersDiv,
 	& .followingDiv {
 		display: inline-block;
 		text-align: center;
+		margin: 0 0 0.5em 0;
 	}
-	& .planDiv {
-		margin: 0 1em;
+	& .postsDiv,
+	& .plansDiv {
+		width: 20%;
 	}
 	& .followersDiv,
 	& .followingDiv {
-		margin: 0 1em 0 0;
+		width: 30%;
 	}
-
-	& .plans,
-	& .followers,
-	& .following {
-		margin: 0 0 0.25em 0;
-	}
-	& .plans {
-		margin-left: auto;
+	& .item {
+		margin: 0.25em 0;
 	}
 	& .profile {
 		display: flex;
 		align-items: flex-end;
 		justify-content: flex-start;
 		flex-wrap: wrap;
+		border-bottom: 1px solid #aaa;
 		& .name {
 			margin: 0;
 			flex: 1;
@@ -108,6 +104,21 @@ const HostDetailContainer = styled.section`
 		display: flex;
 		align-items: center;
 	}
+	& .row {
+		cursor: pointer;
+		&:hover {
+			background-color: rgba(81, 151, 213, 0.1);
+		}
+	}
+	& .date {
+		width: 30%;
+	}
+	& .title {
+		width: 60%;
+	}
+	& .hits {
+		width: 10%;
+	}
 `;
 
 const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
@@ -116,11 +127,8 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 	const [following, setFollowing] = useState<Number>(0);
 	const [isFollowButtonClicked, setIsFollowButtonClicked] =
 		useState<boolean>(false);
-	const {
-		data: followed,
-		error,
-		isLoading,
-	} = useAsync({
+	const [posts, setPosts] = useState<Board[]>();
+	const { data: followed } = useAsync({
 		_promiseFn: isFollowed,
 		get promiseFn() {
 			return this._promiseFn;
@@ -131,7 +139,15 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 		userId: user.id,
 		followerId: currentUser.id,
 	});
-	const handleTrClickHandler = (
+
+	const handlePostClickHandler = (
+		e: React.MouseEvent<HTMLTableRowElement>,
+		postId: number | undefined,
+	) => {
+		e.preventDefault();
+		Router.push(`/board/${postId}`);
+	};
+	const handlePlanClickHandler = (
 		e: React.MouseEvent<HTMLTableRowElement>,
 		planId: number | undefined,
 	) => {
@@ -149,8 +165,26 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 					setFollowing(res.data.followingUsers.length);
 				}
 			});
+		axios
+			.post(`/api/user/followerList`, {
+				userId: user.id,
+			})
+			.then((res: AxiosResponse<any>) => {
+				if (res.data.success) {
+					setFollowers(res.data.followersNum);
+				}
+			});
+		axios
+			.post(`/api/board/search`, {
+				type: 'nickname',
+				item: user.nickname,
+			})
+			.then((res: AxiosResponse<any>) => {
+				if (res.data.success) {
+					setPosts(res.data.list);
+				}
+			});
 	}, []);
-
 	useEffect(() => {
 		axios
 			.post(`/api/user/followerList`, {
@@ -163,26 +197,37 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 			});
 	}, [isFollowButtonClicked]);
 
+	const dateFormat = (date: string) => {
+		let result;
+		if (date.includes('-')) result = date.slice(0, 10);
+		else result = date;
+		return result;
+	};
 	return (
-		<HostDetailContainer>
+		<UserDetailContainer>
 			<div className='profile'>
 				<UserPhoto src={user.photo} width={8} margin='0 1rem 0 0' />
 				<div className='name'>
 					<div className='flex'>
 						<h2>{user.nickname}</h2>
-						<div className='followDiv'>
-							<div className='planDiv'>
-								<h4 className='plans'>Plans </h4>
-								<h4 className='plans'>{plan.length}</h4>
+						<div className='infoDiv'>
+							<div className='postsDiv'>
+								<h4 className='item'>Posts </h4>
+								<h4 className='item'>{posts?.length}</h4>
+							</div>
+							<div className='plansDiv'>
+								<h4 className='item'>Plans </h4>
+								<h4 className='item'>{plan.length}</h4>
 							</div>
 							<div className='followersDiv'>
-								<h4 className='followers'>Followers </h4>
-								<h4 className='followers'>{followers}</h4>
+								<h4 className='item'>Followers </h4>
+								<h4 className='item'>{followers}</h4>
 							</div>
 							<div className='followingDiv'>
-								<h4 className='following'>Following </h4>
-								<h4 className='following'>{following}</h4>
+								<h4 className='item'>Following </h4>
+								<h4 className='item'>{following}</h4>
 							</div>
+
 							{user.id !== undefined ? (
 								<FollowButton
 									userId={user.id}
@@ -197,6 +242,35 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<div className='basicInfo'>
+				<h3>{user.nickname}님이 작성한 글</h3>
+				{posts?.length === 0 ? (
+					<p>작성한 게시물이 없습니다.</p>
+				) : (
+					<table>
+						<thead>
+							<tr>
+								<td>작성일</td>
+								<td>제목</td>
+								<td>조회수</td>
+							</tr>
+						</thead>
+						<tbody>
+							{posts?.map(item => (
+								<tr
+									className='row'
+									onClick={e => handlePostClickHandler(e, item.id)}
+								>
+									<td className='date'>{dateFormat(item.createTime)}</td>
+									<td className='title'>{item.title}</td>
+									<td className='hits'>{item.hit}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				)}
 			</div>
 
 			<div className='basicInfo'>
@@ -215,19 +289,19 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 						<tbody>
 							{plan.map(item => (
 								<tr
-									className='planRow'
-									onClick={e => handleTrClickHandler(e, item.id)}
+									className='row'
+									onClick={e => handlePlanClickHandler(e, item.id)}
 								>
-									<td style={{ width: '30%' }}>{item.createTime}</td>
-									<td style={{ width: '60%' }}>{item.title}</td>
-									<td style={{ width: '10%' }}>{item.hit}</td>
+									<td className='date'>{dateFormat(item.createTime)}</td>
+									<td className='title'>{item.title}</td>
+									<td className='hits'>{item.hit}</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				)}
 			</div>
-		</HostDetailContainer>
+		</UserDetailContainer>
 	);
 };
 
