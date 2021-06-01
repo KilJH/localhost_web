@@ -8,7 +8,7 @@ const formatDate = date => {
 
 	const yyyy = day.getFullYear();
 	const MM = day.getMonth() < 9 ? `0${day.getMonth() + 1}` : day.getMonth() + 1;
-	const dd = day.getDate() < 9 ? `0${day.getDate()}` : day.getDate();
+	const dd = day.getDate() <= 9 ? `0${day.getDate()}` : day.getDate();
 	return `${yyyy}-${MM}-${dd}`;
 };
 
@@ -373,9 +373,9 @@ module.exports.showHosting = (req, res) => {
 	if (userId && hostUserId) return console.log('값 하나만 입력하세요');
 	let sql = ``;
 	if (userId)
-		sql = `select *,h.date day, h.id appId, h.host_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && NOT status = 4`;
+		sql = `select *,h.date day, h.id appId, h.address, h.host_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.host_user_id WHERE h.user_user_id = ${userId} && NOT status = 4`;
 	else if (hostUserId)
-		sql = `select *, h.date day, h.id appId, h.host_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && NOT status = 4`;
+		sql = `select *, h.date day, h.id appId, h.address, h.user_user_id user_id from host_user_apply h LEFT JOIN user u ON u.id = h.user_user_id WHERE h.host_user_id = ${hostUserId} && NOT status = 4`;
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('applyList err', err);
@@ -443,7 +443,7 @@ module.exports.denyHosting = (req, res) => {
 	});
 };
 
-module.exports.cancleHosting = (req, res) => {
+module.exports.cancelHosting = (req, res) => {
 	// user 가 호스팅을 취소하는 API
 	const id = req.body.id; // application ID
 
@@ -478,9 +478,9 @@ module.exports.completeHosting = (req, res) => {
 };
 
 module.exports.getApplicationId = (req, res) => {
-	const roomId = req.body.roomId; // host_user_id, user_user_id
+	const { hostId, userId, status } = req.body; // host_user_id, user_user_id
 
-	const sql = `SELECT id FROM host_user_apply WHERE room_id = ${roomId};`;
+	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostId} AND user_user_id = ${userId} AND status = ${status};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
 		const applicationId = rows[0].id;

@@ -68,8 +68,8 @@ router.post('/application/location', function (req, res, next) {
 router.post('/application/deny', function (req, res, next) {
 	management.denyHosting(req, res);
 });
-router.post('/application/cancle', function (req, res, next) {
-	management.cancleHosting(req, res);
+router.post('/application/cancel', function (req, res, next) {
+	management.cancelHosting(req, res);
 });
 router.post('/application/complete', function (req, res, next) {
 	management.completeHosting(req, res);

@@ -98,10 +98,10 @@ const Status = status => {
 
 const ApplicationItem = ({
 	application,
-	onCancle,
+	onCancel,
 }: {
 	application: Application;
-	onCancle: MouseEventHandler<HTMLButtonElement>;
+	onCancel: MouseEventHandler<HTMLButtonElement>;
 }) => {
 	return (
 		<tr>
@@ -114,7 +114,7 @@ const ApplicationItem = ({
 			<td>{Status(application.status || 0)}</td>
 			<td>
 				{application.status < 2 ? (
-					<Button default onClick={onCancle}>
+					<Button default onClick={onCancel}>
 						취소
 					</Button>
 				) : (
@@ -125,7 +125,7 @@ const ApplicationItem = ({
 	);
 };
 
-const CancledApplicationItem = ({
+const CanceledApplicationItem = ({
 	application,
 }: {
 	application: Application;
@@ -198,7 +198,7 @@ const MyHostLog = (props: Props) => {
 	const toast = useToast(false);
 
 	// 실시간 표시를 위한 상태화
-	const [cancledApp, setCanceldApp] = useState(
+	const [canceledApp, setCanceledApp] = useState(
 		applications.filter(app => {
 			const { status } = app;
 			return status === 2 || status === 3 || status === 5 || status === 6;
@@ -212,13 +212,13 @@ const MyHostLog = (props: Props) => {
 		}),
 	);
 
-	const onCancle = app => {
+	const onCancel = app => {
 		const yes = confirm('정말 취소하시겠습니까?');
 		if (yes) {
-			axios.post(`/api/host/application/cancle`, { id: app.id }).then(res => {
+			axios.post(`/api/host/application/cancel`, { id: app.id }).then(res => {
 				if (res.data.success) {
-					setCanceldApp(
-						[...cancledApp, { ...app, status: 2 }].sort((a, b) =>
+					setCanceledApp(
+						[...canceledApp, { ...app, status: 2 }].sort((a, b) =>
 							a.date > b.date ? -1 : 1,
 						),
 					);
@@ -233,7 +233,7 @@ const MyHostLog = (props: Props) => {
 	// 단순 on/off를 활용하기 위함
 	const [morePresent, setMorePresent] = useState(false);
 	const [morePast, setMorePast] = useState(false);
-	const [moreCancle, setMoreCancle] = useState(false);
+	const [moreCancel, setMoreCancel] = useState(false);
 
 	const onChangeMorePresent = () => {
 		setMorePresent(!morePresent);
@@ -241,8 +241,8 @@ const MyHostLog = (props: Props) => {
 	const onChangeMorePast = () => {
 		setMorePast(!morePast);
 	};
-	const onChangeMoreCancle = () => {
-		setMoreCancle(!moreCancle);
+	const onChangeMoreCancel = () => {
+		setMoreCancel(!moreCancel);
 	};
 
 	return (
@@ -269,7 +269,7 @@ const MyHostLog = (props: Props) => {
 									app => (
 										<ApplicationItem
 											application={app}
-											onCancle={() => onCancle(app)}
+											onCancel={() => onCancel(app)}
 											key={app.id}
 										/>
 									),
@@ -324,7 +324,7 @@ const MyHostLog = (props: Props) => {
 
 				<section>
 					<header>
-						<h3>취소된 호스트({cancledApp.length})</h3>
+						<h3>취소된 호스트({canceledApp.length})</h3>
 					</header>
 
 					<Table>
@@ -337,10 +337,10 @@ const MyHostLog = (props: Props) => {
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
-							{cancledApp.length ? (
-								(morePresent ? cancledApp! : cancledApp!.slice(0, 5)).map(
+							{canceledApp.length ? (
+								(morePresent ? canceledApp! : canceledApp!.slice(0, 5)).map(
 									app => (
-										<CancledApplicationItem application={app} key={app.id} />
+										<CanceledApplicationItem application={app} key={app.id} />
 									),
 								)
 							) : (
@@ -348,8 +348,8 @@ const MyHostLog = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{cancledApp!.length > 5 ? (
-						<div className='more' onClick={onChangeMoreCancle}>
+					{canceledApp!.length > 5 ? (
+						<div className='more' onClick={onChangeMoreCancel}>
 							<a className='more'>더보기</a>
 						</div>
 					) : (
