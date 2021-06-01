@@ -162,9 +162,13 @@ const ChatRoomList = () => {
 		<ListContainer>
 			<h2>채팅목록</h2>
 			<ul>
-				{(roomList as Array<any>)!.map(room => (
-					<ChatRoomItem item={room} currentUser={currentUser} />
-				))}
+				{(roomList as Array<any>).length ? (
+					(roomList as Array<any>)!.map(room => (
+						<ChatRoomItem item={room} currentUser={currentUser} />
+					))
+				) : (
+					<div style={{ textAlign: 'center' }}>채팅 중인 상대가 없습니다.</div>
+				)}
 			</ul>
 		</ListContainer>
 	);
