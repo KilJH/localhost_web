@@ -62,6 +62,7 @@ const PrivacyContainer = styled.div`
 		}
 	}
 `;
+
 const StyledModal = styled(Modal)`
 	display: flex;
 	align-items: center;
@@ -107,7 +108,9 @@ const Privacy = (props: Props) => {
 	const [img, setImg] = useState<File>();
 
 	const time = new Date().getTime();
-	const [photoUrl, setPhotoUrl] = useState(`${currentUser.photo}?time=${time}`);
+	const [photoUrl, setPhotoUrl] = useState(
+		currentUser.photo ? `${currentUser.photo}?time=${time}` : '',
+	);
 
 	// 패스워드 수정 on/off
 	const [enabledPw, setEnabledPw] = useState(false);
