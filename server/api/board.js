@@ -93,11 +93,15 @@ module.exports.list = (req, res) => {
 
 module.exports.myBoardList = (req, res) => {
 	const { userId } = req.body;
-	const sql = `SELECT * FROM board WHERE user_id = ?`;
+	const sql = `SELECT * FROM board WHERE user_id = ? ORDER BY id DESC`;
 
-	mysql.query(sql, userId, (err, boards) => {
+	mysql.query(sql, userId, (err, boardsRes) => {
 		if (err) return console.log('myBoardList err', err);
 
+		const boards = boardsRes.map(board => ({
+			...board,
+			createTime: formatDate(board.create_time),
+		}));
 		res.json({ success: true, boards });
 	});
 };

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Search from '../search/Search';
 import BoardItem from './BoardItem';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Board } from '../../interfaces';
-import axios from 'axios';
 import Pagination from '../main/Pagination';
 import { ParsedUrlQuery } from 'node:querystring';
 
@@ -23,8 +22,7 @@ const BoardContainer = styled.div`
 `;
 
 const BoardList = (props: Props) => {
-	const { pagedBoards, lastIdx, page, query } = props;
-	const [boards, setBoards] = useState<Board[]>(pagedBoards);
+	const { pagedBoards: boards, lastIdx, page, query } = props;
 
 	// 브라우저 상 주소를 위한 url
 	const url = query.item

@@ -67,8 +67,8 @@ const MypageLayout = (props: Props) => {
 				<Link href='/users/mypage/plan'>
 					<a>플랜</a>
 				</Link>
-				<Link href='#wishlist'>
-					<a>위시리스트</a>
+				<Link href='/users/mypage/board'>
+					<a>내가 쓴 글</a>
 				</Link>
 			</Tabs>
 
