@@ -15,10 +15,14 @@ type Props = {
 		hostUserId: number;
 		userUserId: number;
 		applicationId: number;
+		isMine: boolean;
 	};
 };
 
 const StaticPropsDetail = ({ pageProps }: Props) => {
+	if (!pageProps.isMine) {
+		location.replace('/');
+	}
 	return (
 		<Layout title={`${pageProps.opponent.nickname}님과의 채팅 | localhost`}>
 			<ChatRoom {...pageProps} />
@@ -27,49 +31,39 @@ const StaticPropsDetail = ({ pageProps }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async context => {
-	const opponentId = context.params?.id;
-	const opponent = await (
-		await axios.get(`${SERVER}/api/user/${opponentId}`)
-	).data.user;
+	const roomId = context.params?.id;
 	const cookie = context.req.headers.cookie || '';
-	const user = await (
-		await axios.get(`${SERVER}/api/auth/check`, {
-			withCredentials: true,
-			headers: {
-				cookie,
-			},
-		})
-	).data.user;
 
-	const res = await (
+	const auth = await axios.get(`${SERVER}/api/auth/check`, {
+		withCredentials: true,
+		headers: {
+			cookie,
+		},
+	});
+
+	const userId = auth.data.user.id;
+
+	const room = await (
 		await axios.post(`${SERVER}/api/message/room/load`, {
-			hostUserId: opponentId,
-			userId: user.id,
+			id: roomId,
 		})
 	).data;
 
-	let applicationId = null;
-	if (user.isHost) {
-		applicationId = await (
-			await axios.post(`${SERVER}/api/host/application/id`, {
-				hostUserId: user.id,
-				userId: opponentId,
-			})
-		).data.applicationId;
-	}
+	const isMine = userId === room.userId || userId === room.hostId;
 
-	const messages = res.messages;
-	const roomId = res.roomId;
-	const hostUserId = res.hostId;
-	const userUserId = user.id;
+	const opponentId = userId === room.userId ? room.hostId : room.userId;
+	const opponent = await (
+		await axios.get(`${SERVER}/api/user/${opponentId}`)
+	).data.user;
 	return {
 		props: {
-			loadMessages: messages,
+			loadMessages: room.messages,
 			roomId: roomId,
-			hostUserId: hostUserId,
-			userUserId: userUserId,
-			opponent: opponent,
-			applicationId: applicationId,
+			hostUserId: room.hostId,
+			userUserId: room.userId,
+			applicationId: room.applicationId,
+			opponent,
+			isMine,
 		},
 	};
 };

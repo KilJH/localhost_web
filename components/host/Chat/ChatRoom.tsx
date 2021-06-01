@@ -22,6 +22,7 @@ import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 import Router from 'next/router';
 import Toast from '../../reuse/Toast';
 import { Color } from '@material-ui/lab';
+import { useToast } from '../../../client/hooks/useToast';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
 //    - 해결: 소켓과 메세지배열이 변할 때마다 새로 이벤트를 등록하는 방향으로 설정
@@ -312,19 +313,8 @@ const ChatRoom = (props: Props) => {
 	// 호스팅 주소
 	const addressNotice = '만나고 싶은 장소를 정하려면 클릭! ☝';
 	const [hostingAddress, setHostingAddress] = useState<string>(addressNotice);
-	const [hostingId, setHostingId] = useState();
 
-	// toast
-	const [toastOpen, setToastOpen] = useState(false);
-	const [toastMsg, setToastMsg] = useState('');
-	const [toastType, setToastType] = useState<Color>('success');
-
-	const toast = (msg: string, type: Color, open: boolean) => {
-		setToastMsg(msg);
-		setToastType(type);
-		setToastOpen(open);
-	};
-
+	const toast = useToast(false);
 	// 최초 접속 시
 	useEffect(() => {
 		// 소켓 생성
@@ -337,15 +327,25 @@ const ChatRoom = (props: Props) => {
 		if (currentUser.id == hostUserId) {
 			const hostingAddress = async () => {
 				const address = await axios.post(`/api/host/hostingAddress`, {
-					hostUserId: hostUserId,
-					userId: userUserId,
+					applicationId: applicationId,
 				});
 				setHostingAddress(address.data.hostingAddress);
-				setHostingId(address.data.hostingId);
 			};
 			hostingAddress();
 		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
 	}, []);
+
+	useEffect(() => {
+		if (currentUser.id == hostUserId) {
+			const hostingAddress = async () => {
+				const address = await axios.post(`/api/host/hostingAddress`, {
+					applicationId: applicationId,
+				});
+				setHostingAddress(address.data.hostingAddress);
+			};
+			hostingAddress();
+		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
+	}, [roomId]);
 
 	// place 변경 시 호스팅 주소 업데이트
 	useEffect(() => {
@@ -353,10 +353,10 @@ const ChatRoom = (props: Props) => {
 			const setHostingAddress = async () => {
 				const address = await axios.post(`/api/host/update/hostingAddress`, {
 					hostingAddress: String(place.formatted_address),
-					id: Number(hostingId),
+					id: applicationId,
 				});
 				if (address.data.success) {
-					toast('호스팅 주소를 등록했습니다!', 'success', true);
+					toast.handleOpen('success', '호스팅 주소를 등록했습니다!');
 				}
 			};
 			setHostingAddress();
@@ -416,9 +416,8 @@ const ChatRoom = (props: Props) => {
 				inline: 'nearest',
 			});
 			const { scrollHeight, clientHeight, scrollTop } = ref;
-
 			// 자신의 채팅일 경우
-			if (messages[messages.length - 1].userId == currentUser.id)
+			if (messages[messages.length - 1]?.userId == currentUser.id)
 				ref.scrollTop = scrollHeight - clientHeight;
 			// 팝업 버튼이 나오지 않을 만큼 애매한 경우
 			else if (scrollTop >= scrollHeight - clientHeight - 200) {
@@ -816,12 +815,7 @@ const ChatRoom = (props: Props) => {
 				/>
 				<Button type='submit'>전송</Button>
 			</form>
-			<Toast
-				open={toastOpen}
-				type={toastType}
-				children={toastMsg}
-				handleClose={() => setToastOpen(false)}
-			></Toast>
+			<Toast {...toast}>{toast.message}</Toast>
 		</ChatRoomContainer>
 	);
 };

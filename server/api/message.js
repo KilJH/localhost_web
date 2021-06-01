@@ -12,9 +12,9 @@ module.exports.createRoom = (req, res) => {
 };
 
 module.exports.loadRoom = (req, res) => {
-	const { hostUserApplyId } = req.body;
-	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE r.host_user_apply_id = ?;`;
-	mysql.query(sql, hostUserApplyId, (err, messages) => {
+	const { id } = req.body; // roomId;
+	const sql = `SELECT m.* FROM message m LEFT JOIN message_room r ON r.id = m.messageroom_id WHERE r.id = ?;`;
+	mysql.query(sql, id, (err, messages) => {
 		if (err) return console.log('loadRoom err', err);
 		const message = messages.map(message => {
 			return {
@@ -24,19 +24,18 @@ module.exports.loadRoom = (req, res) => {
 				createTime: message.create_time,
 			};
 		});
-		const innerSql = `SELECT id, host_user_id, user_user_id FROM message_room WHERE host_user_apply_id = ?;`;
-		mysql.query(innerSql, hostUserApplyId, (err, room) => {
+		const innerSql = `SELECT * FROM message_room WHERE id = ?;`;
+		mysql.query(innerSql, id, (err, room) => {
 			if (err) return console.log('roomId find err', err);
-			const roomId = room[0].id;
 			const hostId = room[0].host_user_id;
 			const userId = room[0].user_user_id;
-
+			const applicationId = room[0].host_user_apply_id;
 			res.json({
 				success: true,
 				messages: message,
-				roomId: roomId,
-				hostId: hostId,
-				userId: userId,
+				hostId,
+				userId,
+				applicationId,
 			});
 		});
 	});

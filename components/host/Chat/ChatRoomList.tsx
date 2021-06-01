@@ -115,7 +115,7 @@ const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
 	// }, [socket]);
 
 	return (
-		<Link href='/messages/[id]' as={`/messages/${opponentId}`}>
+		<Link href='/messages/[id]' as={`/messages/${roomId}`}>
 			<ItemContainer>
 				<UserPhoto src={photo} margin='0' width={4} />
 				<div className='message'>

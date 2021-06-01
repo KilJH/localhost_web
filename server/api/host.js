@@ -478,9 +478,9 @@ module.exports.completeHosting = (req, res) => {
 };
 
 module.exports.getApplicationId = (req, res) => {
-	const { hostId, userId, status } = req.body; // host_user_id, user_user_id
+	const { hostId, userId } = req.body; // host_user_id, user_user_id
 
-	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostId} AND user_user_id = ${userId} AND status = ${status};`;
+	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostId} AND user_user_id = ${userId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
 		const applicationId = rows[0].id;
@@ -489,26 +489,30 @@ module.exports.getApplicationId = (req, res) => {
 };
 
 module.exports.getHostingAddress = (req, res) => {
-	const { hostUserId, userId } = req.body; // host_user_id, user_user_id
-	const sql = `SELECT address, create_time, status, id FROM host_user_apply WHERE host_user_id = ${hostUserId} AND user_user_id = ${userId};`;
+	const { applicationId } = req.body;
+	const sql = `SELECT address, status FROM host_user_apply WHERE id = ${applicationId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
 
 		let hostingAddress = '';
-		let hostingId = 0;
 		rows.map((value, index) => {
-			if (value.status === 1) {
-				hostingAddress = value.address;
-				hostingId = value.id;
+			switch (value.status) {
+				case 1:
+					if (hostingAddress === null)
+						hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
+					else hostingAddress = value.address;
+					break;
+				case 4:
+					hostingAddress = '완료된 호스팅입니다.';
+					break;
+				default:
+					hostingAddress = '취소된 호스팅입니다.';
+					break;
 			}
 		});
-		if (hostingAddress === '') hostingAddress = '완료된 호스팅입니다';
-		else if (hostingAddress === null)
-			hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
 		res.json({
 			success: true,
 			hostingAddress: hostingAddress,
-			hostingId: hostingId,
 		});
 	});
 };
