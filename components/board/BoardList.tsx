@@ -6,11 +6,13 @@ import Link from 'next/link';
 import { Board } from '../../interfaces';
 import axios from 'axios';
 import Pagination from '../main/Pagination';
+import { ParsedUrlQuery } from 'node:querystring';
 
 interface Props {
 	pagedBoards: Board[];
 	lastIdx: number;
 	page: number;
+	query: ParsedUrlQuery;
 }
 
 const BoardContainer = styled.div`
@@ -21,29 +23,35 @@ const BoardContainer = styled.div`
 `;
 
 const BoardList = (props: Props) => {
-	const { pagedBoards, lastIdx, page } = props;
+	const { pagedBoards, lastIdx, page, query } = props;
 	const [boards, setBoards] = useState<Board[]>(pagedBoards);
-	const [pageState, setPageState] = useState(page);
 
-	const onClickPage = idx => {
-		setPageState(idx);
+	// 브라우저 상 주소를 위한 url
+	const url = query.item
+		? `/board/?type=${query.type}&item=${query.item}&`
+		: `/board/?`;
+
+	const onPageClick = async idx => {
+		location.href = query.item
+			? `/board?type=${query.type}&item=${query.item}&page=${idx}`
+			: `/board?page=${idx}`;
 	};
 
-	useEffect(() => {
-		axios.get(`/api/board/list?page=${pageState}`).then(res => {
-			setBoards(res.data.pagedBoards);
-		});
-	}, [pageState]);
+	const searchProps = {
+		options: ['title', 'description', 'nickname'],
+		label: ['제목', '내용', '작성자'],
+		onSubmit: (e, type, input) => {
+			e.preventDefault();
+
+			location.href = `/board?type=${type}&item=${input}`;
+		},
+	};
 
 	return (
 		<BoardContainer>
 			<h2>자유게시판</h2>
 			{/* 검색 */}
-			<Search
-				options={['title', 'description', 'nickname']}
-				label={['제목', '내용', '작성자']}
-				onSubmit={() => {}}
-			/>
+			<Search {...searchProps} />
 			<div>
 				{boards?.map(board => (
 					<BoardItem board={board} key={board.id} />
@@ -55,11 +63,10 @@ const BoardList = (props: Props) => {
 			</Link>
 			{/* 페이지네이션 */}
 			<Pagination
-				currentIdx={pageState}
 				lastIdx={lastIdx}
-				url='/board?'
-				api={`/api/board/list`}
-				onClick={onClickPage}
+				currentIdx={page}
+				onClick={onPageClick}
+				url={url}
 			/>
 		</BoardContainer>
 	);

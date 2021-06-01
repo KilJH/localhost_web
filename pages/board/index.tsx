@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
+import { ParsedUrlQuery } from 'node:querystring';
 import React from 'react';
 import SERVER from '../../client/utils/url';
 import BoardList from '../../components/board/BoardList';
@@ -12,6 +13,7 @@ interface Props {
 		pagedBoards: Board[];
 		lastIdx: number;
 		page: number;
+		query: ParsedUrlQuery;
 	};
 }
 
@@ -26,10 +28,14 @@ const index = ({ pageProps }: Props) => {
 export default withAuth(0, 0)(index);
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-	const res = await axios.get(
-		`${SERVER}/api/board/list?page=${ctx.query.page || 1}`,
+	const { page, type, item } = ctx.query;
+	const url = encodeURI(
+		`${SERVER}/api/board/list?page=${page || 1}&type=${type || 'title'}&item=${
+			item || ''
+		}`,
 	);
+	const res = await axios.get(url);
 	return {
-		props: { ...res.data },
+		props: { ...res.data, query: ctx.query },
 	};
 };
