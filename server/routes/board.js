@@ -8,6 +8,9 @@ router.use(cors());
 router.get('/list', function (req, res, next) {
 	management.list(req, res);
 });
+router.post('/list/myboard', function (req, res, next) {
+	management.myBoardList(req, res);
+});
 router.post('/write', function (req, res, next) {
 	management.write(req, res);
 });

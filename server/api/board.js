@@ -91,6 +91,17 @@ module.exports.list = (req, res) => {
 	});
 };
 
+module.exports.myBoardList = (req, res) => {
+	const { userId } = req.body;
+	const sql = `SELECT * FROM board WHERE user_id = ?`;
+
+	mysql.query(sql, userId, (err, boards) => {
+		if (err) return console.log('myBoardList err', err);
+
+		res.json({ success: true, boards });
+	});
+};
+
 module.exports.write = (req, res) => {
 	// 게시글 작성
 	const { userId, title, description } = req.body;
