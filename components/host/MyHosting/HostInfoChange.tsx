@@ -193,7 +193,7 @@ export default function MyHosting(props: Props): ReactElement {
 		setLanguageSave(language);
 		setLanguageOpen(false);
 	};
-	const handleLanguageCancle = () => {
+	const handleLanguageCancel = () => {
 		setLanguage(languageSave);
 		setLanguageOpen(false);
 	};
@@ -367,7 +367,7 @@ export default function MyHosting(props: Props): ReactElement {
 					</form>
 				</DialogueContent>
 				<DialogActions>
-					<Button onClick={handleLanguageCancle} color='secondary'>
+					<Button onClick={handleLanguageCancel} color='secondary'>
 						취소
 					</Button>
 					<Button onClick={handleLanguageClose} color='primary'>
