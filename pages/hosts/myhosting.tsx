@@ -47,16 +47,6 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 	});
 	const host = resLoadHost.data.host;
 
-	const applyList = await (
-		await axios.post(`${SERVER}/api/host/application/list`, {
-			hostUserId: userId,
-		})
-	).data.applicant;
-
-	applyList.map(value => {
-		if (value.status === 0) waitingApplicant.push(value);
-	});
-
 	const previousApplicant = await (
 		await axios.post(`${SERVER}/api/host/application/history`, {
 			hostUserId: host.id,
@@ -68,8 +58,8 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 			hostUserId: host.id,
 		})
 	).data.applicant;
-
 	applicationList.map(value => {
+		if (value.status === 0) waitingApplicant.push(value);
 		if (value.status === 1) matchedApplicant.push(value);
 	});
 	return {

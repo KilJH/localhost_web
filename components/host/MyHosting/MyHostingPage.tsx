@@ -86,6 +86,7 @@ const NoItem = ({
 
 export default function MyHostingPage(props: Props): ReactElement {
 	const { waitingApplicant, host, previousApplicant, matchedApplicant } = props;
+
 	const [dialogueOpen, setDialogueOpen] = useState(false);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
@@ -99,8 +100,9 @@ export default function MyHostingPage(props: Props): ReactElement {
 			<UserTable>
 				<thead>
 					<tr>
-						<th style={{ width: '50%' }}>닉네임</th>
-						<th style={{ width: '50%' }}>날짜</th>
+						<th style={{ width: '35%' }}>닉네임</th>
+						<th style={{ width: '35%' }}>날짜</th>
+						<th style={{ width: '30%' }}>동행관리</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -109,7 +111,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 							<HostMatchedApplicantItem applicant={value} />
 						))
 					) : (
-						<NoItem colspan={2}>진행중인 호스팅이 없습니다.</NoItem>
+						<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
 					)}
 				</tbody>
 			</UserTable>

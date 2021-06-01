@@ -31,11 +31,10 @@ export default function HostApplicantItem(props: Props) {
 	const { applicant } = props;
 	const [list, setList] = useState(applicant);
 	const currentUser = useContext(UserStateContext);
-
 	useEffect(() => {
 		setList(applicant);
 	}, [applicant]);
-
+	console.log(applicant.user, currentUser.id);
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
@@ -47,6 +46,7 @@ export default function HostApplicantItem(props: Props) {
 				const createRoomRes = await axios.post(`/api/message/room/create`, {
 					hostUserId: currentUser.id,
 					userId: list.user.id,
+					hostUserApplyId: applicant.id,
 				});
 				if (createRoomRes.data.success) {
 					alert('승인 처리되었습니다. 채팅을 통해 약속을 잡으세요');
