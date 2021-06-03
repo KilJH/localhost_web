@@ -28,6 +28,7 @@ import { Radio, RadioGroup } from '@material-ui/core';
 
 interface Props {
 	host: Host;
+	toast: Function;
 }
 const ComponentDiv = styled.div`
 	& > h3 {
@@ -160,7 +161,7 @@ const TravelStyleInput = ({
 };
 
 export default function MyHosting(props: Props): ReactElement {
-	const { host } = props;
+	const { host, toast } = props;
 	const [isOn, setIsOn] = useState(host.on);
 	const [language, setLanguage] = useState({
 		language1: host.languages[0] === null ? ' ' : host.languages[0],
@@ -261,11 +262,11 @@ export default function MyHosting(props: Props): ReactElement {
 				address: place?.formatted_address,
 			});
 			if (res.data.success) {
-				alert('호스트 정보 수정이 완료되었습니다!');
+				toast('success', '호스트 정보 수정이 완료되었습니다!');
 				window.location.replace('/hosts/myhosting'); // 새로고침
-			}
+			} else toast('error', '호스트 정보 수정 실패');
 		} catch (err) {
-			return console.log(err);
+			return toast('error', err);
 		}
 	};
 	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -234,7 +234,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 							<CloseIcon />
 						</Button>
 					</CloseButtonDiv>
-					<HostInfoChange host={host} />
+					<HostInfoChange host={host} toast={toast.handleOpen} />
 				</HostInfoChangeDialogue>
 			</div>
 			<Toast {...toast}>{toast.message}</Toast>
