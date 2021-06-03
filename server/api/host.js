@@ -401,9 +401,9 @@ module.exports.applyHosting = (req, res) => {
 
 module.exports.approveHosting = (req, res) => {
 	// host 가 user의 신청을 승인하는 API
-	const { id, hostUserId } = req.body; // requestUserId
+	const { id } = req.body; // host_user_apply_Id
 
-	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE user_user_id = ${id} && host_user_id = ${hostUserId};`;
+	const updateSql = `UPDATE host_user_apply SET status=${1} WHERE id = ${id};`;
 	mysql.query(updateSql, err => {
 		if (err) return console.log('approveHosting err', err);
 

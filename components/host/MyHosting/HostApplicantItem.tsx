@@ -35,13 +35,11 @@ export default function HostApplicantItem(props: Props) {
 	useEffect(() => {
 		setList(applicant);
 	}, [applicant]);
-	console.log(applicant.user, currentUser.id);
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		try {
 			const res = await axios.post(`/api/host/application/approve`, {
-				id: list.user.id,
-				hostUserId: currentUser.id,
+				id: applicant.id,
 			});
 			if (res.data.success) {
 				const createRoomRes = await axios.post(`/api/message/room/create`, {
