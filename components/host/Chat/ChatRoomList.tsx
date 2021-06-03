@@ -92,6 +92,20 @@ const ItemContainer = styled.li`
 const ChatRoomItem = ({ item }: ItemProps) => {
 	const { roomId, nickname, photo, recentMessage } = item;
 
+	const addZero = num => {
+		return `0${num}`;
+	};
+	const formatDate = (date: string) => {
+		if (date.indexOf(':') === -1) return null;
+		else {
+			const hour = Number(date.split(':')[0]);
+			const min = Number(date.split(':')[1]);
+
+			return `${hour < 10 ? addZero(hour) : hour}:${
+				min < 10 ? addZero(min) : min
+			}`;
+		}
+	};
 	// 만약 열고 있는데 문자 오면 보여지게
 	// const [socket, setSocket] = useState<Socket>();
 	// const [recent, setRecent] = useState(recentMessage);
@@ -122,9 +136,9 @@ const ChatRoomItem = ({ item }: ItemProps) => {
 					<div>
 						{nickname}#{roomId}
 					</div>
-					<div>{recentMessage.message}</div>
+					<div>{recentMessage.message || '메세지가 없습니다.'}</div>
 				</div>
-				<div className='time'>{recentMessage.createTime}</div>
+				<div className='time'>{formatDate(recentMessage.createTime)}</div>
 			</ItemContainer>
 		</Link>
 	);
