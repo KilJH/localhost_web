@@ -3,28 +3,16 @@ const crypto = require('crypto');
 const mysql = require('../db/mysql');
 
 module.exports.userMapping = user => {
-	const {
-		id,
-		name,
-		email,
-		nickname,
-		sex,
-		phone,
-		nationality,
-		address,
-		photo,
-		user_id,
-	} = user;
 	return {
-		id: user_id || id,
-		name,
-		email,
-		nickname,
-		sex,
-		phone,
-		nationality,
-		address,
-		photo,
+		id: user.user_id || user.id,
+		name: user.name,
+		email: user.email,
+		nickname: user.nickname,
+		sex: user.sex,
+		phone: user.phone,
+		nationality: user.nationality,
+		address: user.address,
+		photo: user.photo,
 		isHost: user.ishost,
 		isAdmin: user.isadmin,
 	};
@@ -35,7 +23,6 @@ module.exports.userListMapping = userList => {
 };
 
 module.exports.register = (req, res) => {
-	// 회원가입
 	const { email, pw, name, sex, nickname, phone, nationality, address } =
 		req.body;
 	const sql = `SELECT * FROM user WHERE email = ?`;
@@ -47,7 +34,6 @@ module.exports.register = (req, res) => {
 		if (err2) return console.log('register err: ', err2);
 
 		if (rows == '') {
-			// res.json({ message: '사용할 수 있는 이메일입니다.' });
 			const insert = `INSERT INTO user(email, pw, name, sex, nickname, phone, nationality, address) VALUES("${email}", "${hashPW}", "${name}", "${sex}", "${nickname}", "${phone}","${nationality}", "${address}");`;
 
 			mysql.query(insert, (err3, rows, fields) => {
@@ -63,7 +49,6 @@ module.exports.register = (req, res) => {
 };
 
 module.exports.update = (req, res) => {
-	// 정보수정
 	const email = req.body.email || req.query.email;
 	const nickname = req.body.nickname || '';
 	const phone = req.body.phone || '';
@@ -73,13 +58,12 @@ module.exports.update = (req, res) => {
 
 	mysql.query(update, (err, rows) => {
 		if (err) return console.log(err);
-		console.log('변경 성공');
+
 		res.json({ success: true, message: '변경 대성공' });
 	});
 };
 
 module.exports.updatePhoto = (req, res) => {
-	// 프로필 이미지 수정
 	const { url, userId } = req.body;
 	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${userId}"`;
 
@@ -97,22 +81,21 @@ module.exports.updatePW = (req, res) => {
 
 	mysql.query(update, err => {
 		if (err) return err;
+
 		res.json({ success: true, message: '비밀번호 변경에 성공했습니다.' });
 	});
 };
 
 module.exports.delete = (req, res) => {
 	const userId = req.body.userId;
-
 	const sql = `DELETE FROM user WHERE id = ?`;
 
 	mysql.query(sql, userId, err => {
 		if (err) {
-			res.json({
+			return res.json({
 				success: false,
 				message: 'SQL 오류로 회원 삭제에 실패했습니다.',
 			});
-			console.log('DELETE err: ', err);
 		}
 
 		res.json({ success: true, message: `id:${userId} 회원 삭제 완료` });
@@ -120,32 +103,29 @@ module.exports.delete = (req, res) => {
 };
 
 module.exports.list = (req, res) => {
-	// 전체회원
 	const sql = `SELECT * FROM user`;
 
 	mysql.query(sql, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
-		console.log('검색된 회원수: ', rows.length);
+
 		res.status(200).json({ success: true, users: this.userListMapping(rows) });
 	});
 };
 module.exports.find = (req, res) => {
-	// 한명 검색
-	const id = req.params.id;
-
-	// const sql = `SELECT * FROM user WHERE id = "?"`;
+	const id = req.params.id || req.query.id;
 	const sql = `SELECT * FROM user WHERE id = ?`;
 
 	mysql.query(sql, id, (err, rows, fields) => {
 		if (err) return console.log('select err: ', err);
+
 		res.status(200).json({ success: true, user: this.userMapping(rows[0]) });
 	});
 };
 
 module.exports.search = (req, res) => {
-	// 회원 검색
 	const type = req.body.type || 'nickname';
 	const item = req.body.item;
+
 	let sql = '';
 	switch (type) {
 		case 'name':
@@ -170,10 +150,8 @@ module.exports.search = (req, res) => {
 };
 
 module.exports.follow = (req, res) => {
-	// 팔로우, 팔로우 취소
-
 	if (!req.body.userId || !req.body.followerId) {
-		res.json({ success: false, message: '비정상적인 요청입니다.' });
+		return res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const { userId, followerId } = req.body;
@@ -186,12 +164,14 @@ module.exports.follow = (req, res) => {
 			const insert = `INSERT INTO follow(user_id, follower_id) VALUES("${userId}", "${followerId}");`;
 			mysql.query(insert, (err, rows, fields) => {
 				if (err) return console.log('insert err: ', err);
+
 				res.status(200).json({ success: true, message: ' 팔로우 성공' });
 			});
 		} else {
 			const deleteSql = `DELETE FROM follow WHERE user_id = ? AND follower_id = ?`;
 			mysql.query(deleteSql, [userId, followerId], (err, rows, fields) => {
 				if (err) return console.log('delete err: ', err);
+
 				res.status(200).json({ success: true, message: ' 팔로우 취소' });
 			});
 		}
@@ -201,7 +181,7 @@ module.exports.follow = (req, res) => {
 module.exports.followList = (req, res) => {
 	// 팔로우 리스트 가져오기
 	if (!req.body.userId) {
-		res.json({ success: false, message: '비정상적인 요청입니다.' });
+		return res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
@@ -219,7 +199,7 @@ module.exports.followList = (req, res) => {
 module.exports.followerList = (req, res) => {
 	// 팔로워 리스트 가져오기
 	if (!req.body.userId) {
-		res.json({ success: false, message: '비정상적인 요청입니다.' });
+		return res.json({ success: false, message: '비정상적인 요청입니다.' });
 	}
 
 	const userId = req.body.userId;
@@ -227,7 +207,6 @@ module.exports.followerList = (req, res) => {
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
-		// 팔로우 테이블의 정보로 모든 유저를 찾아야 함
 		const followers = this.userListMapping(rows);
 
 		res.json({ success: true, followers, followersNum: rows.length });
@@ -240,6 +219,7 @@ module.exports.isFollowed = (req, res) => {
 
 	mysql.query(sql, [userId, followerId], (err, rows) => {
 		if (err) return console.log(err);
+
 		if (rows == '') {
 			res.json({ isFollowed: false });
 		} else {
