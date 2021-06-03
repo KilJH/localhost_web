@@ -313,7 +313,6 @@ const ChatRoom = (props: Props) => {
 	// 호스팅 주소
 	const addressNotice = '만나고 싶은 장소를 정하려면 클릭! ☝';
 	const [hostingAddress, setHostingAddress] = useState<string>(addressNotice);
-
 	const toast = useToast(false);
 	// 최초 접속 시
 	useEffect(() => {
@@ -329,7 +328,8 @@ const ChatRoom = (props: Props) => {
 				const address = await axios.post(`/api/host/hostingAddress`, {
 					applicationId: applicationId,
 				});
-				setHostingAddress(address.data.hostingAddress);
+				if (address.data.hostingAddress)
+					setHostingAddress(address.data.hostingAddress);
 			};
 			hostingAddress();
 		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
@@ -341,7 +341,8 @@ const ChatRoom = (props: Props) => {
 				const address = await axios.post(`/api/host/hostingAddress`, {
 					applicationId: applicationId,
 				});
-				setHostingAddress(address.data.hostingAddress);
+				if (address.data.hostingAddress)
+					setHostingAddress(address.data.hostingAddress);
 			};
 			hostingAddress();
 		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
@@ -701,7 +702,6 @@ const ChatRoom = (props: Props) => {
 			setScrollDisplay('none');
 		}
 	}, [chatInput.value]);
-
 	return (
 		<ChatRoomContainer scrollDisplay={scrollDisplay}>
 			<header>
