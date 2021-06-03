@@ -23,6 +23,7 @@ import { languages, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import { useToast } from '../../client/hooks/useToast';
 import { Alert, Color } from '@material-ui/lab';
+import Toast from '../reuse/Toast';
 
 const RequestContainer = styled.div`
 	margin: 2rem auto;
@@ -106,15 +107,7 @@ const Request = () => {
 	const [reqCountry, setReqCountry] = useState(0);
 	const currentUser = useContext(UserStateContext);
 
-	const saveToast = useToast(false);
-	const [errMsg, setErrMsg] = useState('');
-	const [severity, setSeverity] = useState<Color>('warning');
-	const setToast = (str, severity) => {
-		saveToast.handleOpen();
-		setSeverity(severity);
-		setErrMsg(str);
-	};
-
+	const toast = useToast(false);
 	let newChecked: boolean[] = [];
 
 	for (let i = 0; i < languages.length; i++) {
@@ -140,13 +133,13 @@ const Request = () => {
 		// e.preventDefault();
 
 		if (place == null) {
-			setToast('활동지역을 선택해주세요', 'warning');
+			toast.handleOpen('warning', '활동지역을 선택해주세요');
 		} else if (langs.length === 0) {
-			setToast('언어를 선택해주세요', 'warning');
+			toast.handleOpen('warning', '언어를 선택해주세요');
 		} else if (selectedStyle === '') {
-			setToast('여행스타일을 선택해주세요', 'warning');
+			toast.handleOpen('warning', '여행스타일을 선택해주세요');
 		} else if (description.value === '') {
-			setToast('자기소개를 작성해주세요', 'warning');
+			toast.handleOpen('warning', '자기소개를 작성해주세요');
 		} else {
 			const hostInfo = {
 				// country: country.value,
@@ -163,10 +156,10 @@ const Request = () => {
 			});
 
 			if (res.data.success) {
-				setToast(res.data.message, 'success');
+				alert(res.data.message);
 				Router.push('/');
 			} else {
-				setToast(res.data.message, 'error');
+				toast.handleOpen('error', res.data.message);
 			}
 		}
 	};
@@ -287,7 +280,7 @@ const Request = () => {
 				<BtnRequest onClick={onSubmit} width='10em' padding='0.5rem 1rem'>
 					신청
 				</BtnRequest>
-				<Snackbar
+				{/* <Snackbar
 					open={saveToast.open}
 					autoHideDuration={4000}
 					onClose={saveToast.handleClose}
@@ -300,7 +293,8 @@ const Request = () => {
 					>
 						{errMsg}
 					</Alert>
-				</Snackbar>
+				</Snackbar> */}
+				<Toast {...toast}>{toast.message}</Toast>
 			</div>
 		</RequestContainer>
 	);

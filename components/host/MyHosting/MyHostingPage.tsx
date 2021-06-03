@@ -9,6 +9,8 @@ import HostApplicantItem from './HostApplicantItem';
 import CloseIcon from '@material-ui/icons/Close';
 import HostPreviousApplicantItem from './HostPreviousApplicantItem';
 import HostMatchedApplicantItem from './HostMatchedApplicantItem';
+import Toast from '../../reuse/Toast';
+import { useToast } from '../../../client/hooks/useToast';
 interface Props {
 	host: Host;
 	waitingApplicant: Application[];
@@ -88,12 +90,30 @@ export default function MyHostingPage(props: Props): ReactElement {
 	const { waitingApplicant, host, previousApplicant, matchedApplicant } = props;
 
 	const [dialogueOpen, setDialogueOpen] = useState(false);
+	const toast = useToast(false);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
 	};
 	const handleDialogueClose = () => {
 		setDialogueOpen(false);
 	};
+	// useEffect(() => {
+	// 	const updateApplicants = async () => {
+	// 		let waitingApplicant: any[] = [];
+	// 		const applicationList = await (
+	// 			await axios.post(`${SERVER}/api/host/application/list`, {
+	// 				hostUserId: currentUser.id,
+	// 			})
+	// 		).data.applicant;
+	// 		applicationList.map(value => {
+	// 			if (value.status === 0) waitingApplicant.push(value);
+	// 		});
+	// 		if (waitingApplicant) {
+	// 			setList(waitingApplicant);
+	// 		}
+	// 	};
+	// 	updateApplicants();
+	// }, [toast.handleOpen]);
 	return (
 		<Layout>
 			<h3>현재 호스팅 목록</h3>
@@ -108,7 +128,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 				<tbody>
 					{matchedApplicant.length ? (
 						matchedApplicant.map(value => (
-							<HostMatchedApplicantItem applicant={value} />
+							<HostMatchedApplicantItem applicant={value} toast={toast.handleOpen} />
 						))
 					) : (
 						<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
@@ -128,7 +148,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 				<tbody>
 					{waitingApplicant.length ? (
 						waitingApplicant.map(value => (
-							<HostApplicantItem applicant={value} />
+							<HostApplicantItem applicant={value} toast={toast.handleOpen} />
 						))
 					) : (
 						<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>
@@ -170,6 +190,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 				</CloseButtonDiv>
 				<HostInfoChange host={host} />
 			</HostInfoChangeDialogue>
+			<Toast {...toast}>{toast.message}</Toast>
 		</Layout>
 	);
 }
