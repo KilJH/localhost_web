@@ -352,6 +352,9 @@ const ChatRoom = (props: Props) => {
 			socket.emit('join', roomId);
 			socket.on('address', data => {
 				setHostingAddress(data.address);
+				if (currentUser.id !== hostUserId) {
+					toast.handleOpen('success', '호스트가 장소를 등록했습니다.');
+				}
 			});
 		}
 		return () => {
