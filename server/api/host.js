@@ -504,6 +504,7 @@ module.exports.getHostingAddress = (req, res) => {
 					break;
 			}
 		});
+
 		res.json({
 			success: true,
 			hostingAddress: hostingAddress,
@@ -514,15 +515,15 @@ module.exports.getHostingAddress = (req, res) => {
 module.exports.setHostingAddress = (req, res) => {
 	const { hostingAddress, id } = req.body;
 	const sql = `UPDATE host_user_apply SET address = "${hostingAddress}" WHERE id = "${id}";`;
+
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
+
 		res.json({ success: true });
 	});
 };
 
-// 수정중입니다*/
 module.exports.reviewWrite = (req, res) => {
-	// host review작성 API
 	const { id, description, rating } = req.body; // host_user_apply id를 입력해야합니다!!
 
 	const sql = `INSERT INTO host_review(host_user_apply_id, description , rating) VALUES("${id}","${description}","${rating}")`;
