@@ -123,7 +123,7 @@ const MyBoard = (props: Props) => {
 						</thead>
 						<tbody>
 							{boards.length ? (
-								boards.map(board => (
+								(moreBoard ? boards : boards.slice(0, 5)).map(board => (
 									<BoardItem
 										board={board}
 										onDelete={() => {
