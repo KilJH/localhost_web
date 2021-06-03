@@ -44,9 +44,6 @@ router.post('/update', function (req, res, next) {
 router.post('/status', function (req, res, next) {
 	management.status(req, res);
 });
-router.post('/hostingAddress', function (req, res, next) {
-	management.getHostingAddress(req, res);
-});
 router.post('/update/hostingAddress', function (req, res, next) {
 	management.setHostingAddress(req, res);
 });

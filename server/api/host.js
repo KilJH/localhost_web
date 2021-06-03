@@ -482,36 +482,6 @@ module.exports.getApplicationId = (req, res) => {
 	});
 };
 
-module.exports.getHostingAddress = (req, res) => {
-	const { applicationId } = req.body;
-	const sql = `SELECT address, status FROM host_user_apply WHERE id = ${applicationId};`;
-	mysql.query(sql, (err, rows) => {
-		if (err) return console.log('select err');
-
-		let hostingAddress = '';
-		rows.map((value, index) => {
-			switch (value.status) {
-				case 1:
-					if (hostingAddress === '' || hostingAddress === null)
-						hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
-					else hostingAddress = value.address;
-					break;
-				case 4:
-					hostingAddress = '완료된 호스팅입니다.';
-					break;
-				default:
-					hostingAddress = '취소된 호스팅입니다.';
-					break;
-			}
-		});
-
-		res.json({
-			success: true,
-			hostingAddress: hostingAddress,
-		});
-	});
-};
-
 module.exports.setHostingAddress = (req, res) => {
 	const { hostingAddress, id } = req.body;
 	const sql = `UPDATE host_user_apply SET address = "${hostingAddress}" WHERE id = "${id}";`;
