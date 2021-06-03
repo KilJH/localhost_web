@@ -5,7 +5,6 @@ const management = require('../api/auth');
 router.post('/login', function (req, res, next) {
 	management.login(req, res);
 });
-
 // 페이지 인증
 router.get('/check', function (req, res, next) {
 	management.checkToken(req, res);
