@@ -1,6 +1,6 @@
 const mysql = require('../db/mysql');
 const userApi = require('./user');
-// 호스트 관련된 API를 작성하세요
+
 const formatDate = date => {
 	const day = new Date(date);
 	const now = new Date();
@@ -91,7 +91,6 @@ module.exports.preApplicationMapping = preApp => {
 };
 
 module.exports.list = (req, res) => {
-	// host의 host정보 불러오기
 	const sql = `select *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude from host left join user on user.id = host.user_id`;
 
 	mysql.query(sql, (err, rows) => {
@@ -107,9 +106,8 @@ module.exports.listOfRequestedHost = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log(err);
-		console.log(rows);
+
 		const requestedHosts = this.hostListMapping(rows);
-		console.log(requestedHosts);
 		res.status(200).json({ success: true, requestedHosts });
 	});
 };
@@ -127,10 +125,9 @@ module.exports.requestHost = (req, res) => {
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);
-		if (rows[0]) {
-			res.json({ success: false, message: '이미 신청한 상태입니다.' });
-			return;
-		}
+		if (rows[0])
+			return res.json({ success: false, message: '이미 신청한 상태입니다.' });
+
 		mysql.query(
 			insert,
 			[
@@ -164,11 +161,9 @@ module.exports.allowHost = (req, res) => {
 	const del = `DELETE FROM host_request WHERE user_id = ?`;
 	const update = `UPDATE user SET ishost=1 WHERE id = ?`;
 
-	// 신청 테이블에서 검색
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log('err:', err);
 
-		// 호스트 테이블로 복사
 		mysql.query(
 			insert,
 			[
@@ -186,11 +181,9 @@ module.exports.allowHost = (req, res) => {
 			(err, rows) => {
 				if (err) return console.log('insert err: ', err);
 
-				// 신청 테이블에서 삭제
 				mysql.query(del, userId, err => {
 					if (err) return console.log('delete err: ', err);
 
-					// 유저 테이블에 isHost = 1 로 업데이트
 					mysql.query(update, userId, err => {
 						res.json({
 							success: true,
@@ -202,8 +195,8 @@ module.exports.allowHost = (req, res) => {
 		);
 	});
 };
+
 module.exports.denyHost = (req, res) => {
-	// 신청한 회원을 거부
 	const userId = req.body.userId;
 	const sql = `DELETE FROM host_request WHERE user_id = ?`;
 
@@ -215,8 +208,8 @@ module.exports.denyHost = (req, res) => {
 			.json({ success: true, message: '호스트 신청을 거절했습니다.' });
 	});
 };
+
 module.exports.demote = (req, res) => {
-	// 기존 호스트 회원을 일반회원으로 강등
 	const userId = req.body.userId;
 
 	const sql = `DELETE FROM host WHERE user_id = ?`;
@@ -224,6 +217,7 @@ module.exports.demote = (req, res) => {
 
 	mysql.query(sql, userId, err => {
 		if (err) return console.log(err);
+
 		mysql.query(update, userId, err => {
 			if (err) return console.log('err: ', err);
 
@@ -236,10 +230,10 @@ module.exports.demote = (req, res) => {
 };
 
 module.exports.searchHost = (req, res) => {
-	// 호스트 회원 검색
 	const type = req.body.type || 'nickname';
 	const item = req.body.item;
 	let sql = '';
+
 	switch (type) {
 		case 'name':
 			sql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude FROM host LEFT JOIN user ON host.user_id=user.id WHERE user.name LIKE "%${item}%"`;
@@ -265,7 +259,6 @@ module.exports.searchHost = (req, res) => {
 };
 
 module.exports.load = (req, res) => {
-	// 특정 host를 불러오는 API
 	const id = req.body.id; // userId
 
 	const hostSql = `SELECT *, host.address AS formattedAddress, host.latitude AS host_latitude, host.longitude AS host_longitude, host.id AS host_id, user.id user_id FROM host LEFT JOIN user ON user.id = host.user_id WHERE user_id = ${id};`;
@@ -292,7 +285,6 @@ module.exports.load = (req, res) => {
 };
 
 module.exports.update = (req, res) => {
-	// host정보를 수정하는 API
 	const {
 		id,
 		language1,
@@ -316,7 +308,6 @@ module.exports.update = (req, res) => {
 };
 
 module.exports.nearbyList = (req, res) => {
-	// 사용자와 호스트의 거리를 구하는 API
 	const { latitude, longitude, country } = req.body;
 	const distance = req.body.distance || 100000;
 
@@ -334,7 +325,6 @@ module.exports.nearbyList = (req, res) => {
 };
 
 module.exports.status = (req, res) => {
-	// host 상태 설정 API
 	const { id, on } = req.body; // userId;
 
 	const sql = `UPDATE host SET host.on="${on}" WHERE user_id = "${id}";`;
@@ -359,9 +349,11 @@ module.exports.doneHosting = (req, res) => {
 
 	mysql.query(sql, (err, rows) => {
 		if (err) console.log('doneHosting err', err);
+
 		const previousApplicant = rows
 			.map(row => this.preApplicationMapping(row))
 			.sort((a, b) => (a.date > b.date ? -1 : 1));
+
 		res.json({ success: true, previousApplicant });
 	});
 };
@@ -483,7 +475,9 @@ module.exports.getApplicationId = (req, res) => {
 	const sql = `SELECT id FROM host_user_apply WHERE host_user_id = ${hostId} AND user_user_id = ${userId};`;
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
+
 		const applicationId = rows[0].id;
+
 		res.json({ success: true, applicationId: applicationId });
 	});
 };
@@ -498,7 +492,7 @@ module.exports.getHostingAddress = (req, res) => {
 		rows.map((value, index) => {
 			switch (value.status) {
 				case 1:
-					if (hostingAddress === null)
+					if (hostingAddress === '')
 						hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
 					else hostingAddress = value.address;
 					break;
@@ -510,6 +504,7 @@ module.exports.getHostingAddress = (req, res) => {
 					break;
 			}
 		});
+
 		res.json({
 			success: true,
 			hostingAddress: hostingAddress,
@@ -520,15 +515,15 @@ module.exports.getHostingAddress = (req, res) => {
 module.exports.setHostingAddress = (req, res) => {
 	const { hostingAddress, id } = req.body;
 	const sql = `UPDATE host_user_apply SET address = "${hostingAddress}" WHERE id = "${id}";`;
+
 	mysql.query(sql, (err, rows) => {
 		if (err) return console.log('select err');
+
 		res.json({ success: true });
 	});
 };
 
-// 수정중입니다*/
 module.exports.reviewWrite = (req, res) => {
-	// host review작성 API
 	const { id, description, rating } = req.body; // host_user_apply id를 입력해야합니다!!
 
 	const sql = `INSERT INTO host_review(host_user_apply_id, description , rating) VALUES("${id}","${description}","${rating}")`;

@@ -2,8 +2,29 @@ const {
 	default: formatDistanceStrictWithOptions,
 } = require('date-fns/fp/formatDistanceStrictWithOptions');
 const mysql = require('../db/mysql');
+const userApi = require('./user');
 
-// DATE formatting function
+module.exports.boardMapping = board => {
+	return {
+		id: board.board_id || board.id,
+		title: board.title,
+		description: board.description,
+		createTime: formatDate(board.create_time),
+		hit: board.hit,
+		author: userApi.userMapping(board),
+		numOfComment: board.num_comment,
+	};
+};
+
+module.exports.commentMapping = comment => {
+	return {
+		id: comment.comment_id,
+		user: userApi.userMapping(comment),
+		description: comment.description,
+		createTime: formatDate(comment.create_time),
+	};
+};
+
 const formatDate = date => {
 	const day = new Date(date);
 	const now = new Date();
@@ -32,12 +53,6 @@ const formatDate = date => {
 };
 
 module.exports.list = (req, res) => {
-	// 전체 게시글
-	// 전체 게시물과 유저정보를 불러온다.
-	// id 컬럼이 중복되기때문에 board.id를 board_id로 별칭을 지어준다 Alias
-	// ORDER BY로 create_time의 역순대로
-	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
-	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
 	const type = req.query.type || 'title';
 	const item = req.query.item || '';
 	let sql = ``;
@@ -63,21 +78,7 @@ module.exports.list = (req, res) => {
 		if (err) return console.log('select err: ', err);
 
 		const boards = rows.map(board => {
-			return {
-				id: board.board_id,
-				title: board.title,
-				description: board.description,
-				createTime: formatDate(board.create_time),
-				hit: board.hit,
-				author: {
-					id: board.user_id,
-					name: board.name,
-					email: board.email,
-					nickname: board.nickname,
-					photo: board.photo,
-				},
-				numOfComment: board.num_comment,
-			};
+			return this.boardMapping(board);
 		});
 
 		const results = boards.slice((page - 1) * 10, page * 10);
@@ -107,11 +108,10 @@ module.exports.myBoardList = (req, res) => {
 };
 
 module.exports.write = (req, res) => {
-	// 게시글 작성
 	const { userId, title, description } = req.body;
 	const sql = `INSERT INTO board(user_id, title, description) VALUES("${userId}", "${title}", "${description}");`;
 
-	mysql.query(sql, (err, rows, fields) => {
+	mysql.query(sql, err => {
 		if (err) return console.log('write err: ', err);
 
 		res.status(200).json({ success: true });
@@ -119,62 +119,27 @@ module.exports.write = (req, res) => {
 };
 
 module.exports.load = (req, res) => {
-	// 게시글 불러오기
 	const id = req.body.id; // board id
 
-	// 0. 조회수 1 증가
 	const hitSql = `UPDATE board SET hit = hit+1 WHERE id = ?`;
-	mysql.query(hitSql, id, err3 => {
-		if (err3) return console.log('조회수 증가 실패', err3);
+	mysql.query(hitSql, id, err => {
+		if (err) return console.log('조회수 증가 실패', err);
 	});
 
-	// 1. 해당 id의 게시물과 유저정보를 불러온다.
-	// 결과값이 행 한 개 -> rows[0] 해줘야됨
 	const boardSql = `SELECT *, board.id AS board_id FROM board LEFT JOIN user ON board.user_id = user.id WHERE board.id = ${id};`;
 	mysql.query(boardSql, (err, boardRows) => {
 		if (err) return console.log(err);
 
-		// 2. 해당 board_id의 코멘트와 유저정보를 불러온다.
-		// 결과값을 배열 그대로 넘겨준다.
 		const commentSql = `SELECT *, board_comment.id AS comment_id FROM board_comment LEFT JOIN user ON board_comment.user_id = user.id WHERE board_comment.board_id = ${id}`;
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log(err2);
 
-			// 게시물 객체 생성
-			const board = {
-				id: boardRows[0].board_id,
-				title: boardRows[0].title,
-				description: boardRows[0].description,
-				createTime: formatDate(boardRows[0].create_time),
-				hit: boardRows[0].hit,
-				author: {
-					id: boardRows[0].user_id,
-					name: boardRows[0].name,
-					email: boardRows[0].email,
-					nickname: boardRows[0].nickname,
-					photo: boardRows[0].photo,
-				},
-				numOfComment: commentsRows.length,
-			};
+			const board = this.boardMapping(boardRows[0]);
 
-			// 댓글 배열 생성
 			const comments = commentsRows.map(comment => {
-				return {
-					id: comment.comment_id,
-					description: comment.description,
-					createTime: formatDate(comment.create_time),
-					user: {
-						id: comment.user_id,
-						name: comment.name,
-						email: comment.email,
-						nickname: comment.nickname,
-						photo: comment.photo,
-					},
-				};
+				return this.commentMapping(comment);
 			});
 
-			// 3. Board와 Comment[] 객체를 넘겨준다.( 불필요 정보 없어도 됨 )
-			// 객체의 키 값은 client/interfaces/index.ts 참조
 			res.status(200).json({ success: true, board, comments });
 		});
 	});
@@ -198,13 +163,7 @@ module.exports.delete = (req, res) => {
 	const sql = `DELETE FROM board WHERE id = ${id}`;
 
 	mysql.query(sql, err => {
-		if (err) {
-			res.json({
-				success: false,
-				message: 'SQL 오류로 공지 삭제에 실패했습니다.',
-			});
-			console.log('DELETE err: ', err);
-		}
+		if (err) console.log('DELETE err: ', err);
 
 		res.json({ success: true });
 	});
@@ -244,21 +203,7 @@ module.exports.search = (req, res) => {
 		if (err) return console.log('serach err: ', err);
 
 		const boards = rows.map(board => {
-			return {
-				id: board.board_id,
-				title: board.title,
-				description: board.description,
-				createTime: formatDate(board.create_time),
-				hit: board.hit,
-				author: {
-					id: board.user_id,
-					name: board.name,
-					email: board.email,
-					nickname: board.nickname,
-					photo: board.photo,
-				},
-				numOfComment: board.num_comment,
-			};
+			return this.boardMapping(board);
 		});
 
 		res.status(200).json({ success: true, list: boards });

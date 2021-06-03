@@ -3,8 +3,9 @@ const {
 } = require('date-fns/fp/formatDistanceStrictWithOptions');
 const { isUnionTypeNode, ModuleKind } = require('typescript');
 const mysql = require('../db/mysql');
+const userApi = require('./user');
+const boardApi = require('./board');
 
-// DATE formatting function
 const formatDate = date => {
 	const day = new Date(date);
 	const now = new Date();
@@ -31,12 +32,24 @@ const formatDate = date => {
 	}
 };
 
+module.exports.planMapping = plan => {
+	return {
+		id: plan.plan_id,
+		title: plan.title,
+		description: plan.description,
+		sleepDays: plan.sleep_days,
+		travelDays: plan.travel_days,
+		price: plan.price,
+		thumb: plan.thumb,
+		createTime: formatDate(plan.create_time),
+		hit: plan.hit,
+		author: userApi.userMapping(plan),
+		numOfComment: plan.num_comment,
+		likes: plan.likes,
+	};
+};
+
 module.exports.list = (req, res) => {
-	// 전체 플랜
-	// 전체 플랜과 유저정보를 불러온다.
-	// description중첩이기 때문에 별칭을 지어준다 _desc
-	// GROUP BY와 COUNT()를 통해 댓글 수를 카운팅해준다.
-	// comment 내용은 필요없기 때문에 JOIN을 하되 SELECT 하지않는다.
 	const type = req.query.type || 'title';
 	const item = req.query.item || '';
 
@@ -62,25 +75,7 @@ module.exports.list = (req, res) => {
 		if (err) return res.json({ success: false, err });
 
 		const plans = rows.map(plan => {
-			return {
-				id: plan.plan_id,
-				title: plan.title,
-				description: plan.description,
-				sleepDays: plan.sleep_days,
-				travelDays: plan.travel_days,
-				price: plan.price,
-				thumb: plan.thumb,
-				createTime: formatDate(plan.create_time),
-				hit: plan.hit,
-				author: {
-					id: plan.user_id,
-					name: plan.name,
-					email: plan.email,
-					nickname: plan.nickname,
-					photo: plan.photo,
-				},
-				numOfComment: plan.num_comment,
-			};
+			return this.planMapping(plan);
 		});
 		const start = (page - 1) * 10;
 		const results = plans.slice(start, start + 10);
@@ -182,40 +177,14 @@ module.exports.load = (req, res) => {
 		mysql.query(commentSql, (err2, commentsRows) => {
 			if (err2) return console.log('load err2', err2);
 
+			const mapedPlan = this.planMapping(plansRows[0]);
 			const plan = {
-				id: plansRows[0].plan_id,
-				title: plansRows[0].title,
-				description: plansRows[0].description,
-				price: plansRows[0].price,
-				sleepDays: plansRows[0].sleep_days,
-				travelDays: plansRows[0].travel_days,
-				thumb: plansRows[0].thumb,
-				createTime: formatDate(plansRows[0].create_time),
-				hit: plansRows[0].hit,
-				likes: plansRows[0].likes,
-				author: {
-					id: plansRows[0].user_id,
-					name: plansRows[0].name,
-					email: plansRows[0].email,
-					nickname: plansRows[0].nickname,
-					photo: plansRows[0].photo,
-				},
+				...mapedPlan,
 				planDays,
 			};
 
 			const comments = commentsRows.map(comment => {
-				return {
-					id: comment.comment_id,
-					description: comment.description,
-					createTime: formatDate(comment.create_time),
-					user: {
-						id: comment.user_id,
-						name: comment.name,
-						email: comment.email,
-						nickname: comment.nickname,
-						photo: comment.photo,
-					},
-				};
+				return boardApi.commentMapping(comment);
 			});
 
 			res.status(200).json({ success: true, plan, comments, price: total });
@@ -308,7 +277,6 @@ module.exports.write = (req, res) => {
 };
 
 module.exports.delete = (req, res) => {
-	// 삭제
 	const { planId, planDayId, planTimeId } = req.body; // 플랜 id
 
 	let sql = '';
@@ -326,7 +294,6 @@ module.exports.insertPhoto = (req, res) => {
 	const { url, planTimeId } = req.body;
 	const sql = `UPDATE user SET photo = "${url}" WHERE id = "${planTimeId}"`;
 
-	// 임시 저장 및 플랜 작성시 업로드하는 사진을 바로 s3에 저장
 	mysql.query(sql, err => {
 		if (err) return console.log('InsertPhoto Err');
 
@@ -335,7 +302,6 @@ module.exports.insertPhoto = (req, res) => {
 };
 
 module.exports.timeUpdate = (req, res) => {
-	//시간 수정
 	const {
 		id,
 		description,
@@ -358,7 +324,6 @@ module.exports.timeUpdate = (req, res) => {
 };
 
 module.exports.dayUpdate = (req, res) => {
-	//데이 수정
 	const { id, description, date } = req.body; // plan_dayId
 
 	const sql = `UPDATE plan_day SET description = "${description}", date = "${date}" WHERE id = "${id}";`;
@@ -405,20 +370,7 @@ module.exports.search = (req, res) => {
 		if (err) return console.log('serach err: ', err);
 
 		const plans = rows.map(plan => {
-			return {
-				id: plan.plan_id,
-				title: plan.title,
-				createTime: formatDate(plan.create_time),
-				hit: plan.hit,
-				author: {
-					id: plan.user_id,
-					name: plan.name,
-					email: plan.email,
-					nickname: plan.nickname,
-					photo: plan.photo,
-				},
-				numOfComment: plan.num_comment,
-			};
+			return this.planMapping(plan);
 		});
 
 		res.status(200).json({ success: true, list: plans });
@@ -439,7 +391,7 @@ module.exports.getWishList = (req, res) => {
 				author: {
 					id: wish.user_id,
 					nickname: wish.nickname,
-					photo: wish.nickname,
+					photo: wish.photo,
 				},
 			};
 		});
@@ -536,6 +488,7 @@ module.exports.isLiked = (req, res) => {
 
 	mysql.query(sql, [userId, planId], (err, rows) => {
 		if (err) return console.log('isLiked err ', err);
+
 		if (rows == '') {
 			res.json({ isLiked: false });
 		} else {
@@ -550,6 +503,7 @@ module.exports.howManyLiked = (req, res) => {
 
 	mysql.query(sql, planId, (err, rows) => {
 		if (err) return console.log(err);
+
 		res.json({ success: true, likes: rows.length });
 	});
 };

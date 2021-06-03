@@ -19,6 +19,15 @@ interface Props {
 }
 const Layout = styled.div`
 	padding-top: 2em;
+	& > div {
+		margin-bottom: 2rem;
+	}
+	& .more {
+		padding: 0.25rem;
+		font-size: 0.9em;
+		text-align: right;
+		cursor: pointer;
+	}
 `;
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
@@ -47,7 +56,7 @@ const HostInfoChangeDialogue = styled(Dialog)`
 
 const UserTable = styled.table`
 	width: 100%;
-	margin: 0 auto 3em auto;
+	/* margin: 0 auto 3em auto; */
 	text-align: center;
 	border-collapse: collapse;
 	font-size: 1em;
@@ -97,99 +106,137 @@ export default function MyHostingPage(props: Props): ReactElement {
 	const handleDialogueClose = () => {
 		setDialogueOpen(false);
 	};
-	// useEffect(() => {
-	// 	const updateApplicants = async () => {
-	// 		let waitingApplicant: any[] = [];
-	// 		const applicationList = await (
-	// 			await axios.post(`${SERVER}/api/host/application/list`, {
-	// 				hostUserId: currentUser.id,
-	// 			})
-	// 		).data.applicant;
-	// 		applicationList.map(value => {
-	// 			if (value.status === 0) waitingApplicant.push(value);
-	// 		});
-	// 		if (waitingApplicant) {
-	// 			setList(waitingApplicant);
-	// 		}
-	// 	};
-	// 	updateApplicants();
-	// }, [toast.handleOpen]);
+
+	const [moreMatched, setMoreMatched] = useState(false);
+	const [moreWating, setMoreWating] = useState(false);
+	const [morePrevious, setMorePrevious] = useState(false);
+
+	const onChangeMoreMatched = () => {
+		setMoreMatched(!moreMatched);
+	};
+	const onChangeMoreWating = () => {
+		setMoreWating(!moreWating);
+	};
+	const onChangeMorePrevious = () => {
+		setMorePrevious(!morePrevious);
+	};
 	return (
 		<Layout>
-			<h3>현재 호스팅 목록</h3>
-			<UserTable>
-				<thead>
-					<tr>
-						<th style={{ width: '35%' }}>닉네임</th>
-						<th style={{ width: '35%' }}>날짜</th>
-						<th style={{ width: '30%' }}>동행관리</th>
-					</tr>
-				</thead>
-				<tbody>
-					{matchedApplicant.length ? (
-						matchedApplicant.map(value => (
-							<HostMatchedApplicantItem applicant={value} toast={toast.handleOpen} />
-						))
-					) : (
-						<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
-					)}
-				</tbody>
-			</UserTable>
+			<div>
+				<h3>현재 호스팅 목록</h3>
+				<UserTable>
+					<thead>
+						<tr>
+							<th style={{ width: '35%' }}>닉네임</th>
+							<th style={{ width: '35%' }}>날짜</th>
+							<th style={{ width: '30%' }}>동행관리</th>
+						</tr>
+					</thead>
+					<tbody>
+						{matchedApplicant.length ? (
+							(moreMatched
+								? matchedApplicant
+								: matchedApplicant.slice(0, 5)
+							).map(value => (
+								<HostMatchedApplicantItem
+									applicant={value}
+									toast={toast.handleOpen}
+								/>
+							))
+						) : (
+							<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
+						)}
+					</tbody>
+				</UserTable>
+				{matchedApplicant!.length > 5 ? (
+					<div className='more' onClick={onChangeMoreMatched}>
+						<a className='more'>더보기</a>
+					</div>
+				) : (
+					''
+				)}
+			</div>
+			<div>
+				<h3>호스팅 신청자 목록</h3>
+				<UserTable>
+					<thead>
+						<tr>
+							<th style={{ width: '35%' }}>닉네임</th>
+							<th style={{ width: '35%' }}>날짜</th>
+							<th style={{ width: '30%' }}>승인여부</th>
+						</tr>
+					</thead>
+					<tbody>
+						{waitingApplicant.length ? (
+							(moreWating
+								? waitingApplicant
+								: waitingApplicant.slice(0, 5)
+							).map(value => (
+								<HostApplicantItem applicant={value} toast={toast.handleOpen} />
+							))
+						) : (
+							<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>
+						)}
+					</tbody>
+				</UserTable>
+				{waitingApplicant!.length > 5 ? (
+					<div className='more' onClick={onChangeMoreWating}>
+						<a className='more'>더보기</a>
+					</div>
+				) : (
+					''
+				)}
+			</div>
+			<div>
+				<h3>이전 호스팅 목록</h3>
+				<UserTable>
+					<thead>
+						<tr>
+							<th style={{ width: '15%' }}>날짜</th>
+							<th style={{ width: '40%' }}>장소</th>
+							<th style={{ width: '20%' }}>닉네임</th>
+							<th style={{ width: '25%' }}>평점</th>
+						</tr>
+					</thead>
+					<tbody>
+						{previousApplicant.length ? (
+							(morePrevious
+								? previousApplicant
+								: previousApplicant.slice(0, 5)
+							).map(value => <HostPreviousApplicantItem applicant={value} />)
+						) : (
+							<NoItem colspan={4}>호스팅 내역이 없습니다.</NoItem>
+						)}
+					</tbody>
+				</UserTable>
 
-			<h3>호스팅 신청자 목록</h3>
-			<UserTable>
-				<thead>
-					<tr>
-						<th style={{ width: '35%' }}>닉네임</th>
-						<th style={{ width: '35%' }}>날짜</th>
-						<th style={{ width: '30%' }}>승인여부</th>
-					</tr>
-				</thead>
-				<tbody>
-					{waitingApplicant.length ? (
-						waitingApplicant.map(value => (
-							<HostApplicantItem applicant={value} toast={toast.handleOpen} />
-						))
-					) : (
-						<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>
-					)}
-				</tbody>
-			</UserTable>
+				{previousApplicant!.length > 5 ? (
+					<div className='more' onClick={onChangeMorePrevious}>
+						<a className='more'>더보기</a>
+					</div>
+				) : (
+					''
+				)}
+			</div>
 
-			<h3>이전 호스팅 목록</h3>
-			<UserTable>
-				<thead>
-					<tr>
-						<th style={{ width: '15%' }}>날짜</th>
-						<th style={{ width: '40%' }}>장소</th>
-						<th style={{ width: '20%' }}>닉네임</th>
-						<th style={{ width: '25%' }}>평점</th>
-					</tr>
-				</thead>
-				<tbody>
-					{previousApplicant.length ? (
-						previousApplicant.map(value => (
-							<HostPreviousApplicantItem applicant={value} />
-						))
-					) : (
-						<NoItem colspan={4}>호스팅 내역이 없습니다.</NoItem>
-					)}
-				</tbody>
-			</UserTable>
-
-			<h3>호스트 정보 변경</h3>
-			<ButtonLabel onClick={handleDialogueOpen} color='primary'>
-				정보 변경
-			</ButtonLabel>
-			{/* 다이얼로그 창 */}
-			<HostInfoChangeDialogue open={dialogueOpen} onClose={handleDialogueClose}>
-				<CloseButtonDiv>
-					<Button onClick={handleDialogueClose}>
-						<CloseIcon />
-					</Button>
-				</CloseButtonDiv>
-				<HostInfoChange host={host} />
-			</HostInfoChangeDialogue>
+			<div>
+				<h3>호스트 정보 변경</h3>
+				<ButtonLabel onClick={handleDialogueOpen} color='primary'>
+					정보 변경
+				</ButtonLabel>
+				{/* 다이얼로그 창 */}
+				<HostInfoChangeDialogue
+					open={dialogueOpen}
+					onClose={handleDialogueClose}
+				>
+					<CloseButtonDiv>
+						<Button onClick={handleDialogueClose}>
+							<CloseIcon />
+						</Button>
+					</CloseButtonDiv>
+					<HostInfoChange host={host} />
+				</HostInfoChangeDialogue>
+			</div>
 			<Toast {...toast}>{toast.message}</Toast>
 		</Layout>
 	);

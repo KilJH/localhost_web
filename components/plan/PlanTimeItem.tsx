@@ -29,18 +29,19 @@ const ItemContainer = styled.div`
 
 	& .placeItem {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		& .placeDetail {
-			margin-left: 0.5rem;
+			margin: 0.125em;
 			display: flex;
 			align-items: center;
 			font-size: 0.8em;
 			color: #333;
 			cursor: pointer;
+			min-width: 50px;
 
 			transition: font-weight color 0.1s ease;
 			& > svg {
-				font-size: 1.5em;
+				font-size: 1.2em;
 			}
 
 			&:hover {
@@ -71,6 +72,7 @@ const ItemContainer = styled.div`
 
 	& div.placeWrapper {
 		flex: 1;
+		margin: 0 0.25em;
 	}
 
 	&::before {
@@ -79,6 +81,14 @@ const ItemContainer = styled.div`
 		transform: translate(calc(-1em - 0.5rem), 1rem);
 		width: 1rem;
 		height: 1rem;
+	}
+
+	& .plan_flex {
+		display: flex;
+
+		&.column {
+			flex-direction: column;
+		}
 	}
 `;
 
@@ -146,26 +156,35 @@ const PlanTimeItem = (props: Props) => {
 					{plan.type === '이동' ? '이동' : ''}
 				</div>
 			</div>
-			<div className='placeWrapper'>
-				<div className='placeItem'>
-					{plan.place.name}
-					{plan.place.geometry?.location.lat ? (
-						<>
-							<span className='placeDetail' onClick={map.handleOpen}>
-								<LocationOn />
-								지도보기
-							</span>
-							<StyledModal open={map.open} onClose={map.handleClose}>
-								<div className='map_container'>
-									<PlanMap place={plan.place} />
-								</div>
-							</StyledModal>
-						</>
+			<div className='plan_flex column' style={{ flex: 1 }}>
+				<div className='plan_flex'>
+					<div className='placeWrapper'>
+						<div className='placeItem'>
+							{plan.place.name}
+							{plan.place.geometry?.location.lat ? (
+								<>
+									<span className='placeDetail' onClick={map.handleOpen}>
+										<LocationOn />
+										지도보기
+									</span>
+									<StyledModal open={map.open} onClose={map.handleClose}>
+										<div className='map_container'>
+											<PlanMap place={plan.place} />
+										</div>
+									</StyledModal>
+								</>
+							) : (
+								''
+							)}
+						</div>
+						<div className='descriptionItem'>{plan.description}</div>
+					</div>
+					{plan.price !== 0 ? (
+						<div className='priceItem'>{plan.price.toLocaleString()}</div>
 					) : (
 						''
 					)}
 				</div>
-				<div className='descriptionItem'>{plan.description}</div>
 				<div>
 					{plan.photo ? (
 						<PhotoSlider
@@ -178,11 +197,6 @@ const PlanTimeItem = (props: Props) => {
 					)}
 				</div>
 			</div>
-			{plan.price !== 0 ? (
-				<div className='priceItem'>{plan.price.toLocaleString()}</div>
-			) : (
-				''
-			)}
 		</ItemContainer>
 	);
 };
