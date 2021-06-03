@@ -24,6 +24,7 @@ import ReuseButton from '../../reuse/Button';
 import axios from 'axios';
 import { travelStyles } from '../../../client/utils/basicData';
 import TravelStyleTag from '../../reuse/TravelStyleTag';
+import { Radio, RadioGroup } from '@material-ui/core';
 
 interface Props {
 	host: Host;
@@ -174,6 +175,8 @@ export default function MyHosting(props: Props): ReactElement {
 	const [placeOpen, setPlaceOpen] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState(host.tag || '');
 
+	const [reqCountry, setReqCountry] = useState(host.reqCountry);
+	const travelerNation = useInput('0');
 	let languages = [
 		'한국어',
 		'일본어',
@@ -250,6 +253,7 @@ export default function MyHosting(props: Props): ReactElement {
 				language1: language.language1 === null ? ' ' : language.language1,
 				language2: language.language2 === null ? ' ' : language.language2,
 				language3: language.language3 === null ? ' ' : language.language3,
+				reqCountry: reqCountry,
 				tag: selectedStyle,
 				description: description.value,
 				latitude: place?.geometry!.location.lat,
@@ -264,7 +268,9 @@ export default function MyHosting(props: Props): ReactElement {
 			return console.log(err);
 		}
 	};
-
+	const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setReqCountry(Number(e.target.value));
+	};
 	return (
 		<ComponentDiv>
 			<h3>나의 호스트 정보</h3>
@@ -289,10 +295,34 @@ export default function MyHosting(props: Props): ReactElement {
 			{/* 여행스타일 수정 */}
 			<Label>여행스타일 수정</Label>
 			<TravelStyleInput value={selectedStyle} setValue={setSelectedStyle} />
+
+			{/* 원하는 여행객 국적 설정 */}
+			<Label>원하는 여행객의 국적을 선택해주세요</Label>
+			<RadioGroup
+				row
+				{...travelerNation}
+				value={reqCountry}
+				onChange={onRadioChange}
+			>
+				<FormControlLabel
+					value={0}
+					control={<Radio color='primary' />}
+					label='상관없음'
+				/>
+				<FormControlLabel
+					value={1}
+					control={<Radio color='primary' />}
+					label='외국인'
+				/>
+				<FormControlLabel
+					value={2}
+					control={<Radio color='primary' />}
+					label='자국민'
+				/>
+			</RadioGroup>
+
 			{/* 언어 설정 */}
 			<Label>사용 가능한 언어 설정</Label>
-
-			{/* 언어 선택 */}
 			<ButtonLabel onClick={handlelanguageOpen}>언어 선택</ButtonLabel>
 			<Dialog open={languageOpen} onClose={handleLanguageClose}>
 				<DialogueTitle>사용 가능한 언어를 선택해주세요</DialogueTitle>
