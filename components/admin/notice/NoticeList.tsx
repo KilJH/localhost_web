@@ -8,6 +8,8 @@ import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import NoticeItem from './NoticeItem';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 type Props = {
 	items: Notice[];
@@ -67,7 +69,7 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DeleteCheckedItems = state => {
+const DeleteCheckedItems = (state: object, toast: Function) => {
 	const keys = Object.keys(state);
 	const values = Object.values(state);
 	for (let i = 0; i < values.length; i++) {
@@ -77,10 +79,9 @@ const DeleteCheckedItems = state => {
 					id: keys[i],
 				})
 				.then((res: AxiosResponse<any>) => {
-					console.log(res.data);
-					alert(res.data.message);
+					toast('info', res.data.message);
 					if (res.data.success) {
-						Router.push('/admin/notice/list');
+						Router.push('/admin/notice');
 					}
 				});
 		}
@@ -95,6 +96,7 @@ export default function NoticeList(props: Props) {
 	const [numberState, setNumberState] = useState(false);
 	const [titleState, setTitleState] = useState(false);
 	const [dateState, setDateState] = useState(false);
+	const toast = useToast(false);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, checked } = event.target;
@@ -109,7 +111,7 @@ export default function NoticeList(props: Props) {
 	};
 	const deleteButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		DeleteCheckedItems(state);
+		DeleteCheckedItems(state, toast.handleOpen);
 	};
 
 	const numberSortHandler = () => {
@@ -217,6 +219,7 @@ export default function NoticeList(props: Props) {
 					공지 삭제
 				</DeleteButton>
 			</ButtonDiv>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }

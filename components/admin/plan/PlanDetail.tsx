@@ -5,6 +5,8 @@ import UserPhoto from '../../user/UserPhoto';
 import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import Button from '@material-ui/core/Button';
+import Toast from '../../reuse/Toast';
+import { useToast } from '../../../client/hooks/useToast';
 
 type Props = {
 	item: Plan;
@@ -98,15 +100,16 @@ const DeleteButton = styled(Button)`
 	}
 `;
 export default function PlanItem({ item }: Props) {
+	const toast = useToast(false);
 	const ButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		axios
 			.post(`/api/plan/delete`, {
-				id: item.id,
+				planId: item.id,
 			})
 			.then((res: AxiosResponse<any>) => {
 				if (res.data.success) {
-					alert('플랜이 삭제되었습니다.');
+					alert('플랜 삭제 완료');
 					Router.push('/admin/plan');
 				}
 			});
@@ -144,13 +147,17 @@ export default function PlanItem({ item }: Props) {
 							<>
 								{planDay.planTimes.map(planTime => (
 									<>
-										{planTime.photo?.map(src => (
-											<tr>
-												<td colSpan={6}>
-													<img src={src} style={{ width: '100%' }} />
-												</td>
-											</tr>
-										))}
+										{planTime.photo?.map(src =>
+											src ? (
+												<tr>
+													<td colSpan={6}>
+														<img src={src} style={{ width: '100%' }} />
+													</td>
+												</tr>
+											) : (
+												''
+											),
+										)}
 										<tr>
 											<td>{planDay.day}</td>
 											<td>{planTime.time}</td>
@@ -182,6 +189,7 @@ export default function PlanItem({ item }: Props) {
 			>
 				플랜 삭제
 			</DeleteButton>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }

@@ -3,12 +3,11 @@ import React from 'react';
 import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import axios from 'axios';
-import Toast from '../../reuse/Toast';
-import { useToast } from './../../../client/hooks/useToast';
 import Router from 'next/router';
 
 type Props = {
 	applicant: Application;
+	toast: Function;
 };
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
@@ -24,7 +23,7 @@ const ButtonLabel = styled(Button)`
 	}
 `;
 export default function HostMatchedApplicantItem(props: Props) {
-	const { applicant } = props;
+	const { applicant, toast } = props;
 	const date = new Date();
 	const nowDate =
 		date.getFullYear() +
@@ -33,11 +32,10 @@ export default function HostMatchedApplicantItem(props: Props) {
 		'-' +
 		(date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
 
-	const toast = useToast(false);
 	const onApprovalHandler = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (!applicant.user.address || applicant.date > nowDate) {
-			toast.handleOpen('error', '비정상적인 접근입니다.');
+			toast('error', '비정상적인 접근입니다.');
 			return;
 		}
 
@@ -45,10 +43,10 @@ export default function HostMatchedApplicantItem(props: Props) {
 			id: applicant.id,
 		});
 		if (res.data.success) {
-			toast.handleOpen('success', '동행이 완료되었습니다.');
+			toast('success', '동행이 완료되었습니다.');
 			Router.push('/hosts/myhosting');
 		} else {
-			toast.handleOpen('error', '동행 완료를 실패했습니다.');
+			toast('error', '동행 완료를 실패했습니다.');
 		}
 	};
 	const onCancelHandler = async (e: React.MouseEvent) => {
@@ -57,10 +55,10 @@ export default function HostMatchedApplicantItem(props: Props) {
 			id: applicant.id,
 		});
 		if (res.data.success) {
-			toast.handleOpen('success', '동행이 취소되었습니다.');
+			toast('info', '동행이 취소되었습니다.');
 			Router.push('/hosts/myhosting');
 		} else {
-			toast.handleOpen('error', '동행 취소를 실패했습니다.');
+			toast('error', '동행 취소를 실패했습니다.');
 		}
 	};
 
@@ -79,7 +77,6 @@ export default function HostMatchedApplicantItem(props: Props) {
 					)}
 				</td>
 			</tr>
-			<Toast {...toast}>{toast.message}</Toast>
 		</React.Fragment>
 	);
 }

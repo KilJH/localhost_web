@@ -271,14 +271,7 @@ const MyChat = ({
 );
 
 const ChatRoom = (props: Props) => {
-	const {
-		loadMessages,
-		roomId,
-		opponent,
-		applicationId,
-		hostUserId,
-		userUserId,
-	} = props;
+	const { loadMessages, roomId, opponent, applicationId, hostUserId } = props;
 	const chatInput = useInput('');
 	const currentUser = useContext(UserStateContext) as User;
 	const [socket, setSocket] = useState<Socket>();
@@ -627,7 +620,8 @@ const ChatRoom = (props: Props) => {
 					userId: opponent.id,
 					followerId: currentUser.id,
 				});
-				alert(res.data.message);
+				if (res.data.success) toast.handleOpen('success', res.data.message);
+				else toast.handleOpen('error', res.data.message);
 				return;
 			case 1: // 신고
 				return;
@@ -644,7 +638,7 @@ const ChatRoom = (props: Props) => {
 							: { hostUserId: opponent.id, userId: currentUser.id },
 					);
 					if (exitRoom.data.success) Router.push('/');
-					else alert('오류가 발생했습니다.');
+					else toast.handleOpen('error', '오류가 발생했습니다.');
 				}
 				return;
 			case 3: // 호스팅 완료
@@ -656,8 +650,9 @@ const ChatRoom = (props: Props) => {
 							id: applicationId,
 						},
 					);
-					if (completeHosting.data.success) alert('호스팅이 완료되었습니다!');
-					else alert('오류가 발생했습니다.');
+					if (completeHosting.data.success)
+						toast.handleOpen('success', '호스팅이 완료되었습니다!');
+					else toast.handleOpen('error', '오류가 발생했습니다.');
 				}
 				return;
 		}

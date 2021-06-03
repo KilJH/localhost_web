@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -8,9 +8,11 @@ import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import { Host } from '../../../interfaces';
 import HostItem from './HostItem';
+import SERVER from '../../../client/utils/url';
 
 type Props = {
 	items: Host[];
+	toast: Function;
 };
 
 const UserTable = styled.table`
@@ -53,7 +55,8 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DisableHostCheckedItems = state => {
+
+const DisableHostCheckedItems = (state: object, toast: Function) => {
 	// 호스트 해제 기능
 	const keys = Object.keys(state);
 	const values = Object.values(state);
@@ -65,19 +68,34 @@ const DisableHostCheckedItems = state => {
 				})
 				.then((res: AxiosResponse<any>) => {
 					if (res.data.success) {
-						alert(res.data.message);
-						Router.push('/admin/host/list');
+						toast('info', res.data.message);
+						Router.push('/admin/host/');
 					}
 				});
 		}
 	}
 };
+
 export default function HostList(props: Props) {
-	const { items } = props;
+	const { items, toast } = props;
+	const [hosts, setHosts] = useState(items);
 	const [state, setState] = useState({});
 	const [emailState, setEmailState] = useState(false);
 	const [nicknameState, setNicknameState] = useState(false);
 	const [nameState, setNameState] = useState(false);
+
+	useEffect(() => {
+		const updateHosts = async () => {
+			const list: Host[] = await (
+				await axios.get(`${SERVER}/api/host/list`)
+			).data.list;
+			if (list) {
+				setHosts(list);
+			}
+		};
+		updateHosts();
+	}, [toast]);
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, checked } = event.target;
 		setState({
@@ -87,18 +105,18 @@ export default function HostList(props: Props) {
 	};
 	const hostButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		DisableHostCheckedItems(state);
+		DisableHostCheckedItems(state, toast);
 	};
 	const emailSortHandler = () => {
 		setNameState(false);
 		setNicknameState(false);
 		setEmailState(!emailState);
 		if (emailState) {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.email < b.email ? -1 : a.email > b.email ? 1 : 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.email > b.email ? -1 : a.email < b.email ? 1 : 0;
 			});
 		}
@@ -108,11 +126,11 @@ export default function HostList(props: Props) {
 		setNameState(false);
 		setNicknameState(!nicknameState);
 		if (nicknameState) {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.nickname < b.nickname ? -1 : a.nickname > b.nickname ? 1 : 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.nickname > b.nickname ? -1 : a.nickname < b.nickname ? 1 : 0;
 			});
 		}
@@ -122,11 +140,11 @@ export default function HostList(props: Props) {
 		setNicknameState(false);
 		setNameState(!nameState);
 		if (nameState) {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			hosts.sort(function (a: any, b: any) {
 				return a.name > b.name ? -1 : a.name < b.name ? 1 : 0;
 			});
 		}
@@ -158,7 +176,7 @@ export default function HostList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map((item, i) => (
+					{hosts.map((item, i) => (
 						<HostItem
 							key={item.id}
 							host={item}

@@ -3,6 +3,8 @@ import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 const SubTitle = styled.h6`
 	color: #5197d5;
@@ -60,8 +62,8 @@ const writeNotice = (title: string, description: string) => {
 		})
 		.then((res: AxiosResponse<any>) => {
 			if (res.data.success) {
-				alert('공지 작성 완료');
-				Router.push('/admin/notice/list');
+				alert('공지 작성완료');
+				Router.push('/admin/notice');
 			}
 		});
 };
@@ -69,10 +71,12 @@ const writeNotice = (title: string, description: string) => {
 export default function NoticeWrite() {
 	const [titleState, setTitleState] = useState('');
 	const [descState, setDescState] = useState('');
+	const toast = useToast(false);
 	const writeButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		if (titleState === '') alert('제목이 비어있습니다.');
-		else if (descState === '') alert('내용이 비어있습니다.');
+		if (titleState === '') toast.handleOpen('error', '제목이 비어있습니다.');
+		else if (descState === '')
+			toast.handleOpen('error', '내용이 비어있습니다.');
 		else writeNotice(titleState, descState);
 	};
 	return (
@@ -96,6 +100,7 @@ export default function NoticeWrite() {
 			>
 				게시
 			</WriteButton>
+			<Toast {...toast}>{toast.message}</Toast>
 		</DetailsDiv>
 	);
 }
