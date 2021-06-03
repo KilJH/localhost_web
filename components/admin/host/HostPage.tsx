@@ -3,6 +3,8 @@ import Search from '../../search/Search';
 import { Host } from '../../../interfaces';
 import axios from 'axios';
 import HostList from './HostList';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 type Props = {
 	items: Host[];
@@ -11,6 +13,7 @@ type Props = {
 export default function HostPage(props: Props) {
 	const { items } = props;
 	const [foundItems, setFoundItems] = useState(items);
+	const toast = useToast(false);
 
 	const onSubmit = async (event: React.FormEvent, type, item) => {
 		event.preventDefault();
@@ -30,7 +33,11 @@ export default function HostPage(props: Props) {
 				selectLabel='검색할 값'
 				marginBottom='2em'
 			/>
-			<HostList items={foundItems.length !== 0 ? foundItems : []} />
+			<HostList
+				items={foundItems.length !== 0 ? foundItems : []}
+				toast={toast.handleOpen}
+			/>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }

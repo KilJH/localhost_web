@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -8,6 +8,9 @@ import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import { Plan } from '../../../interfaces';
 import PlanItem from './PlanItem';
+import SERVER from '../../../client/utils/url';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 type Props = {
 	items: Plan[];
@@ -59,31 +62,47 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DeleteCheckedItems = state => {
-	// 플랜 삭제 기능
-	const keys = Object.keys(state);
-	const values = Object.values(state);
-	for (let i = 0; i < values.length; i++) {
-		if (values[i] === true) {
-			axios
-				.post(`/api/plan/delete`, {
-					id: keys[i],
-				})
-				.then((res: AxiosResponse<any>) => {
-					if (res.data.success) {
-						alert('플랜이 삭제되었습니다.');
-						Router.push('/admin/plan');
-					}
-				});
-		}
-	}
-};
+
 export default function PlanList(props: Props) {
 	const { items } = props;
+	const [plans, setPlans] = useState(items);
 	const [state, setState] = useState({});
 	const [titleState, setTitleState] = useState(false);
 	const [timeState, setTimeState] = useState(false);
 	const [nicknameState, setNicknameState] = useState(false);
+	const toast = useToast(false);
+
+	useEffect(() => {
+		const updatePlans = async () => {
+			const list: Plan[] = await (
+				await axios.get(`${SERVER}/api/plan/list`)
+			).data.plans;
+			if (list) {
+				setPlans(list);
+			}
+		};
+		updatePlans();
+	}, [toast.handleOpen]);
+
+	const DeleteCheckedItems = (state: object) => {
+		// 플랜 삭제 기능
+		const keys = Object.keys(state);
+		const values = Object.values(state);
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === true) {
+				axios
+					.post(`/api/plan/delete`, {
+						planId: keys[i],
+					})
+					.then((res: AxiosResponse<any>) => {
+						if (res.data.success) {
+							toast.handleOpen('info', '플랜이 삭제되었습니다.');
+							Router.push('/admin/plan');
+						} else toast.handleOpen('error', '플랜 삭제를 실패했습니다.');
+					});
+			}
+		}
+	};
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, checked } = event.target;
@@ -101,7 +120,7 @@ export default function PlanList(props: Props) {
 		setNicknameState(false);
 		setTimeState(!timeState);
 		if (timeState) {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.createTime < b.createTime
 					? -1
 					: a.createTime > b.createTime
@@ -109,7 +128,7 @@ export default function PlanList(props: Props) {
 					: 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.createTime > b.createTime
 					? -1
 					: a.createTime < b.createTime
@@ -123,7 +142,7 @@ export default function PlanList(props: Props) {
 		setTitleState(false);
 		setNicknameState(!nicknameState);
 		if (nicknameState) {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.author.nickname < b.author.nickname
 					? -1
 					: a.author.nickname > b.author.nickname
@@ -131,7 +150,7 @@ export default function PlanList(props: Props) {
 					: 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.author.nickname > b.author.nickname
 					? -1
 					: a.author.nickname < b.author.nickname
@@ -145,11 +164,11 @@ export default function PlanList(props: Props) {
 		setNicknameState(false);
 		setTitleState(!titleState);
 		if (titleState) {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.title < b.title ? -1 : a.title > b.title ? 1 : 0;
 			});
 		} else {
-			items.sort(function (a: any, b: any) {
+			plans.sort(function (a: any, b: any) {
 				return a.title > b.title ? -1 : a.title < b.title ? 1 : 0;
 			});
 		}
@@ -181,7 +200,7 @@ export default function PlanList(props: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{items.map((item, i) => (
+					{plans.map((item, i) => (
 						<PlanItem
 							key={item.id}
 							item={item}
@@ -199,6 +218,7 @@ export default function PlanList(props: Props) {
 			>
 				플랜 삭제
 			</DeleteButton>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }

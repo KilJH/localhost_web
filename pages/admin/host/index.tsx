@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	// Don't forget to include the respective types for any props passed into
 	// the component.
 
-	const items: User[] = await (
+	const items: Host[] = await (
 		await axios.get(`${SERVER}/api/host/list`)
 	).data.list;
 	return { props: { items } };

@@ -8,6 +8,8 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
+import { useToast } from '../../../client/hooks/useToast';
+import Toast from '../../reuse/Toast';
 
 type Props = {
 	items: User[];
@@ -68,43 +70,6 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const BlockCheckedItems = state => {
-	const keys = Object.keys(state);
-	const values = Object.values(state);
-	for (let i = 0; i < values.length; i++) {
-		if (values[i] === true) {
-			axios
-				.post(`/api/user/block`, {
-					userId: keys[i],
-				})
-				.then((res: AxiosResponse<any>) => {
-					if (res.data.success) {
-						alert(res.data.message);
-						Router.push('/admin/user/list');
-					}
-				});
-		}
-	}
-};
-
-const DeleteCheckedItems = state => {
-	const keys = Object.keys(state);
-	const values = Object.values(state);
-	for (let i = 0; i < values.length; i++) {
-		if (values[i] === true) {
-			axios
-				.post(`/api/user/delete`, {
-					userId: keys[i],
-				})
-				.then((res: AxiosResponse<any>) => {
-					if (res.data.success) {
-						alert(res.data.message);
-						Router.push('/admin/user/list');
-					}
-				});
-		}
-	}
-};
 
 export default function UserList(props: Props) {
 	const { items } = props;
@@ -112,6 +77,46 @@ export default function UserList(props: Props) {
 	const [emailState, setEmailState] = useState(false);
 	const [nicknameState, setNicknameState] = useState(false);
 	const [nameState, setNameState] = useState(false);
+	const toast = useToast(false);
+
+	const BlockCheckedItems = (state: object) => {
+		const keys = Object.keys(state);
+		const values = Object.values(state);
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === true) {
+				axios
+					.post(`/api/user/block`, {
+						userId: keys[i],
+					})
+					.then((res: AxiosResponse<any>) => {
+						if (res.data.success) {
+							toast.handleOpen('info', res.data.message);
+							Router.push('/admin/user');
+						}
+					});
+			}
+		}
+	};
+
+	const DeleteCheckedItems = (state: object) => {
+		const keys = Object.keys(state);
+		const values = Object.values(state);
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === true) {
+				axios
+					.post(`/api/user/delete`, {
+						userId: keys[i],
+					})
+					.then((res: AxiosResponse<any>) => {
+						if (res.data.success) {
+							toast.handleOpen('info', res.data.message);
+							Router.push('/admin/user');
+						}
+					});
+			}
+		}
+	};
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, checked } = event.target;
 		setState({
@@ -228,6 +233,7 @@ export default function UserList(props: Props) {
 					유저 차단
 				</BlockButton>
 			</ButtonDiv>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }

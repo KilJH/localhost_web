@@ -9,6 +9,8 @@ import HostApplicantItem from './HostApplicantItem';
 import CloseIcon from '@material-ui/icons/Close';
 import HostPreviousApplicantItem from './HostPreviousApplicantItem';
 import HostMatchedApplicantItem from './HostMatchedApplicantItem';
+import Toast from '../../reuse/Toast';
+import { useToast } from '../../../client/hooks/useToast';
 interface Props {
 	host: Host;
 	waitingApplicant: Application[];
@@ -97,6 +99,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 	const { waitingApplicant, host, previousApplicant, matchedApplicant } = props;
 
 	const [dialogueOpen, setDialogueOpen] = useState(false);
+	const toast = useToast(false);
 	const handleDialogueOpen = () => {
 		setDialogueOpen(true);
 	};
@@ -134,7 +137,12 @@ export default function MyHostingPage(props: Props): ReactElement {
 							(moreMatched
 								? matchedApplicant
 								: matchedApplicant.slice(0, 5)
-							).map(value => <HostMatchedApplicantItem applicant={value} />)
+							).map(value => (
+								<HostMatchedApplicantItem
+									applicant={value}
+									toast={toast.handleOpen}
+								/>
+							))
 						) : (
 							<NoItem colspan={3}>진행중인 호스팅이 없습니다.</NoItem>
 						)}
@@ -163,7 +171,9 @@ export default function MyHostingPage(props: Props): ReactElement {
 							(moreWating
 								? waitingApplicant
 								: waitingApplicant.slice(0, 5)
-							).map(value => <HostApplicantItem applicant={value} />)
+							).map(value => (
+								<HostApplicantItem applicant={value} toast={toast.handleOpen} />
+							))
 						) : (
 							<NoItem colspan={3}>호스트 신청자가 없습니다.</NoItem>
 						)}
@@ -227,6 +237,7 @@ export default function MyHostingPage(props: Props): ReactElement {
 					<HostInfoChange host={host} />
 				</HostInfoChangeDialogue>
 			</div>
+			<Toast {...toast}>{toast.message}</Toast>
 		</Layout>
 	);
 }

@@ -8,6 +8,7 @@ import { UserStateContext } from '../../../context/user';
 
 type Props = {
 	applicant: Application;
+	toast: Function;
 };
 const ButtonLabel = styled(Button)`
 	&.MuiButton-root {
@@ -28,7 +29,7 @@ const ButtonTd = styled.td`
 `;
 
 export default function HostApplicantItem(props: Props) {
-	const { applicant } = props;
+	const { applicant, toast } = props;
 	const [list, setList] = useState(applicant);
 	const currentUser = useContext(UserStateContext);
 	useEffect(() => {
@@ -49,7 +50,7 @@ export default function HostApplicantItem(props: Props) {
 					hostUserApplyId: applicant.id,
 				});
 				if (createRoomRes.data.success) {
-					alert('승인 처리되었습니다. 채팅을 통해 약속을 잡으세요');
+					toast('success', '승인 처리되었습니다. 채팅을 통해 약속을 잡으세요');
 					Router.push('/hosts/myhosting');
 				}
 			}
@@ -65,7 +66,7 @@ export default function HostApplicantItem(props: Props) {
 				hostUserId: currentUser.id,
 			});
 			if (res.data.success) {
-				alert('거부 처리되었습니다.');
+				toast('info', '거부 처리되었습니다.');
 				Router.push('/hosts/myhosting');
 			}
 		} catch (err) {

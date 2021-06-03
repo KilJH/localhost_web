@@ -80,7 +80,7 @@ const modifyNotice = (id: number, title: string, description: string) => {
 		})
 		.then((res: AxiosResponse<any>) => {
 			if (res.data.success) {
-				Router.push('/admin/notice/list');
+				Router.push('/admin/notice');
 			}
 			alert(res.data.message);
 		});
