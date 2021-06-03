@@ -70,8 +70,11 @@ app.prepare().then(() => {
 		});
 
 		socket.on('message', data => {
-			console.log('데이터 수신: ', data);
 			io.to(roomName).emit('message', data);
+		});
+
+		socket.on('address', data => {
+			io.to(roomName).emit('address', data);
 		});
 	});
 

@@ -492,7 +492,7 @@ module.exports.getHostingAddress = (req, res) => {
 		rows.map((value, index) => {
 			switch (value.status) {
 				case 1:
-					if (hostingAddress === '')
+					if (hostingAddress === '' || hostingAddress === null)
 						hostingAddress = '만나고 싶은 장소를 정하려면 클릭! ☝';
 					else hostingAddress = value.address;
 					break;

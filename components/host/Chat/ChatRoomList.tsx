@@ -89,9 +89,8 @@ const ItemContainer = styled.li`
 	}
 `;
 
-const ChatRoomItem = ({ item, currentUser }: ItemProps) => {
-	const { roomId, nickname, photo, hostId, userId, recentMessage } = item;
-	const opponentId = currentUser.id === userId ? hostId : userId;
+const ChatRoomItem = ({ item }: ItemProps) => {
+	const { roomId, nickname, photo, recentMessage } = item;
 
 	// 만약 열고 있는데 문자 오면 보여지게
 	// const [socket, setSocket] = useState<Socket>();

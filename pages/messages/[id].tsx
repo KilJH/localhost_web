@@ -15,6 +15,7 @@ type Props = {
 		hostUserId: number;
 		userUserId: number;
 		applicationId: number;
+		address: string;
 		isMine: boolean;
 	};
 };
@@ -55,14 +56,16 @@ export const getServerSideProps: GetServerSideProps = async context => {
 	const opponent = await (
 		await axios.get(`${SERVER}/api/user/${opponentId}`)
 	).data.user;
+
 	return {
 		props: {
 			loadMessages: room.messages,
-			roomId: roomId,
+			roomId,
+			opponent,
 			hostUserId: room.hostId,
 			userUserId: room.userId,
 			applicationId: room.applicationId,
-			opponent,
+			address: room.address,
 			isMine,
 		},
 	};

@@ -24,7 +24,7 @@ module.exports.loadRoom = (req, res) => {
 				createTime: message.create_time,
 			};
 		});
-		const innerSql = `SELECT * FROM message_room WHERE id = ?;`;
+		const innerSql = `SELECT r.*, a.address FROM message_room r LEFT JOIN host_user_apply a ON a.id = r.host_user_apply_id WHERE r.id = ?;`;
 		mysql.query(innerSql, id, (err, room) => {
 			if (err) return console.log('roomId find err', err);
 			const hostId = room[0].host_user_id;
@@ -36,6 +36,7 @@ module.exports.loadRoom = (req, res) => {
 				hostId,
 				userId,
 				applicationId,
+				address: room[0].address,
 			});
 		});
 	});
@@ -66,8 +67,8 @@ module.exports.writeMessage = (req, res) => {
 module.exports.getRoomList = (req, res) => {
 	const { userId } = req.body;
 	// 정렬 후 GROUP BY를 위해 LIMIT(2^64-1) 걸어줌
-	const selectAsUser = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo FROM message_room m LEFT JOIN message msg ON m.id = msg.messageroom_id LEFT JOIN user u ON m.host_user_id = u.id WHERE m.user_user_id = ? && m.on = ${1} ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
-	const selectAsHost = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo FROM message_room m LEFT JOIN message msg ON m.id = msg.messageroom_id LEFT JOIN user u ON m.user_user_id = u.id WHERE m.host_user_id = ? && m.on = ${1} ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
+	const selectAsUser = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo, a.address FROM message_room m LEFT JOIN message msg ON m.id = msg.messageroom_id LEFT JOIN user u ON m.host_user_id = u.id LEFT JOIN host_user_apply a ON a.id = m.id WHERE m.user_user_id = ? && m.on = ${1} ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
+	const selectAsHost = `SELECT result.* FROM (SELECT m.*, msg.text, msg.create_time, u.nickname, u.photo, a.address FROM message_room m LEFT JOIN message msg ON m.id = msg.messageroom_id LEFT JOIN user u ON m.user_user_id = u.id LEFT JOIN host_user_apply a ON a.id = m.id WHERE m.host_user_id = ? && m.on = ${1} ORDER BY create_time DESC LIMIT 18446744073709551615) as result GROUP BY id ORDER BY create_time DESC;`;
 
 	mysql.query(selectAsUser, userId, (err, rows1) => {
 		if (err) {

@@ -21,7 +21,6 @@ import SearchPlace from '../../search/SearchPlace';
 import VerticalAlignBottomIcon from '@material-ui/icons/VerticalAlignBottom';
 import Router from 'next/router';
 import Toast from '../../reuse/Toast';
-import { Color } from '@material-ui/lab';
 import { useToast } from '../../../client/hooks/useToast';
 // 1. 채팅을 하면 기존 메세지 배열이 삭제되는 이슈
 //    - 원인: 소켓에 이벤트를 등록해주는 과정에서 등록하는 그 당시의 값을 기준으로 참조하기 때문에 빈배열에 추가가 되었던 것
@@ -41,6 +40,7 @@ interface Props {
 	hostUserId: number;
 	userUserId: number;
 	applicationId: number;
+	address: string;
 }
 
 interface InputProps {
@@ -290,7 +290,7 @@ const ChatRoom = (props: Props) => {
 	// 메뉴
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const options =
-		currentUser.isHost === 1
+		currentUser.id === hostUserId
 			? ['팔로우', '신고', '채팅 나가기', '호스팅 완료']
 			: ['팔로우', '신고', '채팅 나가기'];
 	const open = Boolean(anchorEl);
@@ -305,7 +305,12 @@ const ChatRoom = (props: Props) => {
 
 	// 호스팅 주소
 	const addressNotice = '만나고 싶은 장소를 정하려면 클릭! ☝';
-	const [hostingAddress, setHostingAddress] = useState<string>(addressNotice);
+	const [hostingAddress, setHostingAddress] = useState<string>(
+		props.address ||
+			(currentUser.id === hostUserId
+				? '만나고 싶은 장소를 정하려면 클릭! ☝'
+				: '호스트가 주소를 입력 중입니다.'),
+	);
 	const toast = useToast(false);
 	// 최초 접속 시
 	useEffect(() => {
@@ -316,41 +321,20 @@ const ChatRoom = (props: Props) => {
 			const { scrollHeight, clientHeight } = ref;
 			ref.scrollTop = scrollHeight - clientHeight;
 		}
-		if (currentUser.id == hostUserId) {
-			const hostingAddress = async () => {
-				const address = await axios.post(`/api/host/hostingAddress`, {
-					applicationId: applicationId,
-				});
-				if (address.data.hostingAddress)
-					setHostingAddress(address.data.hostingAddress);
-			};
-			hostingAddress();
-		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
 	}, []);
-
-	useEffect(() => {
-		if (currentUser.id == hostUserId) {
-			const hostingAddress = async () => {
-				const address = await axios.post(`/api/host/hostingAddress`, {
-					applicationId: applicationId,
-				});
-				if (address.data.hostingAddress)
-					setHostingAddress(address.data.hostingAddress);
-			};
-			hostingAddress();
-		} else setHostingAddress('호스트가 만날 장소를 입력중입니다');
-	}, [roomId]);
 
 	// place 변경 시 호스팅 주소 업데이트
 	useEffect(() => {
 		if (place) {
 			const setHostingAddress = async () => {
-				const address = await axios.post(`/api/host/update/hostingAddress`, {
-					hostingAddress: String(place.formatted_address),
+				const address = `${place.formatted_address}(${place.name})`;
+				const addRes = await axios.post(`/api/host/update/hostingAddress`, {
+					hostingAddress: address,
 					id: applicationId,
 				});
-				if (address.data.success) {
+				if (addRes.data.success) {
 					toast.handleOpen('success', '호스팅 주소를 등록했습니다!');
+					socket?.emit('address', { roomId, address });
 				}
 			};
 			setHostingAddress();
@@ -366,6 +350,9 @@ const ChatRoom = (props: Props) => {
 		}
 		if (socket) {
 			socket.emit('join', roomId);
+			socket.on('address', data => {
+				setHostingAddress(data.address);
+			});
 		}
 		return () => {
 			if (socket) {
@@ -378,6 +365,12 @@ const ChatRoom = (props: Props) => {
 	useEffect(() => {
 		if (socket) {
 			socket.emit('join', roomId);
+			setHostingAddress(
+				props.address ||
+					(currentUser.id === hostUserId
+						? '만나고 싶은 장소를 정하려면 클릭! ☝'
+						: '호스트가 주소를 입력 중입니다.'),
+			);
 		}
 	}, [roomId]);
 
@@ -475,24 +468,7 @@ const ChatRoom = (props: Props) => {
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (chatInput.value === '') return;
-
-		// 소켓 데이터 생성
-		const submitData = {
-			userId: currentUser.id,
-			message: chatInput.value,
-			createTime: new Date(),
-		};
-
-		// 데이터 베이스 전달
-		await axios.post(`/api/message/write`, {
-			messageRoomId: roomId,
-			userId: submitData.userId,
-			text: submitData.message,
-		});
-		socket!.emit('message', submitData);
-
-		chatInput.setValue('');
+		onInputSubmit();
 	};
 
 	// 시간 포맷
@@ -521,40 +497,12 @@ const ChatRoom = (props: Props) => {
 	// 날짜 포맷
 	const formatDate = (createTime: Date) => {
 		const date = new Date(createTime);
-		let day = '';
-		switch (date.getDay()) {
-			case 0:
-				day = '일';
-				break;
-			case 1:
-				day = '월';
-				break;
-			case 2:
-				day = '화';
-				break;
-			case 3:
-				day = '수';
-				break;
-			case 4:
-				day = '목';
-				break;
-			case 5:
-				day = '금';
-				break;
-			case 6:
-				day = '토';
-				break;
-		}
-		return (
-			date.getFullYear() +
-			'년 ' +
-			(date.getMonth() + 1) +
-			'월 ' +
-			date.getDate() +
-			'일 ' +
-			day +
-			'요일'
-		);
+		const day = ['일', '월', '화', '수', '목', '금', '토', '일'];
+
+		return `
+			${date.getFullYear()}년 
+			${date.getMonth() + 1}월 
+			${date.getDate()}일 ${day[date.getDay()]}요일`;
 	};
 
 	// 같은 시각은 미출력, 채팅 최하단에 출력
@@ -741,7 +689,7 @@ const ChatRoom = (props: Props) => {
 					e.preventDefault();
 					setPlaceInputOpen(!placeInputOpen);
 				}}
-				value={place?.formatted_address || hostingAddress}
+				value={hostingAddress}
 				isVisible={placeInputOpen}
 				style={{
 					paddingRight:
