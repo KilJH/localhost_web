@@ -61,6 +61,15 @@ const PrivacyContainer = styled.div`
 			border: none;
 		}
 	}
+
+	& #user_image {
+		margin: 0;
+		padding: 0;
+		opacity: 0;
+		width: 0;
+		height: 0;
+		border: none;
+	}
 `;
 
 const StyledModal = styled(Modal)`
@@ -181,19 +190,17 @@ const Privacy = (props: Props) => {
 	};
 
 	const onClickPhoto = () => {
-		const input: any = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'image/*';
+		const input: any = document.getElementById('user_image');
 		input.click();
-
-		input.onchange = function (e: React.ChangeEvent<HTMLInputElement>) {
-			setImg(e.target!.files![0]);
-		};
 	};
 
-	const onClickReset = () => {
+	const onChangeFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setImg(e.target!.files![0]);
+	};
+
+	const onClickResetPhoto = () => {
 		setPhotoUrl('');
-		console.log('현재유저', currentUser.id);
+		setCurrentUser({ ...currentUser, photo: '' });
 		axios
 			.post(`/api/user/update/photo`, {
 				userId: currentUser.id,
@@ -271,12 +278,20 @@ const Privacy = (props: Props) => {
 									onClick={onClickPhoto}
 									hover
 								/>
+								{/* 파일 업로드를 위한 보이지않는 input */}
+								{/* 아이폰 사파리 이슈 해결을 위해 정적으로 만들어 줌 */}
+								<input
+									id='user_image'
+									type='file'
+									accept='image/*'
+									onChange={onChangeFileInput}
+								/>
 
 								<Button
 									{...btnProps}
 									default
 									type='button'
-									onClick={onClickReset}
+									onClick={onClickResetPhoto}
 								>
 									기본이미지로 변경
 								</Button>
