@@ -80,6 +80,14 @@ const ItemContainer = styled.div`
 		width: 1rem;
 		height: 1rem;
 	}
+
+	& .plan_flex {
+		display: flex;
+
+		&.column {
+			flex-direction: column;
+		}
+	}
 `;
 
 const DeleteContainer = styled.div`
@@ -146,26 +154,35 @@ const PlanTimeItem = (props: Props) => {
 					{plan.type === '이동' ? '이동' : ''}
 				</div>
 			</div>
-			<div className='placeWrapper'>
-				<div className='placeItem'>
-					{plan.place.name}
-					{plan.place.geometry?.location.lat ? (
-						<>
-							<span className='placeDetail' onClick={map.handleOpen}>
-								<LocationOn />
-								지도보기
-							</span>
-							<StyledModal open={map.open} onClose={map.handleClose}>
-								<div className='map_container'>
-									<PlanMap place={plan.place} />
-								</div>
-							</StyledModal>
-						</>
+			<div className='plan_flex column' style={{ flex: 1 }}>
+				<div className='plan_flex'>
+					<div className='placeWrapper'>
+						<div className='placeItem'>
+							{plan.place.name}
+							{plan.place.geometry?.location.lat ? (
+								<>
+									<span className='placeDetail' onClick={map.handleOpen}>
+										<LocationOn />
+										지도보기
+									</span>
+									<StyledModal open={map.open} onClose={map.handleClose}>
+										<div className='map_container'>
+											<PlanMap place={plan.place} />
+										</div>
+									</StyledModal>
+								</>
+							) : (
+								''
+							)}
+						</div>
+						<div className='descriptionItem'>{plan.description}</div>
+					</div>
+					{plan.price !== 0 ? (
+						<div className='priceItem'>{plan.price.toLocaleString()}</div>
 					) : (
 						''
 					)}
 				</div>
-				<div className='descriptionItem'>{plan.description}</div>
 				<div>
 					{plan.photo ? (
 						<PhotoSlider
@@ -178,11 +195,6 @@ const PlanTimeItem = (props: Props) => {
 					)}
 				</div>
 			</div>
-			{plan.price !== 0 ? (
-				<div className='priceItem'>{plan.price.toLocaleString()}</div>
-			) : (
-				''
-			)}
 		</ItemContainer>
 	);
 };

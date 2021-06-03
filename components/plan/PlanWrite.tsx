@@ -868,7 +868,10 @@ const PlanWrite = () => {
 								<Button
 									padding='1rem'
 									onClick={() => {
-										for (let i = 0; i < wholePlan.length; i++) {
+										// wholePlan의 길이로 반복문을 돌리면
+										// 작성 중 날짜를 수정했을 때 빈 배열이 생기고
+										// 작성할 수 없는 상황에서 유효성검사에 걸리게 된다.
+										for (let i = 0; i < tripDate; i++) {
 											if (wholePlan[i].planTimes.length < 1) {
 												toast.handleOpen(
 													'warning',
