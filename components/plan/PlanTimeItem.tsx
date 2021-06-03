@@ -29,18 +29,19 @@ const ItemContainer = styled.div`
 
 	& .placeItem {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		& .placeDetail {
-			margin-left: 0.5rem;
+			margin: 0.125em;
 			display: flex;
 			align-items: center;
 			font-size: 0.8em;
 			color: #333;
 			cursor: pointer;
+			min-width: 50px;
 
 			transition: font-weight color 0.1s ease;
 			& > svg {
-				font-size: 1.5em;
+				font-size: 1.2em;
 			}
 
 			&:hover {
@@ -71,6 +72,7 @@ const ItemContainer = styled.div`
 
 	& div.placeWrapper {
 		flex: 1;
+		margin: 0 0.25em;
 	}
 
 	&::before {
