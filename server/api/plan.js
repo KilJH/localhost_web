@@ -103,7 +103,7 @@ module.exports.myPlanList = (req, res) => {
 module.exports.load = (req, res) => {
 	// 플랜 불러오기
 	const id = req.body.id; // plan id
-	const sql = `SELECT *, p.id plan_id, COUNT(l.id) likes FROM plan p LEFT JOIN user u ON u.id = p.user_id LEFT JOIN plan_like l ON l.plan_id = p.id WHERE p.id = ?`;
+	const sql = `SELECT p.*, u.*, p.id plan_id, COUNT(l.id) likes FROM plan p LEFT JOIN user u ON u.id = p.user_id LEFT JOIN plan_like l ON l.plan_id = p.id WHERE p.id = ?`;
 	let total = 0;
 
 	mysql.query(sql, id, (err, plansRows) => {
