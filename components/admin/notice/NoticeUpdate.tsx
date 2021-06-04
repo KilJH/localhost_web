@@ -8,6 +8,8 @@ import { Notice } from '../../../interfaces';
 type Props = {
 	item?: Notice;
 	visibility: boolean;
+	setVisibility: Function;
+	toast: Function;
 };
 
 const MainTitle = styled.h2`
@@ -71,25 +73,27 @@ const ModifyButton = styled(Button)`
 const DetailsDiv = styled.div`
 	border-bottom: 3px solid #5197d5;
 `;
-const modifyNotice = (id: number, title: string, description: string) => {
-	axios
-		.post(`/api/notice/update`, {
-			id: id,
-			title: title,
-			description: description,
-		})
-		.then((res: AxiosResponse<any>) => {
-			if (res.data.success) {
-				Router.push('/admin/notice');
-			}
-			alert(res.data.message);
-		});
-};
 
 export default function NoticeUpdate(props: Props) {
-	const { item: notice, visibility } = props;
+	const { item: notice, visibility, setVisibility, toast } = props;
 	const [titleState, setTitleState] = useState(notice!.title);
 	const [descState, setDescState] = useState(notice!.description);
+	const modifyNotice = (id: number, title: string, description: string) => {
+		axios
+			.post(`/api/notice/update`, {
+				id: id,
+				title: title,
+				description: description,
+			})
+			.then((res: AxiosResponse<any>) => {
+				if (res.data.success) {
+					Router.push('/admin/notice');
+					toast('success', res.data.message);
+					setVisibility(false);
+				} else toast('error', res.data.message);
+			});
+	};
+
 	const modifyButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		modifyNotice(notice!.id, titleState, descState);

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useToast } from '../../../client/hooks/useToast';
 import { Notice } from '../../../interfaces';
+import Toast from '../../reuse/Toast';
 import NoticeUpdate from './NoticeUpdate';
 
 type Props = {
@@ -22,6 +24,7 @@ const PushElement = styled.a`
 export default function NoticeItem(props: Props) {
 	const { item, state, handleChange } = props;
 	const [detailState, setDetailState] = useState(false);
+	const toast = useToast(false);
 	const onClickHandler = () => {
 		setDetailState(!detailState);
 	};
@@ -53,9 +56,15 @@ export default function NoticeItem(props: Props) {
 			</tr>
 			<tr>
 				<td style={{ padding: 0 }} colSpan={4}>
-					<NoticeUpdate item={item} visibility={detailState} />
+					<NoticeUpdate
+						item={item}
+						visibility={detailState}
+						setVisibility={setDetailState}
+						toast={toast.handleOpen}
+					/>
 				</td>
 			</tr>
+			<Toast {...toast}>{toast.message}</Toast>
 		</React.Fragment>
 	);
 }

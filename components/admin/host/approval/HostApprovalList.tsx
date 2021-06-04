@@ -8,6 +8,8 @@ import Router from 'next/router';
 import { IconButton } from '@material-ui/core';
 import axios, { AxiosResponse } from 'axios';
 import HostApprovalItem from './HostApprovalItem';
+import { useToast } from '../../../../client/hooks/useToast';
+import Toast from '../../../reuse/Toast';
 
 type Props = {
 	items: Host[];
@@ -66,56 +68,58 @@ const CssIconButton = styled(IconButton)`
 		padding: 0;
 	}
 `;
-const DenyCheckedItems = state => {
-	// 호스트 승인 거부 기능
-	const keys = Object.keys(state);
-	const values = Object.values(state);
-	for (let i = 0; i < values.length; i++) {
-		if (values[i] === true) {
-			axios
-				.post(`/api/host/deny`, {
-					userId: keys[i],
-				})
-				.then((res: AxiosResponse<any>) => {
-					if (res.data.success) {
-						alert(res.data.message);
-						Router.push('/admin/host/approval');
-					}
-				});
-		}
-	}
-};
-const ApproveCheckedItems = state => {
-	// 호스트 승인 기능
-	const keys = Object.keys(state);
-	const values = Object.values(state);
-	for (let i = 0; i < values.length; i++) {
-		if (values[i] === true) {
-			axios
-				.post(`/api/host/allow`, {
-					userId: keys[i],
-				})
-				.then((res: AxiosResponse<any>) => {
-					if (res.data.success) {
-						alert(res.data.message);
-						Router.push('/admin/host/approval');
-					}
-				});
-		}
-	}
-};
+
 export default function HostApprovalList(props: Props) {
 	const { items } = props;
 	const [state, setState] = useState({});
 	const [emailState, setEmailState] = useState(false);
 	const [nicknameState, setNicknameState] = useState(false);
 	const [nameState, setNameState] = useState(false);
+	const toast = useToast(false);
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { id, checked } = event.target;
 		setState({
 			...state,
 			[id]: checked,
 		});
+	};
+	const DenyCheckedItems = state => {
+		// 호스트 승인 거부 기능
+		const keys = Object.keys(state);
+		const values = Object.values(state);
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === true) {
+				axios
+					.post(`/api/host/deny`, {
+						userId: keys[i],
+					})
+					.then((res: AxiosResponse<any>) => {
+						if (res.data.success) {
+							toast.handleOpen('info', res.data.message);
+							Router.push('/admin/host/approval');
+						} else toast.handleOpen('error', res.data.message);
+					});
+			}
+		}
+	};
+	const ApproveCheckedItems = state => {
+		// 호스트 승인 기능
+		const keys = Object.keys(state);
+		const values = Object.values(state);
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] === true) {
+				axios
+					.post(`/api/host/allow`, {
+						userId: keys[i],
+					})
+					.then((res: AxiosResponse<any>) => {
+						if (res.data.success) {
+							toast.handleOpen('success', res.data.message);
+							Router.push('/admin/host/approval');
+						} else toast.handleOpen('error', res.data.message);
+					});
+			}
+		}
 	};
 	const HostDenialButtonHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -226,6 +230,7 @@ export default function HostApprovalList(props: Props) {
 					승인거부
 				</HostDenialButton>
 			</ButtonDiv>
+			<Toast {...toast}>{toast.message}</Toast>
 		</div>
 	);
 }
