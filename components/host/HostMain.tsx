@@ -42,6 +42,13 @@ const HostMain = () => {
 
 	const isMobile = useMediaQuery('(max-width: 800px)');
 
+	// 자기 자신은 제외시키는 함수
+	const exceptCurrentUser = list => {
+		list.map((value, index) => {
+			if (value.id === currentUser.id) list.splice(index, 1);
+		});
+		return list;
+	};
 	// 지역이 바뀌면 위,경도 가져오기
 	useEffect(() => {
 		if (place) {
@@ -71,7 +78,7 @@ const HostMain = () => {
 				distance: distance,
 			})
 			.then(res => {
-				setNearbyHosts(res.data.nearbyhosts);
+				setNearbyHosts(exceptCurrentUser(res.data.nearbyhosts));
 			});
 	}, [coord]);
 
@@ -85,7 +92,7 @@ const HostMain = () => {
 				country: currentUser.nationality,
 			})
 			.then(res => {
-				setNearbyHosts(res.data.nearbyhosts);
+				setNearbyHosts(exceptCurrentUser(res.data.nearbyhosts));
 			});
 	}, [distance]);
 
