@@ -18,7 +18,6 @@ type Props = {
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -50,6 +49,9 @@ const CheckTh = styled.th`
 `;
 const CssTh = styled.th`
 	padding-left: 1em;
+	&.title {
+		width: 40%;
+	}
 	&.nickname {
 		width: 25%;
 	}

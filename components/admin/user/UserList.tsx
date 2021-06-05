@@ -17,7 +17,6 @@ type Props = {
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -27,7 +26,7 @@ const UserTable = styled.table`
 	& thead {
 		border-bottom: 2px solid #5197d5;
 	}
-	& td {
+	& tr:nth-child(even) {
 		border-bottom: 1px solid black;
 	}
 `;
@@ -188,13 +187,13 @@ export default function UserList(props: Props) {
 								{emailState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ minWidth: '5em' }}>
 							닉네임
 							<CssIconButton onClick={nicknameSortHandler}>
 								{nicknameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ minWidth: '4em' }}>
 							이름
 							<CssIconButton onClick={nameSortHandler}>
 								{nameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}

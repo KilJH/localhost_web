@@ -17,7 +17,6 @@ type Props = {
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -27,7 +26,7 @@ const UserTable = styled.table`
 	& thead {
 		border-bottom: 3px solid #5197d5;
 	}
-	& td {
+	& tr:nth-child(even) {
 		border-bottom: 1px solid black;
 	}
 `;
@@ -170,19 +169,19 @@ export default function NoticeList(props: Props) {
 				<thead>
 					<tr>
 						<CheckTh>선택</CheckTh>
-						<CssTh>
+						<CssTh style={{ minWidth: '4em' }}>
 							번호
 							<CssIconButton onClick={numberSortHandler}>
 								{numberState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ minWidth: '6em' }}>
 							공지제목
 							<CssIconButton onClick={titleSortHandler}>
 								{titleState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ minWidth: '6em' }}>
 							작성날짜
 							<CssIconButton onClick={dateSortHandler}>
 								{dateState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}

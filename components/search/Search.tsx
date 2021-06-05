@@ -64,13 +64,14 @@ const SearchForm = styled.form<FormProps>`
 `;
 
 const SelectControl = styled(FormControl)<SelectProps>`
-	height: 2.5em;
+	& div {
+		height: 2.5em;
+	}
 	&.MuiFormControl-root {
 		width: ${(props: SelectProps) => props.selectWidth || '20%'};
 		margin-right: 0.5rem;
 	}
 	& .MuiOutlinedInput-root {
-		height: -webkit-fill-available;
 		font-size: 1em;
 		&.hover fieldset {
 			border-color: rgb(81, 151, 213);
@@ -85,7 +86,6 @@ const CssSelect = styled(Select)`
 		display: flex;
 		align-items: center;
 		padding: 0 1em;
-		height: 100%;
 	}
 	& .MuiSelect-select:focus {
 		background-color: rgba(0, 0, 0, 0);
@@ -108,6 +108,7 @@ const CssInputBase = styled(InputBase)`
 const PaperForm = styled(Paper)<InputProps>`
 	display: flex;
 	align-items: center;
+	height: 2.5em;
 	width: ${(props: InputProps) => props.inputWidth || '80%'};
 	border: 1px solid rgba(0, 0, 0, 0.25);
 	&.MuiPaper-elevation1 {

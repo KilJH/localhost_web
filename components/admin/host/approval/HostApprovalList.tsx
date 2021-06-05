@@ -17,7 +17,6 @@ type Props = {
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -27,7 +26,7 @@ const UserTable = styled.table`
 	& thead {
 		border-bottom: 3px solid #5197d5;
 	}
-	& td {
+	& tr:nth-child(even) {
 		border-bottom: 1px solid black;
 	}
 `;

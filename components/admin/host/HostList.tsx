@@ -17,7 +17,6 @@ type Props = {
 
 const UserTable = styled.table`
 	width: 100%;
-	min-width: 32em;
 	margin: 0 auto;
 	text-align: center;
 	border-collapse: collapse;
@@ -27,7 +26,7 @@ const UserTable = styled.table`
 	& thead {
 		border-bottom: 3px solid #5197d5;
 	}
-	& td {
+	& tr:nth-child(even) {
 		border-bottom: 1px solid black;
 	}
 `;
@@ -154,20 +153,20 @@ export default function HostList(props: Props) {
 			<UserTable>
 				<thead>
 					<tr>
-						<CheckTh>선택</CheckTh>
-						<CssTh>
+						<CheckTh style={{ width: '5%' }}>선택</CheckTh>
+						<CssTh style={{ width: '40%' }}>
 							이메일
 							<CssIconButton onClick={emailSortHandler}>
 								{emailState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ width: '20%' }}>
 							닉네임
 							<CssIconButton onClick={nicknameSortHandler}>
 								{nicknameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 							</CssIconButton>
 						</CssTh>
-						<CssTh>
+						<CssTh style={{ width: '15%' }}>
 							이름
 							<CssIconButton onClick={nameSortHandler}>
 								{nameState ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}

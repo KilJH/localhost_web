@@ -51,7 +51,6 @@ const MainComponent = styled.div<MobileProps>`
 	border-radius: 0.25em;
 	box-shadow: 2px 2px 5px 1px gray;
 	& div {
-		font-size: ${props => (props.isMobile ? '0.5em' : '')};
 		& form > div {
 			&.MuiFormControl-root {
 				height: ${props => (props.isMobile ? '6em' : '')};

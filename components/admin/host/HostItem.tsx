@@ -28,13 +28,7 @@ export default function UserItem(props: Props) {
 	return (
 		<React.Fragment>
 			<tr>
-				<td
-					style={
-						!detailState
-							? { borderBottom: 0 }
-							: { borderBottom: '1px solid black' }
-					}
-				>
+				<td>
 					<Checkbox
 						id={host!.id!.toString()}
 						checked={state}

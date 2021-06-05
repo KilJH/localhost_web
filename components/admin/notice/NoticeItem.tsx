@@ -31,13 +31,7 @@ export default function NoticeItem(props: Props) {
 	return (
 		<React.Fragment>
 			<tr>
-				<td
-					style={
-						!detailState
-							? { borderBottom: 0 }
-							: { borderBottom: '1px solid black' }
-					}
-				>
+				<td>
 					<Checkbox
 						id={item.id.toString()}
 						checked={state}
