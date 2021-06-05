@@ -34,6 +34,9 @@ const ItemContainer = styled.div`
 				font-size: 0.8em;
 			}
 		}
+		& .review_desc {
+			white-space: break-spaces;
+		}
 	}
 
 	&:nth-child(odd) {
@@ -54,7 +57,7 @@ const HostReviewItem = ({ review }: Props) => {
 					<div>{review?.createTime || '2021-01-01'}</div>
 				</div>
 				<h3>{review?.user!.nickname || '닉네임'}</h3>
-				<p>{review?.description || '내용'}</p>
+				<p className='review_desc'>{review?.description || '내용'}</p>
 			</div>
 		</ItemContainer>
 	);
