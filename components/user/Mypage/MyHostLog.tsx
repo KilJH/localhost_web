@@ -279,12 +279,10 @@ const MyHostLog = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{presentApp!.length > 5 ? (
+					{presentApp!.length > 5 && (
 						<div className='more' onClick={onChangeMorePresent}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 				<section>
@@ -313,12 +311,10 @@ const MyHostLog = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{preApplications!.length > 5 ? (
+					{preApplications!.length > 5 && (
 						<div className='more' onClick={onChangeMorePast}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 
@@ -348,12 +344,10 @@ const MyHostLog = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{canceledApp!.length > 5 ? (
+					{canceledApp!.length > 5 && (
 						<div className='more' onClick={onChangeMoreCancel}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 			</Container>

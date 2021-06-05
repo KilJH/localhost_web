@@ -320,7 +320,7 @@ const Privacy = (props: Props) => {
 										>
 											변경
 										</Button>
-										{enabledPw ? (
+										{enabledPw && (
 											<Button
 												{...btnProps}
 												default
@@ -329,8 +329,6 @@ const Privacy = (props: Props) => {
 											>
 												취소
 											</Button>
-										) : (
-											''
 										)}
 									</span>
 								</div>

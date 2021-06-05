@@ -136,12 +136,10 @@ const MyBoard = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{boards!.length > 5 ? (
+					{boards!.length > 5 && (
 						<div className='more' onClick={onChangeMoreBoard}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 			</Container>

@@ -1,5 +1,5 @@
 import { Plan } from '../../../interfaces';
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import UserPhoto from '../../user/UserPhoto';
 import axios, { AxiosResponse } from 'axios';
@@ -147,16 +147,15 @@ export default function PlanItem({ item }: Props) {
 							<>
 								{planDay.planTimes.map(planTime => (
 									<>
-										{planTime.photo?.map(src =>
-											src ? (
-												<tr>
-													<td colSpan={6}>
-														<img src={src} style={{ width: '100%' }} />
-													</td>
-												</tr>
-											) : (
-												''
-											),
+										{planTime.photo?.map(
+											src =>
+												src && (
+													<tr>
+														<td colSpan={6}>
+															<img src={src} style={{ width: '100%' }} />
+														</td>
+													</tr>
+												),
 										)}
 										<tr>
 											<td>{planDay.day}</td>

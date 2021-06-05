@@ -106,12 +106,10 @@ const HostIcon = (props: Props) => {
 
 						<div className='flex'>
 							<div className='languages'>
-								{host?.languages.map(lang =>
-									lang && lang !== ' ' ? (
-										<LanguageTag language={lang} key={lang} />
-									) : (
-										''
-									),
+								{host?.languages.map(
+									lang =>
+										lang &&
+										lang !== ' ' && <LanguageTag language={lang} key={lang} />,
 								)}
 							</div>
 							<div className='travelStyle'>

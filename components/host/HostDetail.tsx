@@ -138,7 +138,7 @@ const HostDetail = (props: Props) => {
 		res.data.success ? Router.push('/hosts') : alert('신청에 실패했습니다.');
 	};
 
-	const [on, setOn] = useState(false);
+	// const [on, setOn] = useState(false);
 
 	const {
 		data: followed,
@@ -217,12 +217,10 @@ const HostDetail = (props: Props) => {
 						<tr>
 							<td>사용언어</td>
 							<td>
-								{host.languages.map(lang =>
-									lang && lang !== ' ' ? (
-										<LanguageTag language={lang} key={lang} />
-									) : (
-										''
-									),
+								{host.languages.map(
+									lang =>
+										lang &&
+										lang !== ' ' && <LanguageTag language={lang} key={lang} />,
 								)}
 							</td>
 						</tr>
@@ -241,7 +239,7 @@ const HostDetail = (props: Props) => {
 							<td>여행스타일</td>
 							{host.tag ? (
 								<td>
-									<TravelStyleTag label={host.tag} checked={on} />
+									<TravelStyleTag label={host.tag} />
 								</td>
 							) : (
 								''

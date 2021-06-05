@@ -918,10 +918,8 @@ const PlanWrite = () => {
 			return (
 				<WriteWrapper plan={plan} {...wrapperProps}>
 					{/* 썸네일 사진 고르기 */}
-					{wholeImage.length > 0 ? (
+					{wholeImage.length > 0 && (
 						<ThumbnailPicker images={wholeImage} setThumb={setThumb} />
-					) : (
-						''
 					)}
 					{/* 전체 개요*/}
 					<div style={{ width: '100%' }}>

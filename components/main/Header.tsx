@@ -283,7 +283,7 @@ const Header = (props: Props) => {
 						</Link>
 					</Logo>
 					<FlexItemWrapper align='right'>
-						{isLogined ? <ChatMenu /> : ''}
+						{isLogined && <ChatMenu />}
 						<LoginMenu isLogined={isLogined} />
 					</FlexItemWrapper>
 				</HeaderDiv>
@@ -307,7 +307,7 @@ const Header = (props: Props) => {
 					<MainMenu>
 						<Menu />
 					</MainMenu>
-					{isLogined ? <ChatMenu /> : ''}
+					{isLogined && <ChatMenu />}
 					<LoginMenu isLogined={isLogined} />
 				</HeaderDiv>
 			</HeaderContainer>

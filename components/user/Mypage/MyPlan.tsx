@@ -162,12 +162,10 @@ const MyPlan = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{wishPlans.length > 5 ? (
+					{wishPlans.length > 5 && (
 						<div className='more' onClick={onChangeMoreWish}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 				<section>
@@ -218,12 +216,10 @@ const MyPlan = (props: Props) => {
 							)}
 						</tbody>
 					</Table>
-					{myPlans.length > 5 ? (
+					{myPlans.length > 5 && (
 						<div className='more' onClick={onChangeMoreMine}>
 							<a className='more'>더보기</a>
 						</div>
-					) : (
-						''
 					)}
 				</section>
 			</Container>
