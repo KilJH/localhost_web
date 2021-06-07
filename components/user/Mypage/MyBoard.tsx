@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Link from 'next/link';
-import React, { MouseEventHandler, ReactNode, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useToast } from '../../../client/hooks/useToast';
 import { Board } from '../../../interfaces';
@@ -54,31 +54,33 @@ const NoItem = ({ children, col }: { children: ReactNode; col: number }) => (
 	</tr>
 );
 
-const BoardItem = ({
-	board,
-	onDelete,
-}: {
-	board: Board;
-	onDelete: MouseEventHandler<HTMLButtonElement>;
-}) => {
-	return (
-		<tr>
-			<td>{board.createTime}</td>
-			<td>
-				<Link href='/board/[id]' as={`/board/${board.id}`}>
-					<a>{board.title}</a>
-				</Link>
-			</td>
-			<td>{board.hit}</td>
-			<td>{board.numOfComment}</td>
-			<td>
-				<Button default onClick={onDelete}>
-					삭제
-				</Button>
-			</td>
-		</tr>
-	);
-};
+const BoardItem = React.memo(
+	({
+		board,
+		onDelete,
+	}: {
+		board: Board;
+		onDelete: (id: number) => Promise<void>;
+	}) => {
+		return (
+			<tr>
+				<td>{board.createTime}</td>
+				<td>
+					<Link href='/board/[id]' as={`/board/${board.id}`}>
+						<a>{board.title}</a>
+					</Link>
+				</td>
+				<td>{board.hit}</td>
+				<td>{board.numOfComment}</td>
+				<td>
+					<Button default onClick={() => onDelete(board.id)}>
+						삭제
+					</Button>
+				</td>
+			</tr>
+		);
+	},
+);
 
 const MyBoard = (props: Props) => {
 	const [boards, setBoards] = useState(props.boards);
@@ -89,19 +91,18 @@ const MyBoard = (props: Props) => {
 
 	const toast = useToast(false);
 
-	const onDeleteBoard = async (id: number) => {
+	const onDeleteBoard = useCallback(async (id: number) => {
 		const yes = confirm('정말 삭제하시겠습니까?');
 		if (yes) {
 			const res = await axios.post('/api/board/delete', { id });
 			if (res.data.success) {
-				const newBoards = boards.filter(board => board.id !== id);
-				setBoards(newBoards);
+				setBoards(boards => boards.filter(board => board.id !== id));
 				toast.handleOpen('success', '게시물을 삭제했습니다.');
 			} else {
 				toast.handleOpen('error', '게시물 삭제에 실패했습니다.');
 			}
 		}
-	};
+	}, []);
 
 	return (
 		<MypageLayout tabNum={4}>
@@ -126,9 +127,8 @@ const MyBoard = (props: Props) => {
 								(moreBoard ? boards : boards.slice(0, 5)).map(board => (
 									<BoardItem
 										board={board}
-										onDelete={() => {
-											onDeleteBoard(board.id);
-										}}
+										onDelete={onDeleteBoard}
+										key={board.id}
 									/>
 								))
 							) : (

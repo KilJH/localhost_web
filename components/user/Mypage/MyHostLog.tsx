@@ -1,7 +1,12 @@
 import { Modal, useMediaQuery } from '@material-ui/core';
 import axios from 'axios';
 import Link from 'next/link';
-import React, { MouseEventHandler, ReactNode, useState } from 'react';
+import React, {
+	MouseEventHandler,
+	ReactNode,
+	useCallback,
+	useState,
+} from 'react';
 import styled from 'styled-components';
 import { useToast } from '../../../client/hooks/useToast';
 import { Application, PreviousApplication } from '../../../interfaces';
@@ -96,93 +101,95 @@ const Status = status => {
 	}
 };
 
-const ApplicationItem = ({
-	application,
-	onCancel,
-}: {
-	application: Application;
-	onCancel: MouseEventHandler<HTMLButtonElement>;
-}) => {
-	return (
-		<tr>
-			<td>{application.date}</td>
-			<td>
-				<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
-					<a>{application.user.nickname}</a>
-				</Link>
-			</td>
-			<td>{Status(application.status || 0)}</td>
-			<td>
-				{application.status < 2 ? (
-					<Button default onClick={onCancel}>
-						취소
-					</Button>
-				) : (
-					''
-				)}
-			</td>
-		</tr>
-	);
-};
+const ApplicationItem = React.memo(
+	({
+		application,
+		onCancel,
+	}: {
+		application: Application;
+		onCancel: MouseEventHandler<HTMLButtonElement>;
+	}) => {
+		return (
+			<tr>
+				<td>{application.date}</td>
+				<td>
+					<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
+						<a>{application.user.nickname}</a>
+					</Link>
+				</td>
+				<td>{Status(application.status || 0)}</td>
+				<td>
+					{application.status < 2 ? (
+						<Button default onClick={onCancel}>
+							취소
+						</Button>
+					) : (
+						''
+					)}
+				</td>
+			</tr>
+		);
+	},
+);
 
-const CanceledApplicationItem = ({
-	application,
-}: {
-	application: Application;
-}) => {
-	return (
-		<tr>
-			<td>{application.date}</td>
-			<td>
-				<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
-					<a>{application.user.nickname}</a>
-				</Link>
-			</td>
-			<td>{Status(application.status || 0)}</td>
-		</tr>
-	);
-};
+const CanceledApplicationItem = React.memo(
+	({ application }: { application: Application }) => {
+		return (
+			<tr>
+				<td>{application.date}</td>
+				<td>
+					<Link href='/hosts/[id]' as={`/hosts/${application.user.id}`}>
+						<a>{application.user.nickname}</a>
+					</Link>
+				</td>
+				<td>{Status(application.status || 0)}</td>
+			</tr>
+		);
+	},
+);
 
-const HistoryItem = ({ history }: { history: PreviousApplication }) => {
-	// 모달을 위한 State
-	const [open, setOpen] = useState(false);
-	const handleOpen = () => {
-		setOpen(true);
-	};
-	const handleClose = () => {
-		setOpen(false);
-	};
+const HistoryItem = React.memo(
+	({ history }: { history: PreviousApplication }) => {
+		// 모달을 위한 State
+		const [open, setOpen] = useState(false);
+		const handleOpen = () => {
+			setOpen(true);
+		};
+		const handleClose = () => {
+			setOpen(false);
+		};
 
-	const isMobile = useMediaQuery('(max-width: 600px)');
+		const isMobile = useMediaQuery('(max-width: 600px)');
 
-	return (
-		<tr>
-			<td>{history.date}</td>
-			<td>
-				<Link href='/hosts/[id]' as={`/hosts/${history.user.id}`}>
-					<a>{history.user.nickname}</a>
-				</Link>
-			</td>
-			<td>{history.place!.formatted_address}</td>
-			<td>
-				{history.review!.description ? (
-					<Rating
-						rating={history.review!.rating as number}
-						isFilled
-						fontSize={isMobile ? '1.2em' : '1.6em'}
-					/>
-				) : (
-					<Button onClick={handleOpen}>리뷰작성</Button>
-				)}
-			</td>
-			<StyledModal open={open} onClose={handleClose}>
-				<div className='modalItem'>
-					<HostReviewWrite applicationId={history.id} onClose={handleClose} />
-				</div>
-			</StyledModal>
-		</tr>
-	);
-};
+		return (
+			<tr>
+				<td>{history.date}</td>
+				<td>
+					<Link href='/hosts/[id]' as={`/hosts/${history.user.id}`}>
+						<a>{history.user.nickname}</a>
+					</Link>
+				</td>
+				<td>{history.place!.formatted_address}</td>
+				<td>
+					{history.review!.description ? (
+						<Rating
+							rating={history.review!.rating as number}
+							isFilled
+							fontSize={isMobile ? '1.2em' : '1.6em'}
+						/>
+					) : (
+						<Button onClick={handleOpen}>리뷰작성</Button>
+					)}
+				</td>
+				<StyledModal open={open} onClose={handleClose}>
+					<div className='modalItem'>
+						<HostReviewWrite applicationId={history.id} onClose={handleClose} />
+					</div>
+				</StyledModal>
+			</tr>
+		);
+	},
+);
 
 const NoItem = ({ children }: { children: ReactNode }) => (
 	<tr>
@@ -212,23 +219,25 @@ const MyHostLog = (props: Props) => {
 		}),
 	);
 
-	const onCancel = app => {
+	const onCancel = useCallback(app => {
 		const yes = confirm('정말 취소하시겠습니까?');
 		if (yes) {
 			axios.post(`/api/host/application/cancel`, { id: app.id }).then(res => {
 				if (res.data.success) {
-					setCanceledApp(
-						[...canceledApp, { ...app, status: 2 }].sort((a, b) =>
-							a.date > b.date ? -1 : 1,
-						),
+					setCanceledApp(canceledApp =>
+						canceledApp
+							.concat({ ...app, status: 2 })
+							.sort((a, b) => (a.date > b.date ? -1 : 1)),
 					);
-					setPresentApp(presentApp.filter(origin => origin.id !== app.id));
+					setPresentApp(presentApp =>
+						presentApp.filter(origin => origin.id !== app.id),
+					);
 
 					toast.handleOpen('success', '취소가 완료되었습니다.');
 				}
 			});
 		}
-	};
+	}, []);
 
 	// 단순 on/off를 활용하기 위함
 	const [morePresent, setMorePresent] = useState(false);
@@ -305,7 +314,7 @@ const MyHostLog = (props: Props) => {
 								(morePast
 									? preApplications!
 									: preApplications!.slice(0, 5)
-								).map(app => <HistoryItem history={app} />)
+								).map(app => <HistoryItem history={app} key={app.id} />)
 							) : (
 								<NoItem>현재 신청내역이 없습니다.</NoItem>
 							)}
@@ -328,13 +337,13 @@ const MyHostLog = (props: Props) => {
 							<tr>
 								<th>날짜</th>
 								<th>호스트</th>
-								<th>상태</th>
+								<th style={{ width: '16em' }}>상태</th>
 							</tr>
 						</thead>
 						<tbody>
 							{/* 없으면 없습니다, */}
 							{canceledApp.length ? (
-								(morePresent ? canceledApp! : canceledApp!.slice(0, 5)).map(
+								(moreCancel ? canceledApp! : canceledApp!.slice(0, 5)).map(
 									app => (
 										<CanceledApplicationItem application={app} key={app.id} />
 									),

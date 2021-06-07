@@ -203,7 +203,7 @@ module.exports.followerList = (req, res) => {
 	}
 
 	const userId = req.body.userId;
-	const sql = `SELECT * FROM follow LEFT JOIN user ON follow.follower_id=user.id WHERE follow.user_id = ?`;
+	const sql = `SELECT u.* FROM follow f LEFT JOIN user u ON f.follower_id=u.id WHERE f.user_id = ?`;
 
 	mysql.query(sql, userId, (err, rows) => {
 		if (err) return console.log(err);

@@ -386,6 +386,7 @@ const Privacy = (props: Props) => {
 										<MenuItem
 											value={value.nation}
 											onClick={() => setNationality(value.nation)}
+											key={value.nation}
 										>
 											{value.nation}
 										</MenuItem>

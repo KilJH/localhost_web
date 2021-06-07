@@ -72,7 +72,9 @@ const Greeting = () => {
 			>
 				<h1>한 번의 클릭으로 손쉽게 여행을 계획해보세요</h1>
 				<Link href='/plans'>
-					<Button default>베스트 플랜 보기</Button>
+					<a>
+						<Button default>베스트 플랜 보기</Button>
+					</a>
 				</Link>
 			</div>
 
@@ -81,7 +83,9 @@ const Greeting = () => {
 			>
 				<h1>현지인만 아는 로컬맛집을 알고싶다면?</h1>
 				<Link href='/hosts'>
-					<Button default>호스트 보러가기</Button>
+					<a>
+						<Button default>호스트 보러가기</Button>
+					</a>
 				</Link>
 			</div>
 		</Container>

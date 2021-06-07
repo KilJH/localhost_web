@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Link from 'next/link';
-import React, { ReactNode, useContext, useState } from 'react';
+import React, { ReactNode, useCallback, useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useToast } from '../../../client/hooks/useToast';
 import { UserStateContext } from '../../../context/user';
@@ -59,6 +59,72 @@ const NoItem = ({ children, col }: { children: ReactNode; col: number }) => (
 	</tr>
 );
 
+const WishPlanItem = React.memo(
+	({
+		plan,
+		onDelete,
+	}: {
+		plan: Plan;
+		onDelete: (id: any) => Promise<void>;
+	}) => (
+		<tr>
+			<td className='plan_title'>
+				<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
+					<a>{plan.title}</a>
+				</Link>
+			</td>
+			<td>
+				<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
+					<a>{plan.author?.nickname}</a>
+				</Link>
+			</td>
+			<td>
+				<Button
+					default
+					onClick={() => {
+						onDelete(plan.id);
+					}}
+				>
+					삭제
+				</Button>
+			</td>
+		</tr>
+	),
+);
+
+const MyPlanItem = React.memo(
+	({
+		plan,
+		onDelete,
+	}: {
+		plan: Plan;
+		onDelete: (id: any) => Promise<void>;
+	}) => (
+		<tr>
+			<td className='plan_title'>
+				<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
+					<a>{plan.title}</a>
+				</Link>
+			</td>
+			<td>{plan.hit}</td>
+			<td>{0}</td>
+			<td>
+				<Button default>수정</Button>
+			</td>
+			<td>
+				<Button
+					default
+					onClick={() => {
+						onDelete(plan.id);
+					}}
+				>
+					삭제
+				</Button>
+			</td>
+		</tr>
+	),
+);
+
 const MyPlan = (props: Props) => {
 	const [wishPlans, setWishPlans] = useState(props.wishPlans);
 	const [myPlans, setmyPlans] = useState(props.myPlans);
@@ -77,7 +143,7 @@ const MyPlan = (props: Props) => {
 		setMoreMine(!moreMine);
 	};
 
-	const onDeleteWish = async id => {
+	const onDeleteWish = useCallback(async id => {
 		const yes = confirm('정말 삭제하시겠습니까?');
 		if (yes) {
 			const res = await axios.post('/api/plan/wishList/delete', {
@@ -86,34 +152,28 @@ const MyPlan = (props: Props) => {
 			});
 
 			if (res.data.success) {
+				setWishPlans(wishPlans => wishPlans.filter(plan => plan.id !== id));
 				toast.handleOpen('success', '내가 담은 플랜에서 제거했습니다.');
-				const wishRes = await axios.post(`/api/plan/wishlist`, {
-					userId: currentUser.id,
-				});
-				setWishPlans(wishRes.data.list);
 			} else {
 				toast.handleOpen('error', '삭제에 실패했습니다.');
 			}
 		}
-	};
+	}, []);
 
-	const onDeleteMine = async id => {
+	const onDeleteMine = useCallback(async id => {
 		const yes = confirm('정말 삭제하시겠습니까?');
 		if (yes) {
 			const res = await axios.post('/api/plan/delete', {
 				planId: id,
 			});
 			if (res.data.success) {
+				setmyPlans(myPlans => myPlans.filter(plan => plan.id !== id));
 				toast.handleOpen('success', '플랜을 삭제했습니다.');
-				const wishRes = await axios.post(`/api/plan/list/myPlan`, {
-					userId: currentUser.id,
-				});
-				setmyPlans(wishRes.data.plans);
 			} else {
 				toast.handleOpen('error', '삭제에 실패했습니다.');
 			}
 		}
-	};
+	}, []);
 
 	return (
 		<MypageLayout tabNum={3}>
@@ -134,28 +194,11 @@ const MyPlan = (props: Props) => {
 						<tbody>
 							{wishPlans.length ? (
 								(moreWish ? wishPlans : wishPlans.slice(0, 5)).map(plan => (
-									<tr>
-										<td className='plan_title'>
-											<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
-												<a>{plan.title}</a>
-											</Link>
-										</td>
-										<td>
-											<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
-												<a>{plan.author?.nickname}</a>
-											</Link>
-										</td>
-										<td>
-											<Button
-												default
-												onClick={() => {
-													onDeleteWish(plan.id);
-												}}
-											>
-												삭제
-											</Button>
-										</td>
-									</tr>
+									<WishPlanItem
+										plan={plan}
+										onDelete={onDeleteWish}
+										key={plan.id}
+									/>
 								))
 							) : (
 								<NoItem col={3}>여행플랜이 없습니다.</NoItem>
@@ -188,28 +231,11 @@ const MyPlan = (props: Props) => {
 							{/* 없으면 없습니다, */}
 							{myPlans.length ? (
 								(moreMine ? myPlans : myPlans.slice(0, 5)).map(plan => (
-									<tr>
-										<td className='plan_title'>
-											<Link href='/plans/[id]' as={`/plans/${plan.id}`}>
-												<a>{plan.title}</a>
-											</Link>
-										</td>
-										<td>{plan.hit}</td>
-										<td>{0}</td>
-										<td>
-											<Button default>수정</Button>
-										</td>
-										<td>
-											<Button
-												default
-												onClick={() => {
-													onDeleteMine(plan.id);
-												}}
-											>
-												삭제
-											</Button>
-										</td>
-									</tr>
+									<MyPlanItem
+										plan={plan}
+										onDelete={onDeleteMine}
+										key={plan.id}
+									/>
 								))
 							) : (
 								<NoItem col={5}>여행플랜이 없습니다.</NoItem>
