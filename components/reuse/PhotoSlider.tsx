@@ -170,4 +170,4 @@ const PhotoSlider = (props: Props) => {
 	);
 };
 
-export default PhotoSlider;
+export default React.memo(PhotoSlider);

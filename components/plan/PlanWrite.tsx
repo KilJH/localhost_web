@@ -13,7 +13,13 @@ import {
 	MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import axios from 'axios';
-import React, { SetStateAction, useContext, useEffect, useState } from 'react';
+import React, {
+	SetStateAction,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import styled from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
@@ -574,18 +580,19 @@ const PlanWrite = () => {
 		setPlaceDetail(undefined);
 	}
 
-	const onDeleteTimePlan = (i: number) => {
-		const existingPlans = dayPlan.planTimes;
-		const newPlans = [
-			...existingPlans.slice(0, i),
-			...existingPlans.slice(i + 1, existingPlans.length),
-		];
+	const onDeleteTimePlan = useCallback((time: Date) => {
+		// const existingPlans = dayPlan.planTimes;
+		// const newPlans = [
+		// 	...existingPlans.slice(0, i),
+		// 	...existingPlans.slice(i + 1, existingPlans.length),
+		// ];
 
-		setDayPlan({
+		// useCallback, memo 최적화를 위한 함수형 업데이트
+		setDayPlan(dayPlan => ({
 			...dayPlan,
-			planTimes: newPlans,
-		});
-	};
+			planTimes: dayPlan.planTimes.filter(plan => plan.time !== time),
+		}));
+	}, []);
 
 	// 하루 일정 추가
 	function saveDayPlan(): void {
@@ -637,8 +644,10 @@ const PlanWrite = () => {
 				<WriteWrapper isFull={true} {...wrapperProps}>
 					<label>나라를 선택해주세요</label>
 					<StyledSelect {...country}>
-						{countries.map(country => (
-							<MenuItem value={country.nation}>{country.nation}</MenuItem>
+						{countries.map((country, i) => (
+							<MenuItem value={country.nation} key={i}>
+								{country.nation}
+							</MenuItem>
 						))}
 						<MenuItem disabled>다른 국가는 아직 서비스 전입니다.</MenuItem>
 					</StyledSelect>
@@ -651,8 +660,10 @@ const PlanWrite = () => {
 							setCity(e.target.value as string);
 						}}
 					>
-						{cities.map(city => (
-							<MenuItem value={city}>{city}</MenuItem>
+						{cities.map((city, i) => (
+							<MenuItem value={city} key={i}>
+								{city}
+							</MenuItem>
 						))}
 						<MenuItem disabled>다른 도시는 아직 서비스 전입니다.</MenuItem>
 					</StyledSelect>
@@ -707,7 +718,7 @@ const PlanWrite = () => {
 						<div>
 							<label>여행테마를 선택해주세요(복수선택 가능)</label>
 							{travelStyles.map(style => (
-								<TravelStyleTag label={style} onClick={() => {}} />
+								<TravelStyleTag label={style} key={style} onClick={() => {}} />
 							))}
 						</div>
 					</PlanWriteContainer>
@@ -755,8 +766,10 @@ const PlanWrite = () => {
 										});
 									}}
 								>
-									{types.map(type => (
-										<MenuItem value={type}>{type}</MenuItem>
+									{types.map((type, i) => (
+										<MenuItem value={type} key={i}>
+											{type}
+										</MenuItem>
 									))}
 									<MenuItem value='기타' selected={true}>
 										기타

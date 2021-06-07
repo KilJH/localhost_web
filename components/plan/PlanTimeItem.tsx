@@ -10,7 +10,7 @@ import PlanMap from './PlanMap';
 
 interface Props {
 	plan: PlanTime;
-	onDelete?: React.MouseEventHandler<HTMLButtonElement>;
+	onDelete?: (time: Date) => void;
 }
 
 const ItemContainer = styled.div`
@@ -142,7 +142,7 @@ const PlanTimeItem = (props: Props) => {
 			{onDelete ? (
 				<Fade in={isShow}>
 					<DeleteContainer>
-						<Button onClick={onDelete}>
+						<Button onClick={() => onDelete(plan.time as Date)}>
 							<CloseIcon fontSize='small' />
 						</Button>
 					</DeleteContainer>
@@ -201,4 +201,4 @@ const PlanTimeItem = (props: Props) => {
 	);
 };
 
-export default PlanTimeItem;
+export default React.memo(PlanTimeItem);

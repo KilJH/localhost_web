@@ -4,30 +4,19 @@ import PlanTimeItem from './PlanTimeItem';
 
 interface Props {
 	planDay: PlanDay;
-	onDelete?: (i: number) => void;
+	onDelete?: (time: Date) => void;
 }
 
 const PlanDayItem = (props: Props) => {
 	const { planDay, onDelete } = props;
+
 	return (
 		<div>
 			{planDay.planTimes?.map((time, i) => {
-				return (
-					<PlanTimeItem
-						plan={time}
-						key={i}
-						onDelete={
-							onDelete
-								? () => {
-										onDelete(i);
-								  }
-								: undefined
-						}
-					/>
-				);
+				return <PlanTimeItem plan={time} key={i} onDelete={onDelete} />;
 			})}
 		</div>
 	);
 };
 
-export default PlanDayItem;
+export default React.memo(PlanDayItem);
