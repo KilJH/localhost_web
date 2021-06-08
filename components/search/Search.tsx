@@ -45,11 +45,11 @@ interface FormProps {
 }
 
 interface SelectProps {
-	selectWidth?: string;
+	$selectWidth?: string;
 }
 
 interface InputProps {
-	inputWidth?: string;
+	$inputWidth?: string;
 }
 
 // 검색 바디
@@ -68,7 +68,7 @@ const SelectControl = styled(FormControl)<SelectProps>`
 		height: 2.5em;
 	}
 	&.MuiFormControl-root {
-		width: ${(props: SelectProps) => props.selectWidth || '20%'};
+		width: ${(props: SelectProps) => props.$selectWidth || '20%'};
 		margin-right: 0.5rem;
 	}
 	& .MuiOutlinedInput-root {
@@ -109,7 +109,7 @@ const PaperForm = styled(Paper)<InputProps>`
 	display: flex;
 	align-items: center;
 	height: 2.5em;
-	width: ${(props: InputProps) => props.inputWidth || '80%'};
+	width: ${(props: InputProps) => props.$inputWidth || '80%'};
 	border: 1px solid rgba(0, 0, 0, 0.25);
 	&.MuiPaper-elevation1 {
 		box-shadow: none;
@@ -140,9 +140,10 @@ export default function Search(props: Props) {
 			marginLeft={props.marginLeft}
 			marginRight={props.marginRight}
 		>
-			<SelectControl variant='outlined' selectWidth={props.selectWidth}>
+			<SelectControl variant='outlined' $selectWidth={props.selectWidth}>
 				<CssSelect
-					{...type}
+					value={type.value}
+					onChange={type.onChange}
 					inputProps={{ 'aria-label': 'Without label' }}
 					displayEmpty
 				>
@@ -156,9 +157,10 @@ export default function Search(props: Props) {
 					))}
 				</CssSelect>
 			</SelectControl>
-			<PaperForm inputWidth={props.inputWidth}>
+			<PaperForm $inputWidth={props.inputWidth}>
 				<CssInputBase
-					{...item}
+					value={item.value}
+					onChange={item.onChange}
 					placeholder={inputLabel ? inputLabel : '입력'}
 					type='text'
 				/>

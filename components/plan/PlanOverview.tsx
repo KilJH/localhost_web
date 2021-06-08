@@ -3,7 +3,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 // import FavoriteIcon from '@material-ui/icons/Favorite';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import React, { useContext, useState } from 'react';
-import { Plan } from '../../interfaces/index';
+import { Plan, User } from '../../interfaces/index';
 import styled from 'styled-components';
 import TravelDaysTag from './TravelDaysTag';
 import Link from 'next/link';
@@ -93,6 +93,17 @@ const PlanOverviewContent = styled.div`
 	}
 `;
 
+const PlanAuthorInfo = React.memo(({ user }: { user: User }) => (
+	<div className='plan_author'>
+		<Link href='/users/[id]' as={`/users/${user.id}`}>
+			<a>
+				<UserPhoto width={2} src={user.photo} margin='0 0.25em' />
+				{user.nickname || '닉네임'}
+			</a>
+		</Link>
+	</div>
+));
+
 const PlanOverview: React.FC<Props> = props => {
 	const { plan } = props;
 	const currentUser = useContext(UserStateContext);
@@ -155,18 +166,7 @@ const PlanOverview: React.FC<Props> = props => {
 						<div className='content'>{plan.description}</div>
 
 						<div className='plan_flex'>
-							<div className='plan_author'>
-								<Link href='/users/[id]' as={`/users/${plan.author?.id}`}>
-									<a>
-										<UserPhoto
-											width={2}
-											src={plan.author?.photo}
-											margin='0 0.25em'
-										/>
-										{plan.author?.nickname || '닉네임'}
-									</a>
-								</Link>
-							</div>
+							<PlanAuthorInfo user={plan.author as User} />
 							<div className='price'>
 								<p>
 									₩{' '}
@@ -204,7 +204,8 @@ const PlanOverview: React.FC<Props> = props => {
 };
 
 const getWholeImage = (plan: Plan) => {
-	let wholeImage: string[] = [];
+	// 썸네일을 맨 첫번째로
+	let wholeImage: string[] = plan.thumb ? [plan.thumb] : [];
 	plan.planDays!.forEach(planDay => {
 		planDay.planTimes.forEach(planTime => {
 			if (planTime.photo!.length > 0 && !(planTime.photo![0] === '')) {

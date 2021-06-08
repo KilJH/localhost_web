@@ -62,7 +62,9 @@ const PlanList = (props: Props) => {
 			))}
 
 			<Link href='/plans/write'>
-				<Button>플랜작성</Button>
+				<a>
+					<Button>플랜작성</Button>
+				</a>
 			</Link>
 
 			<Pagination

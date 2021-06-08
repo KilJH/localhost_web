@@ -26,13 +26,13 @@ const Container = styled.div`
 	}
 `;
 
-const Marker = (_props: { lat: number; lng: number }) => {
+const Marker = React.memo((_props: { lat: number; lng: number }) => {
 	return (
 		<div>
 			<PlaceIcon fontSize='large' style={{ color: '#5197d5' }} />
 		</div>
 	);
-};
+});
 
 const PlanMap = (props: Props) => {
 	const { place } = props;

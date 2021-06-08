@@ -25,4 +25,4 @@ const TravelDaysTag = (props: Props) => {
 	);
 };
 
-export default TravelDaysTag;
+export default React.memo(TravelDaysTag);
