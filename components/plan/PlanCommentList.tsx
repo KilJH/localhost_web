@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Router from 'next/router';
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../client/hooks/useInput';
@@ -63,7 +64,9 @@ const ItemContainer = styled.section`
 		border-bottom: none !important;
 	}
 `;
-
+const href = id => {
+	Router.push(`../users/${id}`);
+};
 const PlanCommentItem = ({ comment }: ItemProps) => {
 	return (
 		<ItemContainer>
@@ -71,10 +74,18 @@ const PlanCommentItem = ({ comment }: ItemProps) => {
 				src={comment.user.photo || '/img/default.jpg'}
 				width={3}
 				margin='0 1rem 0 0'
+				onClick={() => href(comment.user.id)}
+				hover={true}
 			/>
 			<div>
 				<div className='top'>
-					<div className='nickname'>{comment.user.nickname}</div>
+					<div
+						className='nickname'
+						onClick={() => href(comment.user.id)}
+						style={{ cursor: 'pointer' }}
+					>
+						{comment.user.nickname}
+					</div>
 					<div className='time'>{comment.createTime}</div>
 				</div>
 				<div className='description'>{comment.description}</div>
