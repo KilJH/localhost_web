@@ -23,12 +23,10 @@ const UserDetailContainer = styled.section`
 	}
 	& table {
 		width: 100%;
-		min-width: 32em;
 		margin: 0 auto 3em auto;
 		text-align: center;
 		border-collapse: collapse;
 		font-size: 1em;
-		display: inline;
 	}
 	& th {
 		padding: 0.75em 0;
