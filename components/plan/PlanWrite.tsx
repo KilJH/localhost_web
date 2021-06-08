@@ -603,7 +603,7 @@ const PlanWrite = () => {
 		);
 	}
 	// 이전 날
-	function onPrevDate(): void {
+	function onPrevDate() {
 		saveDayPlan();
 		setDayPlan(wholePlan[date - 2]);
 		setDate(date - 1);
@@ -643,7 +643,7 @@ const PlanWrite = () => {
 			return (
 				<WriteWrapper isFull={true} {...wrapperProps}>
 					<label>나라를 선택해주세요</label>
-					<StyledSelect {...country}>
+					<StyledSelect value={country.value} onChange={country.onChange}>
 						{countries.map((country, i) => (
 							<MenuItem value={country.nation} key={i}>
 								{country.nation}
@@ -947,7 +947,9 @@ const PlanWrite = () => {
 					<h1>플랜 작성 완료!</h1>
 					{/* 링크달기 */}
 					<Link href='/plans/[id]' as={`/plans/${planId}`}>
-						<Button width='16rem'>작성한 플랜 보러가기</Button>
+						<a>
+							<Button width='16rem'>작성한 플랜 보러가기</Button>
+						</a>
 					</Link>
 				</WriteWrapper>
 			);

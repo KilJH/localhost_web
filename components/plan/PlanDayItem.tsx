@@ -12,8 +12,14 @@ const PlanDayItem = (props: Props) => {
 
 	return (
 		<div>
-			{planDay.planTimes?.map((time, i) => {
-				return <PlanTimeItem plan={time} key={i} onDelete={onDelete} />;
+			{planDay.planTimes?.map(time => {
+				return (
+					<PlanTimeItem
+						plan={time}
+						key={time.time.toString()}
+						onDelete={onDelete}
+					/>
+				);
 			})}
 		</div>
 	);

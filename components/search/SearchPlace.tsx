@@ -136,12 +136,12 @@ const SearchPlace = (props: Props) => {
 			<ListContainer id='placesList' onBlur={handleClose}>
 				{places.length > 0 && open ? (
 					<div>
-						{places.map((place: Place) => (
+						{places.map((place: Place, i) => (
 							<PlaceItem
 								place={place}
 								setPlace={setPlace}
 								onClose={handleClose}
-								key={place.name}
+								key={i}
 							/>
 						))}
 					</div>

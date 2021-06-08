@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface Props {
@@ -57,29 +57,49 @@ const Container = styled.div`
 	}
 `;
 
+const Img = React.memo(
+	({
+		image,
+		onClick,
+		i,
+		index,
+	}: {
+		image: string;
+		onClick: Function;
+		i: number;
+		index: number;
+	}) => {
+		return (
+			<img
+				src={image}
+				className={index === i ? 'selected' : ''}
+				onClick={() => onClick(i, image)}
+				key={i}
+			/>
+		);
+	},
+);
+
 const ThumbnailPicker = (props: Props) => {
 	const { images, setThumb } = props;
 	const [index, setIndex] = useState(0);
 
-	const onClick = (i, img) => {
+	const onClick = useCallback((i, img) => {
 		setIndex(i);
 		setThumb(img);
-	};
+	}, []);
 
 	useEffect(() => {
 		setThumb(images[0] ?? '');
 	}, []);
+
 	return (
 		<div style={{ width: '100%' }}>
 			<h2 style={{ margin: '0.5rem 0' }}>썸네일 사진을 골라주세요</h2>
 			<Container>
 				{images?.map((image, i) => {
 					return (
-						<img
-							src={image}
-							className={index === i ? 'selected' : ''}
-							onClick={() => onClick(i, image)}
-						/>
+						<Img image={image} onClick={onClick} i={i} index={index} key={i} />
 					);
 				})}
 			</Container>

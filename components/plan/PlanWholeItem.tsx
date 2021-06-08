@@ -86,4 +86,4 @@ const PlanWholeItem = (props: Props) => {
 	);
 };
 
-export default PlanWholeItem;
+export default React.memo(PlanWholeItem);
