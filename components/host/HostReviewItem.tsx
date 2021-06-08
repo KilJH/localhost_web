@@ -63,4 +63,4 @@ const HostReviewItem = ({ review }: Props) => {
 	);
 };
 
-export default HostReviewItem;
+export default React.memo(HostReviewItem);

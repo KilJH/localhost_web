@@ -75,4 +75,4 @@ const TravelStyleTag = (props: Props) => {
 	);
 };
 
-export default TravelStyleTag;
+export default React.memo(TravelStyleTag);
