@@ -96,15 +96,17 @@ const ChatRoomItem = ({ item }: ItemProps) => {
 		return `0${num}`;
 	};
 	const formatDate = (date: string) => {
-		if (date.indexOf(':') === -1) return null;
-		else {
-			const hour = Number(date.split(':')[0]);
-			const min = Number(date.split(':')[1]);
-
-			return `${hour < 10 ? addZero(hour) : hour}:${
-				min < 10 ? addZero(min) : min
-			}`;
-		}
+		if (recentMessage.message) {
+			// 메세지가 있을 경우
+			if (date.includes(':')) {
+				// 시간일 경우
+				const hour = Number(date.split(':')[0]);
+				const min = Number(date.split(':')[1]);
+				return `${hour < 10 ? addZero(hour) : hour}:${
+					min < 10 ? addZero(min) : min
+				}`;
+			} else return date; // 날짜일 경우
+		} else return null; // 메세지가 없을 경우
 	};
 	// 만약 열고 있는데 문자 오면 보여지게
 	// const [socket, setSocket] = useState<Socket>();
