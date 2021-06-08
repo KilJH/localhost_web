@@ -125,4 +125,4 @@ const HostIcon = (props: Props) => {
 	);
 };
 
-export default HostIcon;
+export default React.memo(HostIcon);

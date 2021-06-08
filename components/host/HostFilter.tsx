@@ -1,5 +1,5 @@
 import { Grow, Slider } from '@material-ui/core';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, MouseEventHandler, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { Host } from '../../interfaces';
 import Button from '../reuse/Button';
@@ -9,7 +9,7 @@ interface FilterProps {
 	origin: Host[];
 	setNearbyHosts: Dispatch<SetStateAction<Host[]>>;
 	onShow?: boolean;
-	onClose?: Function;
+	onClose?: MouseEventHandler<HTMLButtonElement>;
 	coord: { lat: number; lng: number };
 	distance: number;
 	setDistance: Dispatch<SetStateAction<number>>;
@@ -106,12 +106,7 @@ const HostFilter = (props: FilterProps) => {
 						/>
 					</div>
 
-					<Button
-						onClick={() => {
-							onClose!();
-						}}
-						width='100%'
-					>
+					<Button onClick={onClose} width='100%'>
 						확인
 					</Button>
 				</FilterContainer>

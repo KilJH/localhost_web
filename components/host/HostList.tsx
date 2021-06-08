@@ -59,9 +59,9 @@ const HostList = (props: Props) => {
 	const onOpenFilter = () => {
 		setFilterOn(!filterOn);
 	};
-	// const onCloseFilter = () => {
-	// 	setFilterOn(false);
-	// };
+	const onCloseFilter = () => {
+		setFilterOn(false);
+	};
 
 	const compareValue = (a, b) => {
 		return sortOpt.asc ? a - b : b - a;
@@ -126,7 +126,7 @@ const HostList = (props: Props) => {
 					<TuneIcon />
 					<span>필터</span>
 				</button>
-				<HostFilter onShow={filterOn} {...props} />
+				<HostFilter onShow={filterOn} onClose={onCloseFilter} {...props} />
 			</SortContainer>
 			{sortedHosts?.map(host => (
 				<HostListItem host={host} key={host.id} />

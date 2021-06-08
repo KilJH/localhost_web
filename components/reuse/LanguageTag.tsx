@@ -28,4 +28,4 @@ const LanguageTag = (props: Props) => {
 	return <Tag>{props.language}</Tag>;
 };
 
-export default LanguageTag;
+export default React.memo(LanguageTag);

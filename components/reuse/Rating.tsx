@@ -55,4 +55,4 @@ const Rating = (props: Props) => {
 	);
 };
 
-export default Rating;
+export default React.memo(Rating);

@@ -13,7 +13,7 @@ interface Props {
 	nearbyHosts?: Host[];
 }
 
-const Marker = (_props: { lat: number; lng: number }) => {
+const Marker = React.memo((_props: { lat: number; lng: number }) => {
 	return (
 		<div>
 			{/* hover
@@ -22,7 +22,7 @@ const Marker = (_props: { lat: number; lng: number }) => {
 			<Place fontSize='large' style={{ color: '#5197d5' }} />
 		</div>
 	);
-};
+});
 
 const Maps = (props: Props) => {
 	const { lat, lng, width, height, nearbyHosts } = props;
@@ -64,4 +64,4 @@ const Maps = (props: Props) => {
 	);
 };
 
-export default Maps;
+export default React.memo(Maps);

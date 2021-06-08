@@ -155,4 +155,4 @@ const HostListItem = (props: Props) => {
 	);
 };
 
-export default HostListItem;
+export default React.memo(HostListItem);
