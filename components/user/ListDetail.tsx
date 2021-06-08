@@ -291,7 +291,7 @@ const ListDetail = ({ item: user, isFollowed, plan }: ListDetailProps) => {
 									className='row'
 									onClick={e => handlePlanClickHandler(e, item.id)}
 								>
-									<td className='date'>{dateFormat(item.createTime)}</td>
+									<td className='date'>{dateFormat(item.createTime!)}</td>
 									<td className='title'>{item.title}</td>
 									<td className='hits'>{item.hit}</td>
 								</tr>
