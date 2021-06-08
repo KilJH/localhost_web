@@ -42,4 +42,4 @@ const UserPhoto = (props: Props) => {
 	);
 };
 
-export default UserPhoto;
+export default React.memo(UserPhoto);

@@ -1,5 +1,5 @@
 import { Modal, Fade, Select, MenuItem } from '@material-ui/core';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../client/hooks/useInput';
 import { Place, User } from '../../../interfaces';
 import styled from 'styled-components';
@@ -194,13 +194,16 @@ const Privacy = (props: Props) => {
 		input.click();
 	};
 
-	const onChangeFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setImg(e.target!.files![0]);
-	};
+	const onChangeFileInput = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setImg(e.target!.files![0]);
+		},
+		[],
+	);
 
-	const onClickResetPhoto = () => {
+	const onClickResetPhoto = useCallback(() => {
 		setPhotoUrl('');
-		setCurrentUser({ ...currentUser, photo: '' });
+		setCurrentUser(currentUser => ({ ...currentUser, photo: '' }));
 		axios
 			.post(`/api/user/update/photo`, {
 				userId: currentUser.id,
@@ -214,7 +217,7 @@ const Privacy = (props: Props) => {
 					  )
 					: toast.handleOpen('error', '프로필사진 변경에 실패했습니다.');
 			});
-	};
+	}, []);
 
 	// 이미지가 바뀌었을 때
 	useEffect(() => {
