@@ -1,5 +1,7 @@
 # localhost
 
+![localhost_log](https://github.com/KilJH/localhost_web/blob/main/public/img/logos/localhostLogoWhite.png?raw=true)
+
 현지인과 함께 여행할 수 있게 현지인을 매칭해주는 웹 플랫폼입니다.
 localhost는 **플랜**과 **호스트** 두가지 서비스를 제공하고 있습니다.
 
