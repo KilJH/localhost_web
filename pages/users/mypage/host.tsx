@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		},
 	});
 
-	const userId = res.data.user.id;
+	const userId = res.data.user?.id;
 
 	const resApp = await axios.post(`${SERVER}/api/host/application/list`, {
 		userId,

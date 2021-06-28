@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 			},
 		});
 
-		const userId = res.data.user.id;
+		const userId = res.data.user?.id;
 		const isFollowed = await (
 			await axios.post(`${SERVER}/api/user/follow_check`, {
 				userId: id,

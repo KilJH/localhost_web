@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		},
 	});
 
-	const userId = res.data.user.id;
+	const userId = res.data.user?.id;
 
 	const wishRes = await axios.post(`${SERVER}/api/plan/wishlist`, { userId });
 

@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 			cookie,
 		},
 	});
-	const userId = userRes.data.user.id;
+	const userId = userRes.data.user?.id;
 
 	const planRes = await axios.post(`${SERVER}/api/plan/load`, { id: planId });
 

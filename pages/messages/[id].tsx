@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 		},
 	});
 
-	const userId = auth.data.user.id;
+	const userId = auth.data.user?.id;
 
 	const room = await (
 		await axios.post(`${SERVER}/api/message/room/load`, {

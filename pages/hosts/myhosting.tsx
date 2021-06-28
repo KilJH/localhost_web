@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		},
 	});
 
-	const userId = res.data.user.id;
+	const userId = res.data.user?.id;
 
 	const resLoadHost = await axios.post(`${SERVER}/api/host/load`, {
 		id: userId,

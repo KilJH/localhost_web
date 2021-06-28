@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
 		},
 	});
 
-	const userId = res.data.user.id;
+	const userId = res.data.user?.id;
 
 	const resFollowing = await axios.post(`${SERVER}/api/user/followingList`, {
 		userId,
