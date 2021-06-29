@@ -3,13 +3,23 @@ import Head from 'next/head';
 import Header from './Header';
 import styled from 'styled-components';
 import Footer from './Footer';
-import { useMediaQuery } from '@material-ui/core';
+import {
+	createMuiTheme,
+	ThemeProvider,
+	useMediaQuery,
+} from '@material-ui/core';
 
 type Props = {
 	children?: ReactNode;
 	title?: string;
 	// loginProps?: LoginProps;
 };
+
+const theme = createMuiTheme({
+	palette: {
+		primary: { main: '#5197d5' },
+	},
+});
 
 const Main = styled.div<{ isMobile: boolean; isAdmin?: boolean }>`
 	width: ${props => (props.isMobile ? '100%' : '80%')};
@@ -29,20 +39,25 @@ Props) => {
 
 	// setUser(loginProps.user);
 	return (
-		<div>
-			<Head>
-				<title>{title}</title>
-				<meta charSet='utf-8' />
-				<meta name='viewport' content='initial-scale=1.0, width=device-width' />
-			</Head>
-			{/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
-			<Header isMobile={isMobile} />
-			<Main isMobile={isMobile}>{children}</Main>
-			<footer>
-				<hr />
-				<Footer />
-			</footer>
-		</div>
+		<ThemeProvider theme={theme}>
+			<div>
+				<Head>
+					<title>{title}</title>
+					<meta charSet='utf-8' />
+					<meta
+						name='viewport'
+						content='initial-scale=1.0, width=device-width'
+					/>
+				</Head>
+				{/* <Header isMobile={isMobile} isLogined={loginProps.isLogined} /> */}
+				<Header isMobile={isMobile} />
+				<Main isMobile={isMobile}>{children}</Main>
+				<footer>
+					<hr />
+					<Footer />
+				</footer>
+			</div>
+		</ThemeProvider>
 	);
 };
 

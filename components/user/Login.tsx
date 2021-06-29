@@ -1,4 +1,4 @@
-import { createMuiTheme, TextField, ThemeProvider } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { useInput } from '../../client/hooks/useInput';
@@ -16,12 +16,6 @@ const LoginContainer = styled.div`
 		}
 	}
 `;
-
-const theme = createMuiTheme({
-	palette: {
-		primary: { main: '#5197d5' },
-	},
-});
 
 const Login = () => {
 	const email = useInput('');
@@ -45,46 +39,44 @@ const Login = () => {
 	};
 
 	return (
-		<ThemeProvider theme={theme}>
-			<LoginContainer>
-				<h2>로그인</h2>
-				<form onSubmit={onSubmit}>
-					<div>
-						<TextField
-							{...email}
-							label='Email'
-							variant='outlined'
-							type='email'
-							fullWidth
-						/>
-					</div>
-					<div>
-						<TextField
-							{...pw}
-							label='Password'
-							variant='outlined'
-							type='password'
-							fullWidth
-						/>
-					</div>
+		<LoginContainer>
+			<h2>로그인</h2>
+			<form onSubmit={onSubmit}>
+				<div>
+					<TextField
+						{...email}
+						label='Email'
+						variant='outlined'
+						type='email'
+						fullWidth
+					/>
+				</div>
+				<div>
+					<TextField
+						{...pw}
+						label='Password'
+						variant='outlined'
+						type='password'
+						fullWidth
+					/>
+				</div>
 
-					<div>
-						<Button type='submit' width='100%'>
-							로그인
-						</Button>
-					</div>
-				</form>
+				<div>
+					<Button type='submit' width='100%'>
+						로그인
+					</Button>
+				</div>
+			</form>
 
-				<hr />
-				<Link href='/users/register'>
-					<a>
-						<Button width='100%' default>
-							회원가입
-						</Button>
-					</a>
-				</Link>
-			</LoginContainer>
-		</ThemeProvider>
+			<hr />
+			<Link href='/users/register'>
+				<a>
+					<Button width='100%' default>
+						회원가입
+					</Button>
+				</a>
+			</Link>
+		</LoginContainer>
 	);
 };
 
