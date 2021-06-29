@@ -8,8 +8,10 @@ import React, {
 	useState,
 } from 'react';
 import styled from 'styled-components';
+import { useModal } from '../../../client/hooks/useModal';
 import { useToast } from '../../../client/hooks/useToast';
 import { Application, PreviousApplication } from '../../../interfaces';
+import HostingStatus from '../../host/HostingStatus';
 import HostReviewWrite from '../../host/HostReviewWrite';
 import Button from '../../reuse/Button';
 import Rating from '../../reuse/Rating';
@@ -23,7 +25,6 @@ interface Props {
 
 const Container = styled.div`
 	& > section {
-		/* border-bottom: 1px solid #aaa; */
 		margin-bottom: 2rem;
 		& > header {
 			display: flex;
@@ -71,36 +72,6 @@ const StyledModal = styled(Modal)`
 	}
 `;
 
-const StatusSpan = styled.span<{ color?: string }>`
-	display: inline-block;
-	padding: 0.25rem 0.5rem;
-	color: ${props => props.color || 'black'};
-	border: 2px solid ${props => props.color || 'black'};
-	font-weight: 600;
-	font-size: 0.8em;
-`;
-
-const Status = status => {
-	switch (status) {
-		case 0:
-			return <StatusSpan>대기 중</StatusSpan>;
-		case 1:
-			return <StatusSpan color='#5197d5'>승낙</StatusSpan>;
-		case 2:
-			return <StatusSpan color='#e74c3c'>거절</StatusSpan>;
-		case 3:
-			return <StatusSpan color='#e74c3c'>취소</StatusSpan>;
-		case 4:
-			return <StatusSpan>완료</StatusSpan>;
-		case 5:
-			return <StatusSpan color='#e74c3c'>장소 미설정</StatusSpan>;
-		case 6:
-			return <StatusSpan color='#e74c3c'>시간초과</StatusSpan>;
-		default:
-			return <StatusSpan>대기 중</StatusSpan>;
-	}
-};
-
 const ApplicationItem = React.memo(
 	({
 		application,
@@ -117,14 +88,14 @@ const ApplicationItem = React.memo(
 						<a>{application.user.nickname}</a>
 					</Link>
 				</td>
-				<td>{Status(application.status || 0)}</td>
 				<td>
-					{application.status < 2 ? (
+					<HostingStatus status={application.status ?? 0} />
+				</td>
+				<td>
+					{application.status < 2 && (
 						<Button default onClick={onCancel}>
 							취소
 						</Button>
-					) : (
-						''
 					)}
 				</td>
 			</tr>
@@ -142,7 +113,9 @@ const CanceledApplicationItem = React.memo(
 						<a>{application.user.nickname}</a>
 					</Link>
 				</td>
-				<td>{Status(application.status || 0)}</td>
+				<td>
+					<HostingStatus status={application.status ?? 0} />
+				</td>
 			</tr>
 		);
 	},
@@ -151,14 +124,7 @@ const CanceledApplicationItem = React.memo(
 const HistoryItem = React.memo(
 	({ history }: { history: PreviousApplication }) => {
 		// 모달을 위한 State
-		const [open, setOpen] = useState(false);
-		const handleOpen = () => {
-			setOpen(true);
-		};
-		const handleClose = () => {
-			setOpen(false);
-		};
-
+		const modal = useModal(false);
 		const isMobile = useMediaQuery('(max-width: 600px)');
 
 		return (
@@ -178,14 +144,19 @@ const HistoryItem = React.memo(
 							fontSize={isMobile ? '1.2em' : '1.6em'}
 						/>
 					) : (
-						<Button onClick={handleOpen}>리뷰작성</Button>
+						<>
+							<Button onClick={modal.handleOpen}>리뷰작성</Button>
+							<StyledModal open={modal.open} onClose={modal.handleClose}>
+								<div className='modalItem'>
+									<HostReviewWrite
+										applicationId={history.id}
+										onClose={modal.handleClose}
+									/>
+								</div>
+							</StyledModal>
+						</>
 					)}
 				</td>
-				<StyledModal open={open} onClose={handleClose}>
-					<div className='modalItem'>
-						<HostReviewWrite applicationId={history.id} onClose={handleClose} />
-					</div>
-				</StyledModal>
 			</tr>
 		);
 	},
