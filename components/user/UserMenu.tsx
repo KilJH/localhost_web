@@ -5,6 +5,14 @@ import Link from 'next/link';
 import axios from 'axios';
 import { UserStateContext } from '../../context/user';
 import UserPhoto from './UserPhoto';
+import Button from '../reuse/Button';
+
+const menulist = [
+	{ url: '/users/mypage', name: '마이페이지' },
+	{ url: '/users/mypage/host', name: '신청한 호스트' },
+	{ url: '/users/mypage/plan', name: '나의 플랜' },
+	{ url: '/users/mypage/board', name: '내가 쓴 글' },
+];
 
 const UserMenuContainer = styled.div`
 	width: 16rem;
@@ -45,27 +53,15 @@ const UserMenu = () => {
 
 			<MenuList>
 				<ul>
-					<Link href='/users/mypage'>
-						<a>
-							<li>마이페이지</li>
-						</a>
-					</Link>
-
-					<Link href='/users/mypage/host'>
-						<a>
-							<li>신청한 호스트</li>
-						</a>
-					</Link>
-					<Link href='/users/mypage/plan'>
-						<a>
-							<li>나의 플랜</li>
-						</a>
-					</Link>
-					<Link href='/users/mypage/board'>
-						<a>
-							<li>내가 쓴 글</li>
-						</a>
-					</Link>
+					{/* 공통메뉴 */}
+					{menulist.map((menu, i) => (
+						<Link href={menu.url} key={i}>
+							<a>
+								<li>{menu.name}</li>
+							</a>
+						</Link>
+					))}
+					{/* 호스트 */}
 					{currentUser.isHost ? (
 						<Link href='/hosts/myhosting'>
 							<a>
@@ -79,6 +75,7 @@ const UserMenu = () => {
 							</a>
 						</Link>
 					)}
+					{/* 관리자 */}
 					{currentUser.isAdmin === 1 && (
 						<Link href='/admin/notice'>
 							<a>
@@ -86,13 +83,11 @@ const UserMenu = () => {
 							</a>
 						</Link>
 					)}
-					<hr></hr>
-					<Link href=''>
-						<li>
-							<button onClick={onLogout}>로그아웃</button>
-						</li>
-					</Link>
 				</ul>
+				<hr />
+				<Button onClick={onLogout} style={{ width: '100%' }} default>
+					로그아웃
+				</Button>
 			</MenuList>
 		</UserMenuContainer>
 	);

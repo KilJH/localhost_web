@@ -1,17 +1,17 @@
 import {
-	Container,
+	createMuiTheme,
 	Fade,
 	FormControl,
 	InputLabel,
 	MenuItem,
 	Modal,
 	Select,
+	ThemeProvider,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useInput } from '../../client/hooks/useInput';
 import axios, { AxiosResponse } from 'axios';
 import Router from 'next/router';
 import CpxBarometer from '../reuse/CpxBarometer';
@@ -19,97 +19,49 @@ import { Place } from '../../interfaces';
 import SearchPlace from '../search/SearchPlace';
 import Button from '../reuse/Button';
 import { countries } from '../../client/utils/basicData';
-const RegisterContainer = styled(Container)`
-	& > div {
+import { useModal } from '../../client/hooks/useModal';
+
+const theme = createMuiTheme({
+	palette: {
+		primary: { main: '#5197d5' },
+	},
+});
+
+const RegisterContainer = styled.div`
+	width: 90%;
+	max-width: 900px;
+	margin: auto;
+	& > * {
 		margin: 1.25em 0;
 	}
-	& > Button {
-		margin: 1em 0;
-	}
-	& .Nationality {
+	& .nationality {
 		display: flex;
-		&.MuiFormControl-root {
-			margin-top: 0.7rem;
-			margin-bottom: 0;
-		}
-		& .MuiOutlinedInput-root {
-			&.hover fieldset {
-				border-color: rgb(81, 151, 213);
-			}
-			&.Mui-focused fieldset {
-				border-color: rgb(81, 151, 213);
-			}
-		}
+	}
+	& .MuiInputBase-root,
+	& .MuiFormLabel-root {
+		font-size: inherit;
 	}
 `;
 
 const GenderButton = styled.button`
-	height: 100%;
-	padding: 1rem 0;
-	background-color: transparent;
-	border-color: transparent;
 	border-radius: 0.25rem;
-	width: 100%;
-	outline: 0;
-	font-weight: 500;
-	&:hover {
-		box-shadow: none;
-		background-color: rgba(81, 151, 213, 0.3);
-	}
-	&:active {
-		box-shadow: none;
-		border-color: transparent;
-		background-color: rgba(81, 151, 213, 0.6);
-	}
+	width: 5em;
 	&.selected {
-		border-color: transparent;
 		background-color: #5197d5;
 		color: white;
-		box-shadow: none;
+		border-color: #5197d5;
+		z-index: 1;
 	}
-	&.MuiButtonGroup-groupedOutlinedPrimary:hover {
-		border-color: transparent;
-	}
-	& > button {
-		height: 100%;
-		margin: 0;
-		padding: 1rem 0;
-	}
-`;
-
-const CssTextField = styled(TextField)`
-	width: 100%;
-
-	&.MuiFormControl-root {
-		margin-bottom: 0;
-	}
-	& .MuiOutlinedInput-root {
-		&.hover fieldset {
-			border-color: rgb(81, 151, 213);
-		}
-		&.Mui-focused fieldset {
-			border-color: rgb(81, 151, 213);
-		}
-	}
-`;
-
-const CssButtonGroup = styled(ButtonGroup)`
-	min-width: 8em;
-	display: flex;
-	margin-left: 0.5em;
-	margin-top: 1rem;
-	margin-top: 0.7rem;
+	transition: all 0.2s ease;
 `;
 
 const FlexDiv = styled.div`
 	display: flex;
-	width: 100%;
 	align-items: center;
 `;
 
-const Caption = styled.p`
+const Caption = styled.div`
 	font-size: 0.9em;
-	font-weight: 500;
 	margin: 0.5rem 0 0 0;
 `;
 
@@ -128,45 +80,38 @@ const StyledModal = styled(Modal)`
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3), -2px -2px 8px rgba(0, 0, 0, 0.3);
 	}
 `;
+
 export default function Register() {
-	const speCharReg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/i;
-	const numReg = /[0-9]/;
-	const numExceptReg = /[^0-9]/;
+	const [inputs, setInputs] = useState({
+		email: '',
+		password: '',
+		name: '',
+		nickname: '',
+		phone: '',
+		nationality: '',
+	});
+	const { email, password, name, nickname, phone, nationality } = inputs;
 
-	const [isMan, setIsMan] = useState(true);
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { value, name } = e.target;
+		setInputs({
+			...inputs,
+			[name]: value,
+		});
+	};
 
-	const passwordInput = useInput('', (value: string) => value.length <= 16);
-	const nicknameInput = useInput(
-		'',
-		(value: string) => !speCharReg.test(value),
-	);
-	const emailInput = useInput('');
-	const nameInput = useInput(
-		'',
-		(value: string) => !(speCharReg.test(value) || numReg.test(value)),
-	);
-	const phoneNumInput = useInput(
-		'',
-		(value: string) => !numExceptReg.test(value) && value.length <= 12,
-	);
 	const [place, setPlace] = useState<Place>();
 
-	const [nationality, setNationality] = useState('');
-	// 모달을 위한 State
-	const [open, setOpen] = useState(false);
-	const handleOpen = () => {
-		setOpen(true);
-	};
-	const Dialogue = () => {
-		setOpen(false);
-	};
-	useEffect(() => {
-		setOpen(false);
-	}, [place]);
-
+	const [isMan, setIsMan] = useState(true);
 	const onClickHandler = (value: boolean) => {
 		setIsMan(value);
 	};
+
+	const modal = useModal(false);
+	useEffect(() => {
+		modal.handleClose();
+	}, [place]);
+
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
@@ -174,17 +119,11 @@ export default function Register() {
 
 		axios
 			.post(`/api/user/register`, {
-				email: emailInput.value,
-				pw: passwordInput.value,
-				name: nameInput.value,
+				...inputs,
 				sex: isMan ? 'male' : 'female',
-				nickname: nicknameInput.value,
-				phone: phoneNumInput.value,
-				nationality: nationality,
 				address: address,
 			})
 			.then((res: AxiosResponse<any>) => {
-				console.log(res.data);
 				alert(res.data.message);
 				if (res.data.success) {
 					Router.push('/');
@@ -192,125 +131,141 @@ export default function Register() {
 			});
 	};
 	return (
-		<RegisterContainer maxWidth='sm'>
-			<div>
-				<h2 style={{ margin: '1rem 0 0 0' }}>
-					회원가입을 위해 개인정보를 입력해주세요.
-				</h2>
-				<Caption>
-					LocalHost는 고객님의 소중한 정보를 안전하게 관리합니다.
-				</Caption>
-			</div>
-			<div>
-				<CssTextField
-					{...emailInput}
-					label='이메일을 입력하세요.'
-					variant='outlined'
-					type='email'
-				/>
-			</div>
-			<div>
-				<CssTextField
-					{...passwordInput}
-					label='비밀번호를 입력하세요.'
-					variant='outlined'
-					type='password'
-					margin-bottom='15px'
-				/>
-				<CpxBarometer value={passwordInput.value} />
-				<Caption>
-					비밀번호는 8~16자리의 영문 대/소문자, 숫자, 특수문자 중 2개이상을
-					조합해서 비밀번호를 설정해 주세요.
-				</Caption>
-			</div>
-			<FlexDiv>
-				<div style={{ flex: 1 }}>
-					<CssTextField
-						label='이름을 입력하세요.'
+		<ThemeProvider theme={theme}>
+			<RegisterContainer>
+				<div>
+					<h2 style={{ margin: '1rem 0 0 0' }}>
+						회원가입을 위해 개인정보를 입력해주세요.
+					</h2>
+					<Caption>
+						LocalHost는 고객님의 소중한 정보를 안전하게 관리합니다.
+					</Caption>
+				</div>
+				<div>
+					<TextField
+						name='email'
+						onChange={onInputChange}
+						value={email}
+						label='이메일을 입력하세요.'
 						variant='outlined'
-						type='text'
-						{...nameInput}
+						type='email'
+						fullWidth
 					/>
 				</div>
-				<CssButtonGroup
-					color='primary'
-					aria-label='outlined primary button group'
-					disableRipple
-				>
-					<GenderButton
-						type='button'
-						color='primary'
-						className={isMan ? 'selected' : ''}
-						onClick={() => onClickHandler(true)}
+				<div>
+					<TextField
+						name='password'
+						onChange={onInputChange}
+						value={password}
+						label='비밀번호를 입력하세요.'
+						variant='outlined'
+						type='password'
+						margin-bottom='15px'
+						fullWidth
+					/>
+					<CpxBarometer value={password} />
+					<Caption>
+						비밀번호는 8~16자리의 영문 대/소문자, 숫자, 특수문자 중 2개이상을
+						조합해서 비밀번호를 설정해 주세요.
+					</Caption>
+				</div>
+				<FlexDiv>
+					<div style={{ flex: 1 }}>
+						<TextField
+							name='name'
+							onChange={onInputChange}
+							value={name}
+							label='이름을 입력하세요.'
+							variant='outlined'
+							type='text'
+							fullWidth
+						/>
+					</div>
+					<ButtonGroup
+						disableRipple
+						style={{ marginLeft: '0.5em', height: '3rem' }}
 					>
-						남
-					</GenderButton>
-					<GenderButton
-						type='button'
-						color='primary'
-						className={isMan ? '' : 'selected'}
-						onClick={() => onClickHandler(false)}
-					>
-						여
-					</GenderButton>
-				</CssButtonGroup>
-			</FlexDiv>
-			<div>
-				<CssTextField
-					{...nicknameInput}
-					label='사용할 닉네임을 입력하세요.'
-					variant='outlined'
-					type='text'
-				/>
-			</div>
-			<div>
-				<CssTextField
-					{...phoneNumInput}
-					label='휴대폰 번호를 입력하세요.'
-					variant='outlined'
-				/>
-			</div>
-			<div>
-				<FormControl variant='outlined' className='Nationality'>
-					<InputLabel id='select'>국적을 선택해주세요.</InputLabel>
-					<Select labelId='select' label='국적을 선택해주세요.'>
-						{countries.map(value => (
-							<MenuItem
-								value={value.nation}
-								onClick={() => setNationality(value.nation)}
-							>
-								{value.nation}
-							</MenuItem>
-						))}
-						<MenuItem value='기타' onClick={() => setNationality('기타')}>
-							기타
-						</MenuItem>
-					</Select>
-				</FormControl>
-			</div>
-			<div>
-				<CssTextField
-					label='주소를 입력하세요.'
-					variant='outlined'
-					type='text'
-					value={
-						place?.name ? `${place?.formatted_address}(${place?.name})` : ''
-					}
-					onClick={handleOpen}
-					onChange={handleOpen}
-				/>
+						<GenderButton
+							type='button'
+							className={isMan ? 'selected' : ''}
+							onClick={() => onClickHandler(true)}
+						>
+							남
+						</GenderButton>
+						<GenderButton
+							type='button'
+							className={isMan ? '' : 'selected'}
+							onClick={() => onClickHandler(false)}
+						>
+							여
+						</GenderButton>
+					</ButtonGroup>
+				</FlexDiv>
+				<div>
+					<TextField
+						name='nickname'
+						onChange={onInputChange}
+						value={nickname}
+						label='사용할 닉네임을 입력하세요.'
+						variant='outlined'
+						type='text'
+						fullWidth
+					/>
+				</div>
+				<div>
+					<TextField
+						name='phone'
+						onChange={onInputChange}
+						value={phone}
+						label='휴대폰 번호를 입력하세요.'
+						variant='outlined'
+						type='phone'
+						fullWidth
+					/>
+				</div>
+				<div>
+					<FormControl variant='outlined' className='nationality'>
+						<InputLabel id='select'>국적을 선택해주세요.</InputLabel>
+						<Select
+							name='nationality'
+							value={nationality}
+							onChange={(e: any) => onInputChange(e)}
+							label='국적을 선택해주세요.'
+						>
+							{countries.map((value, i) => (
+								<MenuItem value={value.nation} key={i}>
+									{value.nation}
+								</MenuItem>
+							))}
+							<MenuItem value='기타'>기타</MenuItem>
+						</Select>
+					</FormControl>
+				</div>
+				<div>
+					<TextField
+						label='주소를 입력하세요.'
+						variant='outlined'
+						type='text'
+						fullWidth
+						value={
+							place?.name ? `${place?.formatted_address}(${place?.name})` : ''
+						}
+						onClick={modal.handleOpen}
+						onChange={modal.handleOpen}
+					/>
 
-				<StyledModal open={open} onClose={Dialogue}>
-					<Fade in={open}>
-						<div className='searchForm'>
-							<SearchPlace setPlace={setPlace} />
-						</div>
-					</Fade>
-				</StyledModal>
-			</div>
-			<Button width='100%' onClick={onSubmit} padding='1rem'>
-				회원가입
-			</Button>
-		</RegisterContainer>
+					<StyledModal open={modal.open} onClose={modal.handleClose}>
+						<Fade in={modal.open}>
+							<div className='searchForm'>
+								<SearchPlace setPlace={setPlace} />
+							</div>
+						</Fade>
+					</StyledModal>
+				</div>
+				<Button width='100%' onClick={onSubmit} padding='1rem'>
+					회원가입
+				</Button>
+			</RegisterContainer>
+		</ThemeProvider>
 	);
 }
