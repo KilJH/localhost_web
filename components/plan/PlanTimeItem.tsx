@@ -1,10 +1,10 @@
 import { LocationOn } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { PlanTime } from '../../interfaces';
 import PhotoSlider from '../reuse/PhotoSlider';
 import CloseIcon from '@material-ui/icons/Close';
-import { Button, Fade, Modal } from '@material-ui/core';
+import { Button, Modal } from '@material-ui/core';
 import { useModal } from '../../client/hooks/useModal';
 import PlanMap from './PlanMap';
 
@@ -12,6 +12,24 @@ interface Props {
 	plan: PlanTime;
 	onDelete?: (time: Date) => void;
 }
+
+const DeleteContainer = styled.div`
+	padding: 0;
+	max-width: 2em;
+	margin: 0.25rem !important;
+	& button {
+		min-width: 1em;
+		min-height: 1em;
+		max-width: 2em;
+		max-height: 2em;
+		width: 4em;
+		height: 4em;
+		border-radius: 50%;
+	}
+	/* 자리를 차지해야하기 때문에 display가 아니라 opacity 속성을 조작 */
+	opacity: 0;
+	transition: opacity 0.1s ease;
+`;
 
 const ItemContainer = styled.div`
 	border-left: 1px solid #aaa;
@@ -90,21 +108,11 @@ const ItemContainer = styled.div`
 			flex-direction: column;
 		}
 	}
-`;
 
-const DeleteContainer = styled.div`
-	padding: 0;
-	max-width: 2em;
-	margin: 0.25rem !important;
-	& button {
-		padding: 0;
-		max-width: 1em;
-		max-height: 1em;
-		min-width: 2em;
-		min-height: 2em;
-		width: 4em;
-		height: 4em;
-		border-radius: 50%;
+	&:hover {
+		${DeleteContainer} {
+			opacity: 1;
+		}
 	}
 `;
 
@@ -127,28 +135,17 @@ const StyledModal = styled(Modal)`
 
 const PlanTimeItem = (props: Props) => {
 	const { plan, onDelete } = props;
-	const [isShow, setIsShow] = useState(false);
-	const handleOpen = () => {
-		setIsShow(true);
-	};
-	const handleClose = () => {
-		setIsShow(false);
-	};
 
 	const map = useModal(false);
 
 	return (
-		<ItemContainer onMouseEnter={handleOpen} onMouseLeave={handleClose}>
-			{onDelete ? (
-				<Fade in={isShow}>
-					<DeleteContainer>
-						<Button onClick={() => onDelete(plan.time as Date)}>
-							<CloseIcon fontSize='small' />
-						</Button>
-					</DeleteContainer>
-				</Fade>
-			) : (
-				''
+		<ItemContainer>
+			{onDelete && (
+				<DeleteContainer>
+					<Button onClick={() => onDelete(plan.time as Date)}>
+						<CloseIcon fontSize='small' />
+					</Button>
+				</DeleteContainer>
 			)}
 			<div>
 				<div className='timeItem'>{plan.time.toString()}</div>
@@ -161,7 +158,7 @@ const PlanTimeItem = (props: Props) => {
 					<div className='placeWrapper'>
 						<div className='placeItem'>
 							{plan.place.name}
-							{plan.place.geometry?.location.lat ? (
+							{plan.place.geometry?.location.lat && (
 								<>
 									<span className='placeDetail' onClick={map.handleOpen}>
 										<LocationOn />
@@ -173,27 +170,21 @@ const PlanTimeItem = (props: Props) => {
 										</div>
 									</StyledModal>
 								</>
-							) : (
-								''
 							)}
 						</div>
 						<div className='descriptionItem'>{plan.description}</div>
 					</div>
-					{plan.price !== 0 ? (
+					{plan.price !== 0 && (
 						<div className='priceItem'>{plan.price.toLocaleString()}</div>
-					) : (
-						''
 					)}
 				</div>
 				<div>
-					{plan.photo ? (
+					{plan.photo && (
 						<PhotoSlider
 							imgSrcArray={plan.photo}
 							height='auto'
 							borderRadius='1rem'
 						/>
-					) : (
-						''
 					)}
 				</div>
 			</div>
