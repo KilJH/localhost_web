@@ -46,6 +46,20 @@ const Container = styled.div`
 	}
 `;
 
+const ImageWrapper = ({ children, show, index }) => {
+	return (
+		<>
+			<img
+				src={`https://source.unsplash.com/collection/43588404/3000x2000?${index}`}
+				className={`greeting__image ${show && 'greeting__image--isShow'}`}
+			/>
+			<div className={`greeting__text ${show && 'greeting__text--isShow'}`}>
+				{children}
+			</div>
+		</>
+	);
+};
+
 const Greeting = () => {
 	const [isShow, setIsShow] = useState(true);
 
@@ -57,37 +71,25 @@ const Greeting = () => {
 			clearInterval(time);
 		};
 	}, [isShow]);
+
 	return (
 		<Container className='greeting'>
-			<img
-				src='https://source.unsplash.com/collection/43588404/2400x1600?1'
-				className={`greeting__image ${isShow ? 'greeting__image--isShow' : ''}`}
-			/>
-			<img
-				src='https://source.unsplash.com/collection/43588404/3000x2000?2'
-				className={`greeting__image ${isShow ? '' : 'greeting__image--isShow'}`}
-			/>
-			<div
-				className={`greeting__text ${isShow ? 'greeting__text--isShow' : ''}`}
-			>
+			<ImageWrapper show={isShow} index={1}>
 				<h1>한 번의 클릭으로 손쉽게 여행을 계획해보세요</h1>
 				<Link href='/plans'>
 					<a>
 						<Button default>베스트 플랜 보기</Button>
 					</a>
 				</Link>
-			</div>
-
-			<div
-				className={`greeting__text ${isShow ? '' : 'greeting__text--isShow'}`}
-			>
+			</ImageWrapper>
+			<ImageWrapper show={!isShow} index={2}>
 				<h1>현지인만 아는 로컬맛집을 알고싶다면?</h1>
 				<Link href='/hosts'>
 					<a>
 						<Button default>호스트 보러가기</Button>
 					</a>
 				</Link>
-			</div>
+			</ImageWrapper>
 		</Container>
 	);
 };
