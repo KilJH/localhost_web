@@ -18,6 +18,8 @@ import SearchPlace from '../search/SearchPlace';
 import Button from '../reuse/Button';
 import { countries } from '../../client/utils/basicData';
 import { useModal } from '../../client/hooks/useModal';
+import { useToast } from '../../client/hooks/useToast';
+import Toast from '../reuse/Toast';
 
 const RegisterContainer = styled.div`
 	width: 90%;
@@ -104,10 +106,17 @@ export default function Register() {
 		modal.handleClose();
 	}, [place]);
 
+	const toast = useToast(false);
+
 	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
 		const address = `${place?.formatted_address}(${place?.name})`;
+
+		// 인풋 값이 있는지 체크
+		if (Object.values(inputs).includes('')) {
+			return toast.handleOpen('error', '정보를 입력해주세요');
+		}
 
 		axios
 			.post(`/api/user/register`, {
@@ -256,6 +265,7 @@ export default function Register() {
 			<Button width='100%' onClick={onSubmit} padding='1rem'>
 				회원가입
 			</Button>
+			<Toast {...toast}>{toast.message}</Toast>
 		</RegisterContainer>
 	);
 }
