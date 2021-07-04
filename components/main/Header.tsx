@@ -253,8 +253,8 @@ const Header = (props: Props) => {
 			<HeaderContainer isMobile={isMobile} fixed={state.isUp}>
 				<HeaderDiv isMobile={isMobile} fixed={state.isUp}>
 					<FlexItemWrapper align='left'>
-						<IconButton>
-							<MenuIcon onClick={drawer.onOpen} />
+						<IconButton onClick={drawer.onOpen}>
+							<MenuIcon />
 						</IconButton>
 						<Drawer
 							anchor={drawer.anchor}
@@ -264,8 +264,8 @@ const Header = (props: Props) => {
 							<HamburgerMenu>
 								<div>
 									<EmptyFlexDiv />
-									<IconButton>
-										<CloseIcon onClick={drawer.onClose} />
+									<IconButton onClick={drawer.onClose}>
+										<CloseIcon />
 									</IconButton>
 								</div>
 								<Menu />
