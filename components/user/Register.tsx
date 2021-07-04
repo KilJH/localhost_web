@@ -75,6 +75,12 @@ const StyledModal = styled(Modal)`
 	}
 `;
 
+const VALIDATION = {
+	name: /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"0-9]/i,
+	phone: /[^0-9]/,
+	nickname: /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/i,
+};
+
 export default function Register() {
 	const [inputs, setInputs] = useState({
 		email: '',
@@ -88,6 +94,9 @@ export default function Register() {
 
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value, name } = e.target;
+
+		if (VALIDATION[name]?.test(value)) return;
+
 		setInputs({
 			...inputs,
 			[name]: value,
