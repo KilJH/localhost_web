@@ -1,7 +1,7 @@
 import { Modal, Fade, Select, MenuItem } from '@material-ui/core';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useInput } from '../../../client/hooks/useInput';
-import { Place, User } from '../../../interfaces';
+import { Place } from '../../../interfaces';
 import styled from 'styled-components';
 import { UserSetterContext, UserStateContext } from '../../../context/user';
 import axios from 'axios';
@@ -14,12 +14,6 @@ import { useModal } from '../../../client/hooks/useModal';
 import { useToast } from '../../../client/hooks/useToast';
 import Toast from '../../reuse/Toast';
 import { countries } from '../../../client/utils/basicData';
-
-interface Props {
-	id: string;
-	followingUsers?: User[];
-	followers?: User[];
-}
 
 const PrivacyContainer = styled.div`
 	margin: 0 auto;
@@ -39,7 +33,7 @@ const PrivacyContainer = styled.div`
 		& input {
 			width: 16em;
 		}
-		& .Nationality {
+		& .nationality {
 			width: 100%;
 			height: 2.5rem;
 			font-size: 0.8em;
@@ -104,18 +98,40 @@ const btnProps = {
 	padding: '0.75rem 1rem',
 };
 
-const Privacy = (props: Props) => {
+const VALIDATION = {
+	phone: /[^0-9]/,
+	nickname: /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/i,
+};
+
+const Privacy = () => {
 	const currentUser = useContext(UserStateContext);
 	const setCurrentUser = useContext(UserSetterContext);
 
 	// 입력받는 데이터
+	const [inputs, setInputs] = useState({
+		nickname: currentUser.nickname,
+		phone: currentUser.phone,
+		nationality: currentUser.nationality,
+	});
+	const { nickname, phone, nationality } = inputs;
+
+	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { value, name } = e.target;
+
+		if (VALIDATION[name]?.test(value)) return;
+
+		setInputs({
+			...inputs,
+			[name]: value,
+		});
+	};
+
 	const pwInput = useInput('');
-	const nnInput = useInput(currentUser.nickname);
-	const phInput = useInput(currentUser.phone);
 	const [place, setPlace] = useState<Place>();
 
 	const [img, setImg] = useState<File>();
 
+	// 같은 URL에 다른 요청을 보내기 위해 time을 쿼리로 사용
 	const time = new Date().getTime();
 	const [photoUrl, setPhotoUrl] = useState(
 		currentUser.photo ? `${currentUser.photo}?time=${time}` : '',
@@ -124,16 +140,16 @@ const Privacy = (props: Props) => {
 	// 패스워드 수정 on/off
 	const [enabledPw, setEnabledPw] = useState(false);
 
-	// 국적
-	const [nationality, setNationality] = useState(currentUser.nationality);
-
 	const toast = useToast(false);
 
 	// 취소버튼
 	const onReset = () => {
 		pwInput.setValue('');
-		nnInput.setValue(currentUser.nickname);
-		phInput.setValue(currentUser.phone);
+		setInputs({
+			nickname: currentUser.nickname,
+			phone: currentUser.phone,
+			nationality: currentUser.nationality,
+		});
 		setPlace({
 			name: '',
 			formatted_address: currentUser.address,
@@ -150,10 +166,8 @@ const Privacy = (props: Props) => {
 				: `${place?.formatted_address}(${place?.name})`;
 		const user = {
 			email: currentUser.email,
-			nickname: nnInput.value,
-			phone: phInput.value,
 			address: address || currentUser.address,
-			nationality: nationality,
+			...inputs,
 		};
 		// 유저정보 변경
 		const res = await axios.post(`/api/user/update`, { ...user });
@@ -257,14 +271,14 @@ const Privacy = (props: Props) => {
 	}, [img]);
 
 	// 모달을 위한 State
-	const placeModal = useModal(false);
+	const modal = useModal(false);
 
 	useEffect(() => {
-		placeModal.handleClose();
+		modal.handleClose();
 	}, [place]);
 
 	return (
-		<section id={props.id}>
+		<section>
 			<div>
 				<section>
 					<header>
@@ -314,7 +328,13 @@ const Privacy = (props: Props) => {
 										disabled={!enabledPw}
 										{...pwInput}
 									/>
-									<span style={{ whiteSpace: 'nowrap' }}>
+									<div
+										style={{
+											whiteSpace: 'nowrap',
+											display: 'flex',
+											marginLeft: '0.5em',
+										}}
+									>
 										<Button
 											{...btnProps}
 											type='button'
@@ -329,11 +349,12 @@ const Privacy = (props: Props) => {
 												default
 												type='button'
 												onClick={onResetPw}
+												style={{ marginLeft: '0.25em' }}
 											>
 												취소
 											</Button>
 										)}
-									</span>
+									</div>
 								</div>
 								<CpxBarometer value={pwInput.value} />
 							</div>
@@ -345,13 +366,23 @@ const Privacy = (props: Props) => {
 						<div>
 							<div>닉네임:</div>
 							<div>
-								<Input {...inputProps} {...nnInput} />
+								<Input
+									{...inputProps}
+									name='nickname'
+									value={nickname}
+									onChange={onInputChange}
+								/>
 							</div>
 						</div>
 						<div>
 							<div>휴대폰: </div>
 							<div>
-								<Input {...inputProps} {...phInput} />
+								<Input
+									{...inputProps}
+									name='phone'
+									value={phone}
+									onChange={onInputChange}
+								/>
 							</div>
 						</div>
 						<div>
@@ -364,12 +395,12 @@ const Privacy = (props: Props) => {
 											? `${place?.formatted_address}(${place?.name})`
 											: currentUser.address
 									}
-									onClick={placeModal.handleOpen}
-									onChange={placeModal.handleOpen}
+									onClick={modal.handleOpen}
+									onChange={modal.handleOpen}
 								/>
 
-								<StyledModal {...placeModal}>
-									<Fade in={placeModal.open}>
+								<StyledModal open={modal.open} onClose={modal.handleClose}>
+									<Fade in={modal.open}>
 										<div className='searchForm'>
 											<SearchPlace setPlace={setPlace} />
 										</div>
@@ -381,22 +412,18 @@ const Privacy = (props: Props) => {
 							<div>국적: </div>
 							<div>
 								<Select
+									name='nationality'
 									variant='outlined'
-									className='Nationality'
-									defaultValue={nationality}
+									className='nationality'
+									value={nationality}
+									onChange={(e: any) => onInputChange(e)}
 								>
-									{countries.map(value => (
-										<MenuItem
-											value={value.nation}
-											onClick={() => setNationality(value.nation)}
-											key={value.nation}
-										>
+									{countries.map((value, i) => (
+										<MenuItem value={value.nation} key={i}>
 											{value.nation}
 										</MenuItem>
 									))}
-									<MenuItem value='기타' onClick={() => setNationality('기타')}>
-										기타
-									</MenuItem>
+									<MenuItem value='기타'>기타</MenuItem>
 								</Select>
 							</div>
 						</div>

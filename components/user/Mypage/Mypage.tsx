@@ -13,7 +13,7 @@ interface Props {
 const Mypage = (props: Props) => {
 	return (
 		<MypageLayout tabNum={1}>
-			<Privacy id='pravacy' />
+			<Privacy />
 			<hr />
 			<MyFollow
 				id='follow'
