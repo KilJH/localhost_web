@@ -85,7 +85,11 @@ const UserMenu = () => {
 					)}
 				</ul>
 				<hr />
-				<Button onClick={onLogout} style={{ width: '100%' }} default>
+				<Button
+					onClick={onLogout}
+					style={{ width: '100%', height: '3em', fontSize: '0.75rem' }}
+					default
+				>
 					로그아웃
 				</Button>
 			</MenuList>

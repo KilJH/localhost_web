@@ -15,6 +15,9 @@ const LoginContainer = styled.div`
 			margin: 1rem 0;
 		}
 	}
+	& Button {
+		font-size: 0.9rem;
+	}
 `;
 
 const Login = () => {
@@ -62,7 +65,7 @@ const Login = () => {
 				</div>
 
 				<div>
-					<Button type='submit' width='100%' style={{ height: '1rem' }}>
+					<Button type='submit' width='100%' style={{ fontWeight: 'bold' }}>
 						로그인
 					</Button>
 				</div>
