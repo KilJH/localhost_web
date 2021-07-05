@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { Host } from '../../interfaces';
-import PersonIcon from '@material-ui/icons/Person';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import UserPhoto from '../user/UserPhoto';
-import { Fade } from '@material-ui/core';
 import Rating from '../reuse/Rating';
 import LanguageTag from '../reuse/LanguageTag';
 import TravelStyleTag from '../reuse/TravelStyleTag';
+import { InfoWindow, Marker } from '@react-google-maps/api';
 
 interface Props {
 	host?: Host;
 	isShow?: boolean;
-	lat?: number;
-	lng?: number;
+	position: { lat: number; lng: number };
 }
 
 const HostIconContainer = styled.div`
@@ -26,20 +24,28 @@ const HostIconContainer = styled.div`
 	}
 `;
 
+const fadeIn = keyframes`
+	from {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
+`;
+
 const HostInfo = styled.section`
-	width: 12rem;
+	width: 100%;
 	height: 18rem;
-	background: rgba(255, 255, 255, 0.8);
-	border-radius: 0.5rem;
-	padding: 1rem;
-	position: absolute;
-	z-index: 15;
-	font-size: 1.2em;
+	padding: 1rem 0.25rem 0 0.25rem;
+	font-size: 1em;
+	font-weight: normal;
+	margin: auto;
+	box-sizing: border-box;
 
 	display: flex;
 	flex-direction: column;
 
-	animation: fadeIn 0.3s ease;
+	animation: ${fadeIn} 0.3s ease;
 
 	& .distance,
 	& .nickname,
@@ -64,19 +70,10 @@ const HostInfo = styled.section`
 		justify-content: space-between;
 		align-items: center;
 	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
 `;
 
 const HostIcon = (props: Props) => {
-	const { host, isShow = true } = props;
+	const { host, isShow = true, position } = props;
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleOpen = () => {
@@ -87,13 +84,30 @@ const HostIcon = (props: Props) => {
 	};
 
 	return (
-		<Fade in={isShow} timeout={500}>
-			<HostIconContainer>
-				<div onMouseEnter={handleOpen} onMouseLeave={handleClose}>
-					<PersonIcon fontSize='large' style={{ color: '#333' }} />
-				</div>
-				{isOpen ? (
-					<HostInfo onMouseEnter={handleOpen} onMouseLeave={handleClose}>
+		<HostIconContainer>
+			{isShow && (
+				<Marker
+					position={position}
+					icon={{
+						path: google.maps.SymbolPath.CIRCLE,
+						scale: 16,
+						fillColor: '#333',
+						fillOpacity: 0.8,
+						strokeOpacity: 0,
+					}}
+					onClick={handleOpen} // 모바일에서 처리를 위함
+					onMouseOver={handleOpen}
+					onMouseOut={handleClose}
+				/>
+			)}
+			{isOpen && (
+				<InfoWindow
+					position={position}
+					options={{
+						minWidth: 256,
+					}}
+				>
+					<HostInfo>
 						<UserPhoto src={host?.photo} />
 						<h3 className='nickname'>{host!.nickname}</h3>
 						<div className='distance'>
@@ -117,11 +131,9 @@ const HostIcon = (props: Props) => {
 							</div>
 						</div>
 					</HostInfo>
-				) : (
-					''
-				)}
-			</HostIconContainer>
-		</Fade>
+				</InfoWindow>
+			)}
+		</HostIconContainer>
 	);
 };
 

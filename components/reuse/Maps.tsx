@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import GoogleMap from 'google-map-react';
+import React, { LegacyRef, useMemo, useRef, useState } from 'react';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { MAP_KEY } from '../../client/utils/keys';
 import HostIcon from '../host/HostIcon';
 import { Host } from '../../interfaces';
-import { Place } from '@material-ui/icons';
 
 interface Props {
 	width?: string;
@@ -13,53 +12,55 @@ interface Props {
 	nearbyHosts?: Host[];
 }
 
-const Marker = React.memo((_props: { lat: number; lng: number }) => {
-	return (
-		<div>
-			{/* hover
-				theme에 따른 색상 변화
-			*/}
-			<Place fontSize='large' style={{ color: '#5197d5' }} />
-		</div>
-	);
-});
-
 const Maps = (props: Props) => {
 	const { lat, lng, width, height, nearbyHosts } = props;
-	const defaults = {
-		center: {
-			lat: lat || 37.4870684,
-			lng: lng || 126.8257101,
-		},
-		zoom: 15,
-	};
+
+	const mapRef: LegacyRef<GoogleMap> = useRef(null);
+
+	const { isLoaded } = useJsApiLoader({
+		id: 'google-map-script',
+		googleMapsApiKey: MAP_KEY,
+	});
+
+	const defaults = useMemo(
+		() => ({
+			mapContainerStyle: { width: '100%', height: '100%' },
+			center: {
+				lat: lat || 37.4870684,
+				lng: lng || 126.8257101,
+			},
+			zoom: 15,
+		}),
+		[lat, lng],
+	);
+
 	const [markerShow, setMarkerShow] = useState(true);
-	const onZoom = zoom => {
+
+	const onZoom = () => {
+		const zoom = mapRef.current?.state.map?.getZoom() ?? 15;
 		zoom > 12 ? setMarkerShow(true) : setMarkerShow(false);
 	};
+	// 줌 됐을때
+	// 마커 표시
 
 	return (
 		<div style={{ width: width || '100%', height: height || '100%' }}>
-			<GoogleMap
-				bootstrapURLKeys={{ key: MAP_KEY }}
-				{...defaults}
-				onZoomAnimationStart={onZoom}
-				onZoomAnimationEnd={onZoom}
-			>
-				{/* 해당 위치 */}
-				<Marker lat={lat} lng={lng} />
+			{isLoaded && (
+				<GoogleMap {...defaults} onZoomChanged={onZoom} ref={mapRef}>
+					{/* 해당 위치 */}
+					{markerShow && <Marker position={{ lat, lng }} />}
 
-				{/* 호스트 위치 */}
-				{nearbyHosts?.map(host => (
-					<HostIcon
-						host={host}
-						lat={host.place!.geometry!.location.lat}
-						lng={host.place!.geometry!.location.lng}
-						isShow={markerShow}
-						key={host.id}
-					/>
-				))}
-			</GoogleMap>
+					{/* 호스트 위치 */}
+					{nearbyHosts?.map(host => (
+						<HostIcon
+							host={host}
+							isShow={markerShow}
+							key={host.id}
+							position={{ ...host.place!.geometry!.location }}
+						/>
+					))}
+				</GoogleMap>
+			)}
 		</div>
 	);
 };

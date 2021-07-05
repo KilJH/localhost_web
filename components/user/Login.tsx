@@ -62,7 +62,7 @@ const Login = () => {
 				</div>
 
 				<div>
-					<Button type='submit' width='100%'>
+					<Button type='submit' width='100%' style={{ height: '1rem' }}>
 						로그인
 					</Button>
 				</div>

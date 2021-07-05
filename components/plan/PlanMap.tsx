@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Place } from '../../interfaces/index';
-import PlaceIcon from '@material-ui/icons/Place';
-import GoogleMap from 'google-map-react';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { MAP_KEY } from '../../client/utils/keys';
 
 interface Props {
@@ -26,32 +25,34 @@ const Container = styled.div`
 	}
 `;
 
-const Marker = React.memo((_props: { lat: number; lng: number }) => {
-	return (
-		<div>
-			<PlaceIcon fontSize='large' style={{ color: '#5197d5' }} />
-		</div>
-	);
-});
-
 const PlanMap = (props: Props) => {
 	const { place } = props;
 
-	const defaults = {
-		center: {
-			lat: place!.geometry!.location.lat || 37.4870684,
-			lng: place!.geometry!.location.lng || 126.8257101,
-		},
-		zoom: 15,
-	};
+	const { isLoaded } = useJsApiLoader({
+		id: 'google-map-script',
+		googleMapsApiKey: MAP_KEY,
+	});
+
+	const defaults = useMemo(
+		() => ({
+			mapContainerStyle: { width: '100%', height: '100%' },
+			center: {
+				...place!.geometry!.location,
+			},
+			zoom: 15,
+		}),
+		[],
+	);
 
 	return (
 		<Container>
 			<div className='address'>{place.formatted_address}</div>
 			<div>
-				<GoogleMap bootstrapURLKeys={{ key: MAP_KEY }} {...defaults}>
-					<Marker {...place!.geometry!.location} />
-				</GoogleMap>
+				{isLoaded && (
+					<GoogleMap {...defaults}>
+						<Marker position={{ ...place!.geometry!.location }} />
+					</GoogleMap>
+				)}
 			</div>
 		</Container>
 	);
