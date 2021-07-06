@@ -23,6 +23,7 @@ import { languages, travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import { useToast } from '../../client/hooks/useToast';
 import Toast from '../reuse/Toast';
+import { useModal } from '../../client/hooks/useModal';
 
 const RequestContainer = styled.div`
 	margin: 1.5rem auto;
@@ -80,6 +81,7 @@ const TravelStyleInput = ({
 		<>
 			{travelStyles.map(style => (
 				<TravelStyleTag
+					key={style}
 					label={style}
 					checked={style === selectedStyle}
 					onClick={onClick}
@@ -90,42 +92,30 @@ const TravelStyleInput = ({
 };
 
 const Request = () => {
-	// const country = useInput('대한민국');
 	const [place, setPlace] = useState<Place>();
-	const [langs, setLangs] = useState<string[]>([]);
+	const [langs, setLangs] = useState(
+		languages.map(lang => ({ ...lang, checked: false })),
+	);
 	const [selectedStyle, setSelectedStyle] = useState('');
 	const description = useInput('');
 	const [reqCountry, setReqCountry] = useState(0);
 	const currentUser = useContext(UserStateContext);
 
 	const toast = useToast(false);
-	let newChecked: boolean[] = [];
-
-	for (let i = 0; i < languages.length; i++) {
-		newChecked = newChecked.concat(false);
-	}
-
-	const [checked, setChecked] = useState(newChecked);
-	const travelerNation = useInput('0');
 
 	// 모달을 위한 State
-	const [open, setOpen] = useState(false);
-	const handleOpen = () => {
-		setOpen(true);
-	};
-	const handleClose = () => {
-		setOpen(false);
-	};
+	const modal = useModal(false);
 	useEffect(() => {
-		setOpen(false);
+		modal.handleClose();
 	}, [place]);
 
 	const onSubmit = async () => {
 		// e.preventDefault();
+		const selectedLangs = langs.filter(lang => lang.checked);
 
 		if (place == null) {
 			toast.handleOpen('warning', '활동지역을 선택해주세요');
-		} else if (langs.length === 0) {
+		} else if (selectedLangs.length === 0) {
 			toast.handleOpen('warning', '언어를 선택해주세요');
 		} else if (selectedStyle === '') {
 			toast.handleOpen('warning', '여행스타일을 선택해주세요');
@@ -133,9 +123,8 @@ const Request = () => {
 			toast.handleOpen('warning', '자기소개를 작성해주세요');
 		} else {
 			const hostInfo = {
-				// country: country.value,
 				place: place,
-				languages: langs,
+				languages: selectedLangs.map(lang => lang.name),
 				description: description.value,
 				reqCountry: reqCountry,
 				tag: selectedStyle,
@@ -155,23 +144,28 @@ const Request = () => {
 		}
 	};
 
-	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (langs.length < 4) {
-			if (e.target.checked && langs.length < 3) {
-				setLangs([...langs, e.target.value]);
-				setChecked([
-					...checked.slice(0, Number(e.target.id) - 1),
-					true,
-					...checked.slice(Number(e.target.id) - 1 + 1),
-				]);
-			} else {
-				setLangs(langs.filter(lang => lang !== e.target.value));
-				setChecked([
-					...checked.slice(0, Number(e.target.id) - 1),
-					false,
-					...checked.slice(Number(e.target.id) - 1 + 1),
-				]);
+	const onChange = (id: number) => {
+		const count = langs.filter(lang => lang.checked).length;
+		if (count < 3) {
+			setLangs(
+				langs.map(lang =>
+					id === lang.id ? { ...lang, checked: !lang.checked } : lang,
+				),
+			);
+		} else {
+			// 3개로 꽉 찼을 때
+			if (!langs.filter(lang => lang.id === id)[0].checked) {
+				// 새로운 거 누를 때
+				toast.handleOpen('warning', '최대 3개까지만 선택할 수 있습니다.');
+				return;
 			}
+
+			// 이미 눌러져있는 거 누를 때
+			setLangs(
+				langs.map(lang =>
+					id === lang.id ? { ...lang, checked: false } : lang,
+				),
+			);
 		}
 	};
 
@@ -201,11 +195,11 @@ const Request = () => {
 										? `${place?.formatted_address}(${place!.name})`
 										: ''
 								}
-								onClick={handleOpen}
-								onChange={handleOpen}
+								onClick={modal.handleOpen}
+								onChange={modal.handleOpen}
 							/>
-							<StyledModal open={open} onClose={handleClose}>
-								<Fade in={open}>
+							<StyledModal open={modal.open} onClose={modal.handleClose}>
+								<Fade in={modal.open}>
 									<div className='searchForm'>
 										<SearchPlace setPlace={setPlace} />
 									</div>
@@ -221,16 +215,14 @@ const Request = () => {
 
 					<Grid item xs={12} md={8}>
 						<FormGroup row>
-							{languages.map(lang => (
+							{langs.map(lang => (
 								<FormControlLabel
-									key={lang.name}
+									key={lang.id}
 									control={
 										<Checkbox
-											id={`${lang.id}`}
 											color='primary'
-											onChange={onChange}
-											value={lang.name}
-											checked={checked[lang.id - 1]}
+											onChange={() => onChange(lang.id)}
+											checked={lang.checked}
 										/>
 									}
 									label={lang.name}
@@ -245,12 +237,7 @@ const Request = () => {
 						<label>원하는 여행객의 국적을 선택해주세요</label>
 					</Grid>
 					<Grid item xs={12} md={8}>
-						<RadioGroup
-							row
-							{...travelerNation}
-							value={reqCountry}
-							onChange={onRadioChange}
-						>
+						<RadioGroup row value={reqCountry} onChange={onRadioChange}>
 							<FormControlLabel
 								value={0}
 								control={<Radio color='primary' />}
