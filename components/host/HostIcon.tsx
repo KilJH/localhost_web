@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Host } from '../../interfaces';
 import styled, { keyframes } from 'styled-components';
 import UserPhoto from '../user/UserPhoto';
@@ -12,17 +12,6 @@ interface Props {
 	isShow?: boolean;
 	position: { lat: number; lng: number };
 }
-
-const HostIconContainer = styled.div`
-	/* 호스트의 성향에 따라 색상 */
-	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-	& svg {
-		&:hover {
-			opacity: 0.8;
-			cursor: pointer;
-		}
-	}
-`;
 
 const fadeIn = keyframes`
 	from {
@@ -76,28 +65,34 @@ const HostIcon = (props: Props) => {
 	const { host, isShow = true, position } = props;
 	const [isOpen, setIsOpen] = useState(false);
 
-	const handleOpen = () => {
-		setIsOpen(true);
-	};
-	const handleClose = () => {
+	const handleToggle = useCallback(() => {
+		setIsOpen(isOpen => !isOpen);
+	}, []);
+	const handleClose = useCallback(() => {
 		setIsOpen(false);
-	};
+	}, []);
+
+	const [opacity, setOpacity] = useState(0.8);
 
 	return (
-		<HostIconContainer>
+		<>
 			{isShow && (
 				<Marker
 					position={position}
 					icon={{
 						path: google.maps.SymbolPath.CIRCLE,
 						scale: 16,
-						fillColor: '#333',
-						fillOpacity: 0.8,
+						fillColor: '#5197d5',
+						fillOpacity: opacity,
 						strokeOpacity: 0,
 					}}
-					onClick={handleOpen} // 모바일에서 처리를 위함
-					onMouseOver={handleOpen}
-					onMouseOut={handleClose}
+					onClick={handleToggle} // 사용자경험 개선을 위해 toggle 형식으로 넘겨줌
+					onMouseOver={() => {
+						setOpacity(1);
+					}}
+					onMouseOut={() => {
+						setOpacity(0.8);
+					}}
 				/>
 			)}
 			{isOpen && (
@@ -106,6 +101,7 @@ const HostIcon = (props: Props) => {
 					options={{
 						minWidth: 256,
 					}}
+					onCloseClick={handleClose}
 				>
 					<HostInfo>
 						<UserPhoto src={host?.photo} />
@@ -133,7 +129,7 @@ const HostIcon = (props: Props) => {
 					</HostInfo>
 				</InfoWindow>
 			)}
-		</HostIconContainer>
+		</>
 	);
 };
 
