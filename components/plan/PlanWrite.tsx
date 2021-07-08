@@ -22,7 +22,7 @@ import React, {
 } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { UserStateContext } from '../../context/user';
-import { useInput } from '../../client/hooks/useInput';
+import { useInputs } from '../../client/hooks/useInput';
 import { Place, Plan, PlanDay, PlanTime } from '../../interfaces';
 import Button from '../reuse/Button';
 import Input from '../reuse/Input';
@@ -58,13 +58,21 @@ interface SaveProps {
 	step: number;
 	sleepDate: number;
 	tripDate: number;
-	planName: string;
-	planDesc: string;
-
+	title: string;
+	desc: string;
 	wholePlan: PlanDay[];
 }
 
 const types = ['이동', '식사', '관광', '기타'];
+const initialTime = new Date(0, 0, 0, 10, 0);
+const initialTimePlan = {
+	time: initialTime,
+	type: '기타',
+	price: 0,
+	place: { name: '' },
+	description: '',
+	photo: [],
+};
 
 const fadeIn = keyframes`
 	from {
@@ -289,7 +297,7 @@ const SaveBtn = (props: SaveProps) => {
 
 	const onSave = () => {
 		localStorage.setItem('tempPlan', JSON.stringify(props));
-		saveToast.handleOpen();
+		saveToast.handleOpen('success', '임시저장을 완료하였습니다.');
 	};
 	return (
 		<>
@@ -297,9 +305,7 @@ const SaveBtn = (props: SaveProps) => {
 				임시저장
 			</Button>
 
-			<Toast {...saveToast} type='success'>
-				임시저장을 완료하였습니다.
-			</Toast>
+			<Toast {...saveToast}>{saveToast.message}</Toast>
 		</>
 	);
 };
@@ -399,8 +405,10 @@ const PlanWrite = () => {
 	}, [tripDate]);
 
 	// 제목과 소개
-	const planName = useInput('');
-	const planDesc = useInput('');
+	const [{ title, desc }, onChange, setInputs] = useInputs({
+		title: '',
+		desc: '',
+	});
 
 	// 총 플랜
 	const [wholePlan, setWholePlan] = useState<PlanDay[]>([]);
@@ -408,17 +416,9 @@ const PlanWrite = () => {
 		description: '',
 		planTimes: [],
 	});
-	const [timePlan, setTimePlan] = useState<PlanTime>({
-		// time: new Date(null, null, null, 10, 0),
-		time: '',
-		type: '기타',
-		price: 0,
-		place: { name: '' },
-		description: '',
-		photo: [],
-	});
+	const [timePlan, setTimePlan] = useState<PlanTime>(initialTimePlan);
 	// TimePicker 사용을 위한 Date 타입의 state
-	const [time, setTime] = useState(new Date(0, 0, 0, 10, 0));
+	const [time, setTime] = useState(initialTime);
 
 	useEffect(() => {
 		setTimePlan({
@@ -442,8 +442,7 @@ const PlanWrite = () => {
 			const res = confirm('임시저장된 여행계획이 있습니다. 불러오시겠습니까?');
 			if (res) {
 				setStep(temp.step);
-				planName.setValue(temp.planName);
-				planDesc.setValue(temp.planDesc);
+				setInputs({ title: temp.title, desc: temp.desc });
 				setSleepDate(temp.sleepDate);
 				setTripDate(temp.tripDate);
 				setWholePlan([...temp.wholePlan]);
@@ -523,14 +522,7 @@ const PlanWrite = () => {
 				.concat({ ...timePlan, photo: imageUrls })
 				.sort((a, b) => (a.time < b.time ? -1 : 1)),
 		});
-		setTimePlan({
-			time: new Date(0, 0, 0, 10, 0),
-			type: '기타',
-			price: 0,
-			place: { name: '' },
-			description: '',
-			photo: [],
-		});
+		setTimePlan(initialTimePlan);
 		setImages([]);
 		setTime(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
 		setPlaceDetail(undefined);
@@ -569,8 +561,8 @@ const PlanWrite = () => {
 		step,
 		sleepDate,
 		tripDate,
-		planName: planName.value as string,
-		planDesc: planDesc.value as string,
+		title,
+		desc,
 		wholePlan,
 	};
 
@@ -580,8 +572,8 @@ const PlanWrite = () => {
 		setStep,
 		saveProps,
 		images,
-		titleState: planName.value as string,
-		descState: planDesc.value as string,
+		titleState: title,
+		descState: desc,
 		setPlanId,
 	};
 
@@ -625,12 +617,14 @@ const PlanWrite = () => {
 								border='1px solid rgba(0,0,0,0.42)'
 								borderRadius='0.25rem'
 								textAlign='left'
-								{...planName}
+								name='title'
+								value={title}
+								onChange={onChange}
 							/>
 						</div>
 						<div>
 							<label>플랜에 대한 간략한 소개를 적어주세요</label>
-							<Textarea {...planDesc} />
+							<Textarea name='desc' value={desc} onChange={onChange} />
 						</div>
 						<div>
 							<label>여행테마를 선택해주세요(복수선택 가능)</label>
@@ -826,8 +820,8 @@ const PlanWrite = () => {
 			);
 		case 4:
 			const plan: Plan = {
-				title: planName.value as string,
-				description: planDesc.value as string,
+				title,
+				description: desc,
 				sleepDays: sleepDate,
 				travelDays: tripDate,
 				tags: [],
