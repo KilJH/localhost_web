@@ -20,7 +20,7 @@ import React, {
 	useEffect,
 	useState,
 } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { UserStateContext } from '../../context/user';
 import { useInput } from '../../client/hooks/useInput';
 import { Place, Plan, PlanDay, PlanTime } from '../../interfaces';
@@ -29,7 +29,7 @@ import Input from '../reuse/Input';
 import Textarea from '../reuse/Textarea';
 import PlanDayItem from './PlanDayItem';
 import PlanWholeItem from './PlanWholeItem';
-import { countries, travelStyles } from '../../client/utils/basicData';
+import { travelStyles } from '../../client/utils/basicData';
 import TravelStyleTag from '../reuse/TravelStyleTag';
 import { useToast } from '../../client/hooks/useToast';
 import { useModal } from '../../client/hooks/useModal';
@@ -58,15 +58,30 @@ interface SaveProps {
 	step: number;
 	sleepDate: number;
 	tripDate: number;
-	country: string;
-	city: string;
 	planName: string;
 	planDesc: string;
 
 	wholePlan: PlanDay[];
 }
 
-const types = ['이동', '식사', '관광'];
+const types = ['이동', '식사', '관광', '기타'];
+
+const fadeIn = keyframes`
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+`;
+const progress = keyframes`
+	from {
+		background-position: 0 0;
+	}
+	to {
+		background-position: 400px 0;
+	}
+`;
 
 const WriteContainer = styled.div<{
 	isFull?: boolean;
@@ -79,14 +94,13 @@ const WriteContainer = styled.div<{
 	flex-direction: column;
 	align-items: center;
 	justify-content: ${props => (props.isFull ? 'center' : 'flex-start')};
-	height: ${props => (props.isFull ? '80vh' : '')};
+	height: ${props => (props.isFull ? '80vh' : 'initial')};
 	& label {
 		font-weight: bold;
 		margin: 0.25rem;
 		font-size: 1.2em;
 		display: block;
 	}
-	/* & > div, */
 	& > input,
 	& > textarea {
 		margin: 0 0 2rem 0;
@@ -103,7 +117,7 @@ const WriteContainer = styled.div<{
 	& div[role='progressbar'] {
 		height: ${props => (props.isMobile ? '4px' : '8px')};
 		& > div {
-			animation: progress 1.5s infinite;
+			animation: ${progress} 1.5s infinite;
 			background: linear-gradient(
 				45deg,
 				rgb(58, 75, 170) 25%,
@@ -137,39 +151,7 @@ const WriteContainer = styled.div<{
 		}
 	}
 
-	animation: fadeIn 0.3s ease;
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-
-	@keyframes progress {
-		from {
-			background-position: 0 0;
-		}
-		to {
-			background-position: 400px 0;
-		}
-	}
-`;
-
-const StyledSelect = styled(Select)`
-	width: 60%;
-	text-align: center;
-
-	& .MuiSelect-select {
-		font-size: 1.5rem;
-	}
-	& .MuiSelect-select.MuiSelect-select {
-		padding: 0.5rem 0 0 0;
-	}
-	& .MuiSelect-select:focus {
-		background-color: rgba(0, 0, 0, 0);
-	}
+	animation: ${fadeIn} 0.3s ease;
 `;
 
 const PlanWriteContainer = styled.div`
@@ -337,11 +319,11 @@ const WriteWrapper = (props: WrapperProps) => {
 	} = props;
 	const currentUser = useContext(UserStateContext);
 
-	const noDataErr = useToast(false);
+	const toast = useToast(false);
 
 	const onNextStep = () => {
 		if (step === 2 && (titleState === '' || descState === '')) {
-			noDataErr.handleOpen();
+			toast.handleOpen('warning', '내용을 입력해주세요');
 			return;
 		}
 		if (step === 4) {
@@ -376,16 +358,12 @@ const WriteWrapper = (props: WrapperProps) => {
 			<div className='btnContainer'>
 				{step > 1 && step < 4 ? <SaveBtn {...saveProps} /> : ''}
 				<div className='prevNext'>
-					{step === 0 || step === 5 ? (
-						''
-					) : (
+					{step !== 1 && step !== 5 && (
 						<Button onClick={onPrevStep} default padding='1rem'>
 							이전
 						</Button>
 					)}
-					{step === 5 ? (
-						''
-					) : (
+					{step !== 5 && (
 						<Button onClick={onNextStep} padding='1rem'>
 							{step === 4 ? '완료' : '다음'}
 						</Button>
@@ -393,9 +371,7 @@ const WriteWrapper = (props: WrapperProps) => {
 				</div>
 			</div>
 
-			<Toast {...noDataErr} type='warning'>
-				내용을 입력해주세요
-			</Toast>
+			<Toast {...toast}>{toast.message}</Toast>
 		</WriteContainer>
 	);
 };
@@ -406,7 +382,7 @@ const PlanWrite = () => {
 	// 모바일인지
 	const isMobile = useMediaQuery('(max-width: 600px)');
 	// 단계
-	const [step, setStep] = useState(0);
+	const [step, setStep] = useState(1);
 
 	// 숙박일
 	const [date, setDate] = useState(1); // 현재 작성중인 날짜
@@ -421,24 +397,6 @@ const PlanWrite = () => {
 	useEffect(() => {
 		setSleepDate(tripDate - 1);
 	}, [tripDate]);
-
-	// 나라와 도시
-	const country = useInput(countries[0].nation);
-	const [cities, setCities] = useState(
-		countries.filter(item => item.nation === country.value)[0].cities,
-	);
-	const [city, setCity] = useState(cities[0]);
-
-	//// 나라가 변하면 도시목록이 변하게
-	useEffect(() => {
-		setCities(
-			countries.filter(item => item.nation === country.value)[0].cities,
-		);
-	}, [country]);
-	//// 도시목록이 변하면 도시상태가 첫번째로 변하게
-	useEffect(() => {
-		setCity(cities[0]);
-	}, [cities]);
 
 	// 제목과 소개
 	const planName = useInput('');
@@ -484,8 +442,6 @@ const PlanWrite = () => {
 			const res = confirm('임시저장된 여행계획이 있습니다. 불러오시겠습니까?');
 			if (res) {
 				setStep(temp.step);
-				country.setValue(temp.country);
-				setCity(temp.city);
 				planName.setValue(temp.planName);
 				planDesc.setValue(temp.planDesc);
 				setSleepDate(temp.sleepDate);
@@ -581,12 +537,6 @@ const PlanWrite = () => {
 	}
 
 	const onDeleteTimePlan = useCallback((time: Date) => {
-		// const existingPlans = dayPlan.planTimes;
-		// const newPlans = [
-		// 	...existingPlans.slice(0, i),
-		// 	...existingPlans.slice(i + 1, existingPlans.length),
-		// ];
-
 		// useCallback, memo 최적화를 위한 함수형 업데이트
 		setDayPlan(dayPlan => ({
 			...dayPlan,
@@ -619,8 +569,6 @@ const PlanWrite = () => {
 		step,
 		sleepDate,
 		tripDate,
-		country: country.value as string,
-		city,
 		planName: planName.value as string,
 		planDesc: planDesc.value as string,
 		wholePlan,
@@ -638,37 +586,6 @@ const PlanWrite = () => {
 	};
 
 	switch (step) {
-		case 0:
-			// 나라, 도시 선택
-			return (
-				<WriteWrapper isFull={true} {...wrapperProps}>
-					<label>나라를 선택해주세요</label>
-					<StyledSelect value={country.value} onChange={country.onChange}>
-						{countries.map((country, i) => (
-							<MenuItem value={country.nation} key={i}>
-								{country.nation}
-							</MenuItem>
-						))}
-						<MenuItem disabled>다른 국가는 아직 서비스 전입니다.</MenuItem>
-					</StyledSelect>
-
-					<label>도시를 선택해주세요</label>
-					<StyledSelect
-						value={city}
-						// 셀렉트에서 온체인지핸들러 타입이 이상함...
-						onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-							setCity(e.target.value as string);
-						}}
-					>
-						{cities.map((city, i) => (
-							<MenuItem value={city} key={i}>
-								{city}
-							</MenuItem>
-						))}
-						<MenuItem disabled>다른 도시는 아직 서비스 전입니다.</MenuItem>
-					</StyledSelect>
-				</WriteWrapper>
-			);
 		case 1:
 			// 여행일수 선택
 			return (
