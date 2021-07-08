@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 export const useInput = (
 	initialValue: string | number,
@@ -19,4 +19,21 @@ export const useInput = (
 		}
 	};
 	return { value, onChange, setValue };
+};
+
+export const useInputs = (initialValue: any, validator?: any) => {
+	const [inputs, setInputs] = useState(initialValue);
+
+	const onChange = (e: ChangeEvent<any>) => {
+		const { value, name } = e.target;
+
+		if (validator && validator[name]?.test(value)) return;
+
+		setInputs({
+			...inputs,
+			[name]: value,
+		});
+	};
+
+	return [inputs, onChange, setInputs];
 };
