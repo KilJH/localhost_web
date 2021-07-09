@@ -26,6 +26,7 @@ const MenuList = styled.nav`
 	& ul {
 		list-style: none;
 		padding: 0;
+		margin: 0;
 	}
 	& li {
 		padding: 0.5em;
@@ -61,6 +62,8 @@ const UserMenu = () => {
 							</a>
 						</Link>
 					))}
+
+					<hr />
 					{/* 호스트 */}
 					{currentUser.isHost ? (
 						<Link href='/hosts/myhosting'>
@@ -75,13 +78,17 @@ const UserMenu = () => {
 							</a>
 						</Link>
 					)}
+
 					{/* 관리자 */}
 					{currentUser.isAdmin === 1 && (
-						<Link href='/admin/notice'>
-							<a>
-								<li style={{ color: '#5197D5' }}>관리자페이지</li>
-							</a>
-						</Link>
+						<>
+							<hr />
+							<Link href='/admin/notice'>
+								<a>
+									<li style={{ color: '#5197D5' }}>관리자페이지</li>
+								</a>
+							</Link>
+						</>
 					)}
 				</ul>
 				<hr />
