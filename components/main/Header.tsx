@@ -44,9 +44,6 @@ const menuArray = [
 	{ name: '호스트', path: '/hosts' },
 	{ name: '공지사항', path: '/notices' },
 	{ name: '자유게시판', path: '/board' },
-	// { name: '소개', path: '/about' },
-	// { name: '문의하기', path: '/question' },
-	{ name: '유저보기', path: '/users' },
 ];
 
 const HeaderContainer = styled.header<HeaderStyleProps>`
@@ -173,19 +170,29 @@ const EmptyFlexDiv = styled.div`
 	height: 100%;
 `;
 
-const Menu = () => (
-	<nav>
-		<ul>
-			{menuArray.map(menu => (
-				<li key={menu.name}>
-					<Link href={menu.path}>
-						<a>{menu.name}</a>
-					</Link>
-				</li>
-			))}
-		</ul>
-	</nav>
-);
+const Menu = () => {
+	const currentUser = useContext(UserStateContext);
+	return (
+		<nav>
+			<ul>
+				{menuArray.map(menu => (
+					<li key={menu.name}>
+						<Link href={menu.path}>
+							<a>{menu.name}</a>
+						</Link>
+					</li>
+				))}
+				{currentUser.isAdmin === 1 && (
+					<li>
+						<Link href='/users'>
+							<a>유저보기</a>
+						</Link>
+					</li>
+				)}
+			</ul>
+		</nav>
+	);
+};
 
 const LoginMenu = (props: LoginProps) => {
 	const loginDrawer = useDrawer('right');
