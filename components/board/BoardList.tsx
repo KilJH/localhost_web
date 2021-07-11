@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Board } from '../../interfaces';
 import Pagination from '../main/Pagination';
 import { ParsedUrlQuery } from 'node:querystring';
+import Button from '../reuse/Button';
 
 interface Props {
 	pagedBoards: Board[];
@@ -57,7 +58,7 @@ const BoardList = (props: Props) => {
 			</div>
 			{/* 작성버튼 */}
 			<Link href='/board/write'>
-				<button>작성</button>
+				<Button>작성</Button>
 			</Link>
 			{/* 페이지네이션 */}
 			<Pagination
